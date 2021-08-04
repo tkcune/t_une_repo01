@@ -1,6 +1,7 @@
 @extends('pc0001.pc0001')
 
 
+    {{-- コメント　ヘッダ画面ここから --}}
 @section('header')
     <header>
     <div class="row border border-dark">
@@ -23,9 +24,12 @@
     </div>
     </header>
 @endsection
+    {{-- コメント　ヘッダ画面ここまで --}}
 
 
 @section('content')
+
+    {{-- コメント　ツリー画面ここから --}}
     <div class="row">
         <div class="col-3 border border-primary" id="tree" style="padding:10px;">
             <div class="row">
@@ -47,6 +51,9 @@
             </div>
         </div>
 
+    {{-- コメント　ツリー画面ここまで --}}
+
+    {{-- コメント　詳細画面ここから --}}
         <div class="col border border-primary" style="padding:10px;">
             <div class="details-area border border-dark bg-warning" style="padding:10px;">
                 <div class="row">
@@ -181,5 +188,6 @@
             
 
         </div>
+    {{-- コメント　詳細画面ここまで --}}
     </div>
 @endsection

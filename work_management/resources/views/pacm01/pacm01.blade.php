@@ -1,57 +1,6 @@
 @extends('pc0001.pc0001')
 
-
-    {{-- コメント　ヘッダ画面ここから --}}
-@section('header')
-    <header>
-    <div class="row border border-dark">
-        <div class="col-2">
-            <p>総合システム</p>
-        </div>
-
-        <div class="col-5">
-            <p>メッセージを表示</p>
-        </div>
-
-        <div class="col-2">
-            <p>ABCさん作業中</p>
-        </div>
-
-        <div class="col-3">
-            <p>ログイン日時 2021/07/01 11:45:00</p>
-        </div>
-        
-    </div>
-    </header>
-@endsection
-    {{-- コメント　ヘッダ画面ここまで --}}
-
-
 @section('content')
-
-    {{-- コメント　ツリー画面ここから --}}
-    <div class="row">
-        <div class="col-3 border border-primary" id="tree" style="padding:10px;">
-            <div class="row">
-                <div class="col-9">  
-                <ul>
-                    <li><a href="#">ログイン画面</a></li>
-                        <ul>
-                            <li><a href="#">ログアウト</a></li>
-                            <li><a href="#">作業管理</a></li>
-                        </ul>
-                    <li><a href="#">組織要員定義</a>
-                    <li><a href="#">作業場所定義</a>
-                </ul>
-                </div>
-                
-                <div class="col">
-                    <button type="button" class="btn-close" aria-label="Close" onclick="display()"></button>
-                </div>
-            </div>
-        </div>
-
-    {{-- コメント　ツリー画面ここまで --}}
 
     {{-- コメント　詳細画面ここから --}}
         <div class="col border border-primary" style="padding:10px;">
@@ -98,7 +47,9 @@
             <div class="department-area">
                 <div class="row">
                     <div class="col">
-                    <p>配下部署 <button>新規</button>
+                    <form action="{{ route('psbs01.index') }}" method="get">
+                    <p>配下部署 
+                    <button>新規</button>
                     【<a href="#">移動</a>】
                     【<a href="#">貼付</a>】
                     <button type="button" >&lt;&lt;</button>
@@ -108,6 +59,7 @@
                     <button type="button" >&gt;&gt;</button>
                     <button type="button" >検索</button>
                     部署<input type="text">
+                    </form>
                     </div>
                 </div>
 
@@ -138,7 +90,6 @@
                     </div>
                 </div>
             </div>
-            <div class="">
                 <div class="row">
                     <div class="col">
                     <p>所属人員 <button>新規</button>
@@ -185,9 +136,7 @@
                     </div>
                 </div>
             </div>
-            
-
         </div>
     {{-- コメント　詳細画面ここまで --}}
-    </div>
+
 @endsection

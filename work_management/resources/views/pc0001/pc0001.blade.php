@@ -26,14 +26,18 @@
 </head>
 
 <body class="p-3 mb-2 bg-light">
-    <div class="header container-md">
-        @yield('header')
-    </div>
-
+<div class="header container-md">
+    @component('components.phcm01')
+    @endcomponent
 
     <div class="container-md">
-        @yield('content')
-    </div>
+        <div class="row">
+    @component('components.ptcm01')
+    @endcomponent
     
+    @yield('content')
+        </div>
+    </div>
+</div>    
 </body>
 </html>

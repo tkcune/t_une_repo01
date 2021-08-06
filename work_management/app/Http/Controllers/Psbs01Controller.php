@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class Pa0001Controller extends Controller
+class Psbs01Controller extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +13,7 @@ class Pa0001Controller extends Controller
      */
     public function index()
     {
-        return view('pacm01.pacm01');
+        return view('psbs01.psbs01');
     }
 
     /**

@@ -1,23 +1,8 @@
-import {Node} from "./Node.js";
-import {ChainParser} from "./ChainParser.js";
+import {Node} from "./ptcmnd.js";
+import {ChainParser} from "./ptcmcp.js";
 
-let treeChain = [
-  {'マイツリー': '部署A'},
-  {'マイツリー': '作業場所A'},
-  {'マイツリー': '作業場所B'},
-  {'マイツリー': '作業B'},
-  {'部署': '部署A'},
-  {'部署': '部署B'},
-  {'部署A': '部署A-1'},
-  {'部署A': '部署A-2'},
-  {'部署A-1': '部署A-1-1'},
-  {'部署A-1': '部署A-1-2'},
-  {'作業': '作業A'},
-  {'作業': '作業B'},
-  {'作業B': '作業C'},
-  {'notitle': 'ユーザー情報'},
-  {'notitle': 'ログアウト'}
-];
+//ツリーのデータは、サーバー側に置かれているので、サーバーと通信する部分がないと動けない。
+//treeSepaleteのデータは、サンプル。
 
 //プログラムで、使用するデータ
 //chaintreeを第一階層のdivのclassの名前
@@ -205,5 +190,6 @@ class Tree {
 }
 
 let tree = Tree.createTreeClass(treeSepalete);
+document.children[0].tree = tree;
 
 export {tree}

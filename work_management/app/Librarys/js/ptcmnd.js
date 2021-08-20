@@ -1,5 +1,5 @@
-import { ChainParser } from "./ChainParser.js";
-import {clipboard} from "./Clipboard.js";
+import { ChainParser } from "./ptcmcp";
+import {clipboard} from "./ptcmcb";
 
 //ツリーのノードクラス
   //ノードのdom要素を操作する

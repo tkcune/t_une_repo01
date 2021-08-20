@@ -1,7 +1,7 @@
-import {clipboard} from "./Clipboard.js";
-import { Node } from "./Node.js";
-import { ChainParser } from "./ChainParser.js";
-import {tree} from "./Tree.js";
+import {clipboard} from "./ptcmcb.js";
+import { Node } from "./ptcmnd.js";
+import { ChainParser } from "./ptcmcp.js";
+import {tree} from "./ptcmtr.js";
 
 export class TreeAction {
   //ノードを削除する

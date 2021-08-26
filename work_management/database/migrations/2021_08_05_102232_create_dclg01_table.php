@@ -17,7 +17,8 @@ class CreateDclg01Table extends Migration
             $table->primary(['client_id', 'log_id']);
             $table->string('client_id','10');
             $table->bigInteger('log_id');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
             $table->string('type','2');
             $table->string('user','255');
             $table->string('function');

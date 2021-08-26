@@ -24,7 +24,8 @@ class CreateDcbs01Table extends Migration
             $table->string('management_personnel_id','10');
             $table->datetime('operation_start_date')->nullable();
             $table->datetime('operation_end_date')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

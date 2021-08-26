@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Pa0001Controller;
 use App\Http\Controllers\Psbs01Controller;
+use App\Http\Controllers\Psji01Controller;
 use App\Http\Controllers\LogController;
 
 /*
@@ -19,11 +20,15 @@ use App\Http\Controllers\LogController;
 //Route::get('/', function () {
   //  return view('welcome');
 //});
+Route::resource('psbs01', Psbs01Controller::class);
+
+Route::resource('psji01', Psji01Controller::class);
 
 Route::get('/',[Pa0001Controller::class,'index'])->name('index');
 
-Route::get('/psbs01/psbs01',[Psbs01Controller::class,'index'])->name('psbs01.index');
+Route::patch('/',[Psbs01Controller::class,'update'])->name('psbs01.update');
 
-Route::post('/psbs01/psbs01',[Psbs01Controller::class,'index'])->name('psbs01.create');
+Route::post('/{id}/{id2}',[Psbs01Controller::class,'delete'])->name('psbs01.delete');
+
 
 

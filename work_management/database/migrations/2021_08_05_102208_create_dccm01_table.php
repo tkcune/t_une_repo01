@@ -18,7 +18,8 @@ class CreateDccm01Table extends Migration
             $table->string('client_id','10');
             $table->string('lower_id','10');
             $table->string('high_id','10');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

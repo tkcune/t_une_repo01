@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class Pa0001Controller extends Controller
@@ -13,7 +14,13 @@ class Pa0001Controller extends Controller
      */
     public function index()
     {
-        return view('pacm01.pacm01');
+        //$client_idの数値はダミー
+        $client_id = "aa00000001";
+
+        $lists = DB::select('select * from dcbs01 where client_id = ?',[$client_id]);
+        $names = DB::select('select * from dcji01 where client_id = ?',[$client_id]);
+        //dd($list);
+        return view('pacm01.pacm01',compact('lists','names'));
     }
 
     /**

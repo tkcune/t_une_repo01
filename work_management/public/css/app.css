@@ -1,1 +1,225 @@
-
+/* linetree関係のcss */
+.linetree ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    position: relative;
+    margin-left: 15px;
+  }
+  .linetree ul li {
+    position: relative;
+    margin: 0;
+    padding: 7px 15px;
+  }
+  .linetree ul::before,
+  .linetree ul li::before,
+  .endtree li:before {
+    content: "";
+    display: block;
+    position: absolute;
+  }
+  .linetree ul:before {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    border-left: 1px dotted;
+  }
+  .linetree ul li:before,
+  .endtree li::before {
+    left: 0;
+    top: 15px;
+    width: 15px;
+    height: 0;
+    border-top: 1px dotted;
+  }
+  .secondtree ul li:last-child:before,
+  .endtree li:last-child::before {
+    top: 15px;
+    bottom: 0;
+    height: auto;
+    background-color: #fff;
+  }
+  
+  /*
+   expnadtree関係のcss
+   */
+  
+  .expandtree ul,
+  .lastexpandtree ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    position: relative;
+    margin-left: 15px;
+  }
+  
+  .expandtree ul li,
+  .lastexpandtree ul li {
+    position: relative;
+    margin: 0;
+    padding: 15px 15px;
+  }
+  .expandtree > ul:before {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    border-left: 1px dotted;
+  }
+  .lastexpandtree > ul::before {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    border-left: 1px dotted white;
+  }
+  
+  .expandtree ul:before,
+  .lastexpandtree ul:before,
+  .titlebox:before,
+  .normaltree li::before,
+  .firsttree li::before,
+  .lasttree li:before,
+  ul.lastnormaltree:before,
+  .lastnormaltree li::before {
+    content: "";
+    display: block;
+    position: absolute;
+  }
+  
+  .treebox {
+    display: flex;
+    position: relative;
+  }
+  .expandbox {
+    margin-left: 7px;
+    border: 1px solid;
+    height: 15px;
+    width: 15px;
+    text-align: center;
+    line-height: 15px;
+    font-size: 15px;
+  }
+  .titlebox {
+    padding-left: 15px;
+    height: 15px;
+  }
+  .titlebox:before {
+    left: 23px;
+    top: 10px;
+    width: 15px;
+    height: 0;
+    border-top: 1px dotted;
+  }
+  .firsttree li::before {
+    left: 0;
+    top: 27px;
+    width: 15px;
+    height: 0;
+    border-top: 1px dotted;
+  }
+  ul.firsttree::before {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    border-left: 1px dotted;
+  }
+  ul.firsttree:before {
+    top: 27px;
+    bottom: 0;
+    height: auto;
+    background-color: #fff;
+  }
+  
+  .normaltree li::before {
+    left: 0;
+    top: 27px;
+    width: 15px;
+    height: 0;
+    border-top: 1px dotted;
+  }
+  ul.normaltree::before {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    border-left: 1px dotted;
+  }
+  
+  .lasttree {
+    height: 40px;
+  }
+  ul.lasttree::before {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    border-left: 1px dotted;
+  }
+  .lasttree li:before {
+    left: 0;
+    top: 27px;
+    width: 15px;
+    height: 0;
+    border-top: 1px dotted;
+  }
+  .lasttree li:last-child:before {
+    top: 27px;
+    bottom: 0;
+    height: auto;
+    background-color: #fff;
+  }
+  ul.lastnormaltree:before {
+    top: 0;
+    bottom: 26px;
+    left: 0;
+    width: 0;
+    border-left: 1px dotted;
+  }
+  .lastnormaltree li::before {
+    left: 0;
+    top: 27px;
+    width: 15px;
+    height: 0;
+    border-top: 1px dotted;
+  }
+  .unexpand {
+    display: none;
+  }
+  
+  /* 詳細行のcss */
+  .detail {
+    display: flex;
+    margin-bottom: 20px;
+  }
+  
+  #palent,
+  #child,
+  #copy,
+  #move,
+  #delete,
+  #paste,
+  #pastepalent,
+  #pastechild,
+  #boxstring,
+  #projection {
+    width: 150px;
+    height: 50px;
+    border: 1px solid;
+    text-align: center;
+    line-height: 50px;
+  }
+  
+  #copy,
+  #move,
+  #delete,
+  #paste,
+  #projection {
+    background-color: aqua;
+  }
+  
+  #boxstring {
+    background-color: royalblue;
+  }

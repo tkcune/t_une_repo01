@@ -15,6 +15,7 @@
 
     <!-- JS -->
     <script src="{{ asset('js/pamt01/pamt01.js') }}" defer></script>
+    <script type="module" src="C:\work\r_shimoda_repo01\work_management\app\Librarys\js\main.js"></script>
 
 
     <!-- Fonts -->
@@ -22,7 +23,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    {{-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
 </head>
 
 <body class="p-3 mb-2 bg-light">

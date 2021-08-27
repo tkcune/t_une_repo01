@@ -9,6 +9,10 @@
 　1-1.PHPMyAdminにアクセスする。<BR>
 　1-2.画面左の新規作成をクリックする。<BR>
 　1-3.データベース名をwork_managementと入力し作成をクリック<BR>
-２・テーブルを作成<BR>
-　2-1.コマンドプロンプトを開きcdコマンドでwork_managementディレクトリに移動<BR>
-　2-2.php artisan migrateと入力しテーブルを作成<BR>
+２・.envファイルの作成
+　2-1.env.exampleのファイル名を.envに変更<BR>
+　2-2.APP_KEY=をAPP_KEY=base64:Nz0Pe/vy8ScPBejgsFqhUijUCJ2gSFLLfDUEpOdLNx8=に変更<BR>
+　2-3.DB_DATABASE=laravelをDB_DATABASE=work_managementに変更<BR>
+３・テーブルを作成<BR>
+　3-1.コマンドプロンプトを開きcdコマンドでwork_managementディレクトリに移動<BR>
+　3-2.php artisan migrateと入力しテーブルを作成<BR>

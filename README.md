@@ -13,6 +13,9 @@
 　2-1.env.exampleのファイル名を.envに変更<BR>
 　2-2.APP_KEY=をAPP_KEY=base64:Nz0Pe/vy8ScPBejgsFqhUijUCJ2gSFLLfDUEpOdLNx8=に変更<BR>
 　2-3.DB_DATABASE=laravelをDB_DATABASE=work_managementに変更<BR>
-３・テーブルを作成<BR>
-　3-1.コマンドプロンプトを開きcdコマンドでwork_managementディレクトリに移動<BR>
-　3-2.php artisan migrateと入力しテーブルを作成<BR>
+３・.vendorファイルの作成<BR>
+  3-1.コマンドプロンプトを開きcdコマンドでwork_managementのpublicディレクトリに移動<BR>
+  3-2.composer updateコマンドを実行<BR>
+４・テーブルを作成<BR>
+　4-1.コマンドプロンプトを開きcdコマンドでwork_managementディレクトリに移動<BR>
+　4-2.php artisan migrateと入力しテーブルを作成<BR>

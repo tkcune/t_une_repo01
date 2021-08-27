@@ -49,6 +49,10 @@ class Psbs01Controller extends Controller
         //顧客IDに対応した最新の部署IDを取得
         $id = DB::select('select department_id from dcbs01 where client_id = ? 
         order by department_id desc limit 1',[$client_id]);
+        if(empty($id))
+        {
+            $department_id = "bs00000001";
+        }else{
         $pieces[0] = substr($id[0]->department_id,0,2);
         $pieces[1] = substr($id[0]->department_id,3);
         $pieces[1] = $pieces[1] + "1";
@@ -56,6 +60,7 @@ class Psbs01Controller extends Controller
         //0埋め
         $department_number = str_pad($pieces[1], 8, '0', STR_PAD_LEFT);
         $department_id = $pieces[0].$department_number;
+        }
 
         list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
 

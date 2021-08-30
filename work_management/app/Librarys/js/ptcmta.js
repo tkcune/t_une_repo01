@@ -1,16 +1,34 @@
 import {clipboard} from "./ptcmcb";
 
+//TreeActionの即時関数に定義され、returnされたメソッドが公開するメソッド。
+//TreeActionの名前空間はTreeActionの即時関数で利用される。
 //@var TreeActionクラス 公開するクラス
 let TreeAction = {};
 
 //TreeActionの名前空間
+
+//ツリーのdom生成
 TreeAction.createTree = {};
+
+//ツリーのNodeクラス
 TreeAction.node = {};
+
+//ツリーのチェインパーサークラス
 TreeAction.chainparser = {};
+
+//ツリーの削除機能クラス
 TreeAction.delete = {};
+
+//ツリーの貼付機能クラス
 TreeAction.paste = {};
+
+//ツリーの移動機能クラス
 TreeAction.move = {};
+
+//ツリーの投影クラス
 TreeAction.projection = {};
+
+//ツリーの追加クラス
 TreeAction.append = {};
 
 //ノードクラス
@@ -931,6 +949,7 @@ TreeAction.chainparser = (() => {
         return [palent, palentPalent];
       }
 
+      //チェインパーサーのメソッド
       return {
         getTwoPalent: getTwoPalent,
         recreateId: recreateId,
@@ -951,6 +970,10 @@ TreeAction.chainparser = (() => {
       }
 })();
 
+//@param array treesepalete ツリーの上下関係のオブジェクトのデータの配列
+//@param array projectionChain ツリーの投影関係のオブジェクトのデータの配列
+//@param Nodeクラス Node Nodeクラスのインスタンス
+//@param ChainParserクラス chainparser チェインパーサーのクラスのインスタンス
 TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparser) {
   //ツリーの子要素のクラスを決定する。
   let decisionClass = function decisionClass(treeTop){
@@ -1070,6 +1093,9 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
   return treeTop;
 }
 
+//@param ChainParserクラス chainparser チェインパーサーのクラスのインスタンス
+//@param Nodeクラス tree ツリー全体のクラスのインスタンス
+//ツリーの削除機能クラス
 TreeAction.delete = function(chainparser, tree) {
   
   //@param string nodeDir 削除されるノードクラスのディレクトリ
@@ -1200,11 +1226,16 @@ TreeAction.delete = function(chainparser, tree) {
       palent.resettingClassElement();
     }
   }
+  //削除機能メソッドを返す
   return {
     deleteNode: deleteNode
   }
 }
 
+//@param Nodeクラス Node Nodeクラスのインスタンス
+//@param ChainParser chainparser チェインパーサーのクラスのインスタンス
+//@param Node tree ツリーの全体クラスのインスタンス
+//ツリーの貼付機能クラス
 TreeAction.paste = function(Node, chainparser, tree){
   //@param string toNodeDir 貼付先のノードクラスのディレクトリ
   //@param string toNodeId 貼付先のノードクラスのid
@@ -1336,12 +1367,18 @@ TreeAction.paste = function(Node, chainparser, tree){
     toNode.appendTree(appendNode.createTree());
   }
 
+  //ツリーの貼付機能メソッドを返す
   return {
     pasteNode: pasteNode,
     pasteMyTreeNode: pasteMyTreeNode
   }
 }
 
+//@param ChainParser チェインパーサーのクラスのインスタンス
+//@param Nodeクラス tree ツリーのインスタンス
+//@param nodePaste pasteFunction 貼付機能のクラス
+//@param nodeDelete deleteFunction 削除機能のクラス
+//移動機能のメソッド
 TreeAction.move = function(chainparser, tree, pasteFunction, deleteFunction){
   //@param string toNodeDir 移動先のノードクラスのディレクトリ
   //@param string toNodeId 移動先のノードクラスのid
@@ -1368,11 +1405,15 @@ TreeAction.move = function(chainparser, tree, pasteFunction, deleteFunction){
       deleteFunction.deleteNode(fromNodeDir, fromNodeId);
     }
   }
+  //移動機能のメソッドを返す
   return {
     moveNode: moveNode
   }
 }
 
+//@param ChainParser chainparser チェインパーサーのクラス
+//@param Node tree ツリーのインスタンス
+//投影機能
 TreeAction.projection = function(chainparser, tree){
   //@param string toNodeDir 投影先のノードクラスのディレクトリ
   //@param string toNodeId 投影先のノードクラスのid
@@ -1467,43 +1508,57 @@ TreeAction.projection = function(chainparser, tree){
     }
   }
 
+  //投影機能メソッドを返す
   return {
     projectionNode: projectionNode
   };
 }
 
+//@param Nodeクラス Node Nodeクラスのインスタンス
+//@param ChainParser chainparser チェインパーサーのクラスのインスタンス
+//@param Nodeクラス tree ツリーのインスタンス
+//ツリーの追加機能
 TreeAction.append = function(Node, chainparser, tree){
+
+  //@param string toNodeDir 追加先のツリーのディレクトリ
+  //@param string toNodeId 追加先のツリーのid
+  //@param array fromNodeChain 上下関係のオブジェクトのデータ
   let nodeAppend = function nodeAppend(toNodeDir, toNodeId, fromNodeChain){
 
+    //@var Nodeクラス toNode 追加先のツリーのクラス
     let toNode = chainparser.searchNodeDirId(toNodeDir, toNodeId, tree);
+    //@var Object chain 上下関係のオブジェクトのデータ
     let chain = fromNodeChain[0];
+    //@var Nodeクラス fromNode 追加するノードクラス
     let fromNode = new Node(toNodeDir + "/" + Object.values(chain)[0].split('.')[1], Object.values(chain)[0].split('.')[0]);
+    //追加先のノードクラスに追加する
     toNode.child.push(fromNode);
+    //ノードクラスのdomを作成する
     appendFromNode(toNode, fromNode);
   }
 
-  //@param Nodeクラス toNode 投影先のノードクラス
-  //@param Nodeクラス fromNode 投影元のノードクラスのコピー
+  //@param Nodeクラス toNode 追加先のノードクラス
+  //@param Nodeクラス fromNode 追加するノードクラス
   let appendFromNode = function appendFromNode(toNode, fromNode){
-    //@var array twoPalent 投影先のノードクラスの親ノードと親の親ノード
+    //@var array twoPalent 追加先のノードクラスの親ノードと親の親ノード
     let twoPalent = chainparser.getTwoPalent(toNode, tree);
 
-    //@var Nodeクラス palent 投影先の親ノード
+    //@var Nodeクラス palent 追加先の親ノード
     let palent = twoPalent[0];
-    //@var Nodeクラス palentPalent 投影先の親の親ノード
+    //@var Nodeクラス palentPalent 追加先の親の親ノード
     let palentPalent = twoPalent[1];
 
     //親からclassNameを決め直す
     chainparser.decisionChildClass(palent, palentPalent);
     fromNode.createLeafTree();
 
-    //貼付先にdomを追加する
+    //追加先にdomを追加する
 
     //親要素のdom要素の削除と再構成
     //ノードクラスを追加した時に、投影先の子要素が1の場合
     //新しく子要素ができた事になるので、投影先を展開するボックスのあるツリーに変更する
     if(toNode.child.length === 1){
-      //投影先を一度削除して、ツリーを作り直す
+      //追加先を一度削除して、ツリーを作り直す
       //@var int deleteId 削除する貼付先のdomの位置
       let deleteId;
       //削除する位置を検索する
@@ -1515,16 +1570,16 @@ TreeAction.append = function(Node, chainparser, tree){
       
       //domを削除する
       palent.deleteElement(deleteId);
-      //投影先のdomを展開するボックスに作り直す
+      //追加先のdomを展開するボックスに作り直す
       toNode.createExpandTree();
       
-      //投影先に、コピーした移動元のdomを追加する
+      //追加先に、コピーした移動元のdomを追加する
       toNode.appendTree(fromNode.element);
       
-      //投影先の子要素のcss名を、domに反映させる
+      //追加先の子要素のcss名を、domに反映させる
       toNode.resettingClassElement();
 
-      //新しく作り直した投影先のdomを、親ノードのdomに追加する
+      //新しく作り直した追加先のdomを、親ノードのdomに追加する
       palent.insertTree(toNode.element, deleteId);
       
       //親ノードに新しくdomを追加したので、
@@ -1532,32 +1587,44 @@ TreeAction.append = function(Node, chainparser, tree){
       palent.resettingClassElement();
     }else{
 
-      //投影先が展開するボックスのあるツリーの場合
-      //投影先のボックスを開く。
+      //追加先が展開するボックスのあるツリーの場合
+      //追加先のボックスを開く。
       toNode.openBox();
 
-      //投影先の子要素を表示する
+      //追加先の子要素を表示する
       toNode.openDisplayNode();
       //コピーした投影元のdomを追加する
       toNode.appendTree(fromNode.element);
-      //投影先の子要素のcss名を、domに反映させる
+      //追加先の子要素のcss名を、domに反映させる
       toNode.resettingClassElement();
     }
   }
 
+  //追加機能メソッドを返す
   return {
     nodeAppend: nodeAppend
   }
 }
 
+//@param array treesepalete 上下関係のオブジェクトのデータ
+//@param array projectionChain 投影関係のメソッド
+//ツリーアクションの機能クラス
 TreeAction = ((treesepalete, projectionChain) => {
+  //@var Nodeクラス Node ノードクラス
   let Node = TreeAction.node;
+  //@var ChainParserクラス chainparser チェインパーサーのクラス
   let chainparser = TreeAction.chainparser;
+  //@var Nodeクラス tree ツリーのインスタンス
   let tree = TreeAction.createTree(treesepalete, projectionChain, Node, chainparser);
+  //@var deleteNode deleteFunction 削除機能のクラス
   let deleteFunction = TreeAction.delete(chainparser, tree);
+  //@var pasteNode pasteFucntion 貼付機能のクラス
   let pasteFunction = TreeAction.paste(Node, chainparser, tree);
+  //@var moveNode moveFuction 移動機能のメソッド
   let moveFunction = TreeAction.move(chainparser, tree, pasteFunction, deleteFunction);
+  //@var projectionNode projectionFunction 投影機能のメソッド
   let projectionFunction = TreeAction.projection(chainparser, tree);
+  //@var appendNode appendFunction 追加機能のメソッド
   let appendFunction = TreeAction.append(Node, chainparser, tree);
 
   //クリップボードのデータを保存する
@@ -1676,6 +1743,8 @@ TreeAction = ((treesepalete, projectionChain) => {
     }
   }
 
+  //@param array fromNodeChain 上下関係のオブジェクトのデータ
+  //追加機能のメソッド
   let appendNode = function appendNode(fromNodeChain){
     appendFunction.nodeAppend(clipboard.getSelectDir(), clipboard.getSelectId(), fromNodeChain);
   }
@@ -1732,6 +1801,7 @@ TreeAction = ((treesepalete, projectionChain) => {
     return splitToDir.shift();
   }
 
+  //公開するメソッドを返す
   return {
     copyNode: copyNode,
     deleteNode: deleteNode,
@@ -1742,4 +1812,5 @@ TreeAction = ((treesepalete, projectionChain) => {
     searchNodeId: searchNodeId
   }
 
+  //引数を与える。
 })(treeSepalete, projectionChain);

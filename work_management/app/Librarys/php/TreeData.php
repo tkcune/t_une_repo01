@@ -13,7 +13,7 @@ class TreeData{
         //@var array 投影のデータ
         $projection_chain = [];
         //@var string データベースの接続情報
-        $dsn = 'mysql:dbname=app;host=localhost';
+        $dsn = 'mysql:dbname=sagyokanri;host=localhost';
         //@var string データベースのユーザ名
         $user = 'root';
         //@var string データベースのパスワード
@@ -44,11 +44,11 @@ class TreeData{
         //@var array 返すデータの配列
         $tree_chain = [];
         //@var array データベースのテーブル名
-        $database_array = ['dcmmt', 'dcbs01', 'dcss', 'dcsb', 'notitle'];
+        $database_array = ['dcbs01', 'notitle'];
         //@var array ツリーの第一階層のidとタイトル
-        $database_index_chain = ['mt.マイツリー', 'bs.部署', 'ss.作業指示', 'sb.作業場所', '0.notitle'];
-        //@var array データベースのidを取得するコラム名
-        $database_colmns_id = ['mytree_id', 'department_id', 'workorder_id', 'workplace_id'];
+        $database_index_chain = ['bs.部署', '0.notitle'];
+        //@var array データベースのidを取得するコラム名(notitleのidは書かない)
+        $database_colmns_id = ['department_id'];
     
         //一つ一つのテーブルから上下関係のオブジェクトのデータを作成する
         //@var int $index ループのインデックス
@@ -136,7 +136,7 @@ class TreeData{
         //@var array 返り値の投影データの配列
         $projection_chain = [];
         //@var array テーブルの投影データ
-        $stmt = $dbh->query("SELECT * FROM dcta");
+        $stmt = $dbh->query("SELECT * FROM dccmta");
         foreach($stmt as $row){
             //@var string キーの名前
             $object_key = $row['projection_id'].'.'.$row['projection_id'];

@@ -106,8 +106,6 @@ class Psji01Controller extends Controller
         [$client_id,$personnel_id,$high]);
 
        return redirect()->route('index');
-
-        return redirect()->route('index');
     }
 
     /**

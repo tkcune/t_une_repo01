@@ -1,16 +1,16 @@
 @extends('pc0001.pc0001')
 
-<?php $a = "aa00000001";
-      $b = "bs00000003";
-      $high = "bs00000004";
+<?php
+    $a = "aa00000001";
+    $b = "bs00000003";
+    $high = "bs00000004";
 ?>
 
 @section('content')
 
     {{-- コメント　詳細画面ここから --}}
-    {{--　8/19　今後詳細画面と　詳細操作画面を分割予定 --}}
-        <div class="col border border-primary" style="padding:10px;">
-        <form action="{{ route('psbs01.update') }}" method="post">
+    <div class="col border border-primary" style="padding:10px;">
+    <form action="{{ route('psbs01.update') }}" method="post">
             @csrf
             @method('patch')
             <input type="hidden" name="department_id" value="bs00000004">
@@ -57,34 +57,115 @@
                     <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
                     @csrf
                     @method('post')
-                    <input type="submit" value="削除">
+                    <input type="submit" value="新規">
                     </form>
+                    <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
+                    @csrf
+                    @method('post')
+                    <input type="submit" id="delete" value="削除" disabled>
+                    </form>
+                    <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
+                    @csrf
+                    @method('post')
+                    <input type="submit" value="複写">
+                    </form>
+                    <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
+                    @csrf
+                    @method('post')
+                    <input type="submit" value="取消">
+                    </form>
+                    <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
+                    @csrf
+                    @method('post')
+                    <input type="submit" value="隠蔽/表示">
+                    </form>
+                    <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
+                    @csrf
+                    @method('post')
+                    <input type="submit" value="再表示">
+                    </form>
+                    <input type="button" value="削除有効化" onclick="deleteOn()">
                     </div>
-                    【<a href="#">コピー</a>】 
-                    【<a href="#">部署コピー取り消し</a>】
-                    【<a href="#">人員コピー取り消し</a>】
                     登録日:140809 登録者:<a href="#">社員08</a></p>
                     </div>
                 </div>
             </div>
-
             <div class="department-area">
                 <div class="row">
-                    <div class="col">
-                    <form action="{{ route('psbs01.index') }}" method="get">
-                    <input type="hidden" name="high" value="{{ $high }}">
-                    <p>配下部署 
-                    <button>新規</button>
-                    【<a href="#">移動</a>】
-                    【<a href="#">貼付</a>】
-                    <button type="button" >&lt;&lt;</button>
-                    <button type="button" >&lt;</button>
-                    1/1(4)
-                    <button type="button" >&gt;</button>
-                    <button type="button" >&gt;&gt;</button>
-                    <button type="button" >検索</button>
-                    部署<input type="text">
-                    </form>
+                    <div class="col" style="padding-top:15px">
+                        <div style="display:inline-flex">
+                        {{-- ツリー操作機能　--}}
+                        <form action="{{ route('psbs01.index') }}" method="get">
+                        <input type="hidden" name="high" value="{{ $high }}">
+                        <p>配下部署<button>新規</button>
+                        </form>
+
+                        <form action="{{ route('psbs01.hierarchyUpdate',[$a]) }}" method="post">
+                        <input type="hidden" name="high_id" value="{{ $b }}">
+                        <input type="hidden" name="lower_id" value="bs00000006"> 
+                        @csrf
+                        @method('patch')
+                        <button>移動</button>
+                        </form>
+
+                        <form action="#" method="get">
+                        <button>挿入</button>
+                        </form>
+
+                        <form action="{{ route('ptcm01.store') }}" method="post">
+                        @csrf
+                        @method('post')
+                        <input type="hidden" name="projection_source_id" value="{{ $high }}">
+                        <input type="hidden" name="client_id" value="aa00000001">
+                        <button>投影</button>
+                        </form>
+                        {{-- ツリー操作機能ここまで　--}}
+
+                        {{-- ページネーション--}}
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-sm">
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count',['department_page'=>1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+@if($count_department == 1)
+                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+@else
+                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+@endif
+                                    <span aria-hidden="true">&lt;</span>
+                                </a>
+                                </li>
+                                1/1(14)
+                                <li class="page-item">
+@if($count_department<$department_max)
+                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+@else
+                                    <a class="page-link" href="{{ route('count',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+@endif
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        {{-- ページネーションここまで--}}
+
+                        
+
+                        {{-- 検索機能　--}}
+                        <form action="#" method="get">
+                        <button type="button" >検索</button>
+                        部署
+                        <input type="text">
+                        </form>
+                        </div>
                     </div>
                 </div>
 
@@ -103,13 +184,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($lists as $list)
+                            @foreach($departments as $department)
                             <tr>
-                            <td>{{$list->department_id}}</td>
-                            <td><a href="#">{{$list->name}}</a></td>
+                            <td>{{$department->department_id}}</td>
+                            <td><a href="#">{{$department->name}}</a></td>
                             <td><a href="#">部署00</a></td>
                             <td>
-                            @switch($list->status)
+                            @switch($department->status)
                                 @case(10)
                                 開設提案
                                 @break
@@ -136,25 +217,84 @@
                             @endforeach
                         </tbody>
                     </table>
+                   
                     </div>
                 </div>
                 {{--　8/19　今後　配下の部署のみ表示させるように修正 ここまで--}}
             </div>
                 <div class="row">
                     <div class="col">
-                    <form action="{{ route('psji01.index') }}" method="get">
-                    <input type="hidden" name="high" value="{{ $high }}">
-                    <p>所属人員 <button>新規</button>
-                    【<a href="#">移動</a>】
-                    【<a href="#">貼付</a>】
-                    <button type="button" >&lt;&lt;</button>
-                    <button type="button" >&lt;</button>
-                    1/1(14)
-                    <button type="button" >&gt;</button>
-                    <button type="button" >&gt;&gt;</button>
-                    <button type="button" >検索</button>
-                    氏名<input type="text">
-                    </form>
+                        <div style="display:inline-flex">
+                        {{-- ツリー操作機能　--}}
+                        <form action="{{ route('psji01.index') }}" method="get">
+                        <input type="hidden" name="high" value="{{ $high }}">
+                        <p>所属人員 <button>新規</button>
+                        </form>
+
+                        <form action="{{ route('psbs01.hierarchyUpdate',[$a]) }}" method="post">
+                        <input type="hidden" name="high_id" value="{{ $b }}">
+                        <input type="hidden" name="lower_id" value="bs00000006"> 
+                        @csrf
+                        @method('patch')
+                        <button>移動</button>
+                        </form>
+
+                        <form action="#" method="get">
+                        <button>挿入</button>
+                        </form>
+
+                        <form action="{{ route('ptcm01.store') }}" method="post">
+                        @csrf
+                        @method('post')
+                        <input type="hidden" name="projection_source_id" value="{{ $high }}">
+                        <input type="hidden" name="client_id" value="aa00000001">
+                        <button>投影</button>
+                        </form>
+                        {{-- ツリー操作機能ここまで　--}}
+
+                        {{-- ページネーション--}}
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-sm">
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+@if($count_personnel == 1)
+                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+@else
+                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1]) }}" aria-label="Previous">
+@endif
+                                    <span aria-hidden="true">&lt;</span>
+                                </a>
+                                </li>
+                                1/1(14)
+                                <li class="page-item">
+@if($count_personnel<$personnel_max)
+                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1]) }}" aria-label="Next">
+@else
+                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
+@endif
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        {{-- ページネーションここまで --}}
+
+                        {{-- 検索機能　--}}
+                        <form action="#" method="get">
+                        <button type="button" >検索</button>
+                        氏名<input type="text">
+                        </form>
+                        {{-- 検索機能ここまで　--}}
+                        </div>
                     </div>
                 </div>
                 
@@ -210,11 +350,12 @@
                         @endforeach
                         </tbody>
                     </table>
+                 
                     </div>
                 </div>
             </div>
             {{--　8/19　今後　部署の人員のみ表示させるように修正 ここまで--}}
-        </div>
+    </div>
     {{-- コメント　詳細画面ここまで --}}
 
 @endsection

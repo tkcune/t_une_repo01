@@ -18,3 +18,14 @@ var display=function() {
         console.log("none");
     }
 }
+
+function deleteOn()
+{
+    if (document.getElementById("delete").disabled === true){
+		// disabled属性を削除
+		document.getElementById("delete").removeAttribute("disabled");
+	}else{
+		// disabled属性を設定
+		document.getElementById("delete").setAttribute("disabled", true);
+	}
+}

@@ -33,10 +33,12 @@
 
     <div class="container-md">
         <div class="row">
-    @component('components.ptcm01')
-    @endcomponent
+        @component('components.ptcm01')
+        @endcomponent
     
-    @yield('content')
+            
+        @yield('content')
+            
         </div>
     </div>
 </div>    

@@ -53,6 +53,7 @@ class Psbs01Controller extends Controller
         {
             $department_id = "bs00000001";
         }else{
+
         $pieces[0] = substr($id[0]->department_id,0,2);
         $pieces[1] = substr($id[0]->department_id,3);
         $pieces[1] = $pieces[1] + "1";
@@ -143,10 +144,24 @@ class Psbs01Controller extends Controller
         return redirect()->route('index');
     }
 
+    public function hierarchyUpdate(Request $request,$id)
+    {
+        //dd($request);
+        $client_id = $id;
+        $high_id = $request->high_id;
+        $lower_id = $request->lower_id;
+
+        DB::update('update dccmks set high_id = ? where client_id = ? and lower_id = ?',
+        [$high_id,$client_id,$lower_id]);
+
+        return redirect()->route('index');
+    }
+
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  string  $id
+     * @param  string  $id2
      * @return \Illuminate\Http\Response
      */
     public function delete($id,$id2)

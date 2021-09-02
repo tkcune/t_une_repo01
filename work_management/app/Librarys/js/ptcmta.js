@@ -1,4 +1,4 @@
-import {clipboard} from "./ptcmcb";
+import {clipboard} from "./ptcmcb.js";
 
 //TreeActionの即時関数に定義され、returnされたメソッドが公開するメソッド。
 //TreeActionの名前空間はTreeActionの即時関数で利用される。
@@ -1813,4 +1813,4 @@ TreeAction = ((treesepalete, projectionChain) => {
   }
 
   //引数を与える。
-})(treeSepalete, projectionChain);
+})(treeChain, projectionChain);

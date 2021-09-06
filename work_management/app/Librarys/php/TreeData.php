@@ -1,35 +1,19 @@
 <?php
 
 namespace App\Librarys\php;
-use PDO;
+use Illuminate\Support\Facades\DB;
+use Traversable;
 
 //ツリーのデータの作成
 class TreeData{
     
     //公開するメソッド
     public static function generate_tree_data(){
-        //@var array 上下関係のオブジェクトのデータの配列
-        $tree_chain = [];
-        //@var array 投影のデータ
-        $projection_chain = [];
-        //@var string データベースの接続情報
-        $dsn = 'mysql:dbname=sagyokanri;host=localhost';
-        //@var string データベースのユーザ名
-        $user = 'root';
-        //@var string データベースのパスワード
-        $password = '';
 
-        //PDOクラスを取得する
-        try{
-            //@var PDOクラス データベースのドライバー
-            $dbh = new PDO($dsn, $user, $password);
-        }catch (PDOException $e){
-        }
-    
         //上下関係のオブジェクトのデータを代入する
-        $tree_chain = self::create_hierarchy($dbh, self::create_chain($dbh));
+        $tree_chain = self::create_hierarchy(self::create_chain());
         //投影データを代入する
-        $projection_chain = self::create_projection($dbh);
+        $projection_chain = self::create_projection();
         
         //返す
         return [$tree_chain, $projection_chain];
@@ -40,15 +24,15 @@ class TreeData{
     //@param array $database_chain データベースの上下関係のオブジェクトのデータ(idだけ)
     //@return array 上下関係のオブジェクトのデータの配列
     //上下関係のオブジェクトのデータを作成する
-    private static function create_hierarchy($dbh, $database_chain){
+    private static function create_hierarchy($database_chain){
         //@var array 返すデータの配列
         $tree_chain = [];
         //@var array データベースのテーブル名
-        $database_array = ['dcbs01', 'notitle'];
+        $database_array = ['dcji01', 'dcbs01', 'notitle'];
         //@var array ツリーの第一階層のidとタイトル
-        $database_index_chain = ['bs.部署', '0.notitle'];
+        $database_index_chain = ['ji.人事', 'bs.部署', '0.notitle'];
         //@var array データベースのidを取得するコラム名(notitleのidは書かない)
-        $database_colmns_id = ['department_id'];
+        $database_colmns_id = ['personnel_id', 'department_id'];
     
         //一つ一つのテーブルから上下関係のオブジェクトのデータを作成する
         //@var int $index ループのインデックス
@@ -62,8 +46,10 @@ class TreeData{
             //notitle以外はデータベースのデータを取得する
             if($database_name != 'notitle'){
                 //@var array データベースのデータ
-                $stmt = $dbh->query("SELECT * FROM ".$database_name);
-        
+                $query_result = DB::select('select * from '.$database_name);
+                //@var array stdClassキーとバリューに変換する
+                $stmt = TreeData::change_key_value($query_result);
+
                 foreach($stmt as $row){
                     //@var string データベースのidのカラム名
                     $colmns_id_name = $database_colmns_id[$index];
@@ -132,11 +118,13 @@ class TreeData{
     //@param PDO $dbh データベースのドライバー
     //@return array 投影データの配列
     //投影データの作成
-    private static function create_projection($dbh){
+    private static function create_projection(){
         //@var array 返り値の投影データの配列
         $projection_chain = [];
         //@var array テーブルの投影データ
-        $stmt = $dbh->query("SELECT * FROM dccmta");
+        $query_result = DB::select('select * from dccmta');
+        //@var array stdClassキーとバリューに変換する
+        $stmt = TreeData::change_key_value($query_result);
         foreach($stmt as $row){
             //@var string キーの名前
             $object_key = $row['projection_id'].'.'.$row['projection_id'];
@@ -151,17 +139,35 @@ class TreeData{
     //@param PDO $dbh データベースのドライバー
     //@return array 上下関係のオブジェクトのデータ(idだけ)
     //上下関係のオブジェクトのデータのidの配列を返す
-    private static function create_chain($dbh){
-        //@var array 返り値の配列
-        $database_chain = [];
+    private static function create_chain(){
+        
         //@var array 上下関係のオブジェクトのデータのid
-        $stmt = $dbh->query("SELECT * FROM dccmks");
-        foreach($stmt as $row){
-            //返り値の変数に代入する
-            $database_chain[] = $row;
-        }
+        $query_result = DB::select('select * from dccmks');
+        //@var array 返り値の配列
+        $database_chain = TreeData::change_key_value($query_result);
         //返す
         return $database_chain;
+    }
+
+    //@param array $query_result DB::selectで取得した配列
+    //@return array 連想配列にした配列
+    //stdClassを連想配列に変換する
+    private static function change_key_value($query_result){
+        //@var array $key_value_array 結果を返す配列
+        $key_value_array = [];
+        //引数をループする
+        foreach($query_result as $row){
+            //@var array $line キーとバリューを代入する
+            $line = [];
+            //キーとバリューに変換する
+            foreach($row as $key => $value){
+                $line[$key] = $value;
+            }
+            //結果に代入する
+            $key_value_array[] = $line;
+        }
+        //返す
+        return $key_value_array;
     }
 }
 ?>

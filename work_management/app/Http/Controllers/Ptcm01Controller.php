@@ -36,6 +36,7 @@ class Ptcm01Controller extends Controller
     public function store(Request $request)
     {
         $client_id = $request->client_id;
+        $high_id = $request->high_id;
         $projection_source_id = $request->projection_source_id;
         //最新の投影番号を生成
         $id = DB::select('select projection_id from dccmta where client_id = ? 
@@ -59,6 +60,12 @@ class Ptcm01Controller extends Controller
         (client_id,projection_id,projection_source_id)
         VALUE (?,?,?)',
         [$client_id,$projection_id,$projection_source_id]);
+
+        //データベースに階層情報を登録
+        DB::insert('insert into dccmks
+        (client_id,lower_id,high_id)
+        VALUE (?,?,?)',
+        [$client_id,$projection_id,$high_id]);
 
         return redirect()->route('index');
     }

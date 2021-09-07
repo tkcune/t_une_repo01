@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Librarys\php\OutputLogClass;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        //ログクラスを登録する
+        app()->bind('OutputLogClass', OutputLogClass::class);
     }
 
     /**

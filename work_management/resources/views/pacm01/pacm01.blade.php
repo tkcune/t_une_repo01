@@ -116,6 +116,7 @@
                         @csrf
                         @method('post')
                         <input type="hidden" name="projection_source_id" value="{{ $high }}">
+                        <input type="hidden" name="high_id" value="{{ $b }}">
                         <input type="hidden" name="client_id" value="aa00000001">
                         <button>投影</button>
                         </form>

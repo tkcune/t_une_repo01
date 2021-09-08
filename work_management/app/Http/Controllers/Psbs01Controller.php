@@ -15,6 +15,8 @@ class Psbs01Controller extends Controller
      */
     public function index()
     {
+        //$tree = new PtcmtrController();
+        //$tree_data = $tree->set_view_treedata();
         return view('psbs01.psbs01');
     }
 
@@ -32,6 +34,17 @@ class Psbs01Controller extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  string $client_id  顧客ID
+     * @param  string $responsible_person_id  責任者ID
+     * @param  string $name  部署名
+     * @param  string $status  状態
+     * @param  string $management_personnel_id　管理者ID
+     * @param  string $high　上位部署のID番号
+     * @param  string $id　顧客IDに対応した最新の部署IDを格納する因数
+     * @param  array $pieces 部署IDを英字と数字に分けるための配列
+     * @param  int $department_number 0埋めをした部署IDの数字部分
+     * @param  int $department_id 部署ID
+     * 
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -43,8 +56,6 @@ class Psbs01Controller extends Controller
         $status = $request->status;
         $management_personnel_id = $request->management_personnel_id;
         $high = $request->high;
-
-        $check = new StatusCheck();
 
         //顧客IDに対応した最新の部署IDを取得
         $id = DB::select('select department_id from dcbs01 where client_id = ? 
@@ -63,6 +74,8 @@ class Psbs01Controller extends Controller
         $department_id = $pieces[0].$department_number;
         }
 
+        //部署状態を判別して稼働開始日・稼働終了日を決定させる
+        $check = new StatusCheck();
         list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
 
         //データベースに部署情報を登録
@@ -119,38 +132,70 @@ class Psbs01Controller extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * 部署情報を更新
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  string  $client_id　顧客ID
+     * @param  string  $department_id　部署ID
+     * @param  string  $name　名前
+     * @param  string  $status　状態
+     * @param  App\Librarys\php\StatusCheck $check
+     * @param  string  $operation_start_date 稼働開始日
+     * @param  string  $operation_end_date 稼働終了日
+     * 
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
     {
-        //dd($request);
+        //リクエストの取得
         $client_id = $request->client_id;
         $department_id = $request->department_id;
         $name = $request->name;
         $status = $request->status;
 
-        //状態によって時刻を挿入するのかどうかの判定　この部分共通関数にしたい
-       
-
-       //ここまで
-
-        DB::update('update dcbs01 set name = ?,status = ? where client_id = ? and department_id = ?',
-        [$name,$status,$client_id,$department_id]);
+        //部署情報の更新
+        if($status == "13")
+        {
+            //状態が稼働中なら稼働開始日を更新
+            $check = new StatusCheck();
+            list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
+        
+            DB::update('update dcbs01 set name = ?,status = ?,operation_start_date = ? where client_id = ? and department_id = ?',
+            [$name,$status,$operation_start_date,$client_id,$department_id]);
+        }else if($status == "18"){
+            //状態が廃止なら稼働終了日を更新
+            $check = new StatusCheck();
+            list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
+        
+            DB::update('update dcbs01 set name = ?,status = ?,operation_end_date = ? where client_id = ? and department_id = ?',
+            [$name,$status,$operation_end_date,$client_id,$department_id]); 
+        }else{
+            //上記以外なら状態と名前のみ更新
+            DB::update('update dcbs01 set name = ?,status = ? where client_id = ? and department_id = ?',
+            [$name,$status,$client_id,$department_id]);
+        }
 
         return redirect()->route('index');
     }
 
+    /** 階層構造を更新
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param string $client_id 顧客ID
+     * @param string $id 送信されたID
+     * @param string $high_id 上位ID
+     * @param string $lower_id 下位ID
+     * 
+     * @return \Illuminate\Http\Response
+     */
     public function hierarchyUpdate(Request $request,$id)
     {
-        //dd($request);
+        //リクエストの取得
         $client_id = $id;
         $high_id = $request->high_id;
         $lower_id = $request->lower_id;
 
+        //データベース更新
         DB::update('update dccmks set high_id = ? where client_id = ? and lower_id = ?',
         [$high_id,$client_id,$lower_id]);
 
@@ -158,7 +203,7 @@ class Psbs01Controller extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * 人員及び部署データの削除
      *
      * @param  string  $id
      * @param  string  $id2

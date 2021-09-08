@@ -69,17 +69,17 @@
                     @method('post')
                     <input type="submit" value="複写">
                     </form>
-                    <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
+                    <form action="#" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" value="取消">
                     </form>
-                    <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
+                    <form action="#" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" value="隠蔽/表示">
                     </form>
-                    <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
+                    <form action="#" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" value="再表示">
@@ -189,7 +189,7 @@
                             <tr>
                             <td>{{$department->department_id}}</td>
                             <td><a href="#">{{$department->name}}</a></td>
-                            <td><a href="#">部署00</a></td>
+                            <td><a href="#">{{$department_high[$loop->index]->name}}</a></td>
                             <td>
                             @switch($department->status)
                                 @case(10)
@@ -320,7 +320,7 @@
                             <tr>
                             <td>{{ $name->personnel_id}}</td>
                             <td><a href="#">{{$name->name}}</a></td>
-                            <td><a href="#">部署09</a></td>
+                            <td><a href="#">{{$personnel_high[$loop->index]->name}}</a></td>
                             <td>
                             @switch($name->status)
                                 @case(10)

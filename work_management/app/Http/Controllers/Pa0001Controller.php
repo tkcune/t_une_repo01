@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Librarys\php\Pagination;
+use App\Librarys\php\Hierarchical;
+use App\Http\Controllers\PtcmtrController;
 
 class Pa0001Controller extends Controller
 {
@@ -19,15 +21,26 @@ class Pa0001Controller extends Controller
         $client_id = "aa00000001";
         $count_department = 1;
         $count_personnel = 1;
-        $department_data = DB::select('select * from dcbs01 where client_id = ?',[$client_id]);
-        $personnel_data = DB::select('select * from dcji01 where client_id = ?',[$client_id]);
+        $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
+        $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+
+        //ページネーション
         $pagination = new Pagination();
         $department_max = $pagination->pageMax($department_data,count($department_data));
         $departments = $pagination->pagination($department_data,count($department_data),$count_department);
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //上位階層取得
+        $hierarchical = new Hierarchical();
+        $department_high = $hierarchical->upperHierarchyName($departments);
+        $personnel_high = $hierarchical->upperHierarchyName($names);
         
-        return view('pacm01.pacm01',compact('departments','names','count_department','count_personnel','department_max','personnel_max'));
+        //$tree = new PtcmtrController();
+        //$tree_data = $tree->set_view_treedata();
+        
+        return view('pacm01.pacm01',compact('departments','names','count_department',
+        'count_personnel','department_max','personnel_max','department_high','personnel_high'));
     }
 
     /**
@@ -107,14 +120,25 @@ class Pa0001Controller extends Controller
         $client_id = "aa00000001";
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
-        $department_data = DB::select('select * from dcbs01 where client_id = ?',[$client_id]);
-        $personnel_data = DB::select('select * from dcji01 where client_id = ?',[$client_id]);
+        $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
+        $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+
+        //ページネーション
         $pagination = new Pagination();
         $department_max = $pagination->pageMax($department_data,count($department_data));
         $departments = $pagination->pagination($department_data,count($department_data),$count_department);
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
-        return view('pacm01.pacm01',compact('departments','names','count_department','count_personnel','department_max','personnel_max'));
+
+        //上位階層取得
+        $hierarchical = new Hierarchical();
+        $department_high = $hierarchical->upperHierarchyName($departments);
+        $personnel_high = $hierarchical->upperHierarchyName($names);
+        
+        //$tree = new PtcmtrController();
+        //$tree_data = $tree->set_view_treedata();
+        return view('pacm01.pacm01',compact('departments','names','count_department','count_personnel',
+        'department_max','personnel_max','department_high','personnel_high'));
     }
 
 }

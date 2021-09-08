@@ -15,7 +15,9 @@
 
     <!-- JS -->
     <script src="{{ asset('js/pamt01/pamt01.js') }}" defer></script>
-    <script type="module" src="C:\work\r_shimoda_repo01\work_management\app\Librarys\js\main.js"></script>
+    <!-- ツリー表示のjsプログラム -->
+    <!-- <script src="{{ asset('js/pamt01/ptcmcb.js') }}" type="module"></script> -->
+    <!-- <script src="{{ asset('js/pamt01/ptcmta.js') }}" type="module"></script> -->
 
 
     <!-- Fonts -->
@@ -33,6 +35,7 @@
 
     <div class="container-md">
         <div class="row">
+
         @component('components.ptcm01')
         @endcomponent
     

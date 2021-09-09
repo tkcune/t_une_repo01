@@ -4,6 +4,9 @@ namespace App\Librarys\php;
 
 use App\Models\Date;
 
+ /**
+  * 稼働開始日、稼働終了日を決定するクラス
+  */
  class StatusCheck
   {
       private $status;

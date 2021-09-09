@@ -17,6 +17,8 @@ class Psji01Controller extends Controller
      */
     public function index()
     {
+        //$tree = new PtcmtrController();
+        //$tree_data = $tree->set_view_treedata();
         return view('psji01.psji01');
     }
 
@@ -132,40 +134,49 @@ class Psji01Controller extends Controller
 
     /**
      * 8.19　ルートが未設定
-     * Update the specified resource in storage.
+     * 人員情報の更新
      * 
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  string  $client_id　顧客ID
+     * @param  string  $personnel_id　人員ID
+     * @param  string  $name　名前
+     * @param  string  $status　状態
+     * @param  App\Librarys\php\StatusCheck $check
+     * @param  string  $operation_start_date 稼働開始日
+     * @param  string  $operation_end_date 稼働終了日
+     * 
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
     {
-       //dd($request);
        $client_id = $request->client_id;
-       $personnel_id = $request->department_id;
+       $personnel_id = $request->personnel_id;
        $name = $request->name;
        $status = $request->status;
 
-       //状態によって時刻を挿入するのかどうかの判定　この部分共通関数にしたい
-       if($request->status == "13")
+       //部署情報の更新
+       if($status == "13")
        {
-           $operation_start_date = $date->today();
+           //状態が稼働中なら稼働開始日を更新
+           $check = new StatusCheck();
+           list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
+       
+           DB::update('update dcji01 set name = ?,status = ?,operation_start_date = ? where client_id = ? and personnel_id = ?',
+           [$name,$status,$operation_start_date,$client_id,$personnel_id]);
+       }else if($status == "18"){
+           //状態が廃止なら稼働終了日を更新
+           $check = new StatusCheck();
+           list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
+       
+           DB::update('update dcji01 set name = ?,status = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
+           [$name,$status,$operation_end_date,$client_id,$personnel_id]); 
        }else{
-           $operation_start_date = null ;
+           //上記以外なら状態と名前のみ更新
+           DB::update('update  dcji01 set name = ?,status = ? where client_id = ? and personnel_id = ?',
+           [$name,$status,$client_id,$personnel_id]);
        }
-
-       if($request->status == "18")
-       {
-           $operation_end_date =$date->today();
-       }else{
-           $operation_end_date = null ;
-       }
-
-       //ここまで
-
-       DB::update('update dcji01 set name = ?,status = ? where client_id = ? and personnel_id = ?',
-       [$name,$status,$client_id,$department_id]);
-
+       
+       return redirect()->route('index');
     }
 
     /**

@@ -6,36 +6,165 @@ use Illuminate\Support\Facades\DB;
 
 //ログ出力クラス
 class OutputLogClass{
+    //@var stirng デバックモード
+    private $debug_mode;
     //@var string クライアントid
     private $client_id;
     //@var string ユーザーメールアドレス
     private $user;
-
+    
     //@param string $client_id クライアントid
     //@param string $user ユーザーメールアドレス
-    //idとメールアドレスを登録する
-    public function setup($client_id, $user){
+    //@pram string $debug_mode デバックモード
+    public function __construct($client_id, $user, $debug_mode){
+        //初期値を代入する
         $this->client_id = $client_id;
         $this->user = $user;
+        $this->debug_mode = $debug_mode;
     }
 
     //@param string $type 状態
     //@param string $function 機能
     //@param string $program_pass パス
     //@param string $log 任意の文字列
-    public function db_insert($type, $function, $program_pass, $log){
-        //@var array ログテーブルのidの配列
-        $result = DB::select('select log_id from dclg01');
+    //公開メソッド
+    public function log($type, $program_pass, $function, $log){
+        
         //@var int 次のログid
-        $log_id = $this->increment_log_id($result);
+        $log_id = $this->increment_log_id();
+        //@var date 現在時刻
+        $created_at = date("Y/m/d h/i/s");
+
         //ログテーブルに出力する
-        DB::insert('insert into dclg01 (client_id, log_id, type, user, function, program_pass, log) values (?, ?, ?, ?, ?, ?, ?)', [$this->client_id, $log_id, $type, $this->user, $function, $program_pass, $log]);
+        $result = DB::insert('insert into dclg01 (client_id, log_id, created_at, type, user, function, program_pass, log) values (?, ?, ?, ?, ?, ?, ?, ?)', [$this->client_id, $log_id, $created_at, $type, $this->user, $function, $program_pass, $log]);
+        if($result){
+            //種別により、ログファイルを出力するか、判断する
+            if($this->is_output_log_csv($type)){
+                //@var array ログファイルに出力するcsv
+                $log_csv = $this->create_log_csv($created_at, $type, $function, $log);
+                //ログファイルを出力
+                $this->write_log_csv($log_csv);
+            }
+            //種別により、システムログファイルを出力するか、判断する
+            if($this->is_output_systemlog_csv($type)){
+                //@var array システムログファイルに出力するcsv
+                $system_log_csv = $this->create_system_log_csv($created_at, $type, $program_pass, $function, $log);
+                //システムログファイルに出力する
+                $this->write_system_log_csv($system_log_csv);
+            }
+        }
     }
 
-    //@param array $result ログテーブルのidの配列
+    //@var array $log_csv ログファイルに出力するcsv
+    //ログファイルを出力する
+    private function write_log_csv($log_csv){
+        //@var boolean ログファイルが存在するか判断
+        $isfile = is_file('./facmlg.csv');
+        if($isfile){
+            //@var File ログファイルのファイルポインタ
+            $facmlg_csv = fopen('./facmlg.csv', 'a');
+            //ログを追加出力する
+            fputcsv($facmlg_csv, $log_csv);
+        }else{
+            //ログファイルが存在しなければ、新規作成
+            //@var array ログファイルのヘッダー
+            $head = ['時間', '類別', 'アクセスユーザー', '機能', 'ログ'];
+            //@var File ログファイルを作成し、ポインタを取得する
+            $facmlg_csv = fopen('./facmlg.csv', 'w');
+            
+            //ヘッダーを出力する
+            fputcsv($facmlg_csv, $head);
+            //ログを出力する
+            fputcsv($facmlg_csv, $log_csv);
+        }
+    }
+
+    //@var array $log_csv システムログファイルに出力するcsv
+    //システムログファイルを出力する
+    private function write_system_log_csv($system_log_csv){
+        //@var boolean システムログファイルが存在するか判断
+        $isfile = is_file('./facmsl.csv');
+        if($isfile){
+            //@var File システムログファイルのファイルポインタ
+            $facmsl_csv = fopen('./facmsl.csv', 'a');
+            //システムログを追加出力する
+            fputcsv($facmsl_csv, $system_log_csv);
+        }else{
+            //システムログファイルが存在しなければ、新規作成
+            //@var array システムログファイルのヘッダー
+            $head = ['時間', '類別', '顧客名', 'アクセスユーザー', '機能', 'ログ'];
+            //@var File システムログファイルを作成し、ポインタを取得する
+            $facmsl_csv = fopen('./facmsl.csv', 'w');
+            
+            //ヘッダーを出力する
+            fputcsv($facmsl_csv, $head);
+            //システムログを出力する
+            fputcsv($facmsl_csv, $system_log_csv);
+        }
+    }
+
+    //@var string $type 種別
+    //@return boolean ログファイルを出力するか、論理値
+    //ログファイルに出力するか、判断する
+    private function is_output_log_csv($type){
+        //種別がnm,wn,er,okなら出力する
+        if(in_array($type, ['nm', 'wn', 'er', 'ok'])){
+            return true;
+        }else{
+            //種別がsi,syなら出力しない
+            return false;
+        }
+    }
+
+    //@var string $type 種別
+    //@return boolean システムログファイルを出力するか、論理値
+    //システムログファイルに出力するか、判断する
+    private function is_output_systemlog_csv($type){
+        //種別がsiの場合
+        if($type == 'si'){
+            //デバックモードなら、システムログファイルに出力する
+            if($this->debug_mode == '1'){
+                return true;
+            }else{
+                //デバックモードでなければ、システムログファイルに出力しない
+                return false;
+            }
+        }else{
+            //種別がsi以外(nm,wn,er,ok,sy)なら、システムログファイルに出力する
+            return true;
+        }
+    }
+
+    //@var date $created_at 現在時刻
+    //@var string $type 種別
+    //@var string $function 機能
+    //@var string $log ログ
+    //@return array ログファイルに出力するcsv
+    //ログファイルに出力するcsvの作成
+    private function create_log_csv($created_at, $type, $function, $log){
+        //ログの中のダブルクォーテーションを取り除く
+        $log = str_replace('"', '', $log);
+        return [$created_at, $type, $this->user, $function, $log];
+    }
+
+    //@var date $created_at 現在時刻
+    //@var string $type 種別
+    //@var string $program_pass プログラムのパス
+    //@var string $function 機能
+    //@var string $log ログ
+    //@return array システムログファイルに出力するcsv
+    //システムログファイルに出力するcsvの作成
+    private function create_system_log_csv($created_at, $type, $program_pass, $function, $log){
+        //ログの中のダブルクォーテーションを取り除く
+        $log = str_replace('"', '', $log);
+        return [$created_at, $type, $this->client_id, $this->user, $program_pass, $function, $log];
+    }
+
     //@return int idを増加した数字
     //次のテーブルに入れるidを今までのidから増加して取得する。
-    private function increment_log_id($result){
+    private function increment_log_id(){
+        //@var array ログテーブルのidの配列
+        $result = DB::select('select log_id from dclg01');
         //データがなければ、1を返す
         if($result == []){
             return 1;

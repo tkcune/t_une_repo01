@@ -36,8 +36,8 @@ class Pa0001Controller extends Controller
         $department_high = $hierarchical->upperHierarchyName($departments);
         $personnel_high = $hierarchical->upperHierarchyName($names);
         
-        //$tree = new PtcmtrController();
-        //$tree_data = $tree->set_view_treedata();
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
         
         return view('pacm01.pacm01',compact('departments','names','count_department',
         'count_personnel','department_max','personnel_max','department_high','personnel_high'));
@@ -135,8 +135,8 @@ class Pa0001Controller extends Controller
         $department_high = $hierarchical->upperHierarchyName($departments);
         $personnel_high = $hierarchical->upperHierarchyName($names);
         
-        //$tree = new PtcmtrController();
-        //$tree_data = $tree->set_view_treedata();
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
         return view('pacm01.pacm01',compact('departments','names','count_department','count_personnel',
         'department_max','personnel_max','department_high','personnel_high'));
     }

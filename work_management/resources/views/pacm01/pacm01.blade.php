@@ -53,37 +53,44 @@
                     <p>
                     <div style="display:inline-flex">
                     <input type="submit" value="確定">
-                    </form>
-                    <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
+    </form>
+
+                    <form action="{{ route('psbs01.index') }}" method="get">
                     @csrf
-                    @method('post')
                     <input type="submit" value="新規">
+                    <input type="hidden" name="high" value="{{ $high }}">
                     </form>
+
                     <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" id="delete" value="削除" disabled>
                     </form>
-                    <form action="{{ route('psbs01.delete',[$a,$b])}}" method="post">
+
+                    <form action="#" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" value="複写">
                     </form>
+
                     <form action="#" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" value="取消">
                     </form>
+
                     <form action="#" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" value="隠蔽/表示">
                     </form>
+
                     <form action="#" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" value="再表示">
                     </form>
+
                     <input type="button" value="削除有効化" onclick="deleteOn()">
                     </div>
                     登録日:140809 登録者:<a href="#">社員08</a></p>
@@ -139,7 +146,7 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                1/1(14)
+                                {{$count_department}}/{{$department_max}}
                                 <li class="page-item">
 @if($count_department<$department_max)
                                     <a class="page-link" href="{{ route('count',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
@@ -161,10 +168,12 @@
                         
 
                         {{-- 検索機能　--}}
-                        <form action="#" method="get">
-                        <button type="button" >検索</button>
+                        <form action="{{ route('psbs01.search',[$a])}}" method="post">
+                        @csrf
+                        @method('post')
+                        <button type="submit">検索</button>
                         部署
-                        <input type="text">
+                        <input type="text" name="search">
                         </form>
                         </div>
                     </div>
@@ -212,7 +221,7 @@
                                 @break
                             @endswitch
                             </td>
-                            <td><a href="#">社員01</a></td>
+                            <td><a href="#">{{ $department->responsible_person_id }}</a></td>
                             <td>【<a href="#">コピー</a>】</td>
                             </tr>
                             @endforeach
@@ -234,7 +243,7 @@
 
                         <form action="{{ route('psbs01.hierarchyUpdate',[$a]) }}" method="post">
                         <input type="hidden" name="high_id" value="{{ $b }}">
-                        <input type="hidden" name="lower_id" value="bs00000006"> 
+                        <input type="hidden" name="lower_id" value="ji00000001"> 
                         @csrf
                         @method('patch')
                         <button>移動</button>
@@ -270,7 +279,7 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                1/1(14)
+                                {{$count_personnel}}/{{$personnel_max}}
                                 <li class="page-item">
 @if($count_personnel<$personnel_max)
                                     <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1]) }}" aria-label="Next">
@@ -290,9 +299,11 @@
                         {{-- ページネーションここまで --}}
 
                         {{-- 検索機能　--}}
-                        <form action="#" method="get">
-                        <button type="button" >検索</button>
-                        氏名<input type="text">
+                        <form action="{{ route('psji01.search',[$a])}}" method="post">
+                        @csrf
+                        @method('post')
+                        <button type="submit" >検索</button>
+                        氏名<input type="text" name="search">
                         </form>
                         {{-- 検索機能ここまで　--}}
                         </div>

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\Date;
 use App\Librarys\php\StatusCheck;
+use App\Librarys\php\Pagination;
+use App\Librarys\php\Hierarchical;
 
 class Psji01Controller extends Controller
 {
@@ -191,5 +193,40 @@ class Psji01Controller extends Controller
         DB::delete('delete from dcji01 where client_id = ? and personnel_id = ?',[$id,$id2]);
 
         return redirect()->route('index');
+    }
+
+    /**
+     * 部署データ検索
+     *
+     * @param  @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request,$id)
+    {
+        $client_id = $id;
+        $count_department = 1;
+        $count_personnel = 1;
+        $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
+        $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?
+        where dcji01.name like ?',[$client_id,'%'.$request->search.'%']);
+
+        //ページネーション
+        $pagination = new Pagination();
+        $department_max = $pagination->pageMax($department_data,count($department_data));
+        $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+        $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
+        $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //上位階層取得
+        $hierarchical = new Hierarchical();
+        $department_high = $hierarchical->upperHierarchyName($departments);
+        $personnel_high = $hierarchical->upperHierarchyName($names);
+
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
+
+        return view('pacm01.pacm01',compact('departments','names','count_department',
+        'count_personnel','department_max','personnel_max','department_high','personnel_high'));
     }
 }

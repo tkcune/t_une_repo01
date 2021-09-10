@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Librarys\php\Pagination;
+use App\Librarys\php\Hierarchical;
 use App\Librarys\php\StatusCheck;
 
 class Psbs01Controller extends Controller
@@ -139,7 +141,7 @@ class Psbs01Controller extends Controller
      * @param  string  $department_id　部署ID
      * @param  string  $name　名前
      * @param  string  $status　状態
-     * @param  App\Librarys\php\StatusCheck $check
+     * @param  \App\Librarys\php\StatusCheck $check
      * @param  string  $operation_start_date 稼働開始日
      * @param  string  $operation_end_date 稼働終了日
      * 
@@ -205,16 +207,99 @@ class Psbs01Controller extends Controller
     /**
      * 人員及び部署データの削除
      *
-     * @param  string  $id
-     * @param  string  $id2
+     * @param  string  $client 顧客ID
+     * @param  string  $delete 削除予定のID
+     * @param  array   $lists 削除予定のIDを格納した配列
+     * @param  \App\Librarys\php\Hierarchical $hierarchical
+     * @param  array   $delete_lists 削除予定のIDを格納した配列
+     * @param  int     $code 機能コードの頭2文字
      * @return \Illuminate\Http\Response
      */
-    public function delete($id,$id2)
+    public function delete($client,$delete)
     {
-        DB::delete('delete from dcbs01 where client_id = ? and department_id = ?',
-        [$id,$id2]);
+        //選択した部署のIDをarray型に格納
+        $lists = [];
+        array_push($lists,$delete);
 
+        //選択した部署の配下を取得
+        $hierarchical = new Hierarchical();
+        $delete_lists = $hierarchical->subordinateSearch($lists,$client);
+         
+        //選択したデータ及び配下データを削除
+        if(!empty($delete_lists)){
+            foreach($delete_lists as $delete_list){
+                //機能コードの判定
+                $code = substr($delete_list,0,2);
+
+                //対応したデータの削除
+                if ($code == "bs"){
+                    DB::delete('delete from dcbs01 where client_id = ? and department_id = ?',
+                    [$client,$delete_list]);
+
+                    //削除予定の配下部署が元になった投影を削除
+                    $delete_projections = DB::select('select projection_id from dccmta where client_id = ? and projection_source_id = ?',
+                    [$client,$delete_list]);
+                    foreach($delete_projections as $delete_projection){
+                    DB::delete('delete from dccmks where client_id = ? and lower_id = ?',
+                    [$client,$delete_projection->projection_id]);
+                    }
+                    DB::delete('delete from dccmta where client_id = ? and projection_source_id = ?',
+                    [$client,$delete_list]);
+
+                }elseif($code == "ji"){
+                    DB::delete('delete  from dcji01 where client_id = ? and personnel_id = ?',
+                    [$client,$delete_list]);
+
+                }elseif($code == "ta"){
+                    DB::delete('delete  from dccmta where client_id = ? and projection_id = ?',
+                    [$client,$delete_list]);
+                }else{
+
+                }
+                //データの階層構造を削除
+                DB::delete('delete from dccmks where client_id = ? 
+                and lower_id = ?',[$client,$delete_list]);
+
+            }
+            
+        }
         return redirect()->route('index');
     
     }
+
+    /**
+     * 部署データ検索
+     *
+     * @param  @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request,$id)
+    {
+        $client_id = $id;
+        $count_department = 1;
+        $count_personnel = 1;
+        $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?
+        where dcbs01.name like ?',[$client_id,'%'.$request->search.'%']);
+        $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+
+        //ページネーション
+        $pagination = new Pagination();
+        $department_max = $pagination->pageMax($department_data,count($department_data));
+        $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+        $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
+        $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //上位階層取得
+        $hierarchical = new Hierarchical();
+        $department_high = $hierarchical->upperHierarchyName($departments);
+        $personnel_high = $hierarchical->upperHierarchyName($names);
+
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
+
+        return view('pacm01.pacm01',compact('departments','names','count_department',
+        'count_personnel','department_max','personnel_max','department_high','personnel_high'));
+    }
+
 }

@@ -67,16 +67,12 @@
                     <input type="submit" id="delete" value="削除" disabled>
                     </form>
 
-                    <form action="#" method="post">
-                    @csrf
-                    @method('post')
-                    <input type="submit" value="複写">
+                    <form action="#" method="get">
+                    <input type="button" value="複写">
                     </form>
 
-                    <form action="#" method="post">
-                    @csrf
-                    @method('post')
-                    <input type="submit" value="取消">
+                    <form action="#" method="get">
+                    <input type="button" value="取消">
                     </form>
 
                     <form action="#" method="post">
@@ -115,7 +111,12 @@
                         <button>移動</button>
                         </form>
 
-                        <form action="#" method="get">
+                        <form action="{{ route('psbs01.copy') }}" method="post">
+                        @csrf
+                        @method('post')
+                        <input type="hidden" name="client_id" value="{{ $a }}">
+                        <input type="hidden" name="copy_id" value="bs00000006">
+                        <input type="hidden" name="high_id" value="{{ $b }}">
                         <button>挿入</button>
                         </form>
 
@@ -124,7 +125,7 @@
                         @method('post')
                         <input type="hidden" name="projection_source_id" value="{{ $high }}">
                         <input type="hidden" name="high_id" value="{{ $b }}">
-                        <input type="hidden" name="client_id" value="aa00000001">
+                        <input type="hidden" name="client_id" value="{{ $a }}">
                         <button>投影</button>
                         </form>
                         {{-- ツリー操作機能ここまで　--}}
@@ -221,7 +222,7 @@
                                 @break
                             @endswitch
                             </td>
-                            <td><a href="#">{{ $department->responsible_person_id }}</a></td>
+                            <td><a href="#">{{ $responsible_lists[$loop->index] }}</a></td>
                             <td>【<a href="#">コピー</a>】</td>
                             </tr>
                             @endforeach
@@ -249,7 +250,12 @@
                         <button>移動</button>
                         </form>
 
-                        <form action="#" method="get">
+                        <form action="{{ route('psji01.copy') }}" method="post">
+                        @csrf
+                        @method('post')
+                        <input type="hidden" name="client_id" value="{{ $a }}">
+                        <input type="hidden" name="high_id" value="{{ $b }}">
+                        <input type="hidden" name="copy_id" value="ji00000004">
                         <button>挿入</button>
                         </form>
 

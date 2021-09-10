@@ -17,8 +17,8 @@ class Psbs01Controller extends Controller
      */
     public function index()
     {
-        //$tree = new PtcmtrController();
-        //$tree_data = $tree->set_view_treedata();
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
         return view('psbs01.psbs01');
     }
 
@@ -276,6 +276,7 @@ class Psbs01Controller extends Controller
      */
     public function search(Request $request,$id)
     {
+        $responsible_lists = [];
         $client_id = $id;
         $count_department = 1;
         $count_personnel = 1;
@@ -290,6 +291,13 @@ class Psbs01Controller extends Controller
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
+
+        //責任者を名前で取得
+        foreach($departments as $department){
+            $responsible = DB::select('select name from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$department->responsible_person_id]);
+            array_push($responsible_lists,$responsible[0]->name);
+        }
+
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
@@ -299,7 +307,65 @@ class Psbs01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('departments','names','count_department',
-        'count_personnel','department_max','personnel_max','department_high','personnel_high'));
+        'count_personnel','department_max','personnel_max','department_high','personnel_high','responsible_lists'));
     }
 
+    /**
+     * 9/10 データベースに登録するメソッドは恐らく、共通関数でまとめられる予定　現在・未実装
+     * 複製したデータを挿入するメソッド
+     */
+    public function copy(Request $request){
+
+        $client_id = $request->client_id;
+        $copy_id = $request->copy_id;
+        $high = $request->high_id;
+
+        if($request->copy_id == null){
+
+            return redirect()->route('index');
+
+        }
+        $copy_department = DB::select('select * from dcbs01 where client_id = ? 
+        and department_id = ?',[$client_id,$copy_id]);
+
+        //顧客IDに対応した最新の部署IDを取得
+        $id = DB::select('select department_id from dcbs01 where client_id = ? 
+        order by department_id desc limit 1',[$client_id]);
+
+        $pieces[0] = substr($id[0]->department_id,0,2);
+        $pieces[1] = substr($id[0]->department_id,3);
+        $pieces[1] = $pieces[1] + "1";
+
+        //0埋め
+        $department_number = str_pad($pieces[1], 8, '0', STR_PAD_LEFT);
+        $department_id = $pieces[0].$department_number;
+
+        //データベースに部署情報を登録
+        DB::insert('insert into dcbs01
+        (client_id,
+        department_id,
+        responsible_person_id,
+        name,
+        status,
+        management_personnel_id,
+        operation_start_date,
+        operation_end_date)
+        VALUE (?,?,?,?,?,?,?,?)',
+        [$client_id,
+        $department_id,
+        $copy_department[0]->responsible_person_id,
+        $copy_department[0]->name,
+        $copy_department[0]->status,
+        $copy_department[0]->management_personnel_id,
+        $copy_department[0]->operation_start_date,
+        $copy_department[0]->operation_end_date]);
+
+        //データベースに階層情報を登録
+        DB::insert('insert into dccmks
+        (client_id,lower_id,high_id)
+        VALUE (?,?,?)',
+        [$client_id,$department_id,$high]);
+
+        return redirect()->route('index');
+    }
 }

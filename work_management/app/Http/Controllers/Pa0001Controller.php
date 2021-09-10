@@ -19,6 +19,7 @@ class Pa0001Controller extends Controller
     {
         //$client_idの数値はダミー
         $client_id = "aa00000001";
+        $responsible_lists = [];
         $count_department = 1;
         $count_personnel = 1;
         $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
@@ -31,6 +32,14 @@ class Pa0001Controller extends Controller
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
+        
+
+        //責任者を名前で取得
+        foreach($departments as $department){
+            $responsible = DB::select('select name from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$department->responsible_person_id]);
+            array_push($responsible_lists,$responsible[0]->name);
+        }
+       
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
@@ -40,7 +49,8 @@ class Pa0001Controller extends Controller
         $tree_data = $tree->set_view_treedata();
         
         return view('pacm01.pacm01',compact('departments','names','count_department',
-        'count_personnel','department_max','personnel_max','department_high','personnel_high'));
+        'count_personnel','department_max','personnel_max','department_high',
+        'personnel_high','responsible_lists'));
     }
 
     /**
@@ -117,6 +127,8 @@ class Pa0001Controller extends Controller
      */
     public function count(Request $request)
     {
+        $responsible_lists = [];
+        
         $client_id = "aa00000001";
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
@@ -130,6 +142,12 @@ class Pa0001Controller extends Controller
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
+        //責任者を名前で取得
+        foreach($departments as $department){
+            $responsible = DB::select('select name from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$department->responsible_person_id]);
+            array_push($responsible_lists,$responsible[0]->name);
+        }
+
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
@@ -138,7 +156,8 @@ class Pa0001Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
         return view('pacm01.pacm01',compact('departments','names','count_department','count_personnel',
-        'department_max','personnel_max','department_high','personnel_high'));
+        'department_max','personnel_max','department_high',
+        'personnel_high','responsible_lists'));
     }
 
 }

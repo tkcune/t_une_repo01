@@ -19,8 +19,8 @@ class Psji01Controller extends Controller
      */
     public function index()
     {
-        //$tree = new PtcmtrController();
-        //$tree_data = $tree->set_view_treedata();
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
         return view('psji01.psji01');
     }
 
@@ -228,5 +228,76 @@ class Psji01Controller extends Controller
 
         return view('pacm01.pacm01',compact('departments','names','count_department',
         'count_personnel','department_max','personnel_max','department_high','personnel_high'));
+    }
+
+    /**
+     * 9/10 データベースに登録するメソッドは恐らく、共通関数でまとめられる予定　現在・未実装
+     * 複製したデータを挿入するメソッド
+     */
+    public function copy(Request $request){
+
+        $client_id = $request->client_id;
+        $copy_id = $request->copy_id;
+        $high = $request->high_id;
+
+        $date = new Date();
+
+        if($request->copy_id == null){
+
+            return redirect()->route('index');
+
+        }
+
+        $copy_personnel = DB::select('select * from dcji01 where client_id = ? 
+        and personnel_id = ?',[$client_id,$copy_id]);
+
+        //顧客IDに対応した最新の人員IDを取得
+        $id = DB::select('select personnel_id from dcji01 where client_id = ? 
+        order by personnel_id desc limit 1',[$client_id]);
+
+        $pieces[0] = substr($id[0]->personnel_id,0,2);
+        $pieces[1] = substr($id[0]->personnel_id,3);
+        $pieces[1] = $pieces[1] + "1";
+
+        //0埋め
+        $personnel_number = str_pad($pieces[1], 8, '0', STR_PAD_LEFT);
+        $personnel_id = $pieces[0].$personnel_number;
+
+        //データベースに登録
+        DB::insert('insert into dcji01
+            (client_id,
+            personnel_id,
+            name,
+            email,
+            password,
+            password_update_day,
+            status,
+            management_personnel_id,
+            login_authority,
+            system_management,
+            operation_start_date,
+            operation_end_date)
+            VALUE (?,?,?,?,?,?,?,?,?,?,?,?)',
+        [
+            $client_id,
+            $personnel_id,
+            $copy_personnel[0]->name,
+            $copy_personnel[0]->email,
+            $copy_personnel[0]->password,
+            $date->today(),
+            $copy_personnel[0]->status,
+            $personnel_id,
+            $copy_personnel[0]->login_authority,
+            $copy_personnel[0]->system_management,
+            $copy_personnel[0]->operation_start_date,
+            $copy_personnel[0]->operation_end_date]);
+
+        //データベースに階層情報を登録
+        DB::insert('insert into dccmks
+        (client_id,lower_id,high_id)
+        VALUE (?,?,?)',
+        [$client_id,$personnel_id,$high]);
+
+       return redirect()->route('index');
     }
 }

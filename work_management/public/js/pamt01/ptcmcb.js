@@ -12,13 +12,14 @@ class ClipBoard {
     this.nodeId = null;
   }
 
-  //@param Nodeくらす node クリックボードに保存される選択したノードクラス
-  //詳細行に表示する
-  select(node){
+  //@param string dir ノードディレクトリ
+  //@param string id ノードのid
+  //選択したノードのデータを保存する
+  select(dir, id){
     
     //クリップボードのプロパティに代入する
-    this.selectNodeDir = node.dir;
-    this.selectNodeId = node.id;
+    this.selectNodeDir = dir;
+    this.selectNodeId = id;
   }
 
   //選択しているノードクラスのコピー
@@ -44,5 +45,4 @@ class ClipBoard {
   }
 }
 
-let clipboard = new ClipBoard();
-export {clipboard}
+export let clipboard = new ClipBoard();

@@ -209,3 +209,12 @@ ul.lasttree li:last-child:before {
 .unexpand {
   display: none;
 }
+
+.focus {
+  font-weight: bold;
+}
+.sync {
+  color: blue;
+  font-style: italic;
+  font-family: Times New Roman, "ＭＳ Ｐゴシック";
+}

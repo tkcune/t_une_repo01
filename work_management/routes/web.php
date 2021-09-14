@@ -31,11 +31,21 @@ Route::get('/',[Pa0001Controller::class,'index'])->name('index');
 
 Route::get('/count',[Pa0001Controller::class,'count'])->name('count');
 
+Route::post('/bscopy',[Psbs01Controller::class,'copy'])->name('psbs01.copy');
+
+Route::post('/jicopy',[Psji01Controller::class,'copy'])->name('psji01.copy');
+
+Route::post('/bssearch/{id}',[Psbs01Controller::class,'search'])->name('psbs01.search');
+
+Route::post('/jisearch/{id}',[Psji01Controller::class,'search'])->name('psji01.search');
+
 Route::patch('/',[Psbs01Controller::class,'update'])->name('psbs01.update');
 
 Route::patch('/{id}',[Psbs01Controller::class,'hierarchyUpdate'])->name('psbs01.hierarchyUpdate');
 
 Route::post('/{id}/{id2}',[Psbs01Controller::class,'delete'])->name('psbs01.delete');
+
+
 
 
 

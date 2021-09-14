@@ -16,8 +16,8 @@
     <!-- JS -->
     <script src="{{ asset('js/pamt01/pamt01.js') }}" defer></script>
     <!-- ツリー表示のjsプログラム -->
-    <!-- <script src="{{ asset('js/pamt01/ptcmcb.js') }}" type="module"></script> -->
-    <!-- <script src="{{ asset('js/pamt01/ptcmta.js') }}" type="module"></script> -->
+    <script src="{{ asset('js/pamt01/ptcmcb.js') }}" type="module"></script>
+    <script src="{{ asset('js/pamt01/ptcmta.js') }}" type="module"></script>
 
 
     <!-- Fonts -->
@@ -26,6 +26,7 @@
 
     <!-- Styles -->
     {{-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
+    <link href="{{ asset('css/ptcmtr.css') }}" rel="stylesheet">
 </head>
 
 <body class="p-3 mb-2 bg-light">
@@ -36,7 +37,7 @@
     <div class="container-md">
         <div class="row">
 
-        @component('components.ptcm01')
+        @component('components.ptcm02')
         @endcomponent
     
             

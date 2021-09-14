@@ -10,12 +10,12 @@
                         </ul>
                     <li><a href="#">組織要員定義</a>
                     <li><a href="#">作業場所定義</a>
-                    <li><a href="#">部署01</a>
+                    <li><a href="#">部署A</a>
                         <ul>
-                            <li><a href="#">部署02</a></li>
-                            <li><a href="#">部署03</a></li>
+                            <li><a href="#">部署B</a></li>
+                            <li><a href="#">部署C</a></li>
                         </ul>
-                    <li><a href="#">部署04</a>
+                    <li><a href="#">部署D</a>
                 </ul>
                 </div>
                 

@@ -3,6 +3,8 @@
 namespace App\Librarys\php;
 
 use Illuminate\Support\Facades\DB;
+use App\Librarys\php\Message;
+use App\Librarys\php\FunctionCode;
 
 //ログ出力クラス
 class OutputLogClass{
@@ -23,15 +25,44 @@ class OutputLogClass{
         $this->debug_mode = $debug_mode;
     }
 
+    //公開メソッド
+    //@param string $program_pass プログラムのパス
+    //@param array $log_arg ログ出力の可変引数
+    public function log($program_pass, $type, $function, $log){
+        
+        //@var string 機能コード
+        $function = FunctionCode::get_functioncode($function);
+        //@var string クラス名とメソッド名
+        $program_pass = $this->get_program_path($program_pass);
+        //ログを出力する
+        $this->output_log($type, $function, $log, $program_pass);
+    }
+
+    public function message_log($program_pass, $message_code, ...$message_string){
+        //種別でなければ、メッセージ番号とみなす
+        //@var array ログメッセージと種別と機能
+        $message_array = Message::get_message($message_code, $message_string);
+        //@var string ログ
+        $log = $message_array[0];
+        //@var string 種別
+        $type = $message_array[1];
+        //@var string 機能
+        $function = $message_array[2];
+        //@var string クラス名とメソッド名
+        $program_pass = $this->get_program_path($program_pass);
+        //ログを出力する
+        $this->output_log($type, $function, $log, $program_pass);
+    }
     //@param string $type 状態
     //@param string $function 機能
     //@param string $program_pass パス
     //@param string $log 任意の文字列
-    //公開メソッド
-    public function log($type, $program_pass, $function, $log){
+    //ログ出力メソッド
+    private function output_log($type, $function, $log, $program_pass){
         
         //@var int 次のログid
-        $log_id = $this->increment_log_id();
+        $log_id = $this->increment_log_id(); 
+
         //@var date 現在時刻
         $created_at = date("Y/m/d h/i/s");
 
@@ -181,6 +212,49 @@ class OutputLogClass{
             $max++;
             return $max;
         }
+    }
+
+    //関数名から呼び出し元のクラス名と関数名を取得する
+    //@var string $program_row プログラムのパス
+    //@var string プログラムのパス
+    private function get_program_path($program_pass){
+
+        //@var array デバックトレース
+        $trace = debug_backtrace();
+        
+        //デバックトレースを探索する
+        foreach($trace as $program_row){
+            //関数名が合致すれば、クラス名を取得する
+            if($program_row['function'] == $program_pass){
+                //@var array クラス名を分割した配列
+                $call_class_name = explode(DIRECTORY_SEPARATOR, $program_row['class']);
+                //@var int 分割した配列の数
+                $count = count($call_class_name);
+                //@var string 分割した配列の最後の要素がクラス名
+                $class_name = $call_class_name[$count - 1];
+                //@var string 関数名
+                $function_name = $program_row['function'];
+                //クラス名とメソッド名を結合して返す
+                return $class_name.'/'.$function_name;
+            }else if(property_exists($program_pass, 'class') && $program_row['class'] == $program_pass){
+                if($program_pass == 'App\Exceptions\Handler'){
+                    $error_row = $program_row['args'][0]->getTrace()[0];
+                    //@var array クラス名を分割した配列
+                    $call_class_name = explode(DIRECTORY_SEPARATOR, $error_row['class']);
+                    //@var int 分割した配列の数
+                    $count = count($call_class_name);
+                    //@var string 分割した配列の最後の要素がクラス名
+                    $class_name = $call_class_name[$count - 1];
+                    //@var string 関数名
+                    $function_name = $error_row['function'];
+                    //クラス名とメソッド名を結合して返す
+                    return $class_name.'/'.$function_name;
+                }
+            }
+        }
+        
+        //クラス名とメソッド名を結合して返す
+        return $program_pass;
     }
 }
 

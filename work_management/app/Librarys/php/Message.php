@@ -98,7 +98,7 @@ Class Message{
                     $message = sprintf($message, $message_string[0]);
                 }else{
                     //引数の挿入する文字の数が合わない場合
-                    return ['message_code_error', 'er', '00'];
+                    return [$message, 'er', '00'];
                 }
             }else if($count_percent_s == 2){
                 //メッセージに挿入する文字がふたつの場合
@@ -107,7 +107,7 @@ Class Message{
                     $message = sprintf($message, $message_string[0], $message_string[1]);
                 }else{
                     //引数の挿入する文字の数が合わない場合
-                    return ['message_code_error', 'er', '00'];
+                    return [$message, 'er', '00'];
                 }
             }
             //メッセージ番号が一致する場合

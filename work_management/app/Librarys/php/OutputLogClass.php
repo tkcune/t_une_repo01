@@ -231,6 +231,7 @@ class OutputLogClass{
         
         //デバックトレースを探索する
         foreach($trace as $program_row){
+            
             //関数名が合致すれば、クラス名を取得する
             if($program_row['function'] == $program_pass){
                 //@var array クラス名を分割した配列
@@ -243,7 +244,7 @@ class OutputLogClass{
                 $function_name = $program_row['function'];
                 //クラス名とメソッド名を結合して返す
                 return $class_name.'/'.$function_name;
-            }else if(property_exists($program_pass, 'class') && $program_row['class'] == $program_pass){
+            }else if($program_row['class'] == $program_pass){
                 if($program_pass == 'App\Exceptions\Handler'){
                     $error_row = $program_row['args'][0]->getTrace()[0];
                     //@var array クラス名を分割した配列

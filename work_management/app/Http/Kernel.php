@@ -21,6 +21,9 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        
+        //webサーバーの処理開始ログメッセージを出力するミドルウェア
+        \App\Http\Middleware\StartWorkManegement::class
     ];
 
     /**

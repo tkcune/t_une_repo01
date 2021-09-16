@@ -15,7 +15,7 @@
         $this->subordinates_list = [];
     }
     /**
-     * 上位階層の名前を取得するメソッド
+     * 上位階層を取得するメソッド
      * @param array $array
      * @param string $code //機能コード
      * @return array $list
@@ -30,10 +30,10 @@
         $code = substr($value->high_id,0,2);
 
             if ($code == "bs"){
-                $name_data = DB::select('select name from dcbs01 where client_id = ? 
+                $name_data = DB::select('select * from dcbs01 where client_id = ? 
                 and department_id = ?',[$value->client_id,$value->high_id]);
             }elseif($code == "ji"){
-                $name_data = DB::select('select name from dcji01 where client_id = ? 
+                $name_data = DB::select('select * from dcji01 where client_id = ? 
                 and personnel_id = ?',[$value->client_id,$value->high_id]);
             }else{
 
@@ -58,8 +58,14 @@
         //直下の配下データを取得
         foreach($lists as $list){
             
-            $subordinates = DB::select('select lower_id from dccmks where client_id = ? 
-            and high_id = ?',[$client,$list]);
+            try{
+                $subordinates = DB::select('select lower_id from dccmks where client_id = ? 
+                and high_id = ?',[$client,$list]);
+            }catch(\Exception $e){
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                return redirect()->route('index');
+            }
 
             //配下データを格納
             array_push($this->subordinates_list,$list);

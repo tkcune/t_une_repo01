@@ -29,3 +29,38 @@ function deleteOn()
 		document.getElementById("delete").setAttribute("disabled", true);
 	}
 }
+
+//クリップボードに保存するメソッド
+function copyToClipboard() {
+    // コピー対象を取得
+    var text = document.getElementById('palent').textContent;
+
+    // 選択しているテキストをクリップボードにコピーする
+    navigator.clipboard.writeText(text).then(e => {
+      });
+
+}
+
+//クリップボード内を削除するメソッド
+function deleteToClipboard() {
+    // コピー対象をJavaScript上で変数として定義する
+    var text = document.getElementById('deletearea').value;
+
+    // 選択しているテキストをクリップボードにコピーする
+    navigator.clipboard.writeText(text).then(e => {
+      });
+
+}
+
+function treeDisabled()
+{
+    var id = document.getElementById("tree");
+
+    if (document.getElementById(id).disabled === true){
+		// disabled属性を削除
+		document.getElementById(id).removeAttribute("disabled");
+	}else{
+		// disabled属性を設定
+		document.getElementById(id).setAttribute("disabled", true);
+	}
+}

@@ -82,6 +82,13 @@ class OutputLogClass{
                 $system_log_csv = $this->create_system_log_csv($created_at, $type, $program_pass, $function, $log);
                 //システムログファイルに出力する
                 $this->write_system_log_csv($system_log_csv);
+            }else if($log == 'webサーバーでのイベントが起動された'){
+                //webサーバーの処理開始メッセージは、デバックモードでなくてもシステムログに残す。
+                
+                //@var array システムログファイルに出力するcsv
+                $system_log_csv = $this->create_system_log_csv($created_at, $type, $program_pass, $function, $log);
+                //システムログファイルに出力する
+                $this->write_system_log_csv($system_log_csv);
             }
         }
     }
@@ -123,7 +130,7 @@ class OutputLogClass{
         }else{
             //システムログファイルが存在しなければ、新規作成
             //@var array システムログファイルのヘッダー
-            $head = ['時間', '類別', '顧客名', 'アクセスユーザー', '機能', 'ログ'];
+            $head = ['時間', '類別', '顧客名', 'アクセスユーザー', '機能', 'プログラムパス', 'ログ'];
             //@var File システムログファイルを作成し、ポインタを取得する
             $facmsl_csv = fopen('./facmsl.csv', 'w');
             
@@ -188,7 +195,7 @@ class OutputLogClass{
     private function create_system_log_csv($created_at, $type, $program_pass, $function, $log){
         //ログの中のダブルクォーテーションを取り除く
         $log = str_replace('"', '', $log);
-        return [$created_at, $type, $this->client_id, $this->user, $program_pass, $function, $log];
+        return [$created_at, $type, $this->client_id, $this->user, $function, $program_pass, $log];
     }
 
     //@return int idを増加した数字

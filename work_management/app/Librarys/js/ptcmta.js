@@ -1,4 +1,4 @@
-import {clipboard} from './ptcmcb';
+import {clipboard} from './ptcmcb.js';
 
 //@var TreeActionクラス 公開するクラス
 let TreeAction = {};

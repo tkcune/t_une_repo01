@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * 投影データを操作するコントローラー
+ */
 class Ptcm01Controller extends Controller
 {
     /**
@@ -39,8 +42,14 @@ class Ptcm01Controller extends Controller
         $high_id = $request->high_id;
         $projection_source_id = $request->projection_source_id;
         //最新の投影番号を生成
-        $id = DB::select('select projection_id from dccmta where client_id = ? 
-        order by projection_id desc limit 1',[$client_id]);
+        try{
+            $id = DB::select('select projection_id from dccmta where client_id = ? 
+            order by projection_id desc limit 1',[$client_id]);
+        }catch(\Exception $e){
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+    
+        }
         if(empty($id))
         {
             $projection_id = "ta00000001";
@@ -56,16 +65,28 @@ class Ptcm01Controller extends Controller
         }
 
         //データベースに投影情報を登録
+        try{
         DB::insert('insert into dccmta
         (client_id,projection_id,projection_source_id)
         VALUE (?,?,?)',
         [$client_id,$projection_id,$projection_source_id]);
+        }catch(\Exception $e){
 
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+    
+        }
+
+        try{
         //データベースに階層情報を登録
         DB::insert('insert into dccmks
         (client_id,lower_id,high_id)
         VALUE (?,?,?)',
         [$client_id,$projection_id,$high_id]);
+        }catch(\Exception $e){
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+    
+        }
 
         return redirect()->route('index');
     }
@@ -113,8 +134,14 @@ class Ptcm01Controller extends Controller
      */
     public function delete($id,$id2)
     {
+        try{
         DB::delete('delete from dccmta where client_id = ? and projection_id = ?',
         [$id,$id2]);
+        }catch(\Exception $e){
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+    
+        }
 
         return redirect()->route('index');
     }

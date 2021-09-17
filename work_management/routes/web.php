@@ -31,6 +31,10 @@ Route::get('/',[Pa0001Controller::class,'index'])->name('index');
 
 Route::get('/count',[Pa0001Controller::class,'count'])->name('count');
 
+Route::get('/count2',[Pa0001Controller::class,'count2'])->name('count2');
+
+Route::get('/show/{id}/{id2}',[Psbs01Controller::class,'show'])->name('plbs01.show');
+
 Route::post('/bscopy',[Psbs01Controller::class,'copy'])->name('psbs01.copy');
 
 Route::post('/jicopy',[Psji01Controller::class,'copy'])->name('psji01.copy');

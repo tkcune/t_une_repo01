@@ -1,6 +1,7 @@
 @extends('pc0001.pc0001')
 
 <?php
+    //スパイラル01では$aは必ずダミー
     $a = "aa00000001";
     $b = "bs00000003";
     $high = "bs00000004";
@@ -127,15 +128,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count',['department_page'=>1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('count2',array_merge(['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>$client,'id2'=>$select_id]))}}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
 @if($count_department == 1)
-                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>$client,'id2'=>$select_id]) }}" aria-label="Previous">
 @else
-                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('count2',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>$client,'id2'=>$select_id]) }}" aria-label="Previous">
 @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -143,15 +144,15 @@
                                 {{$count_department}}/{{$department_max}}
                                 <li class="page-item">
 @if($count_department<$department_max)
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('count2',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>$client,'id2'=>$select_id]) }}" aria-label="Next">
 @else
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('count2',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>$client,'id2'=>$select_id]) }}" aria-label="Next">
 @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('count2',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>$client,'id2'=>$select_id]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -166,17 +167,13 @@
                         @csrf
                         @method('post')
                         <button type="submit">検索</button>
-                        @if(!empty($_POST['search']))
-                        部署<input type="text" name="search" value="{{ $_POST['search'] }}">
-                        @else
-                        氏名<input type="text" name="search">
-                        @endif
+                        部署
+                        <input type="text" name="search" value="{{ old('search')}}">
                         </form>
                         </div>
                     </div>
                 </div>
 
-                {{--　8/19　今後　配下の部署のみ表示させるように修正 --}}
                 <div class="row">
                     <div class="col">
                     <table class="table table-bordered border-dark">
@@ -227,7 +224,7 @@
                    
                     </div>
                 </div>
-                {{--　8/19　今後　配下の部署のみ表示させるように修正 ここまで--}}
+
             </div>
                 <div class="row">
                     <div class="col">
@@ -268,15 +265,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>1]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>1,'id'=>$client,'id2'=>$select_id]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
 @if($count_personnel == 1)
-                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>$client,'id2'=>$select_id]) }}" aria-label="Previous">
 @else
-                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>$client,'id2'=>$select_id]) }}" aria-label="Previous">
 @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -284,15 +281,15 @@
                                 {{$count_personnel}}/{{$personnel_max}}
                                 <li class="page-item">
 @if($count_personnel<$personnel_max)
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>$client,'id2'=>$select_id]) }}" aria-label="Next">
 @else
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>$client,'id2'=>$select_id]) }}" aria-label="Next">
 @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>$client,'id2'=>$select_id]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -305,11 +302,7 @@
                         @csrf
                         @method('post')
                         <button type="submit" >検索</button>
-                        @if(!empty($_POST['search']))
-                        氏名<input type="text" name="search" value="{{ $_POST['search'] }}">
-                        @else
-                        氏名<input type="text" name="search">
-                        @endif
+                        氏名<input type="text" name="search" value="{{ old('search')}}">
                         </form>
                         {{-- 検索機能ここまで　--}}
                         </div>
@@ -337,7 +330,7 @@
                             <tr>
                             <td>{{ $name->personnel_id}}</td>
                             <td><a href="#">{{$name->name}}</a></td>
-                            <td><a href="{{ route('plbs01.show',[$a,$personnel_high[$loop->index]->department_id])}}">{{$personnel_high[$loop->index]->name}}</a></td>
+                            <td><a href="#">{{$personnel_high[$loop->index]->name}}</a></td>
                             <td>
                             @switch($name->status)
                                 @case(10)

@@ -10,6 +10,9 @@ use App\Librarys\php\StatusCheck;
 use App\Librarys\php\Pagination;
 use App\Librarys\php\Hierarchical;
 
+/**
+ * 人員データを操作するコントローラー
+ */
 class Psji01Controller extends Controller
 {
     /**
@@ -204,6 +207,7 @@ class Psji01Controller extends Controller
      */
     public function search(Request $request,$id)
     {
+        $responsible_lists = [];
         $client_id = $id;
         $count_department = 1;
         $count_personnel = 1;
@@ -218,6 +222,12 @@ class Psji01Controller extends Controller
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
+        //責任者を名前で取得
+        foreach($departments as $department){
+        $responsible = DB::select('select name from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$department->responsible_person_id]);
+        array_push($responsible_lists,$responsible[0]->name);
+        }
+
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
@@ -227,7 +237,7 @@ class Psji01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('departments','names','count_department',
-        'count_personnel','department_max','personnel_max','department_high','personnel_high'));
+        'count_personnel','department_max','personnel_max','department_high','personnel_high','responsible_lists'));
     }
 
     /**

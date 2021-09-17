@@ -7,7 +7,11 @@ use Illuminate\Support\Facades\DB;
 use App\Librarys\php\Pagination;
 use App\Librarys\php\Hierarchical;
 use App\Librarys\php\StatusCheck;
+use App\Librarys\php\OutputLog;
 
+/**
+ * 部署データを操作するコントローラー
+ */
 class Psbs01Controller extends Controller
 {
     /**
@@ -60,13 +64,22 @@ class Psbs01Controller extends Controller
         $high = $request->high;
 
         //顧客IDに対応した最新の部署IDを取得
-        $id = DB::select('select department_id from dcbs01 where client_id = ? 
-        order by department_id desc limit 1',[$client_id]);
+        try{
+            $id = DB::select('select department_id from dcbs01 where client_id = ? 
+            order by department_id desc limit 1',[$client_id]);
+        }catch(\Exception $e){
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+
+        return redirect()->route('index');
+        }
+
         if(empty($id))
         {
             $department_id = "bs00000001";
         }else{
 
+        //英字と数字の分割
         $pieces[0] = substr($id[0]->department_id,0,2);
         $pieces[1] = substr($id[0]->department_id,3);
         $pieces[1] = $pieces[1] + "1";
@@ -81,6 +94,7 @@ class Psbs01Controller extends Controller
         list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
 
         //データベースに部署情報を登録
+        try{
         DB::insert('insert into dcbs01
         (client_id,
         department_id,
@@ -99,13 +113,28 @@ class Psbs01Controller extends Controller
         $management_personnel_id,
         $operation_start_date,
         $operation_end_date]);
+        }catch(\Exception $e){
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+
+            return redirect()->route('index');
+        }
 
         //データベースに階層情報を登録
+        try{
         DB::insert('insert into dccmks
         (client_id,lower_id,high_id)
         VALUE (?,?,?)',
         [$client_id,$department_id,$high]);
+        }catch(\Exception $e){
 
+        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+
+        return redirect()->route('index');
+        }
+
+
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0001');
 
         return redirect()->route('index');
         
@@ -117,9 +146,85 @@ class Psbs01Controller extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($client,$select_id)
     {
-        //
+        if($select_id == "bs00000001")
+        {
+            return redirect()->route('index');
+        }
+        $count_department = 1;
+        $count_personnel = 1;
+
+         //選択した部署のIDをarray型に格納
+         $lists = [];
+         $department_data = [];
+         $personnel_data = [];
+         $responsible_lists = [];
+         array_push($lists,$select_id);
+ 
+         //選択した部署の配下を取得
+         $hierarchical = new Hierarchical();
+         $select_lists = $hierarchical->subordinateSearch($lists,$client);
+          
+         //選択したデータ及び配下データを取得
+            foreach($select_lists as $select_list){
+                //機能コードの判定
+                $code = substr($select_list,0,2);
+ 
+                //対応したデータの取得
+                if ($code == "bs"){
+                    try{
+                        $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                        and dcbs01.department_id = ?',[$client,$select_list]);
+                    }catch(\Exception $e){
+
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+        
+                        return redirect()->route('index');
+                    }
+                    array_push($department_data,$data[0]);
+ 
+                }elseif($code == "ji"){
+                    try{
+                        $data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                        and dcji01.personnel_id = ?',[$client,$select_list]);
+                    }catch(\Exception $e){
+
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+    
+                        return redirect()->route('index');
+                    }
+                    array_push($personnel_data,$data[0]);
+                }else{
+
+                }
+                
+            }
+            
+        //ページネーション
+        $pagination = new Pagination();
+        $department_max = $pagination->pageMax($department_data,count($department_data));
+        $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+        $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
+        $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //責任者を名前で取得
+        foreach($departments as $department){
+            $responsible = DB::select('select name from dcji01 where client_id = ? and personnel_id = ?',[$client,$department->responsible_person_id]);
+            array_push($responsible_lists,$responsible[0]->name);
+        }
+       
+        //上位階層取得
+        $hierarchical = new Hierarchical();
+        $department_high = $hierarchical->upperHierarchyName($departments);
+        $personnel_high = $hierarchical->upperHierarchyName($names);
+        
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
+        
+        return view('psbs01.plbs01',compact('departments','names','count_department',
+        'count_personnel','department_max','personnel_max','department_high',
+        'personnel_high','responsible_lists','client','select_id'));
     }
 
     /**

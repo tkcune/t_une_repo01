@@ -1,24 +1,16 @@
-import {clipboard} from './ptcmcb.js';
+import {clipboard} from './ptcmcb';
 
 //@var TreeActionクラス 公開するクラス
 let TreeAction = {};
 
 //TreeActionの名前空間
-//ツリーの生成
 TreeAction.createTree = {};
-//ノードクラス
 TreeAction.node = {};
-//チェインパーサーのクラス
 TreeAction.chainparser = {};
-//削除機能クラス
 TreeAction.delete = {};
-//貼付機能クラス
 TreeAction.paste = {};
-//移動機能クラス
 TreeAction.move = {};
-//投影機能クラス
 TreeAction.projection = {};
-//追加機能クラス
 TreeAction.append = {};
 
 //ノードクラス
@@ -127,16 +119,8 @@ TreeAction.node = class Node {
     //div要素の生成する
     let div = this.createFirstdiv();
 
-    //一番上に表示するタイトルがあれば、タイトルを挿入する
-    //notitleでなければ
     if(this.title === 'マイツリー'){
-      div.innerText = this.title;
-      //クリック処理。テスト用のクリック処理
-      //クリックした要素を表示する
-      div.node = this;
-      
-      div.addEventListener('click', this.displayDetail);
-      //
+      div.innerText = 'マイツリー';
     }
     
     this.element = div;
@@ -162,9 +146,7 @@ TreeAction.node = class Node {
       
     //クリック処理。テスト用のクリック処理
     //クリックした要素を表示する
-    li.node = this;
-      
-    li.addEventListener('click', this.displayDetail);
+    li.addEventListener('click', {node: this, handleEvent: this.displayDetail});
     //
       
     ul.appendChild(li);
@@ -304,53 +286,52 @@ TreeAction.node = class Node {
     //boxValueの1番目に、表示する文字。
     div.innerText = this.title;
 
-    //クリックメソッドにnodeの引数を渡す
-    div.node = this;
-    div.addEventListener('click', this.displayDetail);
+    div.addEventListener('click', {node: this, handleEvent: this.displayDetail});
 
     return div;
   }
 
   //詳細行に表示
-  displayDetail(event) {
-    //@var dom palent 表示する親のdom
+  displayDetail() {
     //@var dom child 表示する子のdom
-    let child = document.getElementById('child');
-  
+    // let child = document.getElementById('child');
+    // child.innerText = event.target.node.title;
     //文字の表示
     //@var array dirArray ディレクトリの文字を分割した配列
-    let dirArray = event.target.node.dir.split('/');
+    let dirArray = this.node.dir.split('/');
     //一番後ろの文字を削除
     dirArray.pop();
     //親要素のタイトルを取得する
     let topDir = dirArray.pop();
-    if(child !== null){
-      child.innerText = event.target.node.title;
-    }
 
     //フォーカス
-    event.target.node.focus();
+    this.node.focus();
+    
+    //クリップボードに選択したノードクラスのidとディレクトリを保存する
+    clipboard.select(this.node.dir, this.node.id);
+
+    //選択したノードがカレントノード
+    clipboard.current(clipboard.getSelectDir(), clipboard.getSelectId());
 
     //選択したノードの親要素がマイツリーである場合は、本来のノードクラスまでツリーを開く
     if(topDir === "マイツリー"){
       //@var string id 選択したノードクラスのid
-      let id = event.target.node.id;
+      let id = this.node.id;
       //@var Nodeクラス selectNode 本来のノードクラス
-      let selectNode = event.target.node.prototype.chainparser.searchNodeId(id, event.target.node.prototype.tree);
+      let selectNode = this.node.prototype.chainparser.searchNodeId(id, this.node.prototype.tree);
       //本来のノードクラスまでツリーを開く
-      selectNode.openBottomUpTree( event.target.node.prototype.tree);
+      selectNode.openBottomUpTree();
     }
-    //クリップボードに選択したノードクラスのidとディレクトリを保存する
-    clipboard.select(event.target.node.dir, event.target.node.id);
   }
 
   //選択したノードを太字にする
   focus(){
 
     //@var string beforeSelectId 前回選択したid
-    let beforeSelectId = clipboard.getSelectId();
+    let beforeSelectId = clipboard.getCurrentId();
     //@var Nodeクラス beforeSelect　前回選択したノードクラス
     let beforeSelect = this.prototype.chainparser.searchNodeId(beforeSelectId, this.prototype.tree);
+    
     //前回選択したノードクラスのフォーカスを消す
     beforeSelect?.outFocusNode();
 
@@ -417,7 +398,7 @@ TreeAction.node = class Node {
 
   //目的のノードクラスまでツリーを開く
   //@var Nodeクラス tree ツリーの全体のインスタンス
-  openBottomUpTree(tree){
+  openBottomUpTree(){
     //@var array splitDir ディレクトリの文字を分割した配列
     let splitDir = this.dir.split('/');
     //最後の文字を削除する
@@ -425,12 +406,12 @@ TreeAction.node = class Node {
     //配列が1の時は、chaintreeなので、openBottomUpTreeを呼ばない
     if(splitDir.length !== 1){
       //@var Nodeクラス palent 目的のノードクラスの親要素
-      let palent = this.prototype.chainparser.searchNodeDir(splitDir.join('/'), tree);
+      let palent = this.prototype.chainparser.searchNodeDir(splitDir.join('/'), this.prototype.tree);
       //目的のノードクラスの親要素のツリーを開く
       palent.openBox();
       palent.openDisplayNode();
       //また親要素を引数にして再帰的に、openBottomUpTreeを呼び出す
-      palent.openBottomUpTree(tree);
+      palent.openBottomUpTree();
     }
   }
 
@@ -601,8 +582,7 @@ TreeAction.node = class Node {
       //@var dom titleboxDiv 展開するボックスのタイトル
       let titleboxDiv = copyNode.element.children[0].children[1];
       //タイトルの表示イベントを付ける
-      titleboxDiv.node = copyNode;
-      titleboxDiv.addEventListener('click', this.displayDetail);
+      titleboxDiv.addEventListener('click', {node: copyNode, handleEvent: this.displayDetail});
 
     }else{
       //展開するボックスではなく線だけのツリーの場合
@@ -611,9 +591,7 @@ TreeAction.node = class Node {
       let li = copyNode.element.children[0];
       //クリック処理。テスト用のクリック処理
       //クリックした要素を表示する
-      li.node = copyNode;
-      
-      li.addEventListener('click', this.displayDetail);
+      li.addEventListener('click', {node: copyNode, handleEvent: this.displayDetail});
       //
     }
     
@@ -1221,11 +1199,13 @@ TreeAction.delete = function(chainparser, tree) {
         });
       }
     }
+    
     //選択先のノードクラスを削除する。投影元のデータを持つ子要素のノードクラスも削除する
     deleteTreeNode(node);
   }
 
   //@param Nodeクラス node 削除するノードクラス
+  //@return string 親ノードのid
   //ノードクラスを削除するコード
   let deleteTreeNode = function deleteTreeNode(node){
 
@@ -1306,6 +1286,7 @@ TreeAction.delete = function(chainparser, tree) {
       //親ノードの子要素のcssを変更している部分をdomに反映させる。
       palent.resettingClassElement();
     }
+    return palent.id;
   }
   return {
     deleteNode: deleteNode
@@ -1735,19 +1716,55 @@ TreeAction = ((treesepalete, projectionChain) => {
 
   //ノードを削除する
   let deleteNode = function deleteNode(){
+    //@var string selectNodeDir 選択したのノードのディレクトリ
+    let selectNodeDir;
+    //@var string selectNodeId 選択したノードのid
+    let selectNodeId;
+    //@var Nodeクラス 削除するノードクラス
+    let node;
 
     //選択したノードがマイツリーにあるかチェックする
     if(checkLineTree(clipboard.getSelectDir()) === true){
 
       //マイツリーのノードは、本来のデータが置いてあるノードとは違うので、本来のノードを検索する。
       //@var Nodeクラス node マイツリーに登録してあるノードの本来のノードクラス
-      let node = searchNodeId(clipboard.getSelectId());
-      //ノードを削除する
-      deleteFunction.deleteNode(node.dir, node.id);
+      node = chainparser.searchNodeId(clipboard.getSelectId(), tree);
+      
+      selectNodeDir = node.dir;
+      selectNodeId = node.id;
+      
     }else{
-      //マイツリーのノードではない場合
-      deleteFunction.deleteNode(clipboard.getSelectDir(), clipboard.getSelectId());
+
+      //選択したノードのidとディレクトリを代入する
+      selectNodeDir = clipboard.getSelectDir();
+      selectNodeId = clipboard.getSelectId();
+      node = chainparser.searchNodeId(selectNodeId, tree);
     }
+    //@var Nodeクラス カレントにする親ノード
+    let palent = chainparser.getTwoPalent(node, tree)[0];
+    //ノードを削除する
+    deleteFunction.deleteNode(selectNodeDir, selectNodeId);
+    //親ノードをカレントにする
+    palent.focus();
+    //選択したノードのデータを削除
+    clipboard.select(null,null);
+    //親ノードのデータをカレントに保存する
+    clipboard.current(palent.dir, palent.id);
+  }
+
+  //特異な操作の削除：ツリーに表示されていないノードを削除
+  //@param string nodeId 削除するノードのid
+  let blindDeleteNode = function blindDeleteNode(nodeId){
+    //@var Nodeクラス 削除するノードクラス
+    let node = chainparser.searchNodeId(nodeId, tree);
+    //@var Nodeクラス カレントにする親ノード
+    let palent = chainparser.getTwoPalent(node, tree)[0];
+    //削除するノードを選択したする
+    clipboard.select(node.dir, node.id);
+    //ノードを削除する
+    deleteNode();
+    //親ノードを開く
+    palent.openBottomUpTree();
   }
 
   //ノードの貼付
@@ -1790,6 +1807,33 @@ TreeAction = ((treesepalete, projectionChain) => {
     }
   }
 
+  //特異なツリー機能:ツリー表示されていないノードの貼付
+  //@param string toNodeId 貼付先のノードid
+  //@param string fromNodeId 貼付元のノードid
+  //@param array fromNodeChain 貼付のデータ
+  let blindPasteNode = function blindPasteNode(toNodeId, fromNodeId, fromNodeChain){
+    //@var Nodeクラス 貼付先のノードクラス
+    let toNode = chainparser.searchNodeId(toNodeId, tree);
+    //@var Nodeクラス 貼付元のノードクラス
+    let fromNode = chainparser.searchNodeId(fromNodeId, tree);
+    //貼付元のノードのデータをコピーする
+    clipboard.copyNode(fromNode.dir, fromNode.id);
+    //貼付先のノードのデータを選択する
+    clipboard.select(toNode.dir, toNode.id);
+    //貼付先のノードをカレントにする
+    clipboard.current(toNode.dir, toNode.id);
+    //貼付する
+    pasteNode(fromNodeChain);
+    //貼付先をカレントにする
+    toNode.focus();
+    //貼付先のノードを開く
+    toNode.openBottomUpTree();
+    //移動によって子ノードクラスが開いていたら、閉じる
+    toNode.noneDisplayTree();
+    //ノードの非表示によって、ボックスが変わったら、変える
+    toNode.ChangeBox();
+  }
+
   //移動機能
   let moveNode = function moveNode(){
     //@var string selectNodeDir 選択したのノードのディレクトリ
@@ -1811,6 +1855,32 @@ TreeAction = ((treesepalete, projectionChain) => {
     if(checkSameTree(selectNodeDir, clipboard.getCopyDir()) === true){
       moveFunction.moveNode(selectNodeDir, selectNodeId, clipboard.getCopyDir(), clipboard.getCopyId());
     }
+  }
+
+  //特異なツリー機能:ツリー表示されていないノードを移動
+  //@param string toNodeId 移動先のノードid
+  //@param string fromNodeId 移動元のノードid
+  let blindModeNode = function blindModeNode(toNodeId, fromNodeId){
+    //@var Nodeクラス 移動先のノードクラス
+    let toNode = chainparser.searchNodeId(toNodeId, tree);
+    //@var Nodeクラス 移動元のノードクラス
+    let fromNode = chainparser.searchNodeId(fromNodeId, tree);
+    //移動元のノードのデータをコピーする
+    clipboard.copyNode(fromNode.dir, fromNode.id);
+    //移動先のノードのデータを選択する
+    clipboard.select(toNode.dir, toNode.id);
+    //移動先のノードをカレントにする
+    clipboard.current(toNode.dir, toNode.id);
+    //移動する
+    moveNode();
+    //移動先をカレントにする
+    toNode.focus();
+    //移動先のノードを開く
+    toNode.openBottomUpTree();
+    //移動によって子ノードクラスが開いていたら、閉じる
+    toNode.toNode.noneDisplayTree();
+    //ノードの非表示によって、ボックスが変わったら、変える
+    toNode.ChangeBox();
   }
 
   //ノードを投影する
@@ -1837,6 +1907,33 @@ TreeAction = ((treesepalete, projectionChain) => {
     }
   }
 
+  //特異なツリー機能:ツリー表示されていないノードの投影
+  //@param string toNodeId 投影先のノードid
+  //@param string fromNodeId 投影元のノードid
+  //@param array fromNodeChain 投影のデータ
+  let blindProjectionNode = function blindProjectionNode(toNodeId, fromNodeId, fromNodeChain){
+    //@var Nodeクラス 投影先のノードクラス
+    let toNode = chainparser.searchNodeId(toNodeId, tree);
+    //@var Nodeクラス 投影元のノードクラス
+    let fromNode = chainparser.searchNodeId(fromNodeId, tree);
+    //投影元のノードのデータをコピーする
+    clipboard.copyNode(fromNode.dir, fromNode.id);
+    //投影先のノードのデータを選択する
+    clipboard.select(toNode.dir, toNode.id);
+    //投影先のノードをカレントにする
+    clipboard.current(toNode.dir, toNode.id);
+    //投影する
+    projectionNode(fromNodeChain);
+    //投影先をカレントにする
+    toNode.focus();
+    //投影先のノードを開く
+    toNode.openBottomUpTree();
+    //投影によって子ノードクラスが開いていたら、閉じる
+    toNode.noneDisplayNode();
+    //ノードの非表示によって、ボックスが変わったら、変える
+    toNode.ChangeBox();
+  }
+
   //追加機能
   //@param array fromNodeChain 上下関係のオブジェクトのデータの配列
   let appendNode = function appendNode(fromNodeChain){
@@ -1851,9 +1948,10 @@ TreeAction = ((treesepalete, projectionChain) => {
     //カレントノードを太字にする
     currentNode.focus();
     //カレントノードを開く
-    currentNode.openBottomUpTree(tree);
+    currentNode.openBottomUpTree();
     //クリップボードの選択ノードをカレントノードにする
     clipboard.select(currentNode.dir, currentNode.id);
+    clipboard.current(currentNode.dir, currentNode.id);
   }
 
   //ツリーのノードをidから検索する
@@ -1863,6 +1961,108 @@ TreeAction = ((treesepalete, projectionChain) => {
     return chainparser.searchNodeId(nodeId, tree).deepCopyNode();
   }
 
+  //クリックイベントを追加する
+  //@param object callback クリックイベントの処理
+  let addNodeClickEvent = (callback) => {
+    //@var array titleboxのdom
+    let titleboxArray = document.getElementsByClassName('titlebox');
+    //@var array firsttreeのdom
+    let firsttreeArray = document.getElementsByClassName('firsttree');
+    //@var array normaltreeのdom
+    let normaltreeArray = document.getElementsByClassName('normaltree');
+    //@var array lasttreeのdom
+    let lasttreeArray = document.getElementsByClassName('lasttree');
+    //@var array secondtreeのdom
+    let secondtreeArray = document.getElementsByClassName('secondtree');
+    //@var array endtreeのdom
+    let endtreeArray = document.getElementsByClassName('endtree');
+    //コールバック関数が存在するなら
+    if(callback){
+      for(let i = 0; i < titleboxArray.length; i++){
+        //@var string titleboxのディレクトリ
+        let titleboxDir = getTitleboxDir(titleboxArray[i]);
+        //@var string ノードのid
+        let nodeId = chainparser.searchNodeDir(titleboxDir, tree).id;
+        //idを引数にして、クリックイベントを追加する
+        titleboxArray[i].addEventListener('click', {id: nodeId, handleEvent: callback});
+      }
+      for(let i = 0; i < firsttreeArray.length; i++){
+        //@var string firsttreeのディレクトリ
+        let firsttreeDir = getTitleboxDir(firsttreeArray[i]) + '/' + firsttreeArray[i].children[0].innerText;
+        //@var string ノードのid
+        let nodeId = chainparser.searchNodeDir(firsttreeDir, tree).id;
+        //idを引数にして、クリックイベントを追加する
+        firsttreeArray[i].children[0].addEventListener('click', {id: nodeId, handleEvent: callback});
+      }
+      for(let i = 0; i < normaltreeArray.length; i++){
+        //@var string normaltreeのディレクトリ
+        let normaltreeDir = getTitleboxDir(normaltreeArray[i]) + '/' + normaltreeArray[i].children[0].innerText;
+        //@var string ノードのid
+        let nodeId = chainparser.searchNodeDir(normaltreeDir, tree).id;
+        //idを引数にして、クリックイベントを追加する
+        normaltreeArray[i].children[0].addEventListener('click', {id: nodeId, handleEvent: callback});
+      }
+      for(let i = 0; i < lasttreeArray.length; i++){
+        //@var string lasttreeのディレクトリ
+        let lasttreeDir = getTitleboxDir(lasttreeArray[i]) + '/' + lasttreeArray[i].children[0].innerText;
+        //@var string ノードのid
+        let nodeId = chainparser.searchNodeDir(lasttreeDir, tree).id;
+        //idを引数にして、クリックイベントを追加する
+        lasttreeArray[i].children[0].addEventListener('click', {id: nodeId, handleEvent: callback});
+      }
+      for(let i = 0; i < secondtreeArray.length; i++){
+        //@var string secondtreeのディレクトリ
+        let secondtreeDir = getLinetreeDir(secondtreeArray[i]);
+        //@var string ノードのid
+        let nodeId = chainparser.searchNodeDir(secondtreeDir, tree).id;
+        //idを引数にして、クリックイベントを追加する
+        secondtreeArray[i].children[0].addEventListener('click', {id: nodeId, handleEvent: callback});
+      }
+      for(let i = 0; i < endtreeArray.length; i++){
+        //@var string endtreeのディレクトリ
+        let endtreeDir = getLinetreeDir(endtreeArray[i]);
+        //@var string ノードのid
+        let nodeId = chainparser.searchNodeDir(endtreeDir, tree).id;
+        //idを引数にして、クリックイベントを追加する
+        endtreeArray[i].children[0].addEventListener('click', {id: nodeId, handleEvent: callback});
+      }
+    }
+  }
+
+  //titleboxのディレクトリを取得する
+  //@var dom 取得したいディレクトリのdom
+  //@return string ディレクトリ
+  let getTitleboxDir = function getTitleboxDir(dom){
+    if(dom.id !== 'chaintree'){
+      //@var string 親ノードのディレクトリ
+      let palentDir = getTitleboxDir(dom.parentElement);
+      //展開するボックスならタイトルをディレクトリにつける
+      if(dom.classList.value.match('expandtree') || dom.classList.value.match('lastexpandtree')){
+        //@var string ノードのタイトル
+        let title = dom.children[0].children[1].innerText;
+        return palentDir + '/' + title;
+      }
+      return palentDir;
+    }else if(dom.id === 'chaintree'){
+      //chaintreeから呼び出し元に返る
+      return '';
+    }
+  }
+
+  //linetreeのディレクトリを取得する
+  //@param dom ノードのdom
+  //@param string ディレクトリ
+  let getLinetreeDir = (dom) => {
+    //ユーザー情報とログアウトは、notitleを付けて、返す
+    if(dom.children[0].innerText === 'ユーザー情報' || dom.children[0].innerText === 'ログアウト'){
+      return '/notitle/' + dom.children[0].innerText;
+    }else{
+      //ユーザー情報とログアウト以外は、マイツリーを付けて、返す
+      return '/マイツリー/' + dom.children[0].innerText;
+    }
+  }
+
+  // let getLinetreeDir = function 
   //linetreeにあるか判断する
   //@var string nodeDir ノードクラスのディレクトリ
   //@return boolean linetreeにあるか判断する
@@ -1916,7 +2116,12 @@ TreeAction = ((treesepalete, projectionChain) => {
     projectionNode: projectionNode,
     appendNode: appendNode,
     searchNodeId: searchNodeId,
-    current: current
+    current: current,
+    blindDeleteNode: blindDeleteNode,
+    blindPasteNode: blindPasteNode,
+    blindModeNode: blindModeNode,
+    blindProjectionNode: blindProjectionNode,
+    addNodeClickEvent: addNodeClickEvent
   }
 
 })(treeChain, projectionChain);

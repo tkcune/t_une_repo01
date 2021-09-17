@@ -82,7 +82,7 @@ class OutputLogClass{
                 $system_log_csv = $this->create_system_log_csv($created_at, $type, $program_pass, $function, $log);
                 //システムログファイルに出力する
                 $this->write_system_log_csv($system_log_csv);
-            }else if($log == 'webサーバーでのイベントが起動された'){
+            }else if($log == '処理開始'){
                 //webサーバーの処理開始メッセージは、デバックモードでなくてもシステムログに残す。
                 
                 //@var array システムログファイルに出力するcsv

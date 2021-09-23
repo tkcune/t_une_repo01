@@ -66,6 +66,10 @@ class OutputLogClass{
         //@var date 現在時刻
         $created_at = date("Y/m/d h/i/s");
 
+        if(!in_array($type, ['nm', 'wn', 'er', 'ok', 'si', 'sy'])){
+            $type = "er";
+        }
+
         //ログテーブルに出力する
         $result = DB::insert('insert into dclg01 (client_id, log_id, created_at, type, user, function, program_pass, log) values (?, ?, ?, ?, ?, ?, ?, ?)', [$this->client_id, $log_id, $created_at, $type, $this->user, $function, $program_pass, $log]);
         if($result){
@@ -228,36 +232,31 @@ class OutputLogClass{
 
         //@var array デバックトレース
         $trace = debug_backtrace();
-        
         //デバックトレースを探索する
-        foreach($trace as $program_row){
-            
-            //関数名が合致すれば、クラス名を取得する
-            if($program_row['function'] == $program_pass){
-                //@var array クラス名を分割した配列
-                $call_class_name = explode(DIRECTORY_SEPARATOR, $program_row['class']);
-                //@var int 分割した配列の数
-                $count = count($call_class_name);
-                //@var string 分割した配列の最後の要素がクラス名
-                $class_name = $call_class_name[$count - 1];
-                //@var string 関数名
-                $function_name = $program_row['function'];
-                //クラス名とメソッド名を結合して返す
-                return $class_name.'/'.$function_name;
-            }else if($program_row['class'] == $program_pass){
-                if($program_pass == 'App\Exceptions\Handler'){
-                    $error_row = $program_row['args'][0]->getTrace()[0];
-                    //@var array クラス名を分割した配列
-                    $call_class_name = explode(DIRECTORY_SEPARATOR, $error_row['class']);
-                    //@var int 分割した配列の数
-                    $count = count($call_class_name);
-                    //@var string 分割した配列の最後の要素がクラス名
-                    $class_name = $call_class_name[$count - 1];
-                    //@var string 関数名
-                    $function_name = $error_row['function'];
-                    //クラス名とメソッド名を結合して返す
-                    return $class_name.'/'.$function_name;
-                }
+        for($i = 0; $i < count($trace); $i++){
+            //例外処理の場合
+            //classのプロパティが存在して、classの名前が、App\Exceptions\Handler
+            if(array_key_exists('class', $trace[$i]) && $trace[$i]['class'] == 'App\Exceptions\Handler'){
+                //@var array エラーデータ
+                $error_row = $trace[$i]['args'][0];
+                //@var string ファイルフルパス
+                $file_fullpass = $error_row->getFile();
+                //@var string 行番号
+                $line = $error_row->getLine();
+                //ファイルフルパスと行番号を結合
+                return $file_fullpass . ':' . $line;
+            }
+        }
+        //例外処理以外の場合
+        for($i = 0; $i < count($trace); $i++){
+            //functionの名前が__callStaticの場合
+            if($trace[$i]['function'] == '__callStatic'){
+                //@var sring ファイルフルパス
+                $file_fullpass = $trace[$i]['file'];
+                //@var string 行番号
+                $line = $trace[$i]['line'];
+                //ファイルフルパスと行番号を結合
+                return $file_fullpass . ':' . $line;
             }
         }
         

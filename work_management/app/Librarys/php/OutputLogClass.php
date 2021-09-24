@@ -233,30 +233,32 @@ class OutputLogClass{
         //@var array デバックトレース
         $trace = debug_backtrace();
         //デバックトレースを探索する
+        //例外処理以外の場合
         for($i = 0; $i < count($trace); $i++){
-            //例外処理の場合
-            //classのプロパティが存在して、classの名前が、App\Exceptions\Handler
-            if(array_key_exists('class', $trace[$i]) && $trace[$i]['class'] == 'App\Exceptions\Handler'){
-                //@var array エラーデータ
-                $error_row = $trace[$i]['args'][0];
-                //@var string ファイルフルパス
-                $file_fullpass = $error_row->getFile();
+            //functionの名前が__callStaticの場合
+            if($trace[$i]['function'] == $program_pass){
+                //@var sring ファイルフルパス
+                $file_fullpass = $trace[$i - 1]['file'];
                 //@var string 行番号
-                $line = $error_row->getLine();
+                $line = $trace[$i - 1]['line'];
                 //ファイルフルパスと行番号を結合
                 return $file_fullpass . ':' . $line;
             }
         }
-        //例外処理以外の場合
         for($i = 0; $i < count($trace); $i++){
-            //functionの名前が__callStaticの場合
-            if($trace[$i]['function'] == '__callStatic'){
-                //@var sring ファイルフルパス
-                $file_fullpass = $trace[$i]['file'];
-                //@var string 行番号
-                $line = $trace[$i]['line'];
-                //ファイルフルパスと行番号を結合
-                return $file_fullpass . ':' . $line;
+            //例外処理の場合
+            //classのプロパティが存在して、classの名前が、App\Exceptions\Handler
+            if(array_key_exists('class', $trace[$i]) && $trace[$i]['class'] == $program_pass){
+                if($program_pass == 'App\Exceptions\Handler'){
+                    //@var array エラーデータ
+                    $error_row = $trace[$i]['args'][0];
+                    //@var string ファイルフルパス
+                    $file_fullpass = $error_row->getFile();
+                    //@var string 行番号
+                    $line = $error_row->getLine();
+                    //ファイルフルパスと行番号を結合
+                    return $file_fullpass . ':' . $line;
+                }
             }
         }
         

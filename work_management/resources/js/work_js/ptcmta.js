@@ -415,6 +415,24 @@ TreeAction.node = class Node {
     }
   }
 
+  //ツリーを閉じる
+  closeBottomUpTree(){
+    //@var array splitDir ディレクトリの文字を分割した配列
+    let splitDir = this.dir.split('/');
+    //最後の文字を削除する
+    splitDir.pop();
+    //配列が1の時は、chaintreeなので、openBottomUpTreeを呼ばない
+    if(splitDir.length !== 1){
+      //@var Nodeクラス palent 目的のノードクラスの親要素
+      let palent = this.prototype.chainparser.searchNodeDir(splitDir.join('/'), this.prototype.tree);
+      //目的のノードクラスの親要素のツリーを閉じる
+      palent.closeBox();
+      palent.noneDisplayNode();
+      //また親要素を引数にして再帰的に、closeBottomUpTreeを呼び出す
+      palent.closeBottomUpTree();
+    } 
+  }
+
   //@param Nodeクラス node 非表示にするノードクラス
   //子要素全体を非表示にする
   noneDisplayTree() {
@@ -1971,6 +1989,24 @@ TreeAction = ((treesepalete, projectionChain) => {
     clipboard.current(currentNode.dir, currentNode.id);
   }
 
+  //@param string nodeId ノードのid
+  //ノードを開く
+  let openNode = function openNode(nodeId){
+    //@var Nodeクラス 開くノードクラス
+    let node = chainparser.searchNodeId(String(nodeId), tree);
+    //ノードを開く
+    node.openBottomUpTree();
+  }
+
+  //@param string nodeId ノードのid
+  //ノードを閉じる
+  let closeNode = function closeNode(nodeId){
+    //@var Nodeクラス 閉じるノードクラス
+    let node = chainparser.searchNodeId(String(nodeId), tree);
+    //ノードを開く
+    node.closeBottomUpTree();
+  }
+
   //ツリーのノードをidから検索する
   //@var string nodeId ノードクラスのid
   //@return Nodeクラス 検索したノードクラス
@@ -2134,6 +2170,8 @@ TreeAction = ((treesepalete, projectionChain) => {
     appendNode: appendNode,
     searchNodeId: searchNodeId,
     current: current,
+    openNode: openNode,
+    closeNode: closeNode,
     blindDeleteNode: blindDeleteNode,
     blindPasteNode: blindPasteNode,
     blindModeNode: blindModeNode,

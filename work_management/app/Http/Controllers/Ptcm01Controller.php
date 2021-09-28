@@ -48,7 +48,7 @@ class Ptcm01Controller extends Controller
         }catch(\Exception $e){
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-            $request->session()->put('message',Config::get('message.mhcmer0001'));
+            DatabaseException::common($e);
             return redirect()->route('index');
         }
         if(empty($id))
@@ -67,26 +67,25 @@ class Ptcm01Controller extends Controller
 
         //データベースに投影情報を登録
         try{
-        DB::insert('insert into dccmta
-        (client_id,projection_id,projection_source_id)
-        VALUE (?,?,?)',
-        [$client_id,$projection_id,$projection_source_id]);
+            DB::insert('insert into dccmta
+            (client_id,projection_id,projection_source_id)
+            VALUE (?,?,?)',
+            [$client_id,$projection_id,$projection_source_id]);
         }catch(\Exception $e){
-
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-    
+            DatabaseException::common($e);
         }
 
-        try{
         //データベースに階層情報を登録
-        DB::insert('insert into dccmks
-        (client_id,lower_id,high_id)
-        VALUE (?,?,?)',
-        [$client_id,$projection_id,$high_id]);
+        try{
+            DB::insert('insert into dccmks
+            (client_id,lower_id,high_id)
+            VALUE (?,?,?)',
+            [$client_id,$projection_id,$high_id]);
         }catch(\Exception $e){
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-            $request->session()->put('message',Config::get('message.mhcmer0001'));
+            DatabaseException::common($e);
             return redirect()->route('index');
         }
 
@@ -137,12 +136,12 @@ class Ptcm01Controller extends Controller
     public function delete($id,$id2)
     {
         try{
-        DB::delete('delete from dccmta where client_id = ? and projection_id = ?',
-        [$id,$id2]);
+            DB::delete('delete from dccmta where client_id = ? and projection_id = ?',
+            [$id,$id2]);
         }catch(\Exception $e){
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            $request->session()->put('message',Config::get('message.mhcmer0001'));
+            DatabaseException::common($e);
         }
 
         OutputLog::message_log(__FUNCTION__, 'mhcmok0003');

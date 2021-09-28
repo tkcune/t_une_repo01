@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Librarys\php\DatabaseException;
 use App\Librarys\php\Pagination;
 use App\Librarys\php\Hierarchical;
 use App\Librarys\php\StatusCheck;
@@ -73,7 +74,8 @@ class Psbs01Controller extends Controller
         }catch(\Exception $e){
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            $request->session()->put('message',Config::get('message.mhcmer0001'));
+            DatabaseException::common($e);
+            
         return redirect()->route('index');
         }
 
@@ -119,7 +121,7 @@ class Psbs01Controller extends Controller
         }catch(\Exception $e){
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-            $request->session()->put('message',Config::get('message.mhcmer0001','01'));
+            DatabaseException::common($e);
             return redirect()->route('index');
         }
 
@@ -132,13 +134,13 @@ class Psbs01Controller extends Controller
         }catch(\Exception $e){
 
         OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-        $request->session()->put('message',Config::get('message.mhcmer0001'));
+        DatabaseException::common($e);
         return redirect()->route('index');
         }
 
 
         OutputLog::message_log(__FUNCTION__, 'mhcmok0001');
-        //エラーメッセージの表示
+        //メッセージの表示
         $request->session()->put('message',Config::get('message.mhcmok0001'));
 
         return redirect()->route('index');
@@ -160,15 +162,15 @@ class Psbs01Controller extends Controller
         $count_department = 1;
         $count_personnel = 1;
 
-         //選択した部署のIDをarray型に格納
-         $lists = [];
-         $department_data = [];
-         $personnel_data = [];
-         array_push($lists,$select_id);
+        //選択した部署のIDをarray型に格納
+        $lists = [];
+        $department_data = [];
+        $personnel_data = [];
+        array_push($lists,$select_id);
  
-         //選択した部署の配下を取得
-         $hierarchical = new Hierarchical();
-         $select_lists = $hierarchical->subordinateSearch($lists,$client);
+        //選択した部署の配下を取得
+        $hierarchical = new Hierarchical();
+        $select_lists = $hierarchical->subordinateSearch($lists,$client);
           
          //選択したデータ及び配下データを取得
             foreach($select_lists as $select_list){
@@ -183,8 +185,7 @@ class Psbs01Controller extends Controller
                     }catch(\Exception $e){
 
                         OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                        
-        
+                        DatabaseException::common($e);
                         return redirect()->route('index');
                     }
                     array_push($department_data,$data[0]);
@@ -196,7 +197,7 @@ class Psbs01Controller extends Controller
                     }catch(\Exception $e){
 
                         OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-    
+                        DatabaseException::common($e);
                         return redirect()->route('index');
                     }
                     array_push($personnel_data,$data[0]);
@@ -276,7 +277,7 @@ class Psbs01Controller extends Controller
             }catch(\Exception $e){
                 //エラー処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                $request->session()->put('message',Config::get('message.mhcmer0001','01'));
+                DatabaseException::common($e);
                 return redirect()->route('index');
             }
         }else if($status == "18"){
@@ -290,7 +291,7 @@ class Psbs01Controller extends Controller
             }catch(\Exception $e){
                 //エラー処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                $request->session()->put('message',Config::get('message.mhcmer0001'));
+                DatabaseException::common($e);
                 return redirect()->route('index');
             }
         }else{
@@ -299,16 +300,17 @@ class Psbs01Controller extends Controller
                 DB::update('update dcbs01 set name = ?,status = ? where client_id = ? and department_id = ?',
                 [$name,$status,$client_id,$department_id]);
             }catch(\Exception $e){
-                //エラー処理
+                //エラー及びログ処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                $message = Message::get_message('mhcmer0001',[0=>'01']);
-                $request->session()->put('message',$message[0]);
+                DatabaseException::common($e);
                 return redirect()->route('index');
             }
         }
             //ログ処理
             OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
-            $request->session()->put('message',Config::get('message.mhcmok0002'));
+            $message = Message::get_message('mhcmok0002',[0=>'']);
+            session(['message'=>$message[0]]);
+
         return redirect()->route('index');
     }
 
@@ -330,9 +332,19 @@ class Psbs01Controller extends Controller
         $lower_id = $request->lower_id;
 
         //データベース更新
-        DB::update('update dccmks set high_id = ? where client_id = ? and lower_id = ?',
-        [$high_id,$client_id,$lower_id]);
-
+        try{
+            DB::update('update dccmks set high_id = ? where client_id = ? and lower_id = ?',
+            [$high_id,$client_id,$lower_id]);
+        }catch(\Exception $e){
+        //エラー及びログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
+        $message = Message::get_message('mhcmok0002',[0=>'']);
+        session(['message'=>$message[0]]);
         return redirect()->route('index');
     }
 
@@ -372,25 +384,55 @@ class Psbs01Controller extends Controller
                     $delete_projections = DB::select('select projection_id from dccmta where client_id = ? and projection_source_id = ?',
                     [$client,$delete_list]);
                     foreach($delete_projections as $delete_projection){
-                    DB::delete('delete from dccmks where client_id = ? and lower_id = ?',
-                    [$client,$delete_projection->projection_id]);
+                        try{
+                            DB::delete('delete from dccmks where client_id = ? and lower_id = ?',
+                            [$client,$delete_projection->projection_id]);
+                        }catch(\Exception $e){
+                            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                            DatabaseException::common($e);
+                            return redirect()->route('index');
+                        }
                     }
-                    DB::delete('delete from dccmta where client_id = ? and projection_source_id = ?',
-                    [$client,$delete_list]);
+                    try{
+                        DB::delete('delete from dccmta where client_id = ? and projection_source_id = ?',
+                        [$client,$delete_list]);
+                    }catch(\Exception $e){
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
 
                 }elseif($code == "ji"){
-                    DB::delete('delete  from dcji01 where client_id = ? and personnel_id = ?',
-                    [$client,$delete_list]);
+                    try{
+                        DB::delete('delete  from dcji01 where client_id = ? and personnel_id = ?',
+                        [$client,$delete_list]);
+                    }catch(\Exception $e){
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
 
                 }elseif($code == "ta"){
-                    DB::delete('delete  from dccmta where client_id = ? and projection_id = ?',
-                    [$client,$delete_list]);
+                    try{
+                        DB::delete('delete  from dccmta where client_id = ? and projection_id = ?',
+                        [$client,$delete_list]);
+                    }catch(\Exception $e){
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
                 }else{
 
                 }
                 //データの階層構造を削除
-                DB::delete('delete from dccmks where client_id = ? 
-                and lower_id = ?',[$client,$delete_list]);
+                try{
+                    DB::delete('delete from dccmks where client_id = ? 
+                    and lower_id = ?',[$client,$delete_list]);
+                }catch(\Exception $e){
+                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                    DatabaseException::common($e);
+                    return redirect()->route('index');
+                }
 
             }
             
@@ -415,11 +457,25 @@ class Psbs01Controller extends Controller
     {
         $responsible_lists = [];
         $client_id = $id;
-        $count_department = 1;
-        $count_personnel = 1;
-        $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?
-        where dcbs01.name like ?',[$client_id,'%'.$request->search.'%']);
+        $count_department = Config::get('startcount.count');
+        $count_personnel = Config::get('startcount.count');
+
+        //データベースの検索
+        try{
+            $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?
+            where dcbs01.name like ?',[$client_id,'%'.$request->search.'%']);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+        try{
         $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
 
         //ページネーション
         $pagination = new Pagination();
@@ -430,10 +486,8 @@ class Psbs01Controller extends Controller
 
 
         //責任者を名前で取得
-        foreach($departments as $department){
-            $responsible = DB::select('select name from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$department->responsible_person_id]);
-            array_push($responsible_lists,$responsible[0]->name);
-        }
+        $responsible = new ResponsiblePerson();
+        $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
         //上位階層取得
         $hierarchical = new Hierarchical();
@@ -458,16 +512,26 @@ class Psbs01Controller extends Controller
         $high = $request->high_id;
 
         if($request->copy_id == null){
-
             return redirect()->route('index');
-
         }
-        $copy_department = DB::select('select * from dcbs01 where client_id = ? 
-        and department_id = ?',[$client_id,$copy_id]);
+        try{
+            $copy_department = DB::select('select * from dcbs01 where client_id = ? 
+            and department_id = ?',[$client_id,$copy_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
 
         //顧客IDに対応した最新の部署IDを取得
-        $id = DB::select('select department_id from dcbs01 where client_id = ? 
-        order by department_id desc limit 1',[$client_id]);
+        try{
+            $id = DB::select('select department_id from dcbs01 where client_id = ? 
+            order by department_id desc limit 1',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
 
         $pieces[0] = substr($id[0]->department_id,0,2);
         $pieces[1] = substr($id[0]->department_id,3);
@@ -478,31 +542,47 @@ class Psbs01Controller extends Controller
         $department_id = $pieces[0].$department_number;
 
         //データベースに部署情報を登録
-        DB::insert('insert into dcbs01
-        (client_id,
-        department_id,
-        responsible_person_id,
-        name,
-        status,
-        management_personnel_id,
-        operation_start_date,
-        operation_end_date)
-        VALUE (?,?,?,?,?,?,?,?)',
-        [$client_id,
-        $department_id,
-        $copy_department[0]->responsible_person_id,
-        $copy_department[0]->name,
-        $copy_department[0]->status,
-        $copy_department[0]->management_personnel_id,
-        $copy_department[0]->operation_start_date,
-        $copy_department[0]->operation_end_date]);
+        try{
+            DB::insert('insert into dcbs01
+            (client_id,
+            department_id,
+            responsible_person_id,
+            name,
+            status,
+            management_personnel_id,
+            operation_start_date,
+            operation_end_date)
+            VALUE (?,?,?,?,?,?,?,?)',
+            [$client_id,
+            $department_id,
+            $copy_department[0]->responsible_person_id,
+            $copy_department[0]->name,
+            $copy_department[0]->status,
+            $copy_department[0]->management_personnel_id,
+            $copy_department[0]->operation_start_date,
+            $copy_department[0]->operation_end_date]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
 
         //データベースに階層情報を登録
-        DB::insert('insert into dccmks
-        (client_id,lower_id,high_id)
-        VALUE (?,?,?)',
-        [$client_id,$department_id,$high]);
+        try{
+            DB::insert('insert into dccmks
+            (client_id,lower_id,high_id)
+            VALUE (?,?,?)',
+            [$client_id,$department_id,$high]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
 
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
+        $message = Message::get_message('mhcmok0009',[0=>'']);
+        session(['message'=>$message[0]]);
         return redirect()->route('index');
     }
 }

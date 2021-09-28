@@ -175,6 +175,12 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /**
+         * 新規作成したデータベースの例外処理サービスプログラムプロバイダー
+         * 作成者::下田
+         */
+        App\Providers\DatabaseExceptionServiceProvider::class,
+
     ],
 
     /*
@@ -227,6 +233,13 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+
+        /**
+         * 新規作成したデータベースの例外処理ファザード
+         * 作成者::下田
+         */
+
+        'Exception' =>　App\Facades\DatabaseException::class,
 
     ],
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Librarys\php\DatabaseException;
 use App\Models\Date;
 use App\Librarys\php\StatusCheck;
 use App\Librarys\php\Pagination;
@@ -60,8 +61,15 @@ class Psji01Controller extends Controller
         $check = new StatusCheck();
 
         //顧客IDに対応した最新の人員IDを取得
-        $id = DB::select('select personnel_id from dcji01 where client_id = ? 
-        order by personnel_id desc limit 1',[$client_id]);
+        try{
+            $id = DB::select('select personnel_id from dcji01 where client_id = ? 
+            order by personnel_id desc limit 1',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+
         if(empty($id))
         {
             $personnel_id = "ji00000001";
@@ -79,7 +87,8 @@ class Psji01Controller extends Controller
         list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
 
         //データベースに登録
-        DB::insert('insert into dcji01
+        try{
+            DB::insert('insert into dcji01
             (client_id,
             personnel_id,
             name,
@@ -93,7 +102,7 @@ class Psji01Controller extends Controller
             operation_start_date,
             operation_end_date)
             VALUE (?,?,?,?,?,?,?,?,?,?,?,?)',
-        [
+            [
             $client_id,
             $personnel_id,
             $name,
@@ -106,12 +115,22 @@ class Psji01Controller extends Controller
             $system_management,
             $operation_start_date,
             $operation_end_date]);
-
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
         //データベースに階層情報を登録
-        DB::insert('insert into dccmks
-        (client_id,lower_id,high_id)
-        VALUE (?,?,?)',
-        [$client_id,$personnel_id,$high]);
+        try{
+            DB::insert('insert into dccmks
+            (client_id,lower_id,high_id)
+            VALUE (?,?,?)',
+            [$client_id,$personnel_id,$high]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
 
        return redirect()->route('index');
     }
@@ -163,25 +182,47 @@ class Psji01Controller extends Controller
        //部署情報の更新
        if($status == "13")
        {
-           //状態が稼働中なら稼働開始日を更新
-           $check = new StatusCheck();
-           list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
+            //状態が稼働中なら稼働開始日を更新
+            $check = new StatusCheck();
+            list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
        
-           DB::update('update dcji01 set name = ?,status = ?,operation_start_date = ? where client_id = ? and personnel_id = ?',
-           [$name,$status,$operation_start_date,$client_id,$personnel_id]);
+            try{
+               DB::update('update dcji01 set name = ?,status = ?,operation_start_date = ? where client_id = ? and personnel_id = ?',
+               [$name,$status,$operation_start_date,$client_id,$personnel_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+
        }else if($status == "18"){
-           //状態が廃止なら稼働終了日を更新
-           $check = new StatusCheck();
-           list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
+            //状態が廃止なら稼働終了日を更新
+            $check = new StatusCheck();
+            list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
        
-           DB::update('update dcji01 set name = ?,status = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
-           [$name,$status,$operation_end_date,$client_id,$personnel_id]); 
+            try{
+                DB::update('update dcji01 set name = ?,status = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$operation_end_date,$client_id,$personnel_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            } 
        }else{
            //上記以外なら状態と名前のみ更新
-           DB::update('update  dcji01 set name = ?,status = ? where client_id = ? and personnel_id = ?',
-           [$name,$status,$client_id,$personnel_id]);
+            try{
+                DB::update('update  dcji01 set name = ?,status = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$client_id,$personnel_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
        }
-       
+       //ログ処理
+       OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
+       $message = Message::get_message('mhcmok0002',[0=>'']);
+       session(['message'=>$message[0]]);
        return redirect()->route('index');
     }
 
@@ -194,8 +235,17 @@ class Psji01Controller extends Controller
     public function destroy($id,$id2)
     {
 
-        DB::delete('delete from dcji01 where client_id = ? and personnel_id = ?',[$id,$id2]);
-
+        try{
+            DB::delete('delete from dcji01 where client_id = ? and personnel_id = ?',[$id,$id2]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
+        $message = Message::get_message('mhcmok0003',[0=>'']);
+        session(['message'=>$message[0]]);
         return redirect()->route('index');
     }
 
@@ -210,11 +260,25 @@ class Psji01Controller extends Controller
     {
         $responsible_lists = [];
         $client_id = $id;
-        $count_department = 1;
-        $count_personnel = 1;
-        $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
-        $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?
-        where dcji01.name like ?',[$client_id,'%'.$request->search.'%']);
+        $count_department = Config::get('startcount.count');
+        $count_personnel = Config::get('startcount.count');
+
+        //データベースの検索
+        try{
+            $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+        try{
+            $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?
+            where dcji01.name like ?',[$client_id,'%'.$request->search.'%']);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
 
         //ページネーション
         $pagination = new Pagination();
@@ -257,12 +321,24 @@ class Psji01Controller extends Controller
 
         }
 
-        $copy_personnel = DB::select('select * from dcji01 where client_id = ? 
-        and personnel_id = ?',[$client_id,$copy_id]);
+        try{
+            $copy_personnel = DB::select('select * from dcji01 where client_id = ? 
+            and personnel_id = ?',[$client_id,$copy_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
 
         //顧客IDに対応した最新の人員IDを取得
-        $id = DB::select('select personnel_id from dcji01 where client_id = ? 
-        order by personnel_id desc limit 1',[$client_id]);
+        try{
+            $id = DB::select('select personnel_id from dcji01 where client_id = ? 
+            order by personnel_id desc limit 1',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
 
         $pieces[0] = substr($id[0]->personnel_id,0,2);
         $pieces[1] = substr($id[0]->personnel_id,3);
@@ -273,7 +349,8 @@ class Psji01Controller extends Controller
         $personnel_id = $pieces[0].$personnel_number;
 
         //データベースに登録
-        DB::insert('insert into dcji01
+        try{
+            DB::insert('insert into dcji01
             (client_id,
             personnel_id,
             name,
@@ -300,12 +377,22 @@ class Psji01Controller extends Controller
             $copy_personnel[0]->system_management,
             $copy_personnel[0]->operation_start_date,
             $copy_personnel[0]->operation_end_date]);
-
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
         //データベースに階層情報を登録
-        DB::insert('insert into dccmks
-        (client_id,lower_id,high_id)
-        VALUE (?,?,?)',
-        [$client_id,$personnel_id,$high]);
+        try{
+            DB::insert('insert into dccmks
+            (client_id,lower_id,high_id)
+            VALUE (?,?,?)',
+            [$client_id,$personnel_id,$high]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
 
        return redirect()->route('index');
     }

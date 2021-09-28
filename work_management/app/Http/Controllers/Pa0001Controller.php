@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
+use App\Librarys\php\DatabaseException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request;
 use App\Librarys\php\Pagination;
@@ -39,13 +40,15 @@ class Pa0001Controller extends Controller
         try{
             $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');  
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
         }
 
         try{
             $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
         }
 
         //ページネーション
@@ -153,16 +156,14 @@ class Pa0001Controller extends Controller
         try{
         $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
-
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-        
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
         }
         try{
         $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
-
-        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-        
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
         }
         //ページネーション
         $pagination = new Pagination();
@@ -221,24 +222,22 @@ class Pa0001Controller extends Controller
 
                //対応したデータの取得
                if ($code == "bs"){
-                   try{
-                   $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
-                   and dcbs01.department_id = ?',[$client,$select_list]);
+                    try{
+                        $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                        and dcbs01.department_id = ?',[$client,$select_list]);
                     }catch(\Exception $e){
-
                         OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                
+                        DatabaseException::common($e);
                     }
                    array_push($department_data,$data[0]);
 
                }elseif($code == "ji"){
-                   try{
-                   $data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
-                   and dcji01.personnel_id = ?',[$client,$select_list]);
+                    try{
+                        $data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                        and dcji01.personnel_id = ?',[$client,$select_list]);
                     }catch(\Exception $e){
-
-                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                        DatabaseException::common($e);
                     }
                    array_push($personnel_data,$data[0]);
                }else{

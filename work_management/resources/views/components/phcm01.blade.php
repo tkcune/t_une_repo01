@@ -5,9 +5,15 @@
             <p>総合システム</p>
         </div>
 
+        @if(session('message'))
+        <div class="col-5">
+            <p>{{ session('message') }}</p>
+        </div>
+        @else
         <div class="col-5">
             <p>メッセージを表示</p>
         </div>
+        @endif
 
         <div class="col-2">
             <p>ABCさん作業中</p>

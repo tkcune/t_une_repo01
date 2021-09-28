@@ -56,11 +56,13 @@ function treeDisabled()
 {
     var id = document.getElementById("tree");
 
-    if (document.getElementById(id).disabled === true){
-		// disabled属性を削除
-		document.getElementById(id).removeAttribute("disabled");
-	}else{
-		// disabled属性を設定
-		document.getElementById(id).setAttribute("disabled", true);
-	}
+    state=id.style.display;
+
+    if(state=="none"){
+      //スタイルを表示(inline)に切り替え
+      id.setAttribute("style","display:inline");
+    }else{
+      //スタイルを非表示(none)に切り替え
+     id.setAttribute("style","display:none");
+ }
 }

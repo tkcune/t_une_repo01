@@ -9,6 +9,7 @@ use App\Models\Date;
 use App\Librarys\php\StatusCheck;
 use App\Librarys\php\Pagination;
 use App\Librarys\php\Hierarchical;
+use App\Librarys\php\ResponsiblePerson;
 
 /**
  * 人員データを操作するコントローラー
@@ -223,10 +224,8 @@ class Psji01Controller extends Controller
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
         //責任者を名前で取得
-        foreach($departments as $department){
-        $responsible = DB::select('select name from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$department->responsible_person_id]);
-        array_push($responsible_lists,$responsible[0]->name);
-        }
+        $responsible = new ResponsiblePerson();
+        $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
         //上位階層取得
         $hierarchical = new Hierarchical();

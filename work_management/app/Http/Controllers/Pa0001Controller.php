@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request;
 use App\Librarys\php\Pagination;
+use App\Librarys\php\ResponsiblePerson;
 use App\Librarys\php\Hierarchical;
 use App\Http\Controllers\PtcmtrController;
+
 
 
 /**
@@ -16,32 +19,33 @@ use App\Http\Controllers\PtcmtrController;
 class Pa0001Controller extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * ディスプレイ表示
      *
+     * @param  int  $client_id 顧客ID　9/27現在　ダミーデータ
+     * @param  array $responsible_lists 責任者リスト
+     * @param　int $count_department 部署ページネーションのページ数
+     * @param　int $count_personnel  人員ページネーションのページ数
+     * @param  array $department_data 部署データ
+     * @param  array $personnel_data 人員データ
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
         //$client_idの数値はダミー
         $client_id = "aa00000001";
-        $responsible_lists = [];
-        $count_department = 1;
-        $count_personnel = 1;
+        $count_department = Config::get('startcount.count');
+        $count_personnel = Config::get('startcount.count');
 
         try{
-        $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
+            $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
-
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-            
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');  
         }
 
         try{
-        $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+            $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
-
-        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-        
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
         }
 
         //ページネーション
@@ -51,19 +55,9 @@ class Pa0001Controller extends Controller
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
-        
-
         //責任者を名前で取得
-        foreach($departments as $department){
-            try{
-            $responsible = DB::select('select name from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$department->responsible_person_id]);
-            }catch(\Exception $e){
-
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-            
-            }
-            array_push($responsible_lists,$responsible[0]->name);
-        }
+        $responsible = new ResponsiblePerson();
+        $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
        
         //上位階層取得
         $hierarchical = new Hierarchical();
@@ -152,7 +146,6 @@ class Pa0001Controller extends Controller
      */
     public function count(Request $request)
     {
-        $responsible_lists = [];
         $client_id = "aa00000001";
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
@@ -179,24 +172,18 @@ class Pa0001Controller extends Controller
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
         //責任者を名前で取得
-        foreach($departments as $department){
-            try{
-                $responsible = DB::select('select name from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$department->responsible_person_id]);
-            }catch(\Exception $e){
-
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-            
-            }
-            array_push($responsible_lists,$responsible[0]->name);
-        }
+        $responsible = new ResponsiblePerson();
+        $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
         $personnel_high = $hierarchical->upperHierarchyName($names);
         
+        //ツリーデータ取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
+
         return view('pacm01.pacm01',compact('departments','names','count_department','count_personnel',
         'department_max','personnel_max','department_high',
         'personnel_high','responsible_lists'));
@@ -210,12 +197,10 @@ class Pa0001Controller extends Controller
      */
     public function count2(Request $request)
     {
-        $responsible_lists = [];
         $lists = [];
         $department_data = [];
         $personnel_data = [];
-        
-
+    
         $client = $_GET['id'];
         $select_id = $_GET['id2'];
         $count_department = $_GET['department_page'];
@@ -270,22 +255,15 @@ class Pa0001Controller extends Controller
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
         //責任者を名前で取得
-        foreach($departments as $department){
-            try{
-            $responsible = DB::select('select name from dcji01 where client_id = ? and personnel_id = ?',[$client,$department->responsible_person_id]);
-            }catch(\Exception $e){
-
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-        
-            }
-            array_push($responsible_lists,$responsible[0]->name);
-        }
+        $responsible = new ResponsiblePerson();
+        $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
         $personnel_high = $hierarchical->upperHierarchyName($names);
         
+        //ツリーデータ取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 

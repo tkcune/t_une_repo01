@@ -48,7 +48,8 @@ class Ptcm01Controller extends Controller
         }catch(\Exception $e){
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-    
+            $request->session()->put('message',Config::get('message.mhcmer0001'));
+            return redirect()->route('index');
         }
         if(empty($id))
         {
@@ -72,7 +73,7 @@ class Ptcm01Controller extends Controller
         [$client_id,$projection_id,$projection_source_id]);
         }catch(\Exception $e){
 
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
     
         }
 
@@ -85,7 +86,8 @@ class Ptcm01Controller extends Controller
         }catch(\Exception $e){
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-    
+            $request->session()->put('message',Config::get('message.mhcmer0001'));
+            return redirect()->route('index');
         }
 
         return redirect()->route('index');
@@ -139,10 +141,12 @@ class Ptcm01Controller extends Controller
         [$id,$id2]);
         }catch(\Exception $e){
 
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-    
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            $request->session()->put('message',Config::get('message.mhcmer0001'));
         }
 
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
+        $request->session()->put('message',Config::get('message.mhcmok0003'));
         return redirect()->route('index');
     }
 }

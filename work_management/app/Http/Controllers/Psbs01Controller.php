@@ -8,6 +8,9 @@ use App\Librarys\php\Pagination;
 use App\Librarys\php\Hierarchical;
 use App\Librarys\php\StatusCheck;
 use App\Librarys\php\OutputLog;
+use Illuminate\Support\Facades\Config;
+use App\Librarys\php\Message;
+use App\Librarys\php\ResponsiblePerson;
 
 /**
  * 部署データを操作するコントローラー
@@ -69,8 +72,8 @@ class Psbs01Controller extends Controller
             order by department_id desc limit 1',[$client_id]);
         }catch(\Exception $e){
 
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            $request->session()->put('message',Config::get('message.mhcmer0001'));
         return redirect()->route('index');
         }
 
@@ -116,7 +119,7 @@ class Psbs01Controller extends Controller
         }catch(\Exception $e){
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-
+            $request->session()->put('message',Config::get('message.mhcmer0001','01'));
             return redirect()->route('index');
         }
 
@@ -128,13 +131,15 @@ class Psbs01Controller extends Controller
         [$client_id,$department_id,$high]);
         }catch(\Exception $e){
 
-        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-
+        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+        $request->session()->put('message',Config::get('message.mhcmer0001'));
         return redirect()->route('index');
         }
 
 
         OutputLog::message_log(__FUNCTION__, 'mhcmok0001');
+        //エラーメッセージの表示
+        $request->session()->put('message',Config::get('message.mhcmok0001'));
 
         return redirect()->route('index');
         
@@ -159,7 +164,6 @@ class Psbs01Controller extends Controller
          $lists = [];
          $department_data = [];
          $personnel_data = [];
-         $responsible_lists = [];
          array_push($lists,$select_id);
  
          //選択した部署の配下を取得
@@ -179,6 +183,7 @@ class Psbs01Controller extends Controller
                     }catch(\Exception $e){
 
                         OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                        
         
                         return redirect()->route('index');
                     }
@@ -209,10 +214,8 @@ class Psbs01Controller extends Controller
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
         //責任者を名前で取得
-        foreach($departments as $department){
-            $responsible = DB::select('select name from dcji01 where client_id = ? and personnel_id = ?',[$client,$department->responsible_person_id]);
-            array_push($responsible_lists,$responsible[0]->name);
-        }
+        $responsible = new ResponsiblePerson();
+        $responsible_lists = $responsible->getResponsibleLists($client,$departments);
        
         //上位階層取得
         $hierarchical = new Hierarchical();
@@ -221,7 +224,7 @@ class Psbs01Controller extends Controller
         
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
-        
+
         return view('psbs01.plbs01',compact('departments','names','count_department',
         'count_personnel','department_max','personnel_max','department_high',
         'personnel_high','responsible_lists','client','select_id'));
@@ -267,21 +270,45 @@ class Psbs01Controller extends Controller
             $check = new StatusCheck();
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
         
-            DB::update('update dcbs01 set name = ?,status = ?,operation_start_date = ? where client_id = ? and department_id = ?',
-            [$name,$status,$operation_start_date,$client_id,$department_id]);
+            try{
+                DB::update('update dcbs01 set name = ?,status = ?,operation_start_date = ? where client_id = ? and department_id = ?',
+                [$name,$status,$operation_start_date,$client_id,$department_id]);
+            }catch(\Exception $e){
+                //エラー処理
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                $request->session()->put('message',Config::get('message.mhcmer0001','01'));
+                return redirect()->route('index');
+            }
         }else if($status == "18"){
             //状態が廃止なら稼働終了日を更新
             $check = new StatusCheck();
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
         
-            DB::update('update dcbs01 set name = ?,status = ?,operation_end_date = ? where client_id = ? and department_id = ?',
-            [$name,$status,$operation_end_date,$client_id,$department_id]); 
+            try{
+                DB::update('update dcbs01 set name = ?,status = ?,operation_end_date = ? where client_id = ? and department_id = ?',
+                [$name,$status,$operation_end_date,$client_id,$department_id]); 
+            }catch(\Exception $e){
+                //エラー処理
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                $request->session()->put('message',Config::get('message.mhcmer0001'));
+                return redirect()->route('index');
+            }
         }else{
             //上記以外なら状態と名前のみ更新
-            DB::update('update dcbs01 set name = ?,status = ? where client_id = ? and department_id = ?',
-            [$name,$status,$client_id,$department_id]);
+            try{
+                DB::update('update dcbs01 set name = ?,status = ? where client_id = ? and department_id = ?',
+                [$name,$status,$client_id,$department_id]);
+            }catch(\Exception $e){
+                //エラー処理
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                $message = Message::get_message('mhcmer0001',[0=>'01']);
+                $request->session()->put('message',$message[0]);
+                return redirect()->route('index');
+            }
         }
-
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
+            $request->session()->put('message',Config::get('message.mhcmok0002'));
         return redirect()->route('index');
     }
 
@@ -368,6 +395,11 @@ class Psbs01Controller extends Controller
             }
             
         }
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
+        $message = Message::get_message('mhcmok0003',[0=>'']);
+        session(['message'=>$message[0]]);
+        
         return redirect()->route('index');
     
     }

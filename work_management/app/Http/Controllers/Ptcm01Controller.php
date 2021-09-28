@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Librarys\php\OutputLog;
+use App\Librarys\php\Message;
 
 /**
  * 投影データを操作するコントローラー
@@ -89,6 +91,10 @@ class Ptcm01Controller extends Controller
             return redirect()->route('index');
         }
 
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0010');
+        $message = Message::get_message('mhcmok0010',[0=>'']);
+        session(['message'=>$message[0]]);
         return redirect()->route('index');
     }
 
@@ -145,7 +151,8 @@ class Ptcm01Controller extends Controller
         }
 
         OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
-        $request->session()->put('message',Config::get('message.mhcmok0003'));
+        $message = Message::get_message('mhcmok0003',[0=>'']);
+        session(['message'=>$message[0]]);
         return redirect()->route('index');
     }
 }

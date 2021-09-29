@@ -142,9 +142,14 @@ class Pa0001Controller extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
+     * ページネーションのページ数移動
      * 
+     * @param  int  $client_id 顧客ID　9/27現在　ダミーデータ
+     * @param  array $responsible_lists 責任者リスト
+     * @param　int $count_department 部署ページネーションのページ数
+     * @param　int $count_personnel  人員ページネーションのページ数
+     * @param  array $department_data 部署データ
+     * @param  array $personnel_data 人員データ
      * @return \Illuminate\Http\Response
      */
     public function count(Request $request)
@@ -193,7 +198,13 @@ class Pa0001Controller extends Controller
     /**
      * 部署を絞り込みした後のページネーション
      *
-     * 
+     * @param  int  $client_id 顧客ID　9/27現在　ダミーデータ
+     * @param  array $responsible_lists 責任者リスト
+     * @param　int $count_department 部署ページネーションのページ数
+     * @param　int $count_personnel  人員ページネーションのページ数
+     * @param  array $department_data 部署データ
+     * @param  array $personnel_data 人員データ
+     * @return \Illuminate\Http\Response
      * @return \Illuminate\Http\Response
      */
     public function count2(Request $request)

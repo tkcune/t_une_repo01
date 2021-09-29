@@ -11,6 +11,10 @@ use App\Librarys\php\StatusCheck;
 use App\Librarys\php\Pagination;
 use App\Librarys\php\Hierarchical;
 use App\Librarys\php\ResponsiblePerson;
+use Illuminate\Support\Facades\Config;
+use App\Librarys\php\OutputLog;
+use App\Librarys\php\Message;
+use App\Librarys\php\ZeroPadding;
 
 /**
  * 人員データを操作するコントローラー
@@ -75,13 +79,9 @@ class Psji01Controller extends Controller
             $personnel_id = "ji00000001";
         }else{
 
-        $pieces[0] = substr($id[0]->personnel_id,0,2);
-        $pieces[1] = substr($id[0]->personnel_id,3);
-        $pieces[1] = $pieces[1] + "1";
-
-        //0埋め
-        $personnel_number = str_pad($pieces[1], 8, '0', STR_PAD_LEFT);
-        $personnel_id = $pieces[0].$personnel_number;
+        //登録する番号を作成
+        $padding = new ZeroPadding();
+        $personnel_id = $padding->padding($id[0]->personnel_id);
         }
 
         list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
@@ -227,9 +227,11 @@ class Psji01Controller extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * 人員データの削除
      *
-     * @param  int  $id
+     * @param  string  $id　顧客ID　
+     * @param  string  $id2 人員ID
+     * @param  string  $message ログメッセージ
      * @return \Illuminate\Http\Response
      */
     public function destroy($id,$id2)
@@ -253,12 +255,11 @@ class Psji01Controller extends Controller
      * 部署データ検索
      *
      * @param  @param  \Illuminate\Http\Request  $request
-     * @param  string  $id
+     * @param  string  $id　顧客ID
      * @return \Illuminate\Http\Response
      */
     public function search(Request $request,$id)
     {
-        $responsible_lists = [];
         $client_id = $id;
         $count_department = Config::get('startcount.count');
         $count_personnel = Config::get('startcount.count');
@@ -296,6 +297,7 @@ class Psji01Controller extends Controller
         $department_high = $hierarchical->upperHierarchyName($departments);
         $personnel_high = $hierarchical->upperHierarchyName($names);
 
+        //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
@@ -340,13 +342,9 @@ class Psji01Controller extends Controller
             return redirect()->route('index');
         }
 
-        $pieces[0] = substr($id[0]->personnel_id,0,2);
-        $pieces[1] = substr($id[0]->personnel_id,3);
-        $pieces[1] = $pieces[1] + "1";
-
-        //0埋め
-        $personnel_number = str_pad($pieces[1], 8, '0', STR_PAD_LEFT);
-        $personnel_id = $pieces[0].$personnel_number;
+        //登録する番号を作成
+        $padding = new ZeroPadding();
+        $personnel_id = $padding->padding($id[0]->personnel_id);
 
         //データベースに登録
         try{

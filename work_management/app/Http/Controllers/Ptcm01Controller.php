@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Librarys\php\OutputLog;
 use App\Librarys\php\Message;
+use App\Librarys\php\ZeroPadding;
+use App\Librarys\php\DatabaseException;
 
 /**
  * 投影データを操作するコントローラー
@@ -33,8 +35,13 @@ class Ptcm01Controller extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
+     * 投影データの登録
+     * @param  string $client_id　顧客ID
+     * @param  string $high_id 上位ID
+     * @param  string $projection_source_id　投影元ID
+     * @param  string $id 現時点で最新の投影ID
+     * @param  string $projection_id　作成する投影ID 
+     * @param  string $message ログメッセージ
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -58,13 +65,9 @@ class Ptcm01Controller extends Controller
             $projection_id = "ta00000001";
         }else{
 
-        $pieces[0] = substr($id[0]->projection_id,0,2);
-        $pieces[1] = substr($id[0]->projection_id,3);
-        $pieces[1] = $pieces[1] + "1";
-
-        //0埋め
-        $projection_number = str_pad($pieces[1], 8, '0', STR_PAD_LEFT);
-        $projection_id = $pieces[0].$projection_number;
+        //登録する番号を作成
+        $padding = new ZeroPadding();
+        $projection_id = $padding->padding($id[0]->projection_id);
         }
 
         //データベースに投影情報を登録
@@ -133,10 +136,11 @@ class Ptcm01Controller extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * 投影データの削除
      *
-     * @param  string  $id
-     * @param  string  $id2
+     * @param  string  $id 顧客ID
+     * @param  string  $id2　投影ID
+     * @param  string  $message ログメッセージ
      * @return \Illuminate\Http\Response
      */
     public function delete($id,$id2)

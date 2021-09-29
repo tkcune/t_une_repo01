@@ -258,8 +258,9 @@
                         <form action="{{ route('ptcm01.store') }}" method="post">
                         @csrf
                         @method('post')
-                        <input type="hidden" name="projection_source_id" value="{{ $high }}">
+                        <input type="hidden" name="projection_source_id" value="ji00000001">
                         <input type="hidden" name="client_id" value="aa00000001">
+                        <input type="hidden" name="high_id" value="bs00000003">
                         <button>投影</button>
                         </form>
                         {{-- ツリー操作機能ここまで　--}}

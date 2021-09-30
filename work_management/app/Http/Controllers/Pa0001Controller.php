@@ -22,12 +22,25 @@ class Pa0001Controller extends Controller
     /**
      * ディスプレイ表示
      *
-     * @param  int  $client_id 顧客ID　9/27現在　ダミーデータ
+     * @param  string  $client_id 顧客ID　9/27現在　ダミーデータ
      * @param  array $responsible_lists 責任者リスト
      * @param　int $count_department 部署ページネーションのページ数
      * @param　int $count_personnel  人員ページネーションのページ数
      * @param  array $department_data 部署データ
      * @param  array $personnel_data 人員データ
+     * @param  App\Librarys\php\Pagination $pagination 
+     * @param  int $department_max 部署データページネーションの最大値
+     * @param  array $departments ページネーション後の部署データ
+     * @param  int $personnel_max 人員データページネーションの最大値
+     * @param  array $names ページネーション後の部署データ
+     * @param  App\Librarys\php\ResponsiblePerson $responsible
+     * @param  array $responsible_lists 責任者リスト
+     * @param  App\Librarys\php\Hierarchical $hierarchical
+     * @param  array $department_high 部署データの上位階層
+     * @param  array $personnel_high 人員データの上位階層
+     * @param  App\Http\Controllers\PtcmtrController $tree
+     * @param  array $tree_data ツリーデータ
+     * 
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -67,6 +80,7 @@ class Pa0001Controller extends Controller
         $department_high = $hierarchical->upperHierarchyName($departments);
         $personnel_high = $hierarchical->upperHierarchyName($names);
         
+        //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
         
@@ -199,11 +213,15 @@ class Pa0001Controller extends Controller
      * 部署を絞り込みした後のページネーション
      *
      * @param  int  $client_id 顧客ID　9/27現在　ダミーデータ
+     * @param  array $lists 選択した部署
      * @param  array $responsible_lists 責任者リスト
      * @param　int $count_department 部署ページネーションのページ数
      * @param　int $count_personnel  人員ページネーションのページ数
      * @param  array $department_data 部署データ
      * @param  array $personnel_data 人員データ
+     * @param  array $select_lists 選択した部署の配下データ
+     * @param  string $code 機能コード
+     * @param  array  $data 取得したデータ
      * @return \Illuminate\Http\Response
      * @return \Illuminate\Http\Response
      */
@@ -213,6 +231,7 @@ class Pa0001Controller extends Controller
         $department_data = [];
         $personnel_data = [];
     
+        //リクエストの取得
         $client = $_GET['id'];
         $select_id = $_GET['id2'];
         $count_department = $_GET['department_page'];
@@ -221,7 +240,6 @@ class Pa0001Controller extends Controller
         //選択した部署のIDをarray型に格納
         array_push($lists,$select_id);
         
-
         //選択した部署の配下を取得
         $hierarchical = new Hierarchical();
         $select_lists = $hierarchical->subordinateSearch($lists,$client);

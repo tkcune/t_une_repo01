@@ -169,7 +169,7 @@
                         @if(!empty($_POST['search']))
                         部署<input type="text" name="search" value="{{ $_POST['search'] }}">
                         @else
-                        氏名<input type="text" name="search">
+                        部署<input type="text" name="search">
                         @endif
                         </form>
                         </div>

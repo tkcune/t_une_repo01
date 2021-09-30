@@ -20,7 +20,7 @@ use App\Librarys\php\ResponsiblePerson;
 class Psbs01Controller extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * 部署新規登録画面表示
      *
      * @return \Illuminate\Http\Response
      */
@@ -52,8 +52,8 @@ class Psbs01Controller extends Controller
      * @param  string $management_personnel_id　管理者ID
      * @param  string $high　上位部署のID番号
      * @param  string $id　顧客IDに対応した最新の部署IDを格納する因数
-     * @param  array $pieces 部署IDを英字と数字に分けるための配列
-     * @param  int $department_number 0埋めをした部署IDの数字部分
+     * @param  string $operation_start_date　稼働開始日
+     * @param  string $operation_end_date　稼働終了日
      * @param  int $department_id 部署ID
      * 
      * @return \Illuminate\Http\Response
@@ -142,9 +142,19 @@ class Psbs01Controller extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * 配下部署の表示
      *
-     * @param  int  $id
+     * @param  string $client 顧客ID
+     * @param  string $select_id 選択した部署ID
+     * @param  array $lists 選択した部署
+     * @param  array $responsible_lists 責任者リスト
+     * @param　int $count_department 部署ページネーションのページ数
+     * @param　int $count_personnel  人員ページネーションのページ数
+     * @param  array $department_data 部署データ
+     * @param  array $personnel_data 人員データ
+     * @param  array $select_lists 選択した部署の配下データ
+     * @param  string $code 機能コード
+     * @param  array  $data 取得したデータ
      * @return \Illuminate\Http\Response
      */
     public function show($client,$select_id)
@@ -153,8 +163,8 @@ class Psbs01Controller extends Controller
         {
             return redirect()->route('index');
         }
-        $count_department = 1;
-        $count_personnel = 1;
+        $count_department = Config::get('startcount.count');
+        $count_personnel = Config::get('startcount.count');
 
         //選択した部署のIDをarray型に格納
         $lists = [];
@@ -444,12 +454,14 @@ class Psbs01Controller extends Controller
      * 部署データ検索
      *
      * @param  @param  \Illuminate\Http\Request  $request
-     * @param  string  $id
+     * @param  string  $client_id 顧客ID
+     * @param  int $count_department 部署ページネーションのページ数
+     * @param  int $count_personnel 人員ページネーションのページ数
+     * 
      * @return \Illuminate\Http\Response
      */
     public function search(Request $request,$id)
     {
-        $responsible_lists = [];
         $client_id = $id;
         $count_department = Config::get('startcount.count');
         $count_personnel = Config::get('startcount.count');
@@ -481,7 +493,7 @@ class Psbs01Controller extends Controller
 
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
-        $responsible_lists = $responsible->getResponsibleLists($client,$departments);
+        $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
         //上位階層取得
         $hierarchical = new Hierarchical();
@@ -497,7 +509,14 @@ class Psbs01Controller extends Controller
 
     /**
      * 9/10 データベースに登録するメソッドは恐らく、共通関数でまとめられる予定　現在・未実装
+     * 
      * 複製したデータを挿入するメソッド
+     * @param string $client_id 顧客ID
+     * @param string $copy_id 複製するID
+     * @param string $high 複製IDが所属する上位階層ID
+     * @param array  $copy_department 複製するデータ
+     * @param string $department_id 登録する部署ID
+     * 
      */
     public function copy(Request $request){
 

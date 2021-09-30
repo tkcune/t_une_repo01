@@ -22,7 +22,7 @@ use App\Librarys\php\ZeroPadding;
 class Psji01Controller extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * 人員新規登録画面表示
      *
      * @return \Illuminate\Http\Response
      */
@@ -252,10 +252,13 @@ class Psji01Controller extends Controller
     }
 
     /**
-     * 部署データ検索
+     * データ検索
      *
      * @param  @param  \Illuminate\Http\Request  $request
-     * @param  string  $id　顧客ID
+     * @param  string  $client_id　顧客ID
+     * @param  int $count_department 部署ページネーションのページ数
+     * @param  int $count_personnel 人員ページネーションのページ数
+     * 
      * @return \Illuminate\Http\Response
      */
     public function search(Request $request,$id)
@@ -307,7 +310,13 @@ class Psji01Controller extends Controller
 
     /**
      * 9/10 データベースに登録するメソッドは恐らく、共通関数でまとめられる予定　現在・未実装
+     * 
      * 複製したデータを挿入するメソッド
+     * @param string $client_id 顧客ID
+     * @param string $copy_id 複製するID
+     * @param string $high 複製IDが所属する上位階層ID
+     * @param array  $copy_personnel 複製するデータ
+     * @param string $department_id 登録する部署ID
      */
     public function copy(Request $request){
 

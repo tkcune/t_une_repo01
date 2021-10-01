@@ -2161,6 +2161,42 @@ TreeAction = ((treesepalete, projectionChain) => {
     return splitToDir.shift();
   }
 
+  window.addEventListener('beforeunload', function(){
+    let storage = {};
+    chainparser.concatNode(tree).forEach(node => {
+      if(node.className === 'expandtree' || node.className === 'lastexpandtree'){
+        if(!node.element.children[0].classList.value.match('unexpand')){
+          storage[node.id] = node.id;
+        }
+      }
+    });
+    let jsonStorage = JSON.stringify(storage);
+    localStorage.setItem('id', jsonStorage);
+    localStorage.setItem('currentId', clipboard.getCurrentId());
+    localStorage.setItem('currentDir', clipboard.getCurrentDir());
+    localStorage.setItem('selectId', clipboard.getSelectId());
+    localStorage.setItem('selectDir', clipboard.getSelectDir());
+    localStorage.setItem('copyId', clipboard.getCopyId());
+    localStorage.setItem('copyDir', clipboard.getCopyDir());
+  });
+
+  window.addEventListener('DOMContentLoaded', function(){
+    if(localStorage.hasOwnProperty('id')){
+      let storage = JSON.parse(localStorage.getItem('id'));
+    
+      Object.keys(storage).forEach(id => {
+        let node = chainparser.searchNodeId(storage[id], tree);
+        node.openBottomUpTree();
+      });
+      clipboard.current(localStorage.getItem('currentDir'), localStorage.getItem('currentId'));
+      clipboard.select(localStorage.getItem('selectDir'), localStorage.getItem('selectId'));
+      clipboard.copyNode(localStorage.getItem('copyDir'), localStorage.getItem('copyId'));
+      let currentNode = chainparser.searchNodeId(clipboard.getCurrentId(), tree);
+      if(currentNode !== undefined || currentNode !== null){
+        currentNode.focus();
+      }
+    }
+  });
   return {
     copyNode: copyNode,
     deleteNode: deleteNode,
@@ -2181,4 +2217,39 @@ TreeAction = ((treesepalete, projectionChain) => {
 
 })(treeChain, projectionChain);
 
+TreeAction.addNodeClickEvent(function(){
+  //詳細行に表示する部署のデータを取得する
+  axios.get('http://localhost:8000/api/bs/resource?id=' + this.id)
+    .then(response => {
+      //@var array 詳細行に表示するデータ
+      let attribute = response['data']['data']['attribute'];
+
+      //詳細行のdom
+      let detailRow = document.getElementById('parent');
+
+      //部署名
+      detailRow.children[0].children[0].children[0].children[0].value = attribute['title'];
+      //番号
+      detailRow.children[0].children[1].children[0].innerText = "番号:" + attribute['id'];
+      //上位
+      detailRow.children[0].children[2].children[0].children[0].innerText = attribute['high'];
+      //状態
+      detailRow.children[1].children[0].children[0].children[0].value = attribute['status'];
+      //責任者
+      var option = document.createElement("option");
+      // optionタグのテキストに責任者を設定する
+      option.text = attribute['responsible_person'];
+      // optionタグのvalueに部署のid設定する
+      option.value = attribute['id'];
+      // selectタグの子要素にoptionタグを追加する
+      detailRow.children[1].children[0].children[0].children[1].appendChild(option);
+      detailRow.children[1].children[0].children[0].children[1].value =  attribute['id'];
+      //登録日
+      detailRow.children[2].children[0].childNodes[3].nodeValue = "登録日:" + attribute['created_at'] + "登録者:";
+      //登録者
+      detailRow.children[2].children[0].children[2].innerText = attribute['manegement_person'];
+    })
+    //エラーログを流すだけ
+    .catch(error => console.log(error));
+})
 export {TreeAction};

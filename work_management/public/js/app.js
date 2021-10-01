@@ -2381,6 +2381,25 @@ TreeAction.node = /*#__PURE__*/function () {
 
         palent.openBottomUpTree();
       }
+    } //ツリーを閉じる
+
+  }, {
+    key: "closeBottomUpTree",
+    value: function closeBottomUpTree() {
+      //@var array splitDir ディレクトリの文字を分割した配列
+      var splitDir = this.dir.split('/'); //最後の文字を削除する
+
+      splitDir.pop(); //配列が1の時は、chaintreeなので、openBottomUpTreeを呼ばない
+
+      if (splitDir.length !== 1) {
+        //@var Nodeクラス palent 目的のノードクラスの親要素
+        var palent = this.prototype.chainparser.searchNodeDir(splitDir.join('/'), this.prototype.tree); //目的のノードクラスの親要素のツリーを閉じる
+
+        palent.closeBox();
+        palent.noneDisplayNode(); //また親要素を引数にして再帰的に、closeBottomUpTreeを呼び出す
+
+        palent.closeBottomUpTree();
+      }
     } //@param Nodeクラス node 非表示にするノードクラス
     //子要素全体を非表示にする
 
@@ -3812,6 +3831,24 @@ TreeAction = function (treesepalete, projectionChain) {
 
     _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(currentNode.dir, currentNode.id);
     _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(currentNode.dir, currentNode.id);
+  }; //@param string nodeId ノードのid
+  //ノードを開く
+
+
+  var openNode = function openNode(nodeId) {
+    //@var Nodeクラス 開くノードクラス
+    var node = chainparser.searchNodeId(String(nodeId), tree); //ノードを開く
+
+    node.openBottomUpTree();
+  }; //@param string nodeId ノードのid
+  //ノードを閉じる
+
+
+  var closeNode = function closeNode(nodeId) {
+    //@var Nodeクラス 閉じるノードクラス
+    var node = chainparser.searchNodeId(String(nodeId), tree); //ノードを開く
+
+    node.closeBottomUpTree();
   }; //ツリーのノードをidから検索する
   //@var string nodeId ノードクラスのid
   //@return Nodeクラス 検索したノードクラス
@@ -4004,6 +4041,41 @@ TreeAction = function (treesepalete, projectionChain) {
     return splitToDir.shift();
   };
 
+  window.addEventListener('beforeunload', function () {
+    var storage = {};
+    chainparser.concatNode(tree).forEach(function (node) {
+      if (node.className === 'expandtree' || node.className === 'lastexpandtree') {
+        if (!node.element.children[0].classList.value.match('unexpand')) {
+          storage[node.id] = node.id;
+        }
+      }
+    });
+    var jsonStorage = JSON.stringify(storage);
+    localStorage.setItem('id', jsonStorage);
+    localStorage.setItem('currentId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId());
+    localStorage.setItem('currentDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentDir());
+    localStorage.setItem('selectId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectId());
+    localStorage.setItem('selectDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectDir());
+    localStorage.setItem('copyId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCopyId());
+    localStorage.setItem('copyDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCopyDir());
+  });
+  window.addEventListener('DOMContentLoaded', function () {
+    if (localStorage.hasOwnProperty('id')) {
+      var storage = JSON.parse(localStorage.getItem('id'));
+      Object.keys(storage).forEach(function (id) {
+        var node = chainparser.searchNodeId(storage[id], tree);
+        node.openBottomUpTree();
+      });
+      _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(localStorage.getItem('currentDir'), localStorage.getItem('currentId'));
+      _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(localStorage.getItem('selectDir'), localStorage.getItem('selectId'));
+      _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.copyNode(localStorage.getItem('copyDir'), localStorage.getItem('copyId'));
+      var currentNode = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(), tree);
+
+      if (currentNode !== undefined || currentNode !== null) {
+        currentNode.focus();
+      }
+    }
+  });
   return {
     copyNode: copyNode,
     deleteNode: deleteNode,
@@ -4013,6 +4085,8 @@ TreeAction = function (treesepalete, projectionChain) {
     appendNode: appendNode,
     searchNodeId: searchNodeId,
     current: current,
+    openNode: openNode,
+    closeNode: closeNode,
     blindDeleteNode: blindDeleteNode,
     blindPasteNode: blindPasteNode,
     blindModeNode: blindModeNode,
@@ -4021,6 +4095,39 @@ TreeAction = function (treesepalete, projectionChain) {
   };
 }(treeChain, projectionChain);
 
+TreeAction.addNodeClickEvent(function () {
+  //詳細行に表示する部署のデータを取得する
+  axios.get('http://localhost:8000/api/bs/resource?id=' + this.id).then(function (response) {
+    //@var array 詳細行に表示するデータ
+    var attribute = response['data']['data']['attribute']; //詳細行のdom
+
+    var detailRow = document.getElementById('parent'); //部署名
+
+    detailRow.children[0].children[0].children[0].children[0].value = attribute['title']; //番号
+
+    detailRow.children[0].children[1].children[0].innerText = "番号:" + attribute['id']; //上位
+
+    detailRow.children[0].children[2].children[0].children[0].innerText = attribute['high']; //状態
+
+    detailRow.children[1].children[0].children[0].children[0].value = attribute['status']; //責任者
+
+    var option = document.createElement("option"); // optionタグのテキストに責任者を設定する
+
+    option.text = attribute['responsible_person']; // optionタグのvalueに部署のid設定する
+
+    option.value = attribute['id']; // selectタグの子要素にoptionタグを追加する
+
+    detailRow.children[1].children[0].children[0].children[1].appendChild(option);
+    detailRow.children[1].children[0].children[0].children[1].value = attribute['id']; //登録日
+
+    detailRow.children[2].children[0].childNodes[3].nodeValue = "登録日:" + attribute['created_at'] + "登録者:"; //登録者
+
+    detailRow.children[2].children[0].children[2].innerText = attribute['manegement_person'];
+  }) //エラーログを流すだけ
+  ["catch"](function (error) {
+    return console.log(error);
+  });
+});
 
 
 /***/ }),

@@ -2118,9 +2118,11 @@ TreeAction.node = /*#__PURE__*/function () {
 
       ul.classList.add(this.className); //@var dom li li要素
 
-      var li = document.createElement('li'); //li要素に、タイトルを挿入する
+      var li = document.createElement('li'); //@var stirng アイコンの名前
 
-      li.innerText = this.title; //クリック処理。テスト用のクリック処理
+      var img_name = this.getImgName(); //li要素に、アイコンとタイトルを挿入する
+
+      li.innerHTML = '<img src = "image/' + img_name + '.png" width = "15" height = "17">' + this.title; //クリック処理。テスト用のクリック処理
       //クリックした要素を表示する
 
       li.addEventListener('click', {
@@ -2249,9 +2251,12 @@ TreeAction.node = /*#__PURE__*/function () {
       //@var dom div divTreeBoxに追加するdom
       var div = document.createElement('div'); //boxValueの0番目に、クラス名
 
-      div.classList.add('titlebox'); //boxValueの1番目に、表示する文字。
+      div.classList.add('titlebox'); //@var string アイコンの名前
 
-      div.innerText = this.title;
+      var img_name = this.getImgName(); //div要素に、アイコンとタイトルを挿入する
+
+      div.innerHTML = '<img src = "image/' + img_name + '.png" width = "15" height = "17">' + this.title; //クリック処理を追加する
+
       div.addEventListener('click', {
         node: this,
         handleEvent: this.displayDetail
@@ -2597,6 +2602,33 @@ TreeAction.node = /*#__PURE__*/function () {
         }
       });
       return copyNode;
+    } //ノードのidから表示するアイコンの名前を取得する
+    //@return string アイコンの名前
+
+  }, {
+    key: "getImgName",
+    value: function getImgName() {
+      //@var stirng 返すアイコンの名前
+      var img_name;
+
+      if (this.id.substr(0, 2) === 'ji') {
+        //人事の場合
+        img_name = 'ji';
+      } else if (this.id.substr(0, 2) === 'bs') {
+        //部署の場合
+        img_name = 'bs';
+      } else if (this.id.substr(0, 2) === 'ta') {
+        //投影の場合
+        img_name = this.toLink[0].substr(0, 2);
+      } else if (this.id.substr(0, 2) === 'ur') {
+        //ユーザー情報の場合
+        img_name = 'ur';
+      } else if (this.id.substr(0, 2) === 'lg') {
+        //ログアウトの場合
+        img_name = 'lg';
+      }
+
+      return img_name;
     }
   }]);
 
@@ -3042,11 +3074,23 @@ TreeAction.createTree = function (treesepalete, projectionChain, Node, chainpars
       //@var Nodeクラス fromNode 投影元のノードクラス
       var fromNode = chainparser.searchNodeId(Object.keys(chain)[0].split('.')[0], treeTop); //@var Nodeクラス toNode 投影先のノードクラス
 
-      var toNode = chainparser.searchNodeId(Object.values(chain)[0].split('.')[0], treeTop); //投影先を斜体にする
-
-      toNode.onSync(); //投影先と投影元をリンクさせる
+      var toNode = chainparser.searchNodeId(Object.values(chain)[0].split('.')[0], treeTop); //投影先と投影元をリンクさせる
 
       chainparser.syncLink(fromNode, toNode);
+    });
+  }; //投影のノードを斜体にする
+  //@param Nodeクラス treeTop ツリー全体のインスタンス
+
+
+  var onSyncTree = function onSyncTree(treeTop) {
+    //全ノードを取得して、回す
+    chainparser.concatNode(treeTop).forEach(function (node) {
+      //投影のノードを斜体にする
+      if (typeof node.id === 'string') {
+        if (node.id.substr(0, 2) === 'ta') {
+          node.onSync();
+        }
+      }
     });
   }; //@var nodeクラス this.treeTop ツリーの一番上のノード
 
@@ -3063,15 +3107,17 @@ TreeAction.createTree = function (treesepalete, projectionChain, Node, chainpars
     treeTop.child.push(createTopNode(sepalete, treeTop));
   }); //ツリーの全体のcssのクラス名を決める
 
-  decisionClass(treeTop); //domを生成して、ツリーを描画する
+  decisionClass(treeTop); //投影
 
-  createElement(treeTop); //ツリーのdom要素を生成した時は、ツリーは表示しているので、非表示にする。
+  syncProjection(projectionChain); //domを生成して、ツリーを描画する
+
+  createElement(treeTop); //投影を斜体にする
+
+  onSyncTree(treeTop); //ツリーのdom要素を生成した時は、ツリーは表示しているので、非表示にする。
 
   treeTop.child.forEach(function (child) {
     child.noneDisplayTree();
-  }); //投影
-
-  syncProjection(projectionChain); //ツリーインスタンスを返す
+  }); //ツリーインスタンスを返す
 
   return treeTop;
 }; //@param ChainParserクラス chainparser チェインパーサーのクラス

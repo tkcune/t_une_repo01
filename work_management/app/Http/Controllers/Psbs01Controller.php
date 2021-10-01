@@ -611,8 +611,14 @@ class Psbs01Controller extends Controller
         //@var array リソースに渡す連想配列
         $json = array();
         try {
+            //テーブルから取得するid
+            $id = $request->id;
+            //投影テーブルのidなら、投影元のidを取得する
+            if(substr($id, 0, 2) == 'ta'){
+                $id = DB::select('select projection_source_id from dccmta where projection_id = ?', [$id])[0]->projection_source_id;
+            }
             //@var array 部署テーブルから詳細行に表示するデータを取得する
-            $data = DB::select('select * from dcbs01 where department_id = ?', [$request->id]);
+            $data = DB::select('select * from dcbs01 where department_id = ?', [$id]);
             //@var array 人事テーブルから責任者を取得する
             $responsible_person = DB::select('select name from dcji01 where personnel_id = ?', [$data[0]->responsible_person_id]);
             //@var array 人事テーブルから登録者を取得する

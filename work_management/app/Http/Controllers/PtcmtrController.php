@@ -14,11 +14,6 @@ class PtcmtrController extends Controller
         View::share('projection_chain', $tree_data[1]);
     }
 
-    //ツリーの追加情報をblade側にセットする
-    static function append_node($id){
-        View::share('treeaction_chain', array('action' => 'append', 'id' => $id));
-    }
-
     //ツリーの削除情報をblade側にセットする
     static function delete_node($id){
         View::share('treeaction_chain', array('action' => 'delete', 'id' => $id));
@@ -27,10 +22,5 @@ class PtcmtrController extends Controller
     //ツリーの展開情報をblade側にセットする
     static function open_node($id){
         View::share('treeaction_chain', array('action' => 'open', 'id' => $id));
-    }
-
-    //ツリーの更新情報をblade側にセットする
-    static function update_node($id){
-        view::share('treeaction_chain', array('action' => 'update', 'id' => $id));
     }
 }

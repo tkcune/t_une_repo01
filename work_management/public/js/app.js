@@ -4122,7 +4122,7 @@ TreeAction = function (treesepalete, projectionChain) {
 
       if (treeaction_chain !== null) {
         //oepn,apend,updateなら、ノードを開く
-        if (treeaction_chain['action'] === 'open' || treeaction_chain['action'] === 'append' || treeaction_chain['update']) {
+        if (treeaction_chain['action'] === 'open') {
           chainparser.searchNodeId(treeaction_chain['id'], tree).openBottomUpTree();
         } else if (treeaction_chain['action'] === 'delete') {
           //deleteならば、そのノードを開かない

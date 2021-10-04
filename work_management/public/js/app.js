@@ -4085,44 +4085,68 @@ TreeAction = function (treesepalete, projectionChain) {
     splitToDir.shift(); //ディレクトリの一番先頭文字を取得する
 
     return splitToDir.shift();
-  };
+  }; //ページ移動前のイベント
+
 
   window.addEventListener('beforeunload', function () {
-    var storage = {};
+    //@var array idを保存する連想配列
+    var storage = {}; //全体のツリーを探索する
+
     chainparser.concatNode(tree).forEach(function (node) {
+      //展開するツリーノードか、判断する
       if (node.className === 'expandtree' || node.className === 'lastexpandtree') {
+        //展開している(非表示ではない)ノードのidを保存する
         if (!node.element.children[0].classList.value.match('unexpand')) {
           storage[node.id] = node.id;
         }
       }
-    });
-    var jsonStorage = JSON.stringify(storage);
-    localStorage.setItem('beforepath', window.location.pathname);
-    localStorage.setItem('id', jsonStorage);
+    }); //@var string 連想配列をjson文字列にする
+
+    var jsonStorage = JSON.stringify(storage); //配列は保存できないので、json文字列に変換して保存する
+
+    localStorage.setItem('id', jsonStorage); //クリップボードのデータを保存する
+
     localStorage.setItem('currentId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId());
     localStorage.setItem('currentDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentDir());
     localStorage.setItem('selectId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectId());
     localStorage.setItem('selectDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectDir());
     localStorage.setItem('copyId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCopyId());
     localStorage.setItem('copyDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCopyDir());
-  });
+  }); //ページ移動後のイベント
+
   window.addEventListener('DOMContentLoaded', function () {
+    //idをキーの存在で、ページ移動をしたと判断する
     if (localStorage.hasOwnProperty('id')) {
-      var storage = JSON.parse(localStorage.getItem('id'));
+      //@var array ツリーを開いていたノードのidの配列
+      var storage = JSON.parse(localStorage.getItem('id')); //ツリーに対して変更があったか、判断する
+
+      if (treeaction_chain !== null) {
+        //oepn,apend,updateなら、ノードを開く
+        if (treeaction_chain['action'] === 'open' || treeaction_chain['action'] === 'append' || treeaction_chain['update']) {
+          chainparser.searchNodeId(treeaction_chain['id'], tree).openBottomUpTree();
+        } else if (treeaction_chain['action'] === 'delete') {
+          //deleteならば、そのノードを開かない
+          if (treeaction_chain['id'] in storage) {
+            delete storage[treeaction_chain['id']];
+          }
+        }
+      } //ページ移動前に開いていたノードを開く
+
+
       Object.keys(storage).forEach(function (id) {
         var node = chainparser.searchNodeId(storage[id], tree);
         node.openBottomUpTree();
-      });
+      }); //ページ移動前のクリップボードのデータを復元する
+
       _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(localStorage.getItem('currentDir'), localStorage.getItem('currentId'));
       _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(localStorage.getItem('selectDir'), localStorage.getItem('selectId'));
-      _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.copyNode(localStorage.getItem('copyDir'), localStorage.getItem('copyId'));
-      var currentNode = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(), tree);
+      _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.copyNode(localStorage.getItem('copyDir'), localStorage.getItem('copyId')); //@var Nodeクラス カレントノード
+
+      var currentNode = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(), tree); //カレントノードをカレントにする
 
       if (currentNode !== undefined && currentNode !== null) {
         currentNode.focus();
       }
-
-      console.log(localStorage.getItem('beforepath'), window.location.pathname);
     }
   });
   return {

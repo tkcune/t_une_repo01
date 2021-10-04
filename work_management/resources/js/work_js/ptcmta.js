@@ -2208,18 +2208,25 @@ TreeAction = ((treesepalete, projectionChain) => {
     return splitToDir.shift();
   }
 
+  //ページ移動前のイベント
   window.addEventListener('beforeunload', function(){
+    //@var array idを保存する連想配列
     let storage = {};
+    //全体のツリーを探索する
     chainparser.concatNode(tree).forEach(node => {
+      //展開するツリーノードか、判断する
       if(node.className === 'expandtree' || node.className === 'lastexpandtree'){
+        //展開している(非表示ではない)ノードのidを保存する
         if(!node.element.children[0].classList.value.match('unexpand')){
           storage[node.id] = node.id;
         }
       }
     });
+    //@var string 連想配列をjson文字列にする
     let jsonStorage = JSON.stringify(storage);
-    localStorage.setItem('beforepath', window.location.pathname);
+    //配列は保存できないので、json文字列に変換して保存する
     localStorage.setItem('id', jsonStorage);
+    //クリップボードのデータを保存する
     localStorage.setItem('currentId', clipboard.getCurrentId());
     localStorage.setItem('currentDir', clipboard.getCurrentDir());
     localStorage.setItem('selectId', clipboard.getSelectId());
@@ -2228,22 +2235,40 @@ TreeAction = ((treesepalete, projectionChain) => {
     localStorage.setItem('copyDir', clipboard.getCopyDir());
   });
 
+  //ページ移動後のイベント
   window.addEventListener('DOMContentLoaded', function(){
+    //idをキーの存在で、ページ移動をしたと判断する
     if(localStorage.hasOwnProperty('id')){
+      //@var array ツリーを開いていたノードのidの配列
       let storage = JSON.parse(localStorage.getItem('id'));
     
+      //ツリーに対して変更があったか、判断する
+      if(treeaction_chain !== null){
+        //oepn,apend,updateなら、ノードを開く
+        if(treeaction_chain['action'] === 'open' || treeaction_chain['action'] === 'append' || treeaction_chain['update']){
+          chainparser.searchNodeId(treeaction_chain['id'], tree).openBottomUpTree();
+        }else if(treeaction_chain['action'] === 'delete'){
+          //deleteならば、そのノードを開かない
+          if(treeaction_chain['id'] in storage){
+            delete storage[treeaction_chain['id']];
+          }
+        }
+      }
+      //ページ移動前に開いていたノードを開く
       Object.keys(storage).forEach(id => {
         let node = chainparser.searchNodeId(storage[id], tree);
         node.openBottomUpTree();
       });
+      //ページ移動前のクリップボードのデータを復元する
       clipboard.current(localStorage.getItem('currentDir'), localStorage.getItem('currentId'));
       clipboard.select(localStorage.getItem('selectDir'), localStorage.getItem('selectId'));
       clipboard.copyNode(localStorage.getItem('copyDir'), localStorage.getItem('copyId'));
+      //@var Nodeクラス カレントノード
       let currentNode = chainparser.searchNodeId(clipboard.getCurrentId(), tree);
+      //カレントノードをカレントにする
       if(currentNode !== undefined && currentNode !== null){
         currentNode.focus();
       }
-      console.log(localStorage.getItem('beforepath'), window.location.pathname);
     }
   });
   return {
@@ -2300,5 +2325,6 @@ TreeAction.addNodeClickEvent(function(){
     })
     //エラーログを流すだけ
     .catch(error => console.log(error));
-})
+});
+
 export {TreeAction};

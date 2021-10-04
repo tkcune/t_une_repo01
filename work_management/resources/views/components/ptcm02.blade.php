@@ -11,4 +11,9 @@
             let treeChain = @json($tree_chain);
             let projectionChain = @json($projection_chain);
         </script>
+        @if(isset($treeaction_chain))
+            <script>let treeaction_chain = @json($treeaction_chain);</script>
+        @else
+            <script>let treeaction_chain = null;</script>
+        @endif
     {{-- コメント　ツリー画面ここまで --}}

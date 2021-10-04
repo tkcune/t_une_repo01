@@ -17,7 +17,7 @@
             <input type="hidden" name="department_id" value="bs00000004">
             <input type="hidden" name="client_id" value="{{ $a }}">
 
-            <div class="details-area border border-dark bg-warning" style="padding:10px;">
+            <div class="details-area border border-dark bg-warning" style="padding:10px;"　id="parent">
                 <div class="row">
                     <div class="col-4">
                         <p id="palent">部署名<input type="text" name="name"></p>

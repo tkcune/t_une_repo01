@@ -2,7 +2,7 @@
     <header>
     <div class="row border border-dark">
         <div class="col-2">
-            <p>総合システム</p>
+            <p>{{Config::get('config.system_name')}}</p>
         </div>
 
         @if(session('message'))

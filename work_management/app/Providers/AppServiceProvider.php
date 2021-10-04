@@ -45,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
             //@var string デバックモードの値
-            $debug_mode = $app->config['debug']['debug_mode'];
+            $debug_mode = $app->config['config']['debug_mode'];
             
             //インスタンスを作成し、返す
             return new OutputLogClass($client_id, $user, $debug_mode);

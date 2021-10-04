@@ -145,7 +145,7 @@ TreeAction.node = class Node {
     let img_name = this.getImgName();
 
     //li要素に、アイコンとタイトルを挿入する
-    li.innerHTML = '<img src = "image/' + img_name + '.png" width = "15" height = "17">' + this.title;
+    li.innerHTML = '<img src = "/image/' + img_name + '.png" width = "15" height = "17">' + this.title;
 
       
     //クリック処理。テスト用のクリック処理
@@ -291,7 +291,7 @@ TreeAction.node = class Node {
     let img_name = this.getImgName();
 
     //div要素に、アイコンとタイトルを挿入する
-    div.innerHTML = '<img src = "image/' + img_name + '.png" width = "15" height = "17">' + this.title;
+    div.innerHTML = '<img src = "/image/' + img_name + '.png" width = "15" height = "17">' + this.title;
 
     //クリック処理を追加する
     div.addEventListener('click', {node: this, handleEvent: this.displayDetail});
@@ -2218,6 +2218,7 @@ TreeAction = ((treesepalete, projectionChain) => {
       }
     });
     let jsonStorage = JSON.stringify(storage);
+    localStorage.setItem('beforepath', window.location.pathname);
     localStorage.setItem('id', jsonStorage);
     localStorage.setItem('currentId', clipboard.getCurrentId());
     localStorage.setItem('currentDir', clipboard.getCurrentDir());
@@ -2239,9 +2240,10 @@ TreeAction = ((treesepalete, projectionChain) => {
       clipboard.select(localStorage.getItem('selectDir'), localStorage.getItem('selectId'));
       clipboard.copyNode(localStorage.getItem('copyDir'), localStorage.getItem('copyId'));
       let currentNode = chainparser.searchNodeId(clipboard.getCurrentId(), tree);
-      if(currentNode !== undefined || currentNode !== null){
+      if(currentNode !== undefined && currentNode !== null){
         currentNode.focus();
       }
+      console.log(localStorage.getItem('beforepath'), window.location.pathname);
     }
   });
   return {

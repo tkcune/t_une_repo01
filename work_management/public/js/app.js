@@ -2122,7 +2122,7 @@ TreeAction.node = /*#__PURE__*/function () {
 
       var img_name = this.getImgName(); //li要素に、アイコンとタイトルを挿入する
 
-      li.innerHTML = '<img src = "image/' + img_name + '.png" width = "15" height = "17">' + this.title; //クリック処理。テスト用のクリック処理
+      li.innerHTML = '<img src = "/image/' + img_name + '.png" width = "15" height = "17">' + this.title; //クリック処理。テスト用のクリック処理
       //クリックした要素を表示する
 
       li.addEventListener('click', {
@@ -2255,7 +2255,7 @@ TreeAction.node = /*#__PURE__*/function () {
 
       var img_name = this.getImgName(); //div要素に、アイコンとタイトルを挿入する
 
-      div.innerHTML = '<img src = "image/' + img_name + '.png" width = "15" height = "17">' + this.title; //クリック処理を追加する
+      div.innerHTML = '<img src = "/image/' + img_name + '.png" width = "15" height = "17">' + this.title; //クリック処理を追加する
 
       div.addEventListener('click', {
         node: this,
@@ -4097,6 +4097,7 @@ TreeAction = function (treesepalete, projectionChain) {
       }
     });
     var jsonStorage = JSON.stringify(storage);
+    localStorage.setItem('beforepath', window.location.pathname);
     localStorage.setItem('id', jsonStorage);
     localStorage.setItem('currentId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId());
     localStorage.setItem('currentDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentDir());
@@ -4117,9 +4118,11 @@ TreeAction = function (treesepalete, projectionChain) {
       _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.copyNode(localStorage.getItem('copyDir'), localStorage.getItem('copyId'));
       var currentNode = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(), tree);
 
-      if (currentNode !== undefined || currentNode !== null) {
+      if (currentNode !== undefined && currentNode !== null) {
         currentNode.focus();
       }
+
+      console.log(localStorage.getItem('beforepath'), window.location.pathname);
     }
   });
   return {

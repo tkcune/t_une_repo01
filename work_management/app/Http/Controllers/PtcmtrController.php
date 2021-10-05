@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Librarys\php\TreeData;
 use Illuminate\Support\Facades\View;
 
+//ツリーデータをblade側に渡すクラス
 class PtcmtrController extends Controller
 {
     //ツリーのデータをblade側にセットする

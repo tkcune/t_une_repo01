@@ -1,4 +1,12 @@
 //@var Clipboardクラス クリップボードクラス
+//プロパティ
+//@var string nodeId コピーしているノードのid
+//@var string nodeDir コピーしているノードディレクトリ
+//@var string selectNodeId 選択しているノードのid
+//@var string selectNodeDir 選択しているノードディレクトリ
+//@var string カレントノードのid
+//@var string カレントノードのディレクトリ
+
 let clipboard = (() => {
   
   //@var string nodeId コピーしているノードのid

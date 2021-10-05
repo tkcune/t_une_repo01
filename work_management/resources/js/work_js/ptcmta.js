@@ -1,19 +1,27 @@
 import {clipboard} from './ptcmcb';
 
-//@var TreeActionクラス 公開するクラス
+//@var TreeActionクラス 公開するクラス,ツリー機能クラス
 let TreeAction = {};
 
 //TreeActionの名前空間
+//ツリー作成クラス
 TreeAction.createTree = {};
+//ノードのdomなどを作成するクラス
 TreeAction.node = {};
+//ツリーの探索やcss名を決定するクラス
 TreeAction.chainparser = {};
-TreeAction.delete = {};
-TreeAction.paste = {};
-TreeAction.move = {};
-TreeAction.projection = {};
-TreeAction.append = {};
 
 //ノードクラス
+//プロパティ
+//@var string this.dir ディレクトリ
+//@var string this.id データベースのid
+//@var string this.className cssで使うclass名
+//@var string this.title 表示するタイトル
+//@var array this.child ノードクラスの子要素を格納する
+//@var dom this.element dom要素
+//@var array this.toLink 投影先のリンク
+//@var array this.fromLink 投影元のリンク
+
 TreeAction.node = class Node {
     
   //@param string dir ツリーのディレクトリ
@@ -23,7 +31,7 @@ TreeAction.node = class Node {
     //@var string dir ツリーのディレクトリ
     this.dir = nodeDir;
 
-    //@var int id データベースのid
+    //@var string id データベースのid
     this.id = id;
 
     //@var string className htmlのcss名となる

@@ -4,6 +4,7 @@ namespace App\Librarys\php;
 
 use Illuminate\Support\Facades\Facade;
 
+//OutputLogClassのファザードクラス
 class OutputLog extends Facade
 {
     /**

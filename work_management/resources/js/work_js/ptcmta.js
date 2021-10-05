@@ -12,16 +12,6 @@ TreeAction.node = {};
 TreeAction.chainparser = {};
 
 //ノードクラス
-//プロパティ
-//@var string this.dir ディレクトリ
-//@var string this.id データベースのid
-//@var string this.className cssで使うclass名
-//@var string this.title 表示するタイトル
-//@var array this.child ノードクラスの子要素を格納する
-//@var dom this.element dom要素
-//@var array this.toLink 投影先のリンク
-//@var array this.fromLink 投影元のリンク
-
 TreeAction.node = class Node {
     
   //@param string dir ツリーのディレクトリ

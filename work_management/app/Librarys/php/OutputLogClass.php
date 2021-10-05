@@ -7,11 +7,6 @@ use App\Librarys\php\Message;
 use App\Librarys\php\FunctionCode;
 
 //ログ出力クラス
-//プロパティ
-//@var stirng デバックモード
-//@var string クライアントid
-//@var string ユーザーメールアドレス
-
 class OutputLogClass{
     //@var stirng デバックモード
     private $debug_mode;

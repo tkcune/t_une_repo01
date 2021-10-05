@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Config;
 use App\Librarys\php\OutputLog;
 use App\Librarys\php\Message;
 use App\Librarys\php\ZeroPadding;
+use App\Http\Controllers\PtcmtrController;
 
 /**
  * 人員データを操作するコントローラー
@@ -132,6 +133,7 @@ class Psji01Controller extends Controller
             return redirect()->route('index');
         }
 
+        PtcmtrController::open_node($personnel_id);
        return redirect()->route('index');
     }
 
@@ -223,6 +225,8 @@ class Psji01Controller extends Controller
        OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
        $message = Message::get_message('mhcmok0002',[0=>'']);
        session(['message'=>$message[0]]);
+       //ツリー開閉
+       PtcmtrController::open_node($personnel_id);
        return redirect()->route('index');
     }
 
@@ -248,6 +252,7 @@ class Psji01Controller extends Controller
         OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
         $message = Message::get_message('mhcmok0003',[0=>'']);
         session(['message'=>$message[0]]);
+        PtcmtrController::delete_node($personnel_id);
         return redirect()->route('index');
     }
 
@@ -400,7 +405,8 @@ class Psji01Controller extends Controller
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-
+        //ツリー開閉
+        PtcmtrController::open_node($personnel_id);
        return redirect()->route('index');
     }
 }

@@ -8,6 +8,7 @@ use App\Librarys\php\OutputLog;
 use App\Librarys\php\Message;
 use App\Librarys\php\ZeroPadding;
 use App\Librarys\php\DatabaseException;
+use App\Http\Controllers\PtcmtrController;
 
 /**
  * 投影データを操作するコントローラー
@@ -98,6 +99,7 @@ class Ptcm01Controller extends Controller
         OutputLog::message_log(__FUNCTION__, 'mhcmok0010');
         $message = Message::get_message('mhcmok0010',[0=>'']);
         session(['message'=>$message[0]]);
+        PtcmtrController::open_node($projection_id);
         return redirect()->route('index');
     }
 
@@ -157,6 +159,7 @@ class Ptcm01Controller extends Controller
         OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
         $message = Message::get_message('mhcmok0003',[0=>'']);
         session(['message'=>$message[0]]);
+        PtcmtrController::delete_node($id2);
         return redirect()->route('index');
     }
 }

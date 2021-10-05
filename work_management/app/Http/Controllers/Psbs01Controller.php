@@ -13,6 +13,7 @@ use App\Librarys\php\ZeroPadding;
 use Illuminate\Support\Facades\Config;
 use App\Librarys\php\Message;
 use App\Librarys\php\ResponsiblePerson;
+use App\Http\Controllers\PtcmtrController;
 
 //BsResource
 //作成者：日置慎一
@@ -141,6 +142,7 @@ class Psbs01Controller extends Controller
         //メッセージの表示
         $request->session()->put('message',Config::get('message.mhcmok0001'));
 
+        PtcmtrController::open_node($department_id);
         return redirect()->route('index');
         
     }

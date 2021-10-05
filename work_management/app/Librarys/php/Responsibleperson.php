@@ -4,8 +4,9 @@
 
     use Illuminate\Support\Facades\DB;
 
-    //責任者を取得する共通クラス
-
+    /**
+     * 責任者を取得する共通クラス
+     */
     class ResponsiblePerson{
     
     private array $responsible_lists = [] ;//責任者データ配列
@@ -14,7 +15,7 @@
      * 責任者を取得するメソッド
      * @param int $client_id 顧客ID
      * @param array $departments 与えられた部署データ配列
-     * @param $responsible_lists 責任者データ配列
+     * @param array $responsible_lists 責任者データ配列
      * 
      * return $responsible_lists
      */

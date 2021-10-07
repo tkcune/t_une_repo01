@@ -42,6 +42,9 @@ TreeAction.node = class Node {
     //@var array fromLink 投影元のリンク、idとディレクトリ
     this.fromLink = [];
 
+    //@var boolean dispaly 表示/非表示を切り替える
+    this.display = true;
+
   }
 
   //ツリーノードのdomを作成する
@@ -670,7 +673,7 @@ TreeAction.node = class Node {
       img_name = 'bs';
     }else if(this.id.substr(0, 2) === 'ta'){
       //投影の場合
-      img_name = this.toLink[0].substr(0, 2);
+      img_name = this.fromLink[0].substr(0, 2);
     }else if(this.id.substr(0, 2) === 'ur'){
       //ユーザー情報の場合
       img_name = 'ur';
@@ -729,10 +732,10 @@ TreeAction.chainparser = (() => {
       //同じノードオブジェクトか比較。
       //@param Nodeクラス node 比較される
       //@param Nodeクラス compairNode 比較する
-      //dirが同じであれば、同じノード
+      //idが同じであれば、同じノード
       let isEqual = function isEqual(node, compairNode) {
       
-        if(node.dir !== compairNode.dir){
+        if(node.id !== compairNode.id){
           return false;
         }
 
@@ -932,6 +935,31 @@ TreeAction.chainparser = (() => {
         return array;      
       }
 
+      //ノードの親要素を返す
+      //@param string nodeId 親要素を探すノードのid
+      //@param Nodeクラス node ツリーノードのインスタンス
+      //@return Nodeクラス 親ノード
+      let searchPalentNode = function searchPalentNode(nodeId, node){
+        //@var Nodeクラス 親ノードを代入する
+        let search = null;
+        //@var Nodeクラス 子ノード
+        let childNode = searchNodeId(nodeId, node);
+        //ノード全体をループする
+        concatNode(node).forEach(palent => {
+          //子要素があるなら
+          if(palent.child !== []){
+            palent.child.forEach(child => {
+              //親要素の中に子要素があるか、調べる
+              if(isEqual(child, childNode)){
+                search = palent;
+              }
+            });
+          }
+        });
+        //結果を返す
+        return search;
+      }
+
       //@param nodeクラス node ノードクラス
       //@return string nodeの親のタイトル
       //ノードクラスの親のタイトルを返す。
@@ -1066,6 +1094,7 @@ TreeAction.chainparser = (() => {
         recreateId: recreateId,
         recreateDir: recreateDir,
         syncLinkNode: syncLinkNode,
+        searchPalentNode: searchPalentNode,
         searchPalentTitle: searchPalentTitle,
         concatNode: concatNode,
         searchNodeDirId: searchNodeDirId,
@@ -1175,7 +1204,7 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
       let toNode = chainparser.searchNodeId(Object.values(chain)[0].split('.')[0], treeTop);
       
       //投影先と投影元をリンクさせる
-      chainparser.syncLink(fromNode, toNode);
+      chainparser.syncLink(toNode, fromNode);
     });
   }
 
@@ -1361,6 +1390,65 @@ TreeAction = ((treesepalete, projectionChain) => {
     }
   }
 
+  //隠蔽再表示のメソッド
+  //@param string nodeId 隠蔽するノードのid
+  let changeDisplay = function changeDispaly(nodeId){
+    //@var Nodeクラス 隠蔽ノード
+    let node = chainparser.searchNodeId(nodeId, tree);
+    //隠蔽ノードのdisplayを変更する
+    node.display = false;
+    //@var Nodeクラス 隠蔽するノードの親ノード
+    let palent = chainparser.searchPalentNode(nodeId, tree);
+    //ノードクラスを隠蔽する
+    displayNone(node, palent);
+    //隠蔽ノードに投影先があるなら、投影先も隠蔽する
+    if(node.toLink !== []){
+      //投影先のidをループする
+      node.toLink.forEach(linkNodeId => {
+        //@var Nodeクラス 投影先のノード
+        let linkNode = chainparser.searchNodeId(linkNodeId, tree);
+        //displayを変更する
+        linkNode.display = false;
+        //@var Nodeクラス 投影先の親ノード
+        let linkPalent = chainparser.searchPalentNode(linkNodeId, tree);
+        //投影先を隠蔽する
+        displayNone(linkNode, linkPalent);
+      });
+    }
+  }
+  
+  //ノードを非表示にして、隣のノードの表示を変える
+  //@var Nodeクラス child 非表示にするノード
+  //@var Nodeクラス palent 非表示にするノードの親ノード
+  let displayNone = function displayNone(child, palent){
+    //隣のノードのcss名を変更する
+    //子ノードが親ノードの先頭にあるなら
+    if(chainparser.isEqual(child, palent.child[0])){
+      //@var string 子ノードの次のノードのcss名
+      let className = child.element.nextElementSibling.className;
+      //normaltreeならば、次のノードは、先頭になるので、firstree
+      if(className === 'normaltree'){
+        child.element.nextElementSibling.className = 'firsttree';
+        //lastreeならば、次のノードは、1つしかないので、lastnormaltree
+      }else if(className === 'lasttree'){
+        child.element.nextElementSibling.className = 'lastnormaltree'
+      }
+      //子ノードが親ノードの最後にあるなら
+    }else if(chainparser.isEqual(child, palent.child[palent.child.length - 1])){
+      //@var string 子ノードの一つ前のノード
+      let className = child.element.previousElementSibling.className;
+      //expandtreeならば、前のノードは、最後のexpandtreeになる
+      if(className === 'expandtree'){
+        child.element.previousElementSibling.className = 'lastexpandntree';
+        //normaltreeか、firsttreeならば、最後のnormaltreeになる
+      }else if(className === 'normaltree' || className === 'firsttree'){
+        child.element.previousElementSibling.className = 'lastnormaltree';
+      }
+    }
+    //ノードを非表示にする
+    child.element.classList.add('unexpand');
+  }
+
   //titleboxのディレクトリを取得する
   //@var dom 取得したいディレクトリのdom
   //@return string ディレクトリ
@@ -1503,18 +1591,21 @@ TreeAction = ((treesepalete, projectionChain) => {
       }
     }
   });
+  
   return {
     copyNode: copyNode,
     searchNodeId: searchNodeId,
     current: current,
     openNode: openNode,
     closeNode: closeNode,
-    addNodeClickEvent: addNodeClickEvent
+    addNodeClickEvent: addNodeClickEvent,
+    changeDisplay: changeDisplay
   }
 
 })(treeChain, projectionChain);
 
 TreeAction.addNodeClickEvent(function(){
+  
   //詳細行に表示する部署のデータを取得する
   axios.get('http://localhost:8000/api/bs/resource?id=' + this.id)
     .then(response => {
@@ -1548,6 +1639,14 @@ TreeAction.addNodeClickEvent(function(){
     })
     //エラーログを流すだけ
     .catch(error => console.log(error));
+});
+
+//隠蔽のイベント
+document.getElementById('parent').children[2].children[0].children[1].children[7].addEventListener('click', () => {
+  //@var string 詳細行の部署のid
+  let nodeId = document.getElementById('parent').children[0].children[1].children[0].innerText.substr(3);
+  //隠蔽のメソッド
+  TreeAction.changeDisplay(nodeId);
 });
 
 export {TreeAction};

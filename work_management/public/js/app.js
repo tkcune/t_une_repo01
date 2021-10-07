@@ -1998,18 +1998,16 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
- //@var TreeActionクラス 公開するクラス
+ //@var TreeActionクラス 公開するクラス,ツリー機能クラス
 
 var TreeAction = {}; //TreeActionの名前空間
+//ツリー作成クラス
 
-TreeAction.createTree = {};
-TreeAction.node = {};
-TreeAction.chainparser = {};
-TreeAction["delete"] = {};
-TreeAction.paste = {};
-TreeAction.move = {};
-TreeAction.projection = {};
-TreeAction.append = {}; //ノードクラス
+TreeAction.createTree = {}; //ノードのdomなどを作成するクラス
+
+TreeAction.node = {}; //ツリーの探索やcss名を決定するクラス
+
+TreeAction.chainparser = {}; //ノードクラス
 
 TreeAction.node = /*#__PURE__*/function () {
   //@param string dir ツリーのディレクトリ
@@ -2018,7 +2016,7 @@ TreeAction.node = /*#__PURE__*/function () {
     _classCallCheck(this, Node);
 
     //@var string dir ツリーのディレクトリ
-    this.dir = nodeDir; //@var int id データベースのid
+    this.dir = nodeDir; //@var string id データベースのid
 
     this.id = id; //@var string className htmlのcss名となる
 
@@ -2032,7 +2030,9 @@ TreeAction.node = /*#__PURE__*/function () {
 
     this.toLink = []; //@var array fromLink 投影元のリンク、idとディレクトリ
 
-    this.fromLink = [];
+    this.fromLink = []; //@var boolean dispaly 表示/非表示を切り替える
+
+    this.display = true;
   } //ツリーノードのdomを作成する
   //@return dom node.element 作成したツリーのdom
 
@@ -2625,7 +2625,7 @@ TreeAction.node = /*#__PURE__*/function () {
         img_name = 'bs';
       } else if (this.id.substr(0, 2) === 'ta') {
         //投影の場合
-        img_name = this.toLink[0].substr(0, 2);
+        img_name = this.fromLink[0].substr(0, 2);
       } else if (this.id.substr(0, 2) === 'ur') {
         //ユーザー情報の場合
         img_name = 'ur';
@@ -2682,11 +2682,11 @@ TreeAction.chainparser = function () {
   }; //同じノードオブジェクトか比較。
   //@param Nodeクラス node 比較される
   //@param Nodeクラス compairNode 比較する
-  //dirが同じであれば、同じノード
+  //idが同じであれば、同じノード
 
 
   var isEqual = function isEqual(node, compairNode) {
-    if (node.dir !== compairNode.dir) {
+    if (node.id !== compairNode.id) {
       return false;
     }
 
@@ -2867,6 +2867,31 @@ TreeAction.chainparser = function () {
     }
 
     return array;
+  }; //ノードの親要素を返す
+  //@param string nodeId 親要素を探すノードのid
+  //@param Nodeクラス node ツリーノードのインスタンス
+  //@return Nodeクラス 親ノード
+
+
+  var searchPalentNode = function searchPalentNode(nodeId, node) {
+    //@var Nodeクラス 親ノードを代入する
+    var search = null; //@var Nodeクラス 子ノード
+
+    var childNode = searchNodeId(nodeId, node); //ノード全体をループする
+
+    concatNode(node).forEach(function (palent) {
+      //子要素があるなら
+      if (palent.child !== []) {
+        palent.child.forEach(function (child) {
+          //親要素の中に子要素があるか、調べる
+          if (isEqual(child, childNode)) {
+            search = palent;
+          }
+        });
+      }
+    }); //結果を返す
+
+    return search;
   }; //@param nodeクラス node ノードクラス
   //@return string nodeの親のタイトル
   //ノードクラスの親のタイトルを返す。
@@ -2984,6 +3009,7 @@ TreeAction.chainparser = function () {
     recreateId: recreateId,
     recreateDir: recreateDir,
     syncLinkNode: syncLinkNode,
+    searchPalentNode: searchPalentNode,
     searchPalentTitle: searchPalentTitle,
     concatNode: concatNode,
     searchNodeDirId: searchNodeDirId,
@@ -3082,7 +3108,7 @@ TreeAction.createTree = function (treesepalete, projectionChain, Node, chainpars
 
       var toNode = chainparser.searchNodeId(Object.values(chain)[0].split('.')[0], treeTop); //投影先と投影元をリンクさせる
 
-      chainparser.syncLink(fromNode, toNode);
+      chainparser.syncLink(toNode, fromNode);
     });
   }; //投影のノードを斜体にする
   //@param Nodeクラス treeTop ツリー全体のインスタンス
@@ -3295,6 +3321,64 @@ TreeAction = function (treesepalete, projectionChain) {
         });
       }
     }
+  }; //隠蔽再表示のメソッド
+  //@param string nodeId 隠蔽するノードのid
+
+
+  var changeDisplay = function changeDispaly(nodeId) {
+    //@var Nodeクラス 隠蔽ノード
+    var node = chainparser.searchNodeId(nodeId, tree); //隠蔽ノードのdisplayを変更する
+
+    node.display = false; //@var Nodeクラス 隠蔽するノードの親ノード
+
+    var palent = chainparser.searchPalentNode(nodeId, tree); //ノードクラスを隠蔽する
+
+    displayNone(node, palent); //隠蔽ノードに投影先があるなら、投影先も隠蔽する
+
+    if (node.toLink !== []) {
+      //投影先のidをループする
+      node.toLink.forEach(function (linkNodeId) {
+        //@var Nodeクラス 投影先のノード
+        var linkNode = chainparser.searchNodeId(linkNodeId, tree); //displayを変更する
+
+        linkNode.display = false; //@var Nodeクラス 投影先の親ノード
+
+        var linkPalent = chainparser.searchPalentNode(linkNodeId, tree); //投影先を隠蔽する
+
+        displayNone(linkNode, linkPalent);
+      });
+    }
+  }; //ノードを非表示にして、隣のノードの表示を変える
+  //@var Nodeクラス child 非表示にするノード
+  //@var Nodeクラス palent 非表示にするノードの親ノード
+
+
+  var displayNone = function displayNone(child, palent) {
+    //隣のノードのcss名を変更する
+    //子ノードが親ノードの先頭にあるなら
+    if (chainparser.isEqual(child, palent.child[0])) {
+      //@var string 子ノードの次のノードのcss名
+      var className = child.element.nextElementSibling.className; //normaltreeならば、次のノードは、先頭になるので、firstree
+
+      if (className === 'normaltree') {
+        child.element.nextElementSibling.className = 'firsttree'; //lastreeならば、次のノードは、1つしかないので、lastnormaltree
+      } else if (className === 'lasttree') {
+        child.element.nextElementSibling.className = 'lastnormaltree';
+      } //子ノードが親ノードの最後にあるなら
+
+    } else if (chainparser.isEqual(child, palent.child[palent.child.length - 1])) {
+      //@var string 子ノードの一つ前のノード
+      var _className = child.element.previousElementSibling.className; //expandtreeならば、前のノードは、最後のexpandtreeになる
+
+      if (_className === 'expandtree') {
+        child.element.previousElementSibling.className = 'lastexpandntree'; //normaltreeか、firsttreeならば、最後のnormaltreeになる
+      } else if (_className === 'normaltree' || _className === 'firsttree') {
+        child.element.previousElementSibling.className = 'lastnormaltree';
+      }
+    } //ノードを非表示にする
+
+
+    child.element.classList.add('unexpand');
   }; //titleboxのディレクトリを取得する
   //@var dom 取得したいディレクトリのdom
   //@return string ディレクトリ
@@ -3443,7 +3527,8 @@ TreeAction = function (treesepalete, projectionChain) {
     current: current,
     openNode: openNode,
     closeNode: closeNode,
-    addNodeClickEvent: addNodeClickEvent
+    addNodeClickEvent: addNodeClickEvent,
+    changeDisplay: changeDisplay
   };
 }(treeChain, projectionChain);
 
@@ -3479,6 +3564,13 @@ TreeAction.addNodeClickEvent(function () {
   ["catch"](function (error) {
     return console.log(error);
   });
+}); //隠蔽のイベント
+
+document.getElementById('parent').children[2].children[0].children[1].children[7].addEventListener('click', function () {
+  //@var string 詳細行の部署のid
+  var nodeId = document.getElementById('parent').children[0].children[1].children[0].innerText.substr(3); //隠蔽のメソッド
+
+  TreeAction.changeDisplay(nodeId);
 });
 
 

@@ -1,4 +1,8 @@
-/* linetree関係のcss */
+/* linetree関係のcss 
+* linetree 展開するノードがない線だけのノードのcss
+* secondtree linetreeの子ノードのcss
+* endtree linetreeの子ノードの最後のcss
+*/
 .linetree ul {
   margin: 0;
   padding: 0;
@@ -41,6 +45,14 @@
 
 /*
  expnadtree関係のcss
+ expandtree 展開するボックスのツリーのcss
+ lastexpandtree 親ノードの最後にある展開するボックスのcss
+ normaltree 親ノードの子ノードのcss
+ firsttree 子要素が二個以上ある親ノードの先頭のノードのcss
+ lasttree 子要素が二個以上ある親ノードの最後のノードのcss
+ lastnormaltree 子要素が一個だけのノードのcss
+ treebox 展開するボックスのcss
+ titlebox 展開するボックスのタイトルのcss
  */
 
 .expandtree ul,
@@ -206,13 +218,15 @@ ul.lasttree li:last-child:before {
   height: 0;
   border-top: 1px dotted;
 }
+/* 非表示にするcss */
 .unexpand {
   display: none;
 }
-
+/* カレント機能のcss */
 .focus {
   font-weight: bold;
 }
+/* 投影のcss */
 .sync {
   color: blue;
   font-style: italic;

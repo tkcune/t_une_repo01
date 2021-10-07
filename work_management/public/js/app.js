@@ -1998,18 +1998,16 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
- //@var TreeActionクラス 公開するクラス
+ //@var TreeActionクラス 公開するクラス,ツリー機能クラス
 
 var TreeAction = {}; //TreeActionの名前空間
+//ツリー作成クラス
 
-TreeAction.createTree = {};
-TreeAction.node = {};
-TreeAction.chainparser = {};
-TreeAction["delete"] = {};
-TreeAction.paste = {};
-TreeAction.move = {};
-TreeAction.projection = {};
-TreeAction.append = {}; //ノードクラス
+TreeAction.createTree = {}; //ノードのdomなどを作成するクラス
+
+TreeAction.node = {}; //ツリーの探索やcss名を決定するクラス
+
+TreeAction.chainparser = {}; //ノードクラス
 
 TreeAction.node = /*#__PURE__*/function () {
   //@param string dir ツリーのディレクトリ
@@ -2018,7 +2016,7 @@ TreeAction.node = /*#__PURE__*/function () {
     _classCallCheck(this, Node);
 
     //@var string dir ツリーのディレクトリ
-    this.dir = nodeDir; //@var int id データベースのid
+    this.dir = nodeDir; //@var string id データベースのid
 
     this.id = id; //@var string className htmlのcss名となる
 
@@ -3474,7 +3472,18 @@ TreeAction.addNodeClickEvent(function () {
 
     detailRow.children[2].children[0].childNodes[3].nodeValue = "登録日:" + attribute['created_at'] + "登録者:"; //登録者
 
-    detailRow.children[2].children[0].children[2].innerText = attribute['manegement_person'];
+    detailRow.children[2].children[0].children[2].innerText = attribute['manegement_person']; //作成者::下田
+    //詳細行のhiddenパラメータの書き換え
+
+    document.getElementById("department_id").defaultValue = attribute['id'];
+    document.getElementById("high").defaultValue = attribute['id'];
+    document.getElementById("high_move").defaultValue = attribute['id'];
+    document.getElementById("high_insert").defaultValue = attribute['id'];
+    document.getElementById("high_projection").defaultValue = attribute['id'];
+    document.getElementById("high_new").defaultValue = attribute['id'];
+    document.getElementById("ji_high_new").defaultValue = attribute['id'];
+    document.getElementById("ji_high_move").defaultValue = attribute['id'];
+    document.getElementById("ji_high_projection").defaultValue = attribute['id'];
   }) //エラーログを流すだけ
   ["catch"](function (error) {
     return console.log(error);

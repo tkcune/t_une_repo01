@@ -1545,6 +1545,19 @@ TreeAction.addNodeClickEvent(function(){
       detailRow.children[2].children[0].childNodes[3].nodeValue = "登録日:" + attribute['created_at'] + "登録者:";
       //登録者
       detailRow.children[2].children[0].children[2].innerText = attribute['manegement_person'];
+
+      //作成者::下田
+      //詳細行のhiddenパラメータの書き換え
+      document.getElementById("department_id").defaultValue = attribute['id'];
+      document.getElementById("high").defaultValue = attribute['id'];
+      document.getElementById("high_move").defaultValue = attribute['id'];
+      document.getElementById("high_insert").defaultValue = attribute['id'];
+      document.getElementById("high_projection").defaultValue = attribute['id'];
+      document.getElementById("high_new").defaultValue = attribute['id'];
+      document.getElementById("ji_high_new").defaultValue = attribute['id'];
+      document.getElementById("ji_high_move").defaultValue = attribute['id'];
+      document.getElementById("ji_high_projection").defaultValue = attribute['id'];
+
     })
     //エラーログを流すだけ
     .catch(error => console.log(error));

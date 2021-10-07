@@ -19,6 +19,9 @@ var display=function() {
     }
 }
 
+/**
+ * 削除のON・OFF切替メソッド
+ */
 function deleteOn()
 {
     if (document.getElementById("delete").disabled === true){
@@ -30,26 +33,18 @@ function deleteOn()
 	}
 }
 
-//クリップボードに保存するメソッド
-function copyToClipboard() {
-    // コピー対象を取得
-    var text = document.getElementById('palent').textContent;
-
-    // 選択しているテキストをクリップボードにコピーする
-    navigator.clipboard.writeText(text).then(e => {
-      });
-
-}
-
-//クリップボード内を削除するメソッド
-function deleteToClipboard() {
-    // コピー対象をJavaScript上で変数として定義する
-    var text = document.getElementById('deletearea').value;
-
-    // 選択しているテキストをクリップボードにコピーする
-    navigator.clipboard.writeText(text).then(e => {
-      });
-
+/**
+ * パスワードを露出・隠蔽するメソッド
+ */
+function passwordOn()
+{
+    if (document.getElementById("password").type === 'password'){
+		// パスワード属性をテキスト属性に変更
+		document.getElementById("password").type="text";
+	}else{
+		// テキスト属性をパスワード属性に変更
+		document.getElementById("password").type="password";
+	}
 }
 
 function treeDisabled()
@@ -66,3 +61,29 @@ function treeDisabled()
      id.setAttribute("style","display:none");
  }
 }
+
+/**
+ * 複写した部署のIDを取得し各種フォームのvalueに当てはめるメソッド
+ */
+function clickSave()
+{
+  var id = document.getElementById("department_id").value ;
+
+  document.getElementById("lower_move").defaultValue = id;
+  document.getElementById("copy").defaultValue = id;
+  document.getElementById("projection_source").defaultValue = id;
+  document.getElementById("ji_lower_move").defaultValue = id;
+
+}
+
+function clickDelete()
+{
+  var id = "";
+
+  document.getElementById("lower_move").defaultValue = id;
+  document.getElementById("copy").defaultValue = id;
+  document.getElementById("projection_source").defaultValue = id;
+  document.getElementById("ji_lower_move").defaultValue = id;
+
+}
+

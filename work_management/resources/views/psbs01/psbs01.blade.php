@@ -10,7 +10,7 @@
             @method('post')
             {{-- hiddenのvalueはダミーデータ　--}}
 
-            <input type="hidden" name="client_id" value="aa00000001">
+            <input type="hidden" name="client_id" value="{{ session('client_id') }}">
             <input type="hidden" name="responsible_person_id" value="ji00000001">
             <input type="hidden" name="management_personnel_id" value="ji00000001">
 

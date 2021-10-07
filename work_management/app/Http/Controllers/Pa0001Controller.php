@@ -45,8 +45,10 @@ class Pa0001Controller extends Controller
      */
     public function index()
     {
-        //$client_idの数値はダミー
+        //$client_idの数値はダミー(ログイン時にセッション保存する予定)
         $client_id = "aa00000001";
+        session(['client_id'=>$client_id]);
+
         $count_department = Config::get('startcount.count');
         $count_personnel = Config::get('startcount.count');
 
@@ -295,7 +297,7 @@ class Pa0001Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('psbs01.plbs01',compact('departments','names','count_department','count_personnel',
+        return view('pacm01.pacm01',compact('departments','names','count_department','count_personnel',
         'department_max','personnel_max','department_high',
         'personnel_high','responsible_lists','client','select_id'));
     }

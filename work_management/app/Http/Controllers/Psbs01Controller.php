@@ -236,7 +236,7 @@ class Psbs01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('psbs01.plbs01',compact('departments','names','count_department',
+        return view('pacm01.pacm01',compact('departments','names','count_department',
         'count_personnel','department_max','personnel_max','department_high',
         'personnel_high','responsible_lists','client','select_id'));
     }
@@ -615,6 +615,7 @@ class Psbs01Controller extends Controller
         try {
             //テーブルから取得するid
             $id = $request->id;
+
             //投影テーブルのidなら、投影元のidを取得する
             if(substr($id, 0, 2) == 'ta'){
                 $id = DB::select('select projection_source_id from dccmta where projection_id = ?', [$id])[0]->projection_source_id;

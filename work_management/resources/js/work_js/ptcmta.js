@@ -1390,30 +1390,56 @@ TreeAction = ((treesepalete, projectionChain) => {
     }
   }
 
-  //隠蔽再表示のメソッド
+  //隠蔽/表示のメソッド
   //@param string nodeId 隠蔽するノードのid
   let changeDisplay = function changeDispaly(nodeId){
-    //@var Nodeクラス 隠蔽ノード
+    //@var Nodeクラス 隠蔽/表示するノード
     let node = chainparser.searchNodeId(nodeId, tree);
-    //隠蔽ノードのdisplayを変更する
-    node.display = false;
-    //@var Nodeクラス 隠蔽するノードの親ノード
-    let palent = chainparser.searchPalentNode(nodeId, tree);
-    //ノードクラスを隠蔽する
-    displayNone(node, palent);
-    //隠蔽ノードに投影先があるなら、投影先も隠蔽する
-    if(node.toLink !== []){
-      //投影先のidをループする
-      node.toLink.forEach(linkNodeId => {
-        //@var Nodeクラス 投影先のノード
-        let linkNode = chainparser.searchNodeId(linkNodeId, tree);
-        //displayを変更する
-        linkNode.display = false;
-        //@var Nodeクラス 投影先の親ノード
-        let linkPalent = chainparser.searchPalentNode(linkNodeId, tree);
-        //投影先を隠蔽する
-        displayNone(linkNode, linkPalent);
-      });
+    //displayがtrueの場合は、表示されているので、隠蔽する
+    if(node.display === true){
+      //隠蔽ノードのdisplayを変更する
+      node.display = false;
+      //@var Nodeクラス 隠蔽するノードの親ノード
+      let palent = chainparser.searchPalentNode(nodeId, tree);
+      //ノードクラスを隠蔽する
+      displayNone(node, palent);
+      //隠蔽ノードに投影先があるなら、投影先も隠蔽する
+      if(node.toLink !== []){
+        //投影先のidをループする
+        node.toLink.forEach(linkNodeId => {
+          //@var Nodeクラス 投影先のノード
+          let linkNode = chainparser.searchNodeId(linkNodeId, tree);
+          //displayを変更する
+          linkNode.display = false;
+          //@var Nodeクラス 投影先の親ノード
+          let linkPalent = chainparser.searchPalentNode(linkNodeId, tree);
+          //投影先を隠蔽する
+          displayNone(linkNode, linkPalent);
+        });
+      }
+    }else if(node.display === false){
+      //displayがfalseならば、隠蔽しているので、表示する
+
+      //displayを変更する
+      node.display = true;
+      //@var Nodeクラス 表示するノードの親ノード
+      let palent = chainparser.searchPalentNode(nodeId, tree);
+      //ノードを表示する
+      displayOpen(node, palent);
+      //表示ノードに投影先があるなら、投影先も表示する
+      if(node.toLink !== []){
+        //投影先のidをループする
+        node.toLink.forEach(linkNodeId => {
+          //@var Nodeクラス 表示先のノード
+          let linkNode = chainparser.searchNodeId(linkNodeId, tree);
+          //displayを変更する
+          linkNode.display = true;
+          //@var Nodeクラス 投影先の親ノード
+          let linkPalent = chainparser.searchPalentNode(linkNodeId, tree);
+          //投影先を表示する
+          displayOpen(linkNode, linkPalent);
+        });
+      }
     }
   }
   
@@ -1421,6 +1447,10 @@ TreeAction = ((treesepalete, projectionChain) => {
   //@var Nodeクラス child 非表示にするノード
   //@var Nodeクラス palent 非表示にするノードの親ノード
   let displayNone = function displayNone(child, palent){
+    
+    //ノードを非表示にする
+    child.element.classList.add('unexpand');
+
     //隣のノードのcss名を変更する
     //子ノードが親ノードの先頭にあるなら
     if(chainparser.isEqual(child, palent.child[0])){
@@ -1440,13 +1470,50 @@ TreeAction = ((treesepalete, projectionChain) => {
       //expandtreeならば、前のノードは、最後のexpandtreeになる
       if(className === 'expandtree'){
         child.element.previousElementSibling.className = 'lastexpandntree';
-        //normaltreeか、firsttreeならば、最後のnormaltreeになる
-      }else if(className === 'normaltree' || className === 'firsttree'){
+        //firsttreeならば、最後のnormaltreeになる
+      }else if(className === 'firsttree'){
         child.element.previousElementSibling.className = 'lastnormaltree';
+        //normaltreeならば、最後のtreeになる
+      }else if(className === 'normaltree'){
+        child.element.previousElementSibling.className = 'lasttree';
       }
     }
-    //ノードを非表示にする
-    child.element.classList.add('unexpand');
+  }
+
+  //隠蔽ノードを表示に替える
+  //@var Nodeクラス child 表示するノード
+  //@var Nodeクラス palent 表示するノードの親ノード
+  let displayOpen = function displayOpen(child, palent){
+    //ノードを表示にする
+    child.element.classList.remove('unexpand');
+
+    //隣のノードのcss名を変更する
+    //子ノードが親ノードの先頭にあるなら
+    if(chainparser.isEqual(child, palent.child[0])){
+      //@var string 子ノードの次のノードのcss名
+      let className = child.element.nextElementSibling.className;
+      //firsttreeならば、次のノードは、normaltree
+      if(className === 'firsttree'){
+        child.element.nextElementSibling.className = 'normaltree';
+        //lastnormalreeならば、次のノードは、最後なので、lasttree
+      }else if(className === 'lastnormaltree'){
+        child.element.nextElementSibling.className = 'lasttree'
+      }
+      //子ノードが親ノードの最後にあるなら
+    }else if(chainparser.isEqual(child, palent.child[palent.child.length - 1])){
+      //@var string 子ノードの一つ前のノード
+      let className = child.element.previousElementSibling.className;
+      //lastexpandtreeならば、前のノードは、expandtreeになる
+      if(className === 'lastexpandtree'){
+        child.element.previousElementSibling.className = 'expandntree';
+        //lastnormaltreeならば、最初のtreeになる
+      }else if(className === 'lastnormaltree'){
+        child.element.previousElementSibling.className = 'firsttree';
+        //lasttreeならば、normaltreeとなる
+      }else if(className === 'lasttree'){
+        child.element.previousElementSibling.className = 'normaltree';
+      }
+    }
   }
 
   //titleboxのディレクトリを取得する

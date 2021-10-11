@@ -1672,53 +1672,12 @@ TreeAction = ((treesepalete, projectionChain) => {
 })(treeChain, projectionChain);
 
 TreeAction.addNodeClickEvent(function(){
-  
-  //詳細行に表示する部署のデータを取得する
-  axios.get('http://localhost:8000/api/bs/resource?id=' + this.id)
-    .then(response => {
-      //@var array 詳細行に表示するデータ
-      let attribute = response['data']['data']['attribute'];
-
-      //詳細行のdom
-      let detailRow = document.getElementById('parent');
-
-      //部署名
-      detailRow.children[0].children[0].children[0].children[0].value = attribute['title'];
-      //番号
-      detailRow.children[0].children[1].children[0].innerText = "番号:" + attribute['id'];
-      //上位
-      detailRow.children[0].children[2].children[0].children[0].innerText = attribute['high'];
-      //状態
-      detailRow.children[1].children[0].children[0].children[0].value = attribute['status'];
-      //責任者
-      var option = document.createElement("option");
-      // optionタグのテキストに責任者を設定する
-      option.text = attribute['responsible_person'];
-      // optionタグのvalueに部署のid設定する
-      option.value = attribute['id'];
-      // selectタグの子要素にoptionタグを追加する
-      detailRow.children[1].children[0].children[0].children[1].appendChild(option);
-      detailRow.children[1].children[0].children[0].children[1].value =  attribute['id'];
-      //登録日
-      detailRow.children[2].children[0].childNodes[3].nodeValue = "登録日:" + attribute['created_at'] + "登録者:";
-      //登録者
-      detailRow.children[2].children[0].children[2].innerText = attribute['manegement_person'];
-
-      //作成者::下田
-      //詳細行のhiddenパラメータの書き換え
-      document.getElementById("department_id").defaultValue = attribute['id'];
-      document.getElementById("high").defaultValue = attribute['id'];
-      document.getElementById("high_move").defaultValue = attribute['id'];
-      document.getElementById("high_insert").defaultValue = attribute['id'];
-      document.getElementById("high_projection").defaultValue = attribute['id'];
-      document.getElementById("high_new").defaultValue = attribute['id'];
-      document.getElementById("ji_high_new").defaultValue = attribute['id'];
-      document.getElementById("ji_high_move").defaultValue = attribute['id'];
-      document.getElementById("ji_high_projection").defaultValue = attribute['id'];
-
-    })
-    //エラーログを流すだけ
-    .catch(error => console.log(error));
+  //@var string Laravelのセッションid
+  let clientId = document.getElementById('parent').parentElement.children.client_id.value;
+  //@var string ノードのid
+  let nodeId = this.id;
+  //移動命令
+  window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
 });
 
 //隠蔽のイベント

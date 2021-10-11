@@ -3321,32 +3321,58 @@ TreeAction = function (treesepalete, projectionChain) {
         });
       }
     }
-  }; //隠蔽再表示のメソッド
+  }; //隠蔽/表示のメソッド
   //@param string nodeId 隠蔽するノードのid
 
 
   var changeDisplay = function changeDispaly(nodeId) {
-    //@var Nodeクラス 隠蔽ノード
-    var node = chainparser.searchNodeId(nodeId, tree); //隠蔽ノードのdisplayを変更する
+    //@var Nodeクラス 隠蔽/表示するノード
+    var node = chainparser.searchNodeId(nodeId, tree); //displayがtrueの場合は、表示されているので、隠蔽する
 
-    node.display = false; //@var Nodeクラス 隠蔽するノードの親ノード
+    if (node.display === true) {
+      //隠蔽ノードのdisplayを変更する
+      node.display = false; //@var Nodeクラス 隠蔽するノードの親ノード
 
-    var palent = chainparser.searchPalentNode(nodeId, tree); //ノードクラスを隠蔽する
+      var palent = chainparser.searchPalentNode(nodeId, tree); //ノードクラスを隠蔽する
 
-    displayNone(node, palent); //隠蔽ノードに投影先があるなら、投影先も隠蔽する
+      displayNone(node, palent); //隠蔽ノードに投影先があるなら、投影先も隠蔽する
 
-    if (node.toLink !== []) {
-      //投影先のidをループする
-      node.toLink.forEach(function (linkNodeId) {
-        //@var Nodeクラス 投影先のノード
-        var linkNode = chainparser.searchNodeId(linkNodeId, tree); //displayを変更する
+      if (node.toLink !== []) {
+        //投影先のidをループする
+        node.toLink.forEach(function (linkNodeId) {
+          //@var Nodeクラス 投影先のノード
+          var linkNode = chainparser.searchNodeId(linkNodeId, tree); //displayを変更する
 
-        linkNode.display = false; //@var Nodeクラス 投影先の親ノード
+          linkNode.display = false; //@var Nodeクラス 投影先の親ノード
 
-        var linkPalent = chainparser.searchPalentNode(linkNodeId, tree); //投影先を隠蔽する
+          var linkPalent = chainparser.searchPalentNode(linkNodeId, tree); //投影先を隠蔽する
 
-        displayNone(linkNode, linkPalent);
-      });
+          displayNone(linkNode, linkPalent);
+        });
+      }
+    } else if (node.display === false) {
+      //displayがfalseならば、隠蔽しているので、表示する
+      //displayを変更する
+      node.display = true; //@var Nodeクラス 表示するノードの親ノード
+
+      var _palent = chainparser.searchPalentNode(nodeId, tree); //ノードを表示する
+
+
+      displayOpen(node, _palent); //表示ノードに投影先があるなら、投影先も表示する
+
+      if (node.toLink !== []) {
+        //投影先のidをループする
+        node.toLink.forEach(function (linkNodeId) {
+          //@var Nodeクラス 表示先のノード
+          var linkNode = chainparser.searchNodeId(linkNodeId, tree); //displayを変更する
+
+          linkNode.display = true; //@var Nodeクラス 投影先の親ノード
+
+          var linkPalent = chainparser.searchPalentNode(linkNodeId, tree); //投影先を表示する
+
+          displayOpen(linkNode, linkPalent);
+        });
+      }
     }
   }; //ノードを非表示にして、隣のノードの表示を変える
   //@var Nodeクラス child 非表示にするノード
@@ -3354,8 +3380,10 @@ TreeAction = function (treesepalete, projectionChain) {
 
 
   var displayNone = function displayNone(child, palent) {
-    //隣のノードのcss名を変更する
+    //ノードを非表示にする
+    child.element.classList.add('unexpand'); //隣のノードのcss名を変更する
     //子ノードが親ノードの先頭にあるなら
+
     if (chainparser.isEqual(child, palent.child[0])) {
       //@var string 子ノードの次のノードのcss名
       var className = child.element.nextElementSibling.className; //normaltreeならば、次のノードは、先頭になるので、firstree
@@ -3371,14 +3399,45 @@ TreeAction = function (treesepalete, projectionChain) {
       var _className = child.element.previousElementSibling.className; //expandtreeならば、前のノードは、最後のexpandtreeになる
 
       if (_className === 'expandtree') {
-        child.element.previousElementSibling.className = 'lastexpandntree'; //normaltreeか、firsttreeならば、最後のnormaltreeになる
-      } else if (_className === 'normaltree' || _className === 'firsttree') {
-        child.element.previousElementSibling.className = 'lastnormaltree';
+        child.element.previousElementSibling.className = 'lastexpandntree'; //firsttreeならば、最後のnormaltreeになる
+      } else if (_className === 'firsttree') {
+        child.element.previousElementSibling.className = 'lastnormaltree'; //normaltreeならば、最後のtreeになる
+      } else if (_className === 'normaltree') {
+        child.element.previousElementSibling.className = 'lasttree';
       }
-    } //ノードを非表示にする
+    }
+  }; //隠蔽ノードを表示に替える
+  //@var Nodeクラス child 表示するノード
+  //@var Nodeクラス palent 表示するノードの親ノード
 
 
-    child.element.classList.add('unexpand');
+  var displayOpen = function displayOpen(child, palent) {
+    //ノードを表示にする
+    child.element.classList.remove('unexpand'); //隣のノードのcss名を変更する
+    //子ノードが親ノードの先頭にあるなら
+
+    if (chainparser.isEqual(child, palent.child[0])) {
+      //@var string 子ノードの次のノードのcss名
+      var className = child.element.nextElementSibling.className; //firsttreeならば、次のノードは、normaltree
+
+      if (className === 'firsttree') {
+        child.element.nextElementSibling.className = 'normaltree'; //lastnormalreeならば、次のノードは、最後なので、lasttree
+      } else if (className === 'lastnormaltree') {
+        child.element.nextElementSibling.className = 'lasttree';
+      } //子ノードが親ノードの最後にあるなら
+
+    } else if (chainparser.isEqual(child, palent.child[palent.child.length - 1])) {
+      //@var string 子ノードの一つ前のノード
+      var _className2 = child.element.previousElementSibling.className; //lastexpandtreeならば、前のノードは、expandtreeになる
+
+      if (_className2 === 'lastexpandtree') {
+        child.element.previousElementSibling.className = 'expandntree'; //lastnormaltreeならば、最初のtreeになる
+      } else if (_className2 === 'lastnormaltree') {
+        child.element.previousElementSibling.className = 'firsttree'; //lasttreeならば、normaltreeとなる
+      } else if (_className2 === 'lasttree') {
+        child.element.previousElementSibling.className = 'normaltree';
+      }
+    }
   }; //titleboxのディレクトリを取得する
   //@var dom 取得したいディレクトリのdom
   //@return string ディレクトリ
@@ -3533,48 +3592,12 @@ TreeAction = function (treesepalete, projectionChain) {
 }(treeChain, projectionChain);
 
 TreeAction.addNodeClickEvent(function () {
-  //詳細行に表示する部署のデータを取得する
-  axios.get('http://localhost:8000/api/bs/resource?id=' + this.id).then(function (response) {
-    //@var array 詳細行に表示するデータ
-    var attribute = response['data']['data']['attribute']; //詳細行のdom
+  //@var string Laravelのセッションid
+  var clientId = document.getElementById('parent').parentElement.children.client_id.value; //@var string ノードのid
 
-    var detailRow = document.getElementById('parent'); //部署名
+  var nodeId = this.id; //移動命令
 
-    detailRow.children[0].children[0].children[0].children[0].value = attribute['title']; //番号
-
-    detailRow.children[0].children[1].children[0].innerText = "番号:" + attribute['id']; //上位
-
-    detailRow.children[0].children[2].children[0].children[0].innerText = attribute['high']; //状態
-
-    detailRow.children[1].children[0].children[0].children[0].value = attribute['status']; //責任者
-
-    var option = document.createElement("option"); // optionタグのテキストに責任者を設定する
-
-    option.text = attribute['responsible_person']; // optionタグのvalueに部署のid設定する
-
-    option.value = attribute['id']; // selectタグの子要素にoptionタグを追加する
-
-    detailRow.children[1].children[0].children[0].children[1].appendChild(option);
-    detailRow.children[1].children[0].children[0].children[1].value = attribute['id']; //登録日
-
-    detailRow.children[2].children[0].childNodes[3].nodeValue = "登録日:" + attribute['created_at'] + "登録者:"; //登録者
-
-    detailRow.children[2].children[0].children[2].innerText = attribute['manegement_person']; //作成者::下田
-    //詳細行のhiddenパラメータの書き換え
-
-    document.getElementById("department_id").defaultValue = attribute['id'];
-    document.getElementById("high").defaultValue = attribute['id'];
-    document.getElementById("high_move").defaultValue = attribute['id'];
-    document.getElementById("high_insert").defaultValue = attribute['id'];
-    document.getElementById("high_projection").defaultValue = attribute['id'];
-    document.getElementById("high_new").defaultValue = attribute['id'];
-    document.getElementById("ji_high_new").defaultValue = attribute['id'];
-    document.getElementById("ji_high_move").defaultValue = attribute['id'];
-    document.getElementById("ji_high_projection").defaultValue = attribute['id'];
-  }) //エラーログを流すだけ
-  ["catch"](function (error) {
-    return console.log(error);
-  });
+  window.location = "http://localhost:8000/show/".concat(clientId, "/").concat(nodeId);
 }); //隠蔽のイベント
 
 document.getElementById('parent').children[2].children[0].children[1].children[7].addEventListener('click', function () {

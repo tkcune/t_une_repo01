@@ -52,6 +52,15 @@ class Pa0001Controller extends Controller
         $count_department = Config::get('startcount.count');
         $count_personnel = Config::get('startcount.count');
 
+        //一番上の部署を取得
+        try{
+            $top_department = DB::select('select * from dcbs01 where client_id = ? limit 1',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+        }
+
+        //配下部署を取得
         try{
             $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
@@ -75,6 +84,7 @@ class Pa0001Controller extends Controller
 
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
+        $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
        
         //上位階層取得
@@ -86,7 +96,7 @@ class Pa0001Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
         
-        return view('pacm01.pacm01',compact('departments','names','count_department',
+        return view('pacm01.pacm01',compact('top_department','top_responsible','departments','names','count_department',
         'count_personnel','department_max','personnel_max','department_high',
         'personnel_high','responsible_lists'));
     }
@@ -173,6 +183,14 @@ class Pa0001Controller extends Controller
         $client_id = "aa00000001";
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
+
+        //一番上の部署を取得
+        try{
+            $top_department = DB::select('select * from dcbs01 where client_id = ? limit 1',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+        }
         
         try{
         $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
@@ -195,6 +213,7 @@ class Pa0001Controller extends Controller
 
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
+        $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
         //上位階層取得
@@ -206,7 +225,7 @@ class Pa0001Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('departments','names','count_department','count_personnel',
+        return view('pacm01.pacm01',compact('top_department','top_responsible','departments','names','count_department','count_personnel',
         'department_max','personnel_max','department_high',
         'personnel_high','responsible_lists'));
     }
@@ -300,5 +319,25 @@ class Pa0001Controller extends Controller
         return view('pacm01.pacm01',compact('departments','names','count_department','count_personnel',
         'department_max','personnel_max','department_high',
         'personnel_high','responsible_lists','client','select_id'));
+    }
+
+    /**
+     * 選択した部署のIDを複写するメソッド
+     */
+    public function clipboard($id){
+
+        session(['clipboard_id'=>$id]);
+
+        return back();
+    }
+
+    /**
+     * 複写したIDを削除するメソッド
+     */
+    public function deleteClipboard(){
+
+        session()->forget('clipboard_id');
+
+        return back();
     }
 }

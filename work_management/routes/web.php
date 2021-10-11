@@ -33,6 +33,10 @@ Route::get('/count',[Pa0001Controller::class,'count'])->name('count');
 
 Route::get('/count2',[Pa0001Controller::class,'count2'])->name('count2');
 
+Route::get('/clipboard/{id}',[Pa0001Controller::class,'clipboard'])->name('clipboard');
+
+Route::get('/deleteclipboard',[Pa0001Controller::class,'deleteclipboard'])->name('deleteclipboard');
+
 Route::get('/show/{id}/{id2}',[Psbs01Controller::class,'show'])->name('plbs01.show');
 
 Route::post('/bscopy',[Psbs01Controller::class,'copy'])->name('psbs01.copy');

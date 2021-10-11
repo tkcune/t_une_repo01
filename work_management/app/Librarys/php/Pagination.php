@@ -50,7 +50,9 @@
             $start_no = ($page_num -1) * self::MAX;
 
             // array_sliceは、配列の何番目($start_no)から何番目(MAX)まで切り取る関数
-            $disp_data = array_slice($array, $start_no, self::MAX, true);
+            $data = array_slice($array, $start_no, self::MAX, true);
+
+            $disp_data = array_values($data);
 
             return $disp_data;
         }

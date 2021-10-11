@@ -2,6 +2,7 @@
 
 <?php
     $b = "bs00000003";
+    //dd($departments);
 ?>
 
 @section('content')
@@ -11,22 +12,23 @@
     {{-- 部署の詳細表示--}}
     <div class="col border border-primary" style="padding:10px;">
     @if( empty(session('click_code')) or session('click_code') == "bs")
+    @if(isset($top_department))
     <form action="{{ route('psbs01.update') }}" method="post">
             @csrf
             @method('patch')
-            <input type="hidden" id="department_id" name="department_id" value="bs00000001">
+            <input type="hidden" id="department_id" name="department_id" value="{{$top_department[0]->department_id}}">
             <input type="hidden" name="client_id" value="{{ session('client_id') }}">
 
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4">
-                        <p id="palent">部署名<input type="text" name="name"></p>
+                        <p id="palent">部署名<input type="text" name="name" value="{{$top_department[0]->name}}"></p>
                     </div>
                     <div class="col">
-                        <p>番号:bs00000001</p>
+                        <p>番号:{{$top_department[0]->department_id}}</p>
                     </div>
                     <div class="col">
-                        <p>上位:<a href="{{ route('plbs01.show',[session('client_id'),$b])}}">部署</a></p>
+        
                     </div>
                 </div>
 
@@ -34,16 +36,16 @@
                     <div class="col">
                         <p>状態:
                         <select name="status">
-                        <option value="10">開設提案</option>
-                        <option value="11">審査</option>
-                        <option value="12">開設待</option>
-                        <option value="13">稼働中</option>
-                        <option value="14">休止</option>
-                        <option value="18">廃止</option>
+                        <option value="10" @if($top_department[0]->status == "10") selected @endif>開設提案</option>
+                        <option value="11" @if($top_department[0]->status == "11") selected @endif>審査</option>
+                        <option value="12" @if($top_department[0]->status == "12") selected @endif>開設待</option>
+                        <option value="13" @if($top_department[0]->status == "13") selected @endif>稼働中</option>
+                        <option value="14" @if($top_department[0]->status == "14") selected @endif>休止</option>
+                        <option value="18" @if($top_department[0]->status == "18") selected @endif>廃止</option>
                         </select>
                         責任者:
                         <select name="management_personnel_id">
-                        <option>社員01</option>
+                        <option>{{$top_responsible[0]}}</option>
                         </select>
                         </p>
                     </div>
@@ -59,18 +61,24 @@
                     <form action="{{ route('psbs01.index') }}" method="get">
                     @csrf
                     <input type="submit" value="新規">
-                    <input type="hidden" id="high_new" name="high" value="">
+                    <input type="hidden" id="high_new" name="high" value="{{$top_department[0]->department_id}}">
                     </form>
 
-                    <form action="{{ route('psbs01.delete',[session('client_id'),$b])}}" method="post">
+                    <form action="{{ route('psbs01.delete',[session('client_id'),$top_department[0]->department_id])}}" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" id="delete" value="削除" disabled>
                     </form>
 
-                    <input type="button" value="複写" id="copyTarget" onclick="clickSave()">
+                    <form action="{{ route('clipboard',$top_department[0]->department_id)}}" method="get">
+                    @csrf
+                    <input type="submit" value="複写" id="copyTarget">
+                    </form>
 
-                    <input type="button" value="取消" onclick="clickDelete()">
+                    <form action="{{ route('deleteclipboard')}}" method="get">
+                    @csrf
+                    <input type="submit" value="取消">
+                    </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                     <input type="button" value="隠蔽/表示" onclick="treeDisabled()">
@@ -81,10 +89,93 @@
 
                     <input type="checkbox" onclick="deleteOn()">
                     </div>
-                    登録日:140809 登録者:<a href="#">社員08</a></p>
+                    登録日:{{$top_department[0]->created_at}} 登録者:<a href="#">{{$top_responsible[0]}}</a></p>
                     </div>
                 </div>
             </div>
+    @else
+    <form action="{{ route('psbs01.update') }}" method="post">
+            @csrf
+            @method('patch')
+            <input type="hidden" id="department_id" name="department_id" value="{{$departments[0]->department_id}}">
+            <input type="hidden" name="client_id" value="{{ session('client_id') }}">
+
+            <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
+                <div class="row">
+                    <div class="col-4">
+                        <p id="palent">部署名<input type="text" name="name" value="{{$departments[0]->name}}"></p>
+                    </div>
+                    <div class="col">
+                        <p>番号:{{$departments[0]->department_id}}</p>
+                    </div>
+                    <div class="col">
+                        <p>上位:<a href="{{ route('plbs01.show',[session('client_id'),$departments[0]->high_id])}}">{{$department_high[0]->name}}</a></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <p>状態:
+                        <select name="status">
+                        <option value="10" @if($departments[0]->status == "10") selected @endif>開設提案</option>
+                        <option value="11" @if($departments[0]->status == "11") selected @endif>審査</option>
+                        <option value="12" @if($departments[0]->status == "12") selected @endif>開設待</option>
+                        <option value="13" @if($departments[0]->status == "13") selected @endif>稼働中</option>
+                        <option value="14" @if($departments[0]->status == "14") selected @endif>休止</option>
+                        <option value="18" @if($departments[0]->status == "18") selected @endif>廃止</option>
+                        </select>
+                        責任者:
+                        <select name="management_personnel_id">
+                        <option>{{$responsible_lists[0]}}</option>
+                        </select>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                    <p>
+                    <div style="display:inline-flex">
+                    <input type="submit" value="確定">
+    </form>
+    
+                    <form action="{{ route('psbs01.index') }}" method="get">
+                    @csrf
+                    <input type="submit" value="新規">
+                    <input type="hidden" id="high_new" name="high" value="{{$departments[0]->department_id}}">
+                    </form>
+
+                    <form action="{{ route('psbs01.delete',[session('client_id'),$departments[0]->department_id])}}" method="post">
+                    @csrf
+                    @method('post')
+                    <input type="submit" id="delete" value="削除" disabled>
+                    </form>
+
+
+                    <form action="{{ route('clipboard',$departments[0]->department_id)}}" method="get">
+                    @csrf
+                    <input type="submit" value="複写" id="copyTarget">
+                    </form>
+
+                    <form action="{{ route('deleteclipboard')}}" method="get">
+                    @csrf
+                    <input type="submit" value="取消">
+                    </form>
+
+                    <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
+                    <input type="button" value="隠蔽/表示" onclick="treeDisabled()">
+
+                    <form action="{{ route('index') }}" method="get">
+                    <input type="submit" value="再表示">
+                    </form>
+
+                    <input type="checkbox" onclick="deleteOn()">
+                    </div>
+                    登録日:{{$departments[0]->created_at}} 登録者:<a href="#">{{$responsible_lists[0]}}</a></p>
+                    </div>
+                </div>
+            </div>
+    @endif
     {{-- 人員の詳細表示　ここまで--}}
     @else
     <form action="{{ route('psji01.update',session('client_id')) }}" method="post">
@@ -197,13 +288,21 @@
                         <div style="display:inline-flex">
                         {{-- ツリー操作機能　--}}
                         <form action="{{ route('psbs01.index') }}" method="get">
-                        <input type="hidden" id="high" name="high" value="">
+                        @if(isset($top_department))
+                            <input type="hidden" id="high" name="high" value="{{$top_department[0]->department_id}}">
+                        @else
+                            <input type="hidden" id="high" name="high" value="{{$departments[0]->department_id}}">
+                        @endif
                         <p>配下部署<button>新規</button>
                         </form>
 
                         <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
-                        <input type="hidden" id="high_move" name="high_id" value="">
-                        <input type="hidden" id="lower_move" name="lower_id" value=""> 
+                        @if(isset($top_department))
+                            <input type="hidden" id="high_move" name="high_id" value="{{$top_department[0]->department_id}}">
+                        @else
+                            <input type="hidden" id="high_move" name="high_id" value="{{$departments[0]->department_id}}">
+                        @endif
+                        <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}">
                         @csrf
                         @method('patch')
                         <button>移動</button>
@@ -213,17 +312,25 @@
                         @csrf
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
-                        <input type="hidden" id="copy" name="copy_id" value="">
-                        <input type="hidden" id="high_insert" name="high_id" value="">
+                        <input type="hidden" id="copy" name="copy_id" value="{{session('clipboard_id')}}">
+                        @if(isset($top_department))
+                        <input type="hidden" id="high_insert" name="high_id" value="{{$top_department[0]->department_id}}">
+                        @else
+                        <input type="hidden" id="high_insert" name="high_id" value="{{$departments[0]->department_id}}">
+                        @endif
                         <button>挿入</button>
                         </form>
 
                         <form action="{{ route('ptcm01.store') }}" method="post">
                         @csrf
                         @method('post')
-                        <input type="hidden" id="projection_source" name="projection_source_id" value="">
-                        <input type="hidden" id="high_projection" name="high_id" value="">
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
+                        <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
+                        @if(isset($top_department))
+                        <input type="hidden" id="high_projection" name="high_id" value="{{$top_department[0]->department_id}}">
+                        @else
+                        <input type="hidden" id="high_projection" name="high_id" value="{{$departments[0]->department_id}}">
+                        @endif
                         <button>投影</button>
                         </form>
                         {{-- ツリー操作機能ここまで　--}}
@@ -281,7 +388,6 @@
                     </div>
                 </div>
 
-                {{--　8/19　今後　配下の部署のみ表示させるように修正 --}}
                 <div class="row">
                     <div class="col">
                     <table class="table table-bordered border-dark">
@@ -332,22 +438,29 @@
                    
                     </div>
                 </div>
-                {{--　8/19　今後　配下の部署のみ表示させるように修正 ここまで--}}
             </div>
                 <div class="row">
                     <div class="col">
                         <div style="display:inline-flex">
                         {{-- ツリー操作機能　--}}
                         <form action="{{ route('psji01.index') }}" method="get">
-                        <input type="hidden" id="ji_high_new" name="high" value="">
+                        @if(isset($top_department))
+                        <input type="hidden" id="ji_high_new" name="high" value="{{$top_department[0]->department_id}}">
+                        @else
+                        <input type="hidden" id="ji_high_new" name="high" value="{{$departments[0]->department_id}}">
+                        @endif
                         <p>所属人員 <button>新規</button>
                         </form>
 
                         <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
-                        <input type="hidden" id="ji_high_move" name="high_id" value="">
-                        <input type="hidden" id="ji_lower_move" name="lower_id" value="ji00000001"> 
                         @csrf
                         @method('patch')
+                        @if(isset($top_department))
+                        <input type="hidden" id="ji_high_move" name="high_id" value="{{$top_department[0]->department_id}}">
+                        @else
+                        <input type="hidden" id="ji_high_move" name="high_id" value="{{$departments[0]->department_id}}">
+                        @endif
+                        <input type="hidden" id="ji_lower_move" name="lower_id" value="{{session('clipboard_ji_id')}}"> 
                         <button>移動</button>
                         </form>
 
@@ -355,17 +468,25 @@
                         @csrf
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
-                        <input type="hidden" name="high_id" value="{{ $b }}">
-                        <input type="hidden" id="ji_copy_id" name="copy_id" value="">
+                        @if(isset($top_department))
+                        <input type="hidden" name="high_id" value="{{$top_department[0]->department_id}}">
+                        @else
+                        <input type="hidden" name="high_id" value="{{$departments[0]->department_id}}">
+                        @endif
+                        <input type="hidden" id="ji_copy_id" name="copy_id" value="{{session('clipboard_ji_id')}}">
                         <button>挿入</button>
                         </form>
 
                         <form action="{{ route('ptcm01.store') }}" method="post">
                         @csrf
                         @method('post')
-                        <input type="hidden" name="projection_source_id" value="ji00000001">
+                        <input type="hidden" name="projection_source_id" value="{{session('clipboard_ji_id')}}">
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
-                        <input type="hidden" id="ji_high_projection" name="high_id" value="">
+                        @if(isset($top_department))
+                        <input type="hidden" id="ji_high_projection" name="high_id" value="{{$top_department[0]->department_id}}">
+                        @else
+                        <input type="hidden" id="ji_high_projection" name="high_id" value="{{$departments[0]->department_id}}">
+                        @endif
                         <button>投影</button>
                         </form>
                         {{-- ツリー操作機能ここまで　--}}
@@ -458,7 +579,6 @@
                     </div>
                 </div>
                 
-                {{--　8/19　今後　部署の人員のみ表示させるように修正 --}}
                 <div class="row">
                     <div class="col">
                     <table class="table table-bordered border-dark">
@@ -514,7 +634,6 @@
                     </div>
                 </div>
             </div>
-            {{--　8/19　今後　部署の人員のみ表示させるように修正 ここまで--}}
     </div>
     {{-- コメント　詳細画面ここまで --}}
 

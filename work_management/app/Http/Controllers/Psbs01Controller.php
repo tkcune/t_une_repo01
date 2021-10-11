@@ -598,7 +598,7 @@ class Psbs01Controller extends Controller
         OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
         $message = Message::get_message('mhcmok0009',[0=>'']);
         session(['message'=>$message[0]]);
-        return redirect()->route('index');
+        return back();
     }
 
     /*

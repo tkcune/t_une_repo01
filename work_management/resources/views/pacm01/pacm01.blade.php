@@ -2,7 +2,6 @@
 
 <?php
     $b = "bs00000003";
-    //dd($departments);
 ?>
 
 @section('content')
@@ -29,6 +28,23 @@
                     </div>
                     <div class="col">
         
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <p>管理者番号：<input type="text" name="management_number" value="{{$top_department[0]->management_personnel_id}}" style="width:100px;"></p>
+                    </div>
+                    <div class="col-3" style="padding:0px">
+                        <p>管理者名：{{$top_management[0]}}</p>
+                    </div>
+                    <div class="col" style="padding:0px">
+                    <p>管理者検索：
+                        <input type="search" list="keywords" style="width:150px;">
+                        <datalist id="keywords">
+                        <option value="山田一郎">
+                        </datalist>
+                    </p>
                     </div>
                 </div>
 
@@ -114,6 +130,23 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-4">
+                        <p>管理者番号：<input type="text" name="management_number" value="{{$departments[0]->management_personnel_id}}" style="width:100px;"></p>
+                    </div>
+                    <div class="col-3" style="padding:0px">
+                        <p>管理者名：{{$management_lists[0]}}</p>
+                    </div>
+                    <div class="col" style="padding:0px">
+                    <p>管理者検索：
+                        <input type="search" list="keywords" style="width:150px;">
+                        <datalist id="keywords">
+                        <option value="山田一郎">
+                        </datalist>
+                    </p>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col">
                         <p>状態:
                         <select name="status">
@@ -163,7 +196,7 @@
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
-                    <input type="button" value="隠蔽/表示" onclick="treeDisabled()">
+                    <input type="button" value="隠蔽/表示">
 
                     <form action="{{ route('index') }}" method="get">
                     <input type="submit" value="再表示">
@@ -176,37 +209,44 @@
                 </div>
             </div>
     @endif
-    {{-- 人員の詳細表示　ここまで--}}
+    {{-- 部署の詳細表示　ここまで--}}
+    {{-- 人員の詳細表示　--}}
     @else
     <form action="{{ route('psji01.update',session('client_id')) }}" method="post">
             @csrf
             @method('patch')
-            <input type="hidden" id="personnel_id" name="personnel_id" value="">
+            <input type="hidden" id="personnel_id" name="personnel_id" value="{{$names[0]->personnel_id}}">
             <input type="hidden" name="client_id" value="{{ session('client_id') }}">
 
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4">
-                        <p id="palent">名前<input type="text" name="name"></p>
+                        <p id="palent">名前<input type="text" name="name" value="{{$names[0]->name}}"></p>
                     </div>
                     <div class="col">
-                        <p>番号:ji00000001</p>
+                        <p>番号:{{$names[0]->personnel_id}}</p>
                     </div>
                     <div class="col">
-                        <p>上位:<a href="{{ route('plbs01.show',[session('client_id'),$b])}}">田中</a></p>
+                        <p>上位:山田一郎</p>
+                    </div>
+
+                    <div class="col" style="padding:0px">
+                    <p>ログイン：
+                        <input type="checkbox" name="login" value="1" onclick="loginDisabled()" @if($names[0]->login_authority == "1") checked @endif>
+                    </p>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-5">
-                        <p>管理者番号：<input type="text" name="number" style="width:100px;"></p>
+                    <div class="col-4">
+                        <p>管理者番号：<input type="text" name="management_number" value="{{$names[0]->management_personnel_id}}" style="width:100px;"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
-                        <p>管理者名：山田太郎</p>
+                        <p>管理者名：{{$personnel_management_lists[0]}}</p>
                     </div>
                     <div class="col" style="padding:0px">
-                        <p>管理者検索：
-                        <input type="search" list="keywords" style="width:100px;">
+                    <p>管理者検索：
+                        <input type="search" list="keywords" style="width:150px;">
                         <datalist id="keywords">
                         <option value="山田太郎">
                         </datalist>
@@ -219,7 +259,7 @@
                         <p>メールアドレス<input type="email" name="mail"></p>
                     </div>
                     <div class="col-4" style="padding:0px">
-                        <p>パスワード<input id="password" type="password" name="mail"><input type="checkbox" onclick="passwordOn()"></p>
+                        <p id="login" @if($names[0]->login_authority == "0") visibility hidden @endif >パスワード<input id="password" type="password" name="mail"><input type="checkbox" onclick="passwordOn()"></p>
                     </div>
                     <div class="col">
                         <button>メール送信</button>
@@ -230,17 +270,15 @@
                     <div class="col">
                         <p>状態:
                         <select name="status">
-                        <option value="10">応募</option>
-                        <option value="11">審査</option>
-                        <option value="12">入社待</option>
-                        <option value="13">在職</option>
-                        <option value="14">休職</option>
-                        <option value="18">退職</option>
+                        <option value="10" @if($names[0]->status == "10") selected @endif>応募</option>
+                        <option value="11" @if($names[0]->status == "11") selected @endif>審査</option>
+                        <option value="12" @if($names[0]->status == "12") selected @endif>入社待</option>
+                        <option value="13" @if($names[0]->status == "13") selected @endif>在職</option>
+                        <option value="14" @if($names[0]->status == "14") selected @endif>休職</option>
+                        <option value="18" @if($names[0]->status == "18") selected @endif>退職</option>
                         </select>
-                        責任者:
-                        <select name="management_personnel_id">
-                        <option>社員01</option>
-                        </select>
+                        システム管理者:
+                        <input type="checkbox" value="1" @if($names[0]->system_management == "1") checked @endif>
                         </p>
                     </div>
                 </div>
@@ -257,7 +295,7 @@
                     <input type="hidden" id="high_new" name="high" value="">
                     </form>
 
-                    <form action="{{ route('psbs01.delete',[session('client_id'),$b])}}" method="post">
+                    <form action="{{ route('psji01.destroy',[session('client_id'),$b])}}" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" id="delete" value="削除" disabled>
@@ -268,7 +306,7 @@
                     <input type="button" value="取消" onclick="clickDelete()">
 
                     <input type="hidden" id="tree_disabled" value="{{ session('client_id') }}">
-                    <input type="button" value="隠蔽/表示" onclick="treeDisabled()">
+                    <input type="button" value="隠蔽/表示">
 
                     <form action="{{ route('index') }}" method="get">
                     <input type="submit" value="再表示">
@@ -598,7 +636,7 @@
                         @foreach($names as $name)
                             <tr>
                             <td>{{ $name->personnel_id}}</td>
-                            <td><a href="#">{{$name->name}}</a></td>
+                            <td><a href="{{ route('plbs01.show',[session('client_id'),$name->personnel_id])}}">{{$name->name}}</a></td>
                             <td><a href="{{ route('plbs01.show',[session('client_id'),$personnel_high[$loop->index]->department_id])}}">{{$personnel_high[$loop->index]->name}}</a></td>
                             <td>
                             @switch($name->status)

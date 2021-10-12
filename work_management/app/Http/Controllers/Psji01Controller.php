@@ -160,7 +160,6 @@ class Psji01Controller extends Controller
     }
 
     /**
-     * 8.19　ルートが未設定
      * 人員情報の更新
      * 
      * @param  \Illuminate\Http\Request  $request
@@ -179,7 +178,22 @@ class Psji01Controller extends Controller
        $client_id = $request->client_id;
        $personnel_id = $request->personnel_id;
        $name = $request->name;
+       $management_number = $request->management_number;
        $status = $request->status;
+
+       //入力された番号の人員が存在するかの確認
+       try{
+            $management_personnel_id = DB::select('select * from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$management_number]);
+        }catch(\Exception $e){
+            //エラー処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+        if($management_personnel_id == null){
+
+            return redirect()->route('index');
+        }
 
        //部署情報の更新
        if($status == "13")
@@ -189,8 +203,8 @@ class Psji01Controller extends Controller
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
        
             try{
-               DB::update('update dcji01 set name = ?,status = ?,operation_start_date = ? where client_id = ? and personnel_id = ?',
-               [$name,$status,$operation_start_date,$client_id,$personnel_id]);
+               DB::update('update dcji01 set name = ?,status = ?,management_personnel_id = ?,operation_start_date = ? where client_id = ? and personnel_id = ?',
+               [$name,$status,$management_number,$operation_start_date,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -203,8 +217,8 @@ class Psji01Controller extends Controller
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
        
             try{
-                DB::update('update dcji01 set name = ?,status = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
-                [$name,$status,$operation_end_date,$client_id,$personnel_id]);
+                DB::update('update dcji01 set name = ?,status = ?,management_personnel_id = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$management_number,$operation_end_date,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -213,8 +227,8 @@ class Psji01Controller extends Controller
        }else{
            //上記以外なら状態と名前のみ更新
             try{
-                DB::update('update  dcji01 set name = ?,status = ? where client_id = ? and personnel_id = ?',
-                [$name,$status,$client_id,$personnel_id]);
+                DB::update('update  dcji01 set name = ?,status = ?,management_personnel_id = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$management_number,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -227,7 +241,7 @@ class Psji01Controller extends Controller
        session(['message'=>$message[0]]);
        //ツリー開閉
        PtcmtrController::open_node($personnel_id);
-       return redirect()->route('index');
+       return back();
     }
 
     /**

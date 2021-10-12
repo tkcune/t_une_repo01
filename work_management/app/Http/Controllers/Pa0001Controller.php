@@ -86,6 +86,10 @@ class Pa0001Controller extends Controller
         $responsible = new ResponsiblePerson();
         $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
+
+        //管理者を名前で取得
+        $top_management = $responsible->getManagementLists($client_id,$top_department);
+        $management_lists = $responsible->getManagementLists($client_id,$departments);
        
         //上位階層取得
         $hierarchical = new Hierarchical();
@@ -96,7 +100,7 @@ class Pa0001Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
         
-        return view('pacm01.pacm01',compact('top_department','top_responsible','departments','names','count_department',
+        return view('pacm01.pacm01',compact('top_management','management_lists','top_department','top_responsible','departments','names','count_department',
         'count_personnel','department_max','personnel_max','department_high',
         'personnel_high','responsible_lists'));
     }

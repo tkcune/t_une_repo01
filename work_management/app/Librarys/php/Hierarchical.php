@@ -36,12 +36,10 @@
          */
         public function upperHierarchyName($array){
             $name_list = [];
-
             foreach($array as $value){
-
             //頭2文字を判定
             $code = substr($value->high_id,0,2);
-
+            
                 if ($code == "bs"){
                     $name_data = DB::select('select * from dcbs01 where client_id = ? 
                     and department_id = ?',[$value->client_id,$value->high_id]);

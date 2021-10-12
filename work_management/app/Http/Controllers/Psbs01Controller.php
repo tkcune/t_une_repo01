@@ -176,13 +176,24 @@ class Psbs01Controller extends Controller
         $lists = [];
         $department_data = [];
         $personnel_data = [];
+        $select_code = substr($select_id,0,2);
+
+        if($select_code == "ta"){
+            //選択部署がtaだった場合は対応するIDを取得
+            $projection_code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$select_id]);
+            $select_id = $projection_code[0]->projection_source_id;
+            $select_code = substr($projection_code[0]->projection_source_id,0,2);
+        }
+        
         array_push($lists,$select_id);
- 
-        //選択した部署の配下を取得
-        $hierarchical = new Hierarchical();
-        $select_lists = $hierarchical->subordinateSearch($lists,$client);
+
+        if($select_code == "bs"){
+
+            //選択した部署の配下を取得
+            $hierarchical = new Hierarchical();
+            $select_lists = $hierarchical->subordinateSearch($lists,$client);
           
-         //選択したデータ及び配下データを取得
+            //選択したデータ及び配下データを取得
             foreach($select_lists as $select_list){
                 //機能コードの判定
                 $code = substr($select_list,0,2);
@@ -216,29 +227,70 @@ class Psbs01Controller extends Controller
                 }
                 
             }
+        }else{
+            //選択した人員のデータを取得
+            try{
+                $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                and dcji01.personnel_id = ?',[$client,$select_id]);
+            }catch(\Exception $e){
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+
+            //選択した人員の所属部署を取得
+            try{
+                $affiliation_data = DB::select('select high_id from dccmks where client_id = ?
+                and lower_id = ?',[$client,$select_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            try{
+                $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                and dcbs01.department_id = ?',[$client,$affiliation_data[0]->high_id]);
+            }catch(\Exception $e){
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            array_push($department_data,$data[0]);
+        }
             
-        //ページネーション
-        $pagination = new Pagination();
-        $department_max = $pagination->pageMax($department_data,count($department_data));
-        $departments = $pagination->pagination($department_data,count($department_data),$count_department);
-        $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
-        $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+            //ページネーション
+            $pagination = new Pagination();
+            $department_max = $pagination->pageMax($department_data,count($department_data));
+            $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+            $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
+            $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+            //責任者を名前で取得
+            $responsible = new ResponsiblePerson();
+            $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
-        //責任者を名前で取得
-        $responsible = new ResponsiblePerson();
-        $responsible_lists = $responsible->getResponsibleLists($client,$departments);
+            //管理者を名前で取得
+            if(isset($departments)){
+                $management_lists = $responsible->getManagementLists($client,$departments);
+            }
+            if(isset($names)){
+                $personnel_management_lists = $responsible->getManagementLists($client,$names);
+            }
        
-        //上位階層取得
-        $hierarchical = new Hierarchical();
-        $department_high = $hierarchical->upperHierarchyName($departments);
-        $personnel_high = $hierarchical->upperHierarchyName($names);
-        
-        $tree = new PtcmtrController();
-        $tree_data = $tree->set_view_treedata();
+            //上位階層取得
+            $hierarchical = new Hierarchical();
+            $department_high = $hierarchical->upperHierarchyName($departments);
+            $personnel_high = $hierarchical->upperHierarchyName($names);
+           
+            $tree = new PtcmtrController();
+            $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('departments','names','count_department',
-        'count_personnel','department_max','personnel_max','department_high',
-        'personnel_high','responsible_lists','client','select_id'));
+            session(['click_code'=>$select_code]);
+
+            return view('pacm01.pacm01',compact('management_lists','departments','personnel_management_lists',
+            'names','count_department','count_personnel','department_max','personnel_max','department_high',
+            'personnel_high','responsible_lists','client','select_id'));
     }
 
     /**
@@ -272,7 +324,23 @@ class Psbs01Controller extends Controller
         $client_id = $request->client_id;
         $department_id = $request->department_id;
         $name = $request->name;
+        $management_number = $request->management_number;
         $status = $request->status;
+
+        
+        //入力された番号の人員が存在するかの確認
+        try{
+            $management_personnel_id = DB::select('select * from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$management_number]);
+        }catch(\Exception $e){
+                //エラー処理
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+        }
+        if($management_personnel_id == null){
+
+            return redirect()->route('index');
+        }
 
         //部署情報の更新
         if($status == "13")
@@ -282,8 +350,8 @@ class Psbs01Controller extends Controller
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
         
             try{
-                DB::update('update dcbs01 set name = ?,status = ?,operation_start_date = ? where client_id = ? and department_id = ?',
-                [$name,$status,$operation_start_date,$client_id,$department_id]);
+                DB::update('update dcbs01 set name = ?,status = ?,management_personnel_id = ?,operation_start_date = ? where client_id = ? and department_id = ?',
+                [$name,$status,$management_number,$operation_start_date,$client_id,$department_id]);
             }catch(\Exception $e){
                 //エラー処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -296,8 +364,8 @@ class Psbs01Controller extends Controller
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
         
             try{
-                DB::update('update dcbs01 set name = ?,status = ?,operation_end_date = ? where client_id = ? and department_id = ?',
-                [$name,$status,$operation_end_date,$client_id,$department_id]); 
+                DB::update('update dcbs01 set name = ?,status = ?,management_personnel_id = ?,operation_end_date = ? where client_id = ? and department_id = ?',
+                [$name,$status,$management_number,$operation_end_date,$client_id,$department_id]); 
             }catch(\Exception $e){
                 //エラー処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
@@ -307,8 +375,8 @@ class Psbs01Controller extends Controller
         }else{
             //上記以外なら状態と名前のみ更新
             try{
-                DB::update('update dcbs01 set name = ?,status = ? where client_id = ? and department_id = ?',
-                [$name,$status,$client_id,$department_id]);
+                DB::update('update dcbs01 set name = ?,status = ?,management_personnel_id = ? where client_id = ? and department_id = ?',
+                [$name,$status,$management_number,$client_id,$department_id]);
             }catch(\Exception $e){
                 //エラー及びログ処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');

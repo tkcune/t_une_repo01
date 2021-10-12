@@ -4,6 +4,7 @@
                 <div id="chaintree" class="col-10"></div>
                 <div class="col">
                     <button type="button" class="btn-close" aria-label="Close" onclick="display()"></button>
+                    <button id='openTree'>露出</button>
                 </div>
             </div>
         </div>

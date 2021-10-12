@@ -2030,7 +2030,7 @@ TreeAction.node = /*#__PURE__*/function () {
 
     this.toLink = []; //@var array fromLink 投影元のリンク、idとディレクトリ
 
-    this.fromLink = []; //@var boolean dispaly 表示/非表示を切り替える
+    this.fromLink = []; //@var boolean display 表示/非表示を切り替える
 
     this.display = true;
   } //ツリーノードのdomを作成する
@@ -2508,8 +2508,8 @@ TreeAction.node = /*#__PURE__*/function () {
     } //子要素の表示、非表示を切り替える。
 
   }, {
-    key: "changeChildDispaly",
-    value: function changeChildDispaly() {
+    key: "changeChildDisplay",
+    value: function changeChildDisplay() {
       this.child.forEach(function (child) {
         //子要素が展開するボックスのツリーとそれ以外のツリーで処理を分ける。
         if (child.element.classList.value.match('expandtree') || child.element.classList.value.match('lastexpandtree')) {
@@ -3325,54 +3325,41 @@ TreeAction = function (treesepalete, projectionChain) {
   //@param string nodeId 隠蔽するノードのid
 
 
-  var changeDisplay = function changeDispaly(nodeId) {
+  var changeDisplay = function changeDisplay(nodeId) {
     //@var Nodeクラス 隠蔽/表示するノード
-    var node = chainparser.searchNodeId(nodeId, tree); //displayがtrueの場合は、表示されているので、隠蔽する
+    var node = chainparser.searchNodeId(nodeId, tree);
 
     if (node.display === true) {
-      //隠蔽ノードのdisplayを変更する
-      node.display = false; //@var Nodeクラス 隠蔽するノードの親ノード
-
-      var palent = chainparser.searchPalentNode(nodeId, tree); //ノードクラスを隠蔽する
-
-      displayNone(node, palent); //隠蔽ノードに投影先があるなら、投影先も隠蔽する
-
-      if (node.toLink !== []) {
-        //投影先のidをループする
-        node.toLink.forEach(function (linkNodeId) {
-          //@var Nodeクラス 投影先のノード
-          var linkNode = chainparser.searchNodeId(linkNodeId, tree); //displayを変更する
-
-          linkNode.display = false; //@var Nodeクラス 投影先の親ノード
-
-          var linkPalent = chainparser.searchPalentNode(linkNodeId, tree); //投影先を隠蔽する
-
-          displayNone(linkNode, linkPalent);
-        });
-      }
+      //displayがtrueの場合は、表示されているので、隠蔽する
+      displayNoneNode(node);
     } else if (node.display === false) {
       //displayがfalseならば、隠蔽しているので、表示する
-      //displayを変更する
-      node.display = true; //@var Nodeクラス 表示するノードの親ノード
+      displayOpenNode(node);
+    }
+  }; //表示しているノードを隠蔽する。投影も含めて
+  //@param Nodeクラス 隠蔽するノード
 
-      var _palent = chainparser.searchPalentNode(nodeId, tree); //ノードを表示する
 
+  var displayNoneNode = function displayNoneNode(node) {
+    //隠蔽ノードのdisplayを変更する
+    node.display = false; //@var Nodeクラス 隠蔽するノードの親ノード
 
-      displayOpen(node, _palent); //表示ノードに投影先があるなら、投影先も表示する
+    var palent = chainparser.searchPalentNode(node.id, tree); //ノードクラスを隠蔽する
 
-      if (node.toLink !== []) {
-        //投影先のidをループする
-        node.toLink.forEach(function (linkNodeId) {
-          //@var Nodeクラス 表示先のノード
-          var linkNode = chainparser.searchNodeId(linkNodeId, tree); //displayを変更する
+    displayNone(node, palent); //隠蔽ノードに投影先があるなら、投影先も隠蔽する
 
-          linkNode.display = true; //@var Nodeクラス 投影先の親ノード
+    if (node.toLink !== []) {
+      //投影先のidをループする
+      node.toLink.forEach(function (linkNodeId) {
+        //@var Nodeクラス 投影先のノード
+        var linkNode = chainparser.searchNodeId(linkNodeId, tree); //displayを変更する
 
-          var linkPalent = chainparser.searchPalentNode(linkNodeId, tree); //投影先を表示する
+        linkNode.display = false; //@var Nodeクラス 投影先の親ノード
 
-          displayOpen(linkNode, linkPalent);
-        });
-      }
+        var linkPalent = chainparser.searchPalentNode(linkNodeId, tree); //投影先を隠蔽する
+
+        displayNone(linkNode, linkPalent);
+      });
     }
   }; //ノードを非表示にして、隣のノードの表示を変える
   //@var Nodeクラス child 非表示にするノード
@@ -3406,6 +3393,31 @@ TreeAction = function (treesepalete, projectionChain) {
         child.element.previousElementSibling.className = 'lasttree';
       }
     }
+  }; //隠蔽したノードを表示する。投影も含めて
+  //@param Nodeクラス 表示するノード
+
+
+  var displayOpenNode = function displayOpenNode(node) {
+    //displayを変更する
+    node.display = true; //@var Nodeクラス 表示するノードの親ノード
+
+    var palent = chainparser.searchPalentNode(node.id, tree); //ノードを表示する
+
+    displayOpen(node, palent); //表示ノードに投影先があるなら、投影先も表示する
+
+    if (node.toLink !== []) {
+      //投影先のidをループする
+      node.toLink.forEach(function (linkNodeId) {
+        //@var Nodeクラス 表示先のノード
+        var linkNode = chainparser.searchNodeId(linkNodeId, tree); //displayを変更する
+
+        linkNode.display = true; //@var Nodeクラス 投影先の親ノード
+
+        var linkPalent = chainparser.searchPalentNode(linkNodeId, tree); //投影先を表示する
+
+        displayOpen(linkNode, linkPalent);
+      });
+    }
   }; //隠蔽ノードを表示に替える
   //@var Nodeクラス child 表示するノード
   //@var Nodeクラス palent 表示するノードの親ノード
@@ -3438,6 +3450,17 @@ TreeAction = function (treesepalete, projectionChain) {
         child.element.previousElementSibling.className = 'normaltree';
       }
     }
+  }; //全体の隠蔽したツリーを表示する
+
+
+  var openTree = function openTree() {
+    //ツリー全体をループする
+    chainparser.concatNode(tree).forEach(function (node) {
+      if (node.display === false) {
+        //displayがfalseならば、隠蔽しているので、表示する
+        displayOpenNode(node);
+      }
+    });
   }; //titleboxのディレクトリを取得する
   //@var dom 取得したいディレクトリのdom
   //@return string ディレクトリ
@@ -3521,7 +3544,9 @@ TreeAction = function (treesepalete, projectionChain) {
 
   window.addEventListener('beforeunload', function () {
     //@var array idを保存する連想配列
-    var storage = {}; //全体のツリーを探索する
+    var storage = {}; //@var array 隠蔽しいてるノードのidを保存する
+
+    var hiddenStorage = {}; //全体のツリーを探索する
 
     chainparser.concatNode(tree).forEach(function (node) {
       //展開するツリーノードか、判断する
@@ -3530,12 +3555,16 @@ TreeAction = function (treesepalete, projectionChain) {
         if (!node.element.children[0].classList.value.match('unexpand')) {
           storage[node.id] = node.id;
         }
+      } //displayがfalseなら、hiddenstorageに保存する
+
+
+      if (node.display === false) {
+        hiddenStorage[node.id] = node.id;
       }
-    }); //@var string 連想配列をjson文字列にする
+    }); //配列は保存できないので、json文字列に変換して保存する
 
-    var jsonStorage = JSON.stringify(storage); //配列は保存できないので、json文字列に変換して保存する
-
-    localStorage.setItem('id', jsonStorage); //クリップボードのデータを保存する
+    localStorage.setItem('id', JSON.stringify(storage));
+    localStorage.setItem('hiddenId', JSON.stringify(hiddenStorage)); //クリップボードのデータを保存する
 
     localStorage.setItem('currentId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId());
     localStorage.setItem('currentDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentDir());
@@ -3565,8 +3594,16 @@ TreeAction = function (treesepalete, projectionChain) {
 
 
       Object.keys(storage).forEach(function (id) {
+        //@var Nodeクラス 開くノード
         var node = chainparser.searchNodeId(storage[id], tree);
         node.openBottomUpTree();
+      }); //@var array 隠蔽していたノードのid
+
+      var hiddenStorage = JSON.parse(localStorage.getItem('hiddenId'));
+      Object.keys(hiddenStorage).forEach(function (id) {
+        //@var Nodeクラス 隠蔽するノード
+        var node = chainparser.searchNodeId(hiddenStorage[id], tree);
+        displayNoneNode(node);
       }); //ページ移動前のクリップボードのデータを復元する
 
       _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(localStorage.getItem('currentDir'), localStorage.getItem('currentId'));
@@ -3586,6 +3623,7 @@ TreeAction = function (treesepalete, projectionChain) {
     current: current,
     openNode: openNode,
     closeNode: closeNode,
+    openTree: openTree,
     addNodeClickEvent: addNodeClickEvent,
     changeDisplay: changeDisplay
   };
@@ -3600,11 +3638,14 @@ TreeAction.addNodeClickEvent(function () {
   window.location = "http://localhost:8000/show/".concat(clientId, "/").concat(nodeId);
 }); //隠蔽のイベント
 
-document.getElementById('parent').children[2].children[0].children[1].children[7].addEventListener('click', function () {
+document.getElementById('parent').children[3].children[0].children[1].children[6].addEventListener('click', function () {
   //@var string 詳細行の部署のid
   var nodeId = document.getElementById('parent').children[0].children[1].children[0].innerText.substr(3); //隠蔽のメソッド
 
   TreeAction.changeDisplay(nodeId);
+});
+document.getElementById('openTree').addEventListener('click', function () {
+  TreeAction.openTree();
 });
 
 

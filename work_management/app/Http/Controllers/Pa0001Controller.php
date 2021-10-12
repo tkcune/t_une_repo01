@@ -99,7 +99,10 @@ class Pa0001Controller extends Controller
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
-        
+
+        //クリックコードの保存
+        session(['click_code'=>'bs']);
+
         return view('pacm01.pacm01',compact('top_management','management_lists','top_department','top_responsible','departments','names','count_department',
         'count_personnel','department_max','personnel_max','department_high',
         'personnel_high','responsible_lists'));
@@ -184,7 +187,7 @@ class Pa0001Controller extends Controller
      */
     public function count(Request $request)
     {
-        $client_id = "aa00000001";
+        $client_id = session('client_id');
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
 
@@ -220,6 +223,10 @@ class Pa0001Controller extends Controller
         $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
+        //管理者を名前で取得
+        $top_management = $responsible->getManagementLists($client_id,$top_department);
+        $management_lists = $responsible->getManagementLists($client_id,$departments);
+
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
@@ -229,7 +236,7 @@ class Pa0001Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('top_department','top_responsible','departments','names','count_department','count_personnel',
+        return view('pacm01.pacm01',compact('top_department','top_responsible','management_lists','top_management','departments','names','count_department','count_personnel',
         'department_max','personnel_max','department_high',
         'personnel_high','responsible_lists'));
     }
@@ -261,7 +268,9 @@ class Pa0001Controller extends Controller
         $select_id = $_GET['id2'];
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
-        
+
+        if(substr($select_id,0,2) == "bs"){
+
         //選択した部署のIDをarray型に格納
         array_push($lists,$select_id);
         
@@ -299,6 +308,79 @@ class Pa0001Controller extends Controller
                }
                
            }
+        }else{
+            //選択した人員のデータを取得
+            try{
+                $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                and dcji01.personnel_id = ?',[$client,$select_id]);
+            }catch(\Exception $e){
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+
+            //選択した人員の所属部署を取得
+            try{
+                $affiliation_data = DB::select('select high_id from dccmks where client_id = ?
+                and lower_id = ?',[$client,$select_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            //取得した部署IDを元に部署データを取得
+            try{
+                $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                and dcbs01.department_id = ?',[$client,$affiliation_data[0]->high_id]);
+            }catch(\Exception $e){
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            array_push($department_data,$data[0]);
+
+            array_push($lists,$affiliation_data[0]->high_id);
+            //取得した部署IDを元に配下を取得
+            $hierarchical = new Hierarchical();
+            $select_lists = $hierarchical->subordinateSearch($lists,$client);
+
+            //選択したデータ及び配下データを取得
+            foreach($select_lists as $select_list){
+                //機能コードの判定
+                $code = substr($select_list,0,2);
+ 
+                //対応したデータの取得
+                if ($code == "bs"){
+                    try{
+                        $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                        and dcbs01.department_id = ?',[$client,$select_list]);
+                    }catch(\Exception $e){
+
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
+                    array_push($department_data,$data[0]);
+ 
+                }elseif($code == "ji"){
+                    try{
+                        $data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                        and dcji01.personnel_id = ?',[$client,$select_list]);
+                    }catch(\Exception $e){
+
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
+                    array_push($personnel_data,$data[0]);
+                }else{
+
+                }
+                
+            }
+        }
 
         //ページネーション
         $pagination = new Pagination();
@@ -311,6 +393,14 @@ class Pa0001Controller extends Controller
         $responsible = new ResponsiblePerson();
         $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
+        //管理者を名前で取得
+        if(isset($departments)){
+            $management_lists = $responsible->getManagementLists($client,$departments);
+        }
+        if(isset($names)){
+            $personnel_management_lists = $responsible->getManagementLists($client,$names);
+        }
+
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
@@ -320,7 +410,7 @@ class Pa0001Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('departments','names','count_department','count_personnel',
+        return view('pacm01.pacm01',compact('management_lists','personnel_management_lists','departments','names','count_department','count_personnel',
         'department_max','personnel_max','department_high',
         'personnel_high','responsible_lists','client','select_id'));
     }

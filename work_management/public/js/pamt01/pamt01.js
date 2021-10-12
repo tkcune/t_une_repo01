@@ -34,6 +34,20 @@ function deleteOn()
 }
 
 /**
+ * パスワード入力欄を露出・隠蔽するメソッド
+ */
+ function loginDisabled()
+ {
+     if (document.getElementById("login").style.visibility ="hidden"){
+     // ログイン欄を出す
+     document.getElementById("login").style.visibility ="visible";
+   }else{
+     // ログイン欄を消す
+     document.getElementById("login").style.visibility ="hidden";
+   }
+ }
+
+/**
  * パスワードを露出・隠蔽するメソッド
  */
 function passwordOn()

@@ -185,9 +185,9 @@ class Psbs01Controller extends Controller
             $select_code = substr($projection_code[0]->projection_source_id,0,2);
         }
         
-        array_push($lists,$select_id);
-
         if($select_code == "bs"){
+
+            array_push($lists,$select_id);
 
             //選択した部署の配下を取得
             $hierarchical = new Hierarchical();
@@ -248,6 +248,7 @@ class Psbs01Controller extends Controller
                 DatabaseException::common($e);
                 return redirect()->route('index');
             }
+            //取得した部署IDを元に部署データを取得
             try{
                 $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
                 and dcbs01.department_id = ?',[$client,$affiliation_data[0]->high_id]);
@@ -258,6 +259,46 @@ class Psbs01Controller extends Controller
                 return redirect()->route('index');
             }
             array_push($department_data,$data[0]);
+
+            array_push($lists,$affiliation_data[0]->high_id);
+            //取得した部署IDを元に配下を取得
+            $hierarchical = new Hierarchical();
+            $select_lists = $hierarchical->subordinateSearch($lists,$client);
+
+            //選択したデータ及び配下データを取得
+            foreach($select_lists as $select_list){
+                //機能コードの判定
+                $code = substr($select_list,0,2);
+ 
+                //対応したデータの取得
+                if ($code == "bs"){
+                    try{
+                        $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                        and dcbs01.department_id = ?',[$client,$select_list]);
+                    }catch(\Exception $e){
+
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
+                    array_push($department_data,$data[0]);
+ 
+                }elseif($code == "ji"){
+                    try{
+                        $data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                        and dcji01.personnel_id = ?',[$client,$select_list]);
+                    }catch(\Exception $e){
+
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
+                    array_push($personnel_data,$data[0]);
+                }else{
+
+                }
+                
+            }
         }
             
             //ページネーション

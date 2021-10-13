@@ -3627,7 +3627,8 @@ TreeAction = function (treesepalete, projectionChain) {
     addNodeClickEvent: addNodeClickEvent,
     changeDisplay: changeDisplay
   };
-}(treeChain, projectionChain);
+}(treeChain, projectionChain); //ツリーノードのクリックイベント
+
 
 TreeAction.addNodeClickEvent(function () {
   //@var string Laravelのセッションid
@@ -3643,7 +3644,8 @@ document.getElementById('parent').children[3].children[0].children[1].children[6
   var nodeId = document.getElementById('parent').children[0].children[1].children[0].innerText.substr(3); //隠蔽のメソッド
 
   TreeAction.changeDisplay(nodeId);
-});
+}); //ツリー画面の露出ボタンのクリックイベント
+
 document.getElementById('openTree').addEventListener('click', function () {
   TreeAction.openTree();
 });

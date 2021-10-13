@@ -313,6 +313,9 @@ class Psji01Controller extends Controller
         $responsible = new ResponsiblePerson();
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
+        //管理者を名前で取得
+        $management_lists = $responsible->getManagementLists($client_id,$departments);
+
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
@@ -322,7 +325,7 @@ class Psji01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('departments','names','count_department',
+        return view('pacm01.pacm01',compact('management_lists','departments','names','count_department',
         'count_personnel','department_max','personnel_max','department_high','personnel_high','responsible_lists'));
     }
 

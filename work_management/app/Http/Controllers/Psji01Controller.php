@@ -61,7 +61,6 @@ class Psji01Controller extends Controller
         $login_authority = $request->login_authority;
         $system_management = $request->system_management;
         $high = $request->high;
-
         $date = new Date();
         $check = new StatusCheck();
 

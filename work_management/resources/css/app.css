@@ -232,3 +232,27 @@ ul.lasttree li:last-child:before {
   font-style: italic;
   font-family: Times New Roman, "ＭＳ Ｐゴシック";
 }
+
+/* ツリー画面全体のcss */
+#tree {
+  display: flex;
+  justify-content: space-between;
+}
+
+.twobutton {
+  display: flex;
+}
+
+.btndisplay {
+  width: 20px;
+  height: 20px;
+}
+
+.btnclose {
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  line-height: 20px;
+  color: gray;
+  cursor: default;
+}

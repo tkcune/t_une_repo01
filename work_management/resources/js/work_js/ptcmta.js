@@ -1712,6 +1712,7 @@ TreeAction = ((treesepalete, projectionChain) => {
 
 })(treeChain, projectionChain);
 
+//ツリーノードのクリックイベント
 TreeAction.addNodeClickEvent(function(){
   //@var string Laravelのセッションid
   let clientId = document.getElementById('parent').parentElement.children.client_id.value;
@@ -1729,6 +1730,7 @@ document.getElementById('parent').children[3].children[0].children[1].children[6
   TreeAction.changeDisplay(nodeId);
 });
 
+//ツリー画面の露出ボタンのクリックイベント
 document.getElementById('openTree').addEventListener('click', () => {
   TreeAction.openTree();
 });

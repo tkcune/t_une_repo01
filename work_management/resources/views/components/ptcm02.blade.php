@@ -1,11 +1,9 @@
     {{-- コメント　ツリー画面ここから --}}
         <div class="col-3 bg-white border p-2" id="tree">
-            <div class="row">
-                <div id="chaintree" class="col-10"></div>
-                <div class="col">
-                    <button type="button" class="btn-close" aria-label="Close" onclick="display()"></button>
-                    <button id='openTree'>露出</button>
-                </div>
+            <div id="chaintree"></div>
+            <div class="twobutton">
+                <img src="/image/lg.png" class="btndisplay" id="openTree">
+                <div class="btnclose" onclick="display()"><<</div>
             </div>
         </div>
         <script>

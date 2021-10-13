@@ -96,7 +96,7 @@
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
-                    <input type="button" value="隠蔽/表示" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします" onclick="treeDisabled()">
+                    <input type="button" value="隠蔽/表示" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
                     <form action="{{ route('index') }}" method="get">
                     <input type="submit" value="再表示" data-toggle="tooltip" title="ツリーを再表示します">

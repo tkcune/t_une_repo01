@@ -25,6 +25,9 @@ class Psji01Controller extends Controller
     /**
      * 人員新規登録画面表示
      *
+     * @param  App\Http\Controllers\PtcmtrController $tree
+     * @param  array $tree_data ツリーデータ
+     * 
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -45,9 +48,26 @@ class Psji01Controller extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
+     * 新規人員データ登録
+     * 
      * @param  \Illuminate\Http\Request  $request
+     * @param  string $client_id 顧客ID
+     * @param  string $name 名前
+     * @param　string $email メールアドレス
+     * @param　string $password パスワード
+     * @param　int $status 状態
+     * @param  int $login_authority ログイン権限
+     * @param  int $login_authority 管理者権限
+     * @param  int $high 上位部署
+     * @param  App\Models\Date $date
+     * @param  App\Librarys\php\StatusCheck $check
+     * @param  string $id　顧客IDに対応した最新の部署IDを格納する因数
+     * @param  string $personnel_id 最新の人員ID
+     * @param  App\Librarys\php\ZeroPadding $padding
+     * @param  App\Librarys\php\StatusCheck $check
+     * @param  string $operation_start_date　稼働開始日
+     * @param  string $operation_end_date　稼働終了日
+     * 
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -74,8 +94,7 @@ class Psji01Controller extends Controller
             return redirect()->route('index');
         }
 
-        if(empty($id))
-        {
+        if(empty($id)){
             $personnel_id = "ji00000001";
         }else{
 
@@ -133,7 +152,7 @@ class Psji01Controller extends Controller
         }
 
         PtcmtrController::open_node($personnel_id);
-       return redirect()->route('index');
+        return redirect()->route('index');
     }
 
     /**
@@ -165,6 +184,8 @@ class Psji01Controller extends Controller
      * @param  string  $client_id　顧客ID
      * @param  string  $personnel_id　人員ID
      * @param  string  $name　名前
+     * @param  string  $management_number 管理者ID
+     * @param  string  $management_personnel_id 管理者番号
      * @param  string  $status　状態
      * @param  App\Librarys\php\StatusCheck $check
      * @param  string  $operation_start_date 稼働開始日
@@ -174,14 +195,14 @@ class Psji01Controller extends Controller
      */
     public function update(Request $request)
     {
-       $client_id = $request->client_id;
-       $personnel_id = $request->personnel_id;
-       $name = $request->name;
-       $management_number = $request->management_number;
-       $status = $request->status;
+        $client_id = $request->client_id;
+        $personnel_id = $request->personnel_id;
+        $name = $request->name;
+        $management_number = $request->management_number;
+        $status = $request->status;
 
-       //入力された番号の人員が存在するかの確認
-       try{
+        //入力された番号の人員が存在するかの確認
+        try{
             $management_personnel_id = DB::select('select * from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$management_number]);
         }catch(\Exception $e){
             //エラー処理
@@ -190,13 +211,12 @@ class Psji01Controller extends Controller
             return redirect()->route('index');
         }
         if($management_personnel_id == null){
-
             return redirect()->route('index');
         }
 
-       //部署情報の更新
-       if($status == "13")
-       {
+        //部署情報の更新
+        if($status == "13")
+        {
             //状態が稼働中なら稼働開始日を更新
             $check = new StatusCheck();
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
@@ -210,7 +230,7 @@ class Psji01Controller extends Controller
                 return redirect()->route('index');
             }
 
-       }else if($status == "18"){
+        }else if($status == "18"){
             //状態が廃止なら稼働終了日を更新
             $check = new StatusCheck();
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
@@ -223,7 +243,7 @@ class Psji01Controller extends Controller
                 DatabaseException::common($e);
                 return redirect()->route('index');
             } 
-       }else{
+        }else{
            //上記以外なら状態と名前のみ更新
             try{
                 DB::update('update  dcji01 set name = ?,status = ?,management_personnel_id = ? where client_id = ? and personnel_id = ?',
@@ -233,14 +253,16 @@ class Psji01Controller extends Controller
                 DatabaseException::common($e);
                 return redirect()->route('index');
             }
-       }
-       //ログ処理
-       OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
-       $message = Message::get_message('mhcmok0002',[0=>'']);
-       session(['message'=>$message[0]]);
-       //ツリー開閉
-       PtcmtrController::open_node($personnel_id);
-       return back();
+        }
+
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
+        $message = Message::get_message('mhcmok0002',[0=>'']);
+        session(['message'=>$message[0]]);
+
+        //ツリー開閉
+        PtcmtrController::open_node($personnel_id);
+        return back();
     }
 
     /**
@@ -253,7 +275,6 @@ class Psji01Controller extends Controller
      */
     public function destroy($id,$id2)
     {
-
         try{
             DB::delete('delete from dcji01 where client_id = ? and personnel_id = ?',[$id,$id2]);
         }catch(\Exception $e){
@@ -276,6 +297,23 @@ class Psji01Controller extends Controller
      * @param  string  $client_id　顧客ID
      * @param  int $count_department 部署ページネーションのページ数
      * @param  int $count_personnel 人員ページネーションのページ数
+     * @param  array $department_data 部署データ
+     * @param  array $personnel_data 人員データ
+     * @param  App\Librarys\php\Pagination $pagination 
+     * @param  int $department_max 部署データページネーションの最大値
+     * @param  array $departments ページネーション後の部署データ
+     * @param  int $personnel_max 人員データページネーションの最大値
+     * @param  array $names ページネーション後の人員データ
+     * @param  App\Librarys\php\ResponsiblePerson $responsible
+     * @param  array $top_responsible 最上位の責任者データ
+     * @param  array $responsible_lists 責任者リスト
+     * @param  array $top_management 最上位の管理者データ
+     * @param  array $management_lists 管理者データ
+     * @param  App\Librarys\php\Hierarchical $hierarchical
+     * @param  array $department_high 部署データの上位階層
+     * @param  array $personnel_high 人員データの上位階層
+     * @param  App\Http\Controllers\PtcmtrController $tree
+     * @param  array $tree_data ツリーデータ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -330,7 +368,6 @@ class Psji01Controller extends Controller
     }
 
     /**
-     * 9/10 データベースに登録するメソッドは恐らく、共通関数でまとめられる予定　現在・未実装
      * 
      * 複製したデータを挿入するメソッド
      * @param string $client_id 顧客ID
@@ -338,6 +375,9 @@ class Psji01Controller extends Controller
      * @param string $high 複製IDが所属する上位階層ID
      * @param array  $copy_personnel 複製するデータ
      * @param string $department_id 登録する部署ID
+     * @param App\Librarys\php\ZeroPadding $padding
+     * 
+     * @return \Illuminate\Http\Response
      */
     public function copy(Request $request){
 

@@ -5,13 +5,19 @@ namespace App\Models;
 
 
     //日付に関連するクラス
-class Date
-{
-    private $today;//今日の日付
+    class Date {
+
+    /**
+     * プロパティ
+     * @param   $today 今日の日付
+     * 
+     */
+    private $today;
 
     /** 
      * 今日の日付を判定するメソッド
      * @param   $today 今日の日付
+     * 
      * @return　$today
     */
     public function today() {

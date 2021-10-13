@@ -23,18 +23,21 @@ class Pa0001Controller extends Controller
      * ディスプレイ表示
      *
      * @param  string  $client_id 顧客ID　9/27現在　ダミーデータ
-     * @param  array $responsible_lists 責任者リスト
      * @param　int $count_department 部署ページネーションのページ数
      * @param　int $count_personnel  人員ページネーションのページ数
-     * @param  array $department_data 部署データ
-     * @param  array $personnel_data 人員データ
+     * @param  array $top_department 最上位の部署データ
+     * @param  array $department_data 全体部署データ
+     * @param  array $personnel_data 全体人員データ
      * @param  App\Librarys\php\Pagination $pagination 
      * @param  int $department_max 部署データページネーションの最大値
      * @param  array $departments ページネーション後の部署データ
      * @param  int $personnel_max 人員データページネーションの最大値
-     * @param  array $names ページネーション後の部署データ
+     * @param  array $names ページネーション後の人員データ
      * @param  App\Librarys\php\ResponsiblePerson $responsible
+     * @param  array $top_responsible 最上位の責任者データ
      * @param  array $responsible_lists 責任者リスト
+     * @param  array $top_management 最上位の管理者データ
+     * @param  array $management_lists 管理者データ
      * @param  App\Librarys\php\Hierarchical $hierarchical
      * @param  array $department_high 部署データの上位階層
      * @param  array $personnel_high 人員データの上位階層
@@ -60,7 +63,7 @@ class Pa0001Controller extends Controller
             DatabaseException::common($e);
         }
 
-        //配下部署を取得
+        //全体の部署データの取得
         try{
             $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
@@ -68,6 +71,7 @@ class Pa0001Controller extends Controller
             DatabaseException::common($e);
         }
 
+        //全体の人員データの取得
         try{
             $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
@@ -103,7 +107,8 @@ class Pa0001Controller extends Controller
         //クリックコードの保存
         session(['click_code'=>'bs']);
 
-        return view('pacm01.pacm01',compact('top_management','management_lists','top_department','top_responsible','departments','names','count_department',
+        return view('pacm01.pacm01',compact('top_management','management_lists',
+        'top_department','top_responsible','departments','names','count_department',
         'count_personnel','department_max','personnel_max','department_high',
         'personnel_high','responsible_lists'));
     }
@@ -177,12 +182,28 @@ class Pa0001Controller extends Controller
     /**
      * ページネーションのページ数移動
      * 
-     * @param  int  $client_id 顧客ID　9/27現在　ダミーデータ
-     * @param  array $responsible_lists 責任者リスト
+     * @param  int  $client_id 顧客ID　9/27現在　ダミーデータ(route indexでセッション保存)
      * @param　int $count_department 部署ページネーションのページ数
      * @param　int $count_personnel  人員ページネーションのページ数
+     * @param  array $top_department 最上位の部署データ
      * @param  array $department_data 部署データ
      * @param  array $personnel_data 人員データ
+     * @param  App\Librarys\php\Pagination $pagination 
+     * @param  int $department_max 部署データページネーションの最大値
+     * @param  array $departments ページネーション後の部署データ
+     * @param  int $personnel_max 人員データページネーションの最大値
+     * @param  array $names ページネーション後の人員データ
+     * @param  App\Librarys\php\ResponsiblePerson $responsible
+     * @param  array $top_responsible 最上位の責任者データ
+     * @param  array $responsible_lists 責任者リスト
+     * @param  array $top_management 最上位の管理者データ
+     * @param  array $management_lists 管理者データ
+     * @param  App\Librarys\php\Hierarchical $hierarchical
+     * @param  array $department_high 部署データの上位階層
+     * @param  array $personnel_high 人員データの上位階層
+     * @param  App\Http\Controllers\PtcmtrController $tree
+     * @param  array $tree_data ツリーデータ
+     *
      * @return \Illuminate\Http\Response
      */
     public function count(Request $request)
@@ -199,18 +220,21 @@ class Pa0001Controller extends Controller
             DatabaseException::common($e);
         }
         
+        //部署データの取得
         try{
-        $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
+            $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
         }
+        //人員データの取得
         try{
-        $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+            $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
         }
+
         //ページネーション
         $pagination = new Pagination();
         $department_max = $pagination->pageMax($department_data,count($department_data));
@@ -236,7 +260,8 @@ class Pa0001Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('top_department','top_responsible','management_lists','top_management','departments','names','count_department','count_personnel',
+        return view('pacm01.pacm01',compact('top_department','top_responsible','management_lists',
+        'top_management','departments','names','count_department','count_personnel',
         'department_max','personnel_max','department_high',
         'personnel_high','responsible_lists'));
     }
@@ -244,17 +269,35 @@ class Pa0001Controller extends Controller
     /**
      * 部署を絞り込みした後のページネーション
      *
-     * @param  int  $client_id 顧客ID　9/27現在　ダミーデータ
-     * @param  array $lists 選択した部署
-     * @param  array $responsible_lists 責任者リスト
-     * @param　int $count_department 部署ページネーションのページ数
-     * @param　int $count_personnel  人員ページネーションのページ数
+     * @param  array $lists 選択したIDを格納するリスト
      * @param  array $department_data 部署データ
      * @param  array $personnel_data 人員データ
+     * @param  int  $client 顧客ID　9/27現在　ダミーデータ
+     * @param  int  $select_id 選択したID
+     * @param　int $count_department 部署ページネーションのページ数
+     * @param　int $count_personnel  人員ページネーションのページ数
+     * @param  App\Librarys\php\Hierarchical $hierarchical
      * @param  array $select_lists 選択した部署の配下データ
      * @param  string $code 機能コード
-     * @param  array  $data 取得したデータ
-     * @return \Illuminate\Http\Response
+     * @param  array  $data 取得した配下データ
+     * @param  array  $department_data 部署データ
+     * @param  array  $personnel_data 人員データ
+     * @param  App\Librarys\php\Pagination $pagination 
+     * @param  int $department_max 部署データページネーションの最大値
+     * @param  array $departments ページネーション後の部署データ
+     * @param  int $personnel_max 人員データページネーションの最大値
+     * @param  array $names ページネーション後の人員データ
+     * @param  App\Librarys\php\ResponsiblePerson $responsible
+     * @param  array $top_responsible 最上位の責任者データ
+     * @param  array $responsible_lists 責任者リスト
+     * @param  array $top_management 最上位の管理者データ
+     * @param  array $management_lists 管理者データ
+     * @param  App\Librarys\php\Hierarchical $hierarchical
+     * @param  array $department_high 部署データの上位階層
+     * @param  array $personnel_high 人員データの上位階層
+     * @param  App\Http\Controllers\PtcmtrController $tree
+     * @param  array $tree_data ツリーデータ
+     * 
      * @return \Illuminate\Http\Response
      */
     public function count2(Request $request)
@@ -269,17 +312,18 @@ class Pa0001Controller extends Controller
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
 
+        //選択したツリーで場合分け
         if(substr($select_id,0,2) == "bs"){
 
-        //選択した部署のIDをarray型に格納
-        array_push($lists,$select_id);
+            //選択した部署のIDをarray型に格納
+            array_push($lists,$select_id);
         
-        //選択した部署の配下を取得
-        $hierarchical = new Hierarchical();
-        $select_lists = $hierarchical->subordinateSearch($lists,$client);
+            //選択した部署の配下を取得
+            $hierarchical = new Hierarchical();
+            $select_lists = $hierarchical->subordinateSearch($lists,$client);
          
-        //選択したデータ及び配下データを取得
-           foreach($select_lists as $select_list){
+            //選択したデータ及び配下データを取得
+            foreach($select_lists as $select_list){
                //機能コードの判定
                $code = substr($select_list,0,2);
 
@@ -307,14 +351,13 @@ class Pa0001Controller extends Controller
 
                }
                
-           }
+            }
         }else{
             //選択した人員のデータを取得
             try{
                 $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
                 and dcji01.personnel_id = ?',[$client,$select_id]);
             }catch(\Exception $e){
-
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
                 return redirect()->route('index');
@@ -417,7 +460,11 @@ class Pa0001Controller extends Controller
 
     /**
      * 選択した部署のIDを複写するメソッド
-     */
+     * 
+     * @param $id 選択したID
+     * 
+     * @return \Illuminate\Http\Response
+     */ 
     public function clipboard($id){
 
         session(['clipboard_id'=>$id]);
@@ -427,6 +474,8 @@ class Pa0001Controller extends Controller
 
     /**
      * 複写したIDを削除するメソッド
+     * 
+     * @return \Illuminate\Http\Response
      */
     public function deleteClipboard(){
 

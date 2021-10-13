@@ -26,6 +26,9 @@ class Psbs01Controller extends Controller
 {
     /**
      * 部署新規登録画面表示
+     * 
+     * @param  App\Http\Controllers\PtcmtrController $tree
+     * @param  array $tree_data ツリーデータ
      *
      * @return \Illuminate\Http\Response
      */
@@ -47,7 +50,7 @@ class Psbs01Controller extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 部署の新規登録
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string $client_id  顧客ID
@@ -57,6 +60,8 @@ class Psbs01Controller extends Controller
      * @param  string $management_personnel_id　管理者ID
      * @param  string $high　上位部署のID番号
      * @param  string $id　顧客IDに対応した最新の部署IDを格納する因数
+     * @param  App\Librarys\php\ZeroPadding $padding
+     * @param  App\Librarys\php\StatusCheck $check
      * @param  string $operation_start_date　稼働開始日
      * @param  string $operation_end_date　稼働終了日
      * @param  int $department_id 部署ID
@@ -78,14 +83,12 @@ class Psbs01Controller extends Controller
             $id = DB::select('select department_id from dcbs01 where client_id = ? 
             order by department_id desc limit 1',[$client_id]);
         }catch(\Exception $e){
-
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             
-        return redirect()->route('index');
+            return redirect()->route('index');
         }
-        if(empty($id))
-        {
+        if(empty($id)){
             $department_id = "bs00000001";
         }else{
             //登録する番号を作成
@@ -99,26 +102,25 @@ class Psbs01Controller extends Controller
 
         //データベースに部署情報を登録
         try{
-        DB::insert('insert into dcbs01
-        (client_id,
-        department_id,
-        responsible_person_id,
-        name,
-        status,
-        management_personnel_id,
-        operation_start_date,
-        operation_end_date)
-        VALUE (?,?,?,?,?,?,?,?)',
-        [$client_id,
-        $department_id,
-        $responsible_person_id,
-        $name,
-        $status,
-        $management_personnel_id,
-        $operation_start_date,
-        $operation_end_date]);
+            DB::insert('insert into dcbs01
+            (client_id,
+            department_id,
+            responsible_person_id,
+            name,
+            status,
+            management_personnel_id,
+            operation_start_date,
+            operation_end_date)
+            VALUE (?,?,?,?,?,?,?,?)',
+            [$client_id,
+            $department_id,
+            $responsible_person_id,
+            $name,
+            $status,
+            $management_personnel_id,
+            $operation_start_date,
+            $operation_end_date]);
         }catch(\Exception $e){
-
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
             return redirect()->route('index');
@@ -126,22 +128,18 @@ class Psbs01Controller extends Controller
 
         //データベースに階層情報を登録
         try{
-        DB::insert('insert into dccmks
-        (client_id,lower_id,high_id)
-        VALUE (?,?,?)',
-        [$client_id,$department_id,$high]);
+            DB::insert('insert into dccmks
+            (client_id,lower_id,high_id)
+            VALUE (?,?,?)',
+            [$client_id,$department_id,$high]);
         }catch(\Exception $e){
-
-        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-        DatabaseException::common($e);
-        return redirect()->route('index');
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
         }
-
-
         OutputLog::message_log(__FUNCTION__, 'mhcmok0001');
         //メッセージの表示
         $request->session()->put('message',Config::get('message.mhcmok0001'));
-
         PtcmtrController::open_node($department_id);
         return redirect()->route('index');
         
@@ -158,15 +156,32 @@ class Psbs01Controller extends Controller
      * @param　int $count_personnel  人員ページネーションのページ数
      * @param  array $department_data 部署データ
      * @param  array $personnel_data 人員データ
+     * @param  string $select_code 選択したIDのコード
+     * @param  array $projection_code 投影元のデータコード
      * @param  array $select_lists 選択した部署の配下データ
      * @param  string $code 機能コード
      * @param  array  $data 取得したデータ
+     * @param  App\Librarys\php\Pagination $pagination 
+     * @param  int $department_max 部署データページネーションの最大値
+     * @param  array $departments ページネーション後の部署データ
+     * @param  int $personnel_max 人員データページネーションの最大値
+     * @param  array $names ページネーション後の人員データ
+     * @param  App\Librarys\php\ResponsiblePerson $responsible
+     * @param  array $top_responsible 最上位の責任者データ
+     * @param  array $responsible_lists 責任者リスト
+     * @param  array $top_management 最上位の管理者データ
+     * @param  array $management_lists 管理者データ
+     * @param  App\Librarys\php\Hierarchical $hierarchical
+     * @param  array $department_high 部署データの上位階層
+     * @param  array $personnel_high 人員データの上位階層
+     * @param  App\Http\Controllers\PtcmtrController $tree
+     * @param  array $tree_data ツリーデータ
+     * 
      * @return \Illuminate\Http\Response
      */
     public function show($client,$select_id)
     {
-        if($select_id == "bs00000001")
-        {
+        if($select_id == "bs00000001" or $select_id == "bs"){
             return redirect()->route('index');
         }
         $count_department = Config::get('startcount.count');
@@ -572,6 +587,19 @@ class Psbs01Controller extends Controller
      * @param  string  $client_id 顧客ID
      * @param  int $count_department 部署ページネーションのページ数
      * @param  int $count_personnel 人員ページネーションのページ数
+     * @param  App\Librarys\php\Pagination $pagination 
+     * @param  int $department_max 部署データページネーションの最大値
+     * @param  array $departments ページネーション後の部署データ
+     * @param  int $personnel_max 人員データページネーションの最大値
+     * @param  array $names ページネーション後の人員データ
+     * @param  App\Librarys\php\ResponsiblePerson $responsible
+     * @param  array $responsible_lists 責任者リスト
+     * @param  array $management_lists 管理者データ
+     * @param  App\Librarys\php\Hierarchical $hierarchical
+     * @param  array $department_high 部署データの上位階層
+     * @param  array $personnel_high 人員データの上位階層
+     * @param  App\Http\Controllers\PtcmtrController $tree
+     * @param  array $tree_data ツリーデータ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -626,7 +654,6 @@ class Psbs01Controller extends Controller
     }
 
     /**
-     * 9/10 データベースに登録するメソッドは恐らく、共通関数でまとめられる予定　現在・未実装
      * 
      * 複製したデータを挿入するメソッド
      * @param string $client_id 顧客ID
@@ -634,7 +661,9 @@ class Psbs01Controller extends Controller
      * @param string $high 複製IDが所属する上位階層ID
      * @param array  $copy_department 複製するデータ
      * @param string $department_id 登録する部署ID
+     * @param App\Librarys\php\ZeroPadding $padding
      * 
+     * @return \Illuminate\Http\Response
      */
     public function copy(Request $request){
 
@@ -645,6 +674,7 @@ class Psbs01Controller extends Controller
         if($request->copy_id == null){
             return redirect()->route('index');
         }
+        //複製するデータの取得
         try{
             $copy_department = DB::select('select * from dcbs01 where client_id = ? 
             and department_id = ?',[$client_id,$copy_id]);

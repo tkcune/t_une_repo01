@@ -324,11 +324,11 @@ class Pa0001Controller extends Controller
          
             //選択したデータ及び配下データを取得
             foreach($select_lists as $select_list){
-               //機能コードの判定
-               $code = substr($select_list,0,2);
+                //機能コードの判定
+                $code = substr($select_list,0,2);
 
-               //対応したデータの取得
-               if ($code == "bs"){
+                //対応したデータの取得
+                if ($code == "bs"){
                     try{
                         $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
                         and dcbs01.department_id = ?',[$client,$select_list]);
@@ -336,9 +336,9 @@ class Pa0001Controller extends Controller
                         OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                         DatabaseException::common($e);
                     }
-                   array_push($department_data,$data[0]);
+                array_push($department_data,$data[0]);
 
-               }elseif($code == "ji"){
+                }elseif($code == "ji"){
                     try{
                         $data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
                         and dcji01.personnel_id = ?',[$client,$select_list]);
@@ -347,11 +347,44 @@ class Pa0001Controller extends Controller
                         DatabaseException::common($e);
                     }
                    array_push($personnel_data,$data[0]);
-               }else{
+                }else{
 
-               }
-               
+                }
             }
+            //選択したデータ及び配下データを取得
+            $lists = $hierarchical->subordinateGet($select_lists,$client);
+            $department_data = $lists[0];
+            $personnel_data = $lists[1];
+
+            //ページネーション
+            $pagination = new Pagination();
+            $department_max = $pagination->pageMax($department_data,count($department_data));
+            $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+            $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
+            $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+            //責任者を名前で取得
+            $responsible = new ResponsiblePerson();
+            $responsible_lists = $responsible->getResponsibleLists($client,$departments);
+
+            //管理者を名前で取得
+            if(isset($departments)){
+                $management_lists = $responsible->getManagementLists($client,$departments);
+            }
+            if(isset($names)){
+                $personnel_management_lists = $responsible->getManagementLists($client,$names);
+            }
+       
+            //上位階層取得
+            $hierarchical = new Hierarchical();
+            $department_high = $hierarchical->upperHierarchyName($departments);
+            $personnel_high = $hierarchical->upperHierarchyName($names);
+           
+            $tree = new PtcmtrController();
+            $tree_data = $tree->set_view_treedata();
+
+            return view('pacm01.pacm01',compact('management_lists','departments','personnel_management_lists',
+            'names','count_department','count_personnel','department_max','personnel_max','department_high',
+            'personnel_high','responsible_lists','client','select_id'));
         }else{
             //選択した人員のデータを取得
             try{

@@ -2,7 +2,6 @@
 
 @section('content')
 
-    
     {{-- コメント　詳細画面ここから --}}
     {{-- 部署の詳細表示--}}
     <div class="col border border-primary" style="padding:10px;">
@@ -215,16 +214,16 @@
     <form action="{{ route('psji01.update',session('client_id')) }}" method="post">
             @csrf
             @method('patch')
-            <input type="hidden" id="personnel_id" name="personnel_id" value="{{$names[0]->personnel_id}}">
+            <input type="hidden" id="personnel_id" name="personnel_id" value="{{$click_personnel_data[0]->personnel_id}}">
             <input type="hidden" name="client_id" value="{{ session('client_id') }}">
 
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4">
-                        <p id="palent">名前<input type="text" name="name" value="{{$names[0]->name}}" data-toggle="tooltip" title="人員の名称を入力します"></p>
+                        <p id="palent">名前<input type="text" name="name" value="{{$click_personnel_data[0]->name}}" data-toggle="tooltip" title="人員の名称を入力します"></p>
                     </div>
                     <div class="col">
-                        <p>番号:{{$names[0]->personnel_id}}</p>
+                        <p>番号:{{$click_personnel_data[0]->personnel_id}}</p>
                     </div>
                     <div class="col">
                         <p>上位:山田一郎</p>
@@ -237,11 +236,11 @@
 
                 <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" name="management_number" value="{{$names[0]->management_personnel_id}}" style="width:100px;"
+                        <p>管理者番号：<input type="text" name="management_number" value="{{$click_personnel_data[0]->management_personnel_id}}" style="width:100px;"
                         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
-                        <p>管理者名：{{$personnel_management_lists[0]}}</p>
+                        <p>管理者名：{{$click_management_lists[0]}}</p>
                     </div>
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
@@ -259,7 +258,7 @@
                         <p>メールアドレス<input type="email" name="mail"></p>
                     </div>
                     <div class="col-4" style="padding:0px">
-                        <p id="login" @if($names[0]->login_authority == "0") visibility hidden @endif >パスワード<input id="password" type="password" name="mail"><input type="checkbox" onclick="passwordOn()"></p>
+                        <p id="login" @if($click_personnel_data[0]->login_authority == "0") visibility hidden @endif >パスワード<input id="password" type="password" name="mail"><input type="checkbox" onclick="passwordOn()"></p>
                     </div>
                     <div class="col">
                         <button>メール送信</button>
@@ -270,18 +269,18 @@
                     <div class="col">
                         <p>状態:
                         <select name="status" data-toggle="tooltip" title="人員の状態を選択します">
-                        <option value="10" @if($names[0]->status == "10") selected @endif>応募</option>
-                        <option value="11" @if($names[0]->status == "11") selected @endif>審査</option>
-                        <option value="12" @if($names[0]->status == "12") selected @endif>入社待</option>
-                        <option value="13" @if($names[0]->status == "13") selected @endif>在職</option>
-                        <option value="14" @if($names[0]->status == "14") selected @endif>休職</option>
-                        <option value="18" @if($names[0]->status == "18") selected @endif>退職</option>
+                        <option value="10" @if($click_personnel_data[0]->status == "10") selected @endif>応募</option>
+                        <option value="11" @if($click_personnel_data[0]->status == "11") selected @endif>審査</option>
+                        <option value="12" @if($click_personnel_data[0]->status == "12") selected @endif>入社待</option>
+                        <option value="13" @if($click_personnel_data[0]->status == "13") selected @endif>在職</option>
+                        <option value="14" @if($click_personnel_data[0]->status == "14") selected @endif>休職</option>
+                        <option value="18" @if($click_personnel_data[0]->status == "18") selected @endif>退職</option>
                         </select>
                         システム管理者:
                         <input type="checkbox" value="1" data-toggle="tooltip" title="人員がシステム管理者かどうかを設定します"
-                        @if($names[0]->system_management == "1") checked @endif>
+                        @if($click_personnel_data[0]->system_management == "1") checked @endif>
                         ログイン：
-                        <input type="checkbox" name="login" value="1" onclick="loginDisabled()" @if($names[0]->login_authority == "1") checked @endif>
+                        <input type="checkbox" name="login" value="1" onclick="loginDisabled()" @if($click_personnel_data[0]->login_authority == "1") checked @endif>
                         </p>
                     </div>
                 </div>
@@ -297,10 +296,10 @@
                     @csrf
                     <input type="submit" value="新規"
                     data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
-                    <input type="hidden" id="high_new" name="high" value="{{$names[0]->high_id}}">
+                    <input type="hidden" id="high_new" name="high" value="{{$click_personnel_data[0]->high_id}}">
                     </form>
 
-                    <form action="{{ route('psji01.destroy',[session('client_id'),$names[0]->personnel_id])}}" method="post">
+                    <form action="{{ route('psji01.destroy',[session('client_id'),$click_personnel_data[0]->personnel_id])}}" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" id="delete" value="削除" data-toggle="tooltip" 
@@ -308,7 +307,7 @@
                     disabled>
                     </form>
 
-                    <form action="{{ route('clipboard',$names[0]->personnel_id)}}" method="get">
+                    <form action="{{ route('clipboard',$click_personnel_data[0]->personnel_id)}}" method="get">
                     @csrf
                     <input type="submit" value="複写" id="copyTarget"
                     data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">

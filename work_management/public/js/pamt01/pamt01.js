@@ -20,6 +20,24 @@ var display=function() {
 }
 
 /**
+ * 画面の隠蔽表示メソッド
+ * @param string div 対象のdiv
+ * @param string state 対象のdivの状態
+ */
+
+ var displayOn=function() {
+  //切り替える対象の状態を取得
+  var div = document.getElementById('tree');
+  //取得した情報からスタイルについての状態のみをstateに代入
+  state=div.style.display;
+  //非表示中のときの処理
+  if(state=="none"){
+       //スタイルを表示(inline)に切り替え
+       div.setAttribute("style","display:inline");
+  }
+}
+
+/**
  * 削除のON・OFF切替メソッド
  */
 function deleteOn()

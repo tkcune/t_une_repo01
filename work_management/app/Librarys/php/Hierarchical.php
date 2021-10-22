@@ -97,4 +97,58 @@
 
             return $this->subordinates_list;
         }
+
+        /**
+         * 配下を取得するメソッド
+         * @param array $select_lists 配下ID
+         * @param string $client 顧客ID
+         * 
+         * @var array $department_data 部署データ
+         * @var array $personnel_data 人員データ 
+         * @var array $subordinates_id_lists 直下の配下IDを格納した配列
+         * @var array $subordinates 直下の配下データを格納した配列
+         * @var Illuminate\Database\QueryException $e エラー内容
+         * 
+         * @return array list 配下データをまとめた配列
+         */
+        public function subordinateGet($select_lists,$client){
+            $department_data = [];
+            $personnel_data = [];
+            foreach($select_lists as $select_list){
+                //機能コードの判定
+                $code = substr($select_list,0,2);
+ 
+                //対応したデータの取得
+                if ($code == "bs"){
+                    try{
+                        $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                        and dcbs01.department_id = ?',[$client,$select_list]);
+                    }catch(\Exception $e){
+
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
+                    array_push($department_data,$data[0]);
+ 
+                }elseif($code == "ji"){
+                    try{
+                        $data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                        and dcji01.personnel_id = ?',[$client,$select_list]);
+                    }catch(\Exception $e){
+
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
+                    array_push($personnel_data,$data[0]);
+                }else{
+
+                }
+                
+            }
+            $lists = [$department_data,$personnel_data];
+
+            return $lists;
+        }
     }

@@ -22,7 +22,8 @@
                         <p>番号:{{$top_department[0]->department_id}}</p>
                     </div>
                     <div class="col">
-        
+                    <input type="submit" value="ツリー表示" onclick="displayOn()"
+                    data-toggle="tooltip" title="ツリーを表示します">
                     </div>
                 </div>
 
@@ -97,7 +98,7 @@
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                     <input type="button" value="隠蔽/表示" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <input type="submit" value="再表示" onclick="displayOn()"
+                    <input type="submit" value="再表示"
                     data-toggle="tooltip" title="ツリーを再表示します">
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
@@ -197,10 +198,9 @@
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                     <input type="button" value="隠蔽/表示" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <input type="button" value="再表示" onclick="displayOn()"
+                    <input type="button" value="再表示"
                     data-toggle="tooltip" title="ツリーを再表示します">
                     
-
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
                     登録日:{{$departments[0]->created_at}} 登録者:<a href="#">{{$responsible_lists[0]}}</a></p>
@@ -323,7 +323,7 @@
                     <input type="button" value="隠蔽/表示"
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <input type="button" value="再表示" onclick="displayOn()"
+                    <input type="button" value="再表示"
                     data-toggle="tooltip" title="ツリーを再表示します">
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">

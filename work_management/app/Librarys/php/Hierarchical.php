@@ -121,7 +121,9 @@
                 //対応したデータの取得
                 if ($code == "bs"){
                     try{
-                        $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                        $data = DB::select('select 
+                        dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+                        from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
                         and dcbs01.department_id = ?',[$client,$select_list]);
                     }catch(\Exception $e){
 

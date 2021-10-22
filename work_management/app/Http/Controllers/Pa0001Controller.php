@@ -10,6 +10,7 @@ use App\Librarys\php\Pagination;
 use App\Librarys\php\ResponsiblePerson;
 use App\Librarys\php\Hierarchical;
 use App\Http\Controllers\PtcmtrController;
+use App\Models\Date;
 
 
 
@@ -22,27 +23,28 @@ class Pa0001Controller extends Controller
     /**
      * ディスプレイ表示
      *
-     * @param  string  $client_id 顧客ID　9/27現在　ダミーデータ
-     * @param　int $count_department 部署ページネーションのページ数
-     * @param　int $count_personnel  人員ページネーションのページ数
-     * @param  array $top_department 最上位の部署データ
-     * @param  array $department_data 全体部署データ
-     * @param  array $personnel_data 全体人員データ
-     * @param  App\Librarys\php\Pagination $pagination 
-     * @param  int $department_max 部署データページネーションの最大値
-     * @param  array $departments ページネーション後の部署データ
-     * @param  int $personnel_max 人員データページネーションの最大値
-     * @param  array $names ページネーション後の人員データ
-     * @param  App\Librarys\php\ResponsiblePerson $responsible
-     * @param  array $top_responsible 最上位の責任者データ
-     * @param  array $responsible_lists 責任者リスト
-     * @param  array $top_management 最上位の管理者データ
-     * @param  array $management_lists 管理者データ
-     * @param  App\Librarys\php\Hierarchical $hierarchical
-     * @param  array $department_high 部署データの上位階層
-     * @param  array $personnel_high 人員データの上位階層
-     * @param  App\Http\Controllers\PtcmtrController $tree
-     * @param  array $tree_data ツリーデータ
+     * @var  string  $client_id 顧客ID　9/27現在　ダミーデータ
+     * @var　int $count_department 部署ページネーションのページ数
+     * @var　int $count_personnel  人員ページネーションのページ数
+     * @var  array $top_department 最上位の部署データ
+     * @var  App\Models\Date $date
+     * @var  array $department_data 全体部署データ
+     * @var  array $personnel_data 全体人員データ
+     * @var  App\Librarys\php\Pagination $pagination 
+     * @var  int $department_max 部署データページネーションの最大値
+     * @var  array $departments ページネーション後の部署データ
+     * @var  int $personnel_max 人員データページネーションの最大値
+     * @var  array $names ページネーション後の人員データ
+     * @var  App\Librarys\php\ResponsiblePerson $responsible
+     * @var  array $top_responsible 最上位の責任者データ
+     * @var  array $responsible_lists 責任者リスト
+     * @var  array $top_management 最上位の管理者データ
+     * @var  array $management_lists 管理者データ
+     * @var  App\Librarys\php\Hierarchical $hierarchical
+     * @var  array $department_high 部署データの上位階層
+     * @var  array $personnel_high 人員データの上位階層
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -62,10 +64,15 @@ class Pa0001Controller extends Controller
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
         }
+        //登録日付を6桁に変換
+        $date = new Date();
+        $date->formatDate($top_department);
 
         //全体の部署データの取得
         try{
-            $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
+            $department_data = DB::select('select 
+            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+            from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -73,7 +80,9 @@ class Pa0001Controller extends Controller
 
         //全体の人員データの取得
         try{
-            $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+            $personnel_data = DB::select('select 
+            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -182,27 +191,30 @@ class Pa0001Controller extends Controller
     /**
      * ページネーションのページ数移動
      * 
-     * @param  int  $client_id 顧客ID　9/27現在　ダミーデータ(route indexでセッション保存)
-     * @param　int $count_department 部署ページネーションのページ数
-     * @param　int $count_personnel  人員ページネーションのページ数
-     * @param  array $top_department 最上位の部署データ
-     * @param  array $department_data 部署データ
-     * @param  array $personnel_data 人員データ
-     * @param  App\Librarys\php\Pagination $pagination 
-     * @param  int $department_max 部署データページネーションの最大値
-     * @param  array $departments ページネーション後の部署データ
-     * @param  int $personnel_max 人員データページネーションの最大値
-     * @param  array $names ページネーション後の人員データ
-     * @param  App\Librarys\php\ResponsiblePerson $responsible
-     * @param  array $top_responsible 最上位の責任者データ
-     * @param  array $responsible_lists 責任者リスト
-     * @param  array $top_management 最上位の管理者データ
-     * @param  array $management_lists 管理者データ
-     * @param  App\Librarys\php\Hierarchical $hierarchical
-     * @param  array $department_high 部署データの上位階層
-     * @param  array $personnel_high 人員データの上位階層
-     * @param  App\Http\Controllers\PtcmtrController $tree
-     * @param  array $tree_data ツリーデータ
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @var  int  $client_id 顧客ID　9/27現在　ダミーデータ(route indexでセッション保存)
+     * @var　int $count_department 部署ページネーションのページ数
+     * @var　int $count_personnel  人員ページネーションのページ数
+     * @var  array $top_department 最上位の部署データ
+     * @var  App\Models\Date $date
+     * @var  array $department_data 部署データ
+     * @var  array $personnel_data 人員データ
+     * @var  App\Librarys\php\Pagination $pagination 
+     * @var  int $department_max 部署データページネーションの最大値
+     * @var  array $departments ページネーション後の部署データ
+     * @var  int $personnel_max 人員データページネーションの最大値
+     * @var  array $names ページネーション後の人員データ
+     * @var  App\Librarys\php\ResponsiblePerson $responsible
+     * @var  array $top_responsible 最上位の責任者データ
+     * @var  array $responsible_lists 責任者リスト
+     * @var  array $top_management 最上位の管理者データ
+     * @var  array $management_lists 管理者データ
+     * @var  App\Librarys\php\Hierarchical $hierarchical
+     * @var  array $department_high 部署データの上位階層
+     * @var  array $personnel_high 人員データの上位階層
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
      *
      * @return \Illuminate\Http\Response
      */
@@ -222,18 +234,25 @@ class Pa0001Controller extends Controller
         
         //部署データの取得
         try{
-            $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
+            $department_data = DB::select('select 
+            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+            from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
         }
         //人員データの取得
         try{
-            $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+            $personnel_data = DB::select('select 
+            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
         }
+        //登録日付を6桁に変換
+        $date = new Date();
+        $date->formatDate($top_department);
 
         //ページネーション
         $pagination = new Pagination();
@@ -269,34 +288,36 @@ class Pa0001Controller extends Controller
     /**
      * 部署を絞り込みした後のページネーション
      *
-     * @param  array $lists 選択したIDを格納するリスト
-     * @param  array $department_data 部署データ
-     * @param  array $personnel_data 人員データ
-     * @param  int  $client 顧客ID　9/27現在　ダミーデータ
-     * @param  int  $select_id 選択したID
-     * @param　int $count_department 部署ページネーションのページ数
-     * @param　int $count_personnel  人員ページネーションのページ数
-     * @param  App\Librarys\php\Hierarchical $hierarchical
-     * @param  array $select_lists 選択した部署の配下データ
-     * @param  string $code 機能コード
-     * @param  array  $data 取得した配下データ
-     * @param  array  $department_data 部署データ
-     * @param  array  $personnel_data 人員データ
-     * @param  App\Librarys\php\Pagination $pagination 
-     * @param  int $department_max 部署データページネーションの最大値
-     * @param  array $departments ページネーション後の部署データ
-     * @param  int $personnel_max 人員データページネーションの最大値
-     * @param  array $names ページネーション後の人員データ
-     * @param  App\Librarys\php\ResponsiblePerson $responsible
-     * @param  array $top_responsible 最上位の責任者データ
-     * @param  array $responsible_lists 責任者リスト
-     * @param  array $top_management 最上位の管理者データ
-     * @param  array $management_lists 管理者データ
-     * @param  App\Librarys\php\Hierarchical $hierarchical
-     * @param  array $department_high 部署データの上位階層
-     * @param  array $personnel_high 人員データの上位階層
-     * @param  App\Http\Controllers\PtcmtrController $tree
-     * @param  array $tree_data ツリーデータ
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @var  array $lists 選択したIDを格納するリスト
+     * @var  array $department_data 部署データ
+     * @var  array $personnel_data 人員データ
+     * @var  int  $client 顧客ID　9/27現在　ダミーデータ
+     * @var  int  $select_id 選択したID
+     * @var　int $count_department 部署ページネーションのページ数
+     * @var　int $count_personnel  人員ページネーションのページ数
+     * @var  App\Librarys\php\Hierarchical $hierarchical
+     * @var  array $select_lists 選択した部署の配下データ
+     * @var  string $code 機能コード
+     * @var  array  $data 取得した配下データ
+     * @var  array  $department_data 部署データ
+     * @var  array  $personnel_data 人員データ
+     * @var  App\Librarys\php\Pagination $pagination 
+     * @var  int $department_max 部署データページネーションの最大値
+     * @var  array $departments ページネーション後の部署データ
+     * @var  int $personnel_max 人員データページネーションの最大値
+     * @var  array $names ページネーション後の人員データ
+     * @var  App\Librarys\php\ResponsiblePerson $responsible
+     * @var  array $top_responsible 最上位の責任者データ
+     * @var  array $responsible_lists 責任者リスト
+     * @var  array $top_management 最上位の管理者データ
+     * @var  array $management_lists 管理者データ
+     * @var  App\Librarys\php\Hierarchical $hierarchical
+     * @var  array $department_high 部署データの上位階層
+     * @var  array $personnel_high 人員データの上位階層
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -340,7 +361,9 @@ class Pa0001Controller extends Controller
 
                 }elseif($code == "ji"){
                     try{
-                        $data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                        $data = DB::select('select 
+                        dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at
+                        from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
                         and dcji01.personnel_id = ?',[$client,$select_list]);
                     }catch(\Exception $e){
                         OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -351,6 +374,10 @@ class Pa0001Controller extends Controller
 
                 }
             }
+            //登録日付を6桁に変換
+            $date = new Date();
+            $date->formatDate($top_department);
+            
             //選択したデータ及び配下データを取得
             $lists = $hierarchical->subordinateGet($select_lists,$client);
             $department_data = $lists[0];
@@ -388,7 +415,9 @@ class Pa0001Controller extends Controller
         }else{
             //選択した人員のデータを取得
             try{
-                $click_personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                $click_personnel_data = DB::select('select f
+                dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at
+                from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
                 and dcji01.personnel_id = ?',[$client,$select_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -427,6 +456,9 @@ class Pa0001Controller extends Controller
             $department_data = $lists[0];
             $personnel_data = $lists[1];
         }
+        //登録日付を6桁に変換
+        $date = new Date();
+        $date->formatDate($click_personnel_data);
 
         //ページネーション
         $pagination = new Pagination();

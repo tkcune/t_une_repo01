@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Config;
 use App\Librarys\php\Message;
 use App\Librarys\php\ResponsiblePerson;
 use App\Http\Controllers\PtcmtrController;
+use App\Models\Date;
 
 //BsResource
 //作成者：日置慎一
@@ -27,8 +28,8 @@ class Psbs01Controller extends Controller
     /**
      * 部署新規登録画面表示
      * 
-     * @param  App\Http\Controllers\PtcmtrController $tree
-     * @param  array $tree_data ツリーデータ
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
      *
      * @return \Illuminate\Http\Response
      */
@@ -53,6 +54,7 @@ class Psbs01Controller extends Controller
      * 部署の新規登録
      *
      * @param  \Illuminate\Http\Request  $request
+     * 
      * @param  string $client_id  顧客ID
      * @param  string $responsible_person_id  責任者ID
      * @param  string $name  部署名
@@ -150,6 +152,7 @@ class Psbs01Controller extends Controller
      *
      * @param  string $client 顧客ID
      * @param  string $select_id 選択した部署ID
+     * 
      * @param  array $lists 選択した部署
      * @param  array $responsible_lists 責任者リスト
      * @param　int $count_department 部署ページネーションのページ数
@@ -230,6 +233,9 @@ class Psbs01Controller extends Controller
             if(isset($names)){
                 $personnel_management_lists = $responsible->getManagementLists($client,$names);
             }
+            //日付を6桁に変換
+            $date = new Date();
+            $date->formatDate($department_data);
        
             //上位階層取得
             $hierarchical = new Hierarchical();
@@ -248,7 +254,9 @@ class Psbs01Controller extends Controller
         }else{
             //選択した人員のデータを取得
             try{
-                $click_personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                $click_personnel_data = DB::select('select 
+                dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+                from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
                 and dcji01.personnel_id = ?',[$client,$select_id]);
             }catch(\Exception $e){
 
@@ -268,7 +276,9 @@ class Psbs01Controller extends Controller
             }
             //取得した部署IDを元に部署データを取得
             try{
-                $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                $data = DB::select('select 
+                dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
                 and dcbs01.department_id = ?',[$client,$affiliation_data[0]->high_id]);
             }catch(\Exception $e){
 
@@ -279,6 +289,10 @@ class Psbs01Controller extends Controller
             array_push($department_data,$data[0]);
 
             array_push($lists,$affiliation_data[0]->high_id);
+
+            $date = new Date();
+            $date->formatDate($click_personnel_data);
+
             //取得した部署IDを元に配下を取得
             $hierarchical = new Hierarchical();
             $select_lists = $hierarchical->subordinateSearch($lists,$client);
@@ -342,6 +356,7 @@ class Psbs01Controller extends Controller
      * 部署情報を更新
      *
      * @param  \Illuminate\Http\Request  $request
+     * 
      * @param  string  $client_id　顧客ID
      * @param  string  $department_id　部署ID
      * @param  string  $name　名前
@@ -429,10 +444,11 @@ class Psbs01Controller extends Controller
     /** 階層構造を更新
      * 
      * @param  \Illuminate\Http\Request  $request
-     * @param string $client_id 顧客ID
      * @param string $id 送信されたID
-     * @param string $high_id 上位ID
-     * @param string $lower_id 下位ID
+     * 
+     * @var string $client_id 顧客ID
+     * @var string $high_id 上位ID
+     * @var string $lower_id 下位ID
      * 
      * @return \Illuminate\Http\Response
      */
@@ -465,10 +481,12 @@ class Psbs01Controller extends Controller
      *
      * @param  string  $client 顧客ID
      * @param  string  $delete 削除予定のID
-     * @param  array   $lists 削除予定のIDを格納した配列
-     * @param  \App\Librarys\php\Hierarchical $hierarchical
-     * @param  array   $delete_lists 削除予定のIDを格納した配列
-     * @param  int     $code 機能コードの頭2文字
+     * 
+     * @var  array   $lists 削除予定のIDを格納した配列
+     * @var  \App\Librarys\php\Hierarchical $hierarchical
+     * @var  array   $delete_lists 削除予定のIDを格納した配列
+     * @var  int     $code 機能コードの頭2文字
+     * 
      * @return \Illuminate\Http\Response
      */
     public function delete($client,$delete)
@@ -561,8 +579,9 @@ class Psbs01Controller extends Controller
     /**
      * 部署データ検索
      *
-     * @param  @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  string  $client_id 顧客ID
+     * 
      * @param  int $count_department 部署ページネーションのページ数
      * @param  int $count_personnel 人員ページネーションのページ数
      * @param  App\Librarys\php\Pagination $pagination 
@@ -589,7 +608,9 @@ class Psbs01Controller extends Controller
 
         //データベースの検索
         try{
-            $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?
+            $department_data = DB::select('select 
+            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+            from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?
             where dcbs01.name like ?',[$client_id,'%'.$request->search.'%']);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
@@ -597,12 +618,18 @@ class Psbs01Controller extends Controller
             return redirect()->route('index');
         }
         try{
-        $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+        $personnel_data = DB::select('select 
+        dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+        from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
+        //日付を6桁にする
+        $date = new Date();
+        $date->formatDate($department_data);
+        $date->formatDate($personnel_data);
 
         //ページネーション
         $pagination = new Pagination();
@@ -634,6 +661,8 @@ class Psbs01Controller extends Controller
     /**
      * 
      * 複製したデータを挿入するメソッド
+     * @param  \Illuminate\Http\Request  $request
+     * 
      * @param string $client_id 顧客ID
      * @param string $copy_id 複製するID
      * @param string $high 複製IDが所属する上位階層ID

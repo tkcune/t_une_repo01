@@ -330,7 +330,14 @@
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
-                    <p>登録日:140809 修正日:140809 運用開始日:140809 運用終了日:140809</p>
+                    <p>登録日:{{$click_personnel_data[0]->created_at}} 修正日:{{$click_personnel_data[0]->updated_at}}
+                    @if($click_personnel_data[0]->operation_start_date)
+                    運用開始日:{{$click_personnel_data[0]->operation_start_date}}
+                    @endif
+                    @if($click_personnel_data[0]->operation_end_date)
+                    運用終了日:{{$click_personnel_data[0]->operation_end_date}}
+                    @endif
+                    </p>
                     </div>
                 </div>
             </div>

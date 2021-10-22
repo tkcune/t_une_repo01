@@ -332,13 +332,19 @@ class Psji01Controller extends Controller
             return redirect()->route('index');
         }
         try{
-            $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?
+            $personnel_data = DB::select('select 
+            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?
             where dcji01.name like ?',[$client_id,'%'.$request->search.'%']);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
+        //日付を６桁にする
+        $date = new Date();
+        $date->formatDate($department_data);
+        $date->formatDate($personnel_data);
 
         //ページネーション
         $pagination = new Pagination();

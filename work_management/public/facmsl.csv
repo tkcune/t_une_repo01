@@ -1,0 +1,33 @@
+時間,類別,顧客名,アクセスユーザー,機能,プログラムパス,ログ
+"2021/10/18 02/46/53",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/18 02/46/53",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/18 02/46/54",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/18 02/46/54",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 02/03/44",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 02/06/39",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 02/12/44",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 02/13/17",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 02/13/18",er,kk00000000,log@log.com,00,"C:\work\sagyokanri\work_management\app\Http\Controllers\Psbs01Controller.php:272",エラーです。エラーID【%s】
+"2021/10/21 02/13/18",sy,kk00000000,log@log.com,00,"App\Librarys\php\DatabaseException","Undefined array key 0"
+"2021/10/21 02/13/18",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 02/30/32",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 02/36/21",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 02/36/22",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 02/36/23",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 02/36/33",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 02/36/46",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/21 03/11/10",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 11/08/37",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 11/08/38",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 11/08/39",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 11/23/23",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 11/23/48",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 11/23/48",er,kk00000000,log@log.com,00,"C:\work\sagyokanri\work_management\app\Http\Controllers\Psbs01Controller.php:272",エラーです。エラーID【%s】
+"2021/10/22 11/23/48",sy,kk00000000,log@log.com,00,"App\Librarys\php\DatabaseException","Undefined offset: 0"
+"2021/10/22 11/23/50",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 11/23/54",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 11/23/56",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 11/24/11",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 11/24/14",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 12/25/16",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2021/10/22 12/25/33",si,kk00000000,log@log.com,cm,"C:\work\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始

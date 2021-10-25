@@ -342,46 +342,16 @@ class Pa0001Controller extends Controller
             //選択した部署の配下を取得
             $hierarchical = new Hierarchical();
             $select_lists = $hierarchical->subordinateSearch($lists,$client);
-         
-            //選択したデータ及び配下データを取得
-            foreach($select_lists as $select_list){
-                //機能コードの判定
-                $code = substr($select_list,0,2);
-
-                //対応したデータの取得
-                if ($code == "bs"){
-                    try{
-                        $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
-                        and dcbs01.department_id = ?',[$client,$select_list]);
-                    }catch(\Exception $e){
-                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                        DatabaseException::common($e);
-                    }
-                array_push($department_data,$data[0]);
-
-                }elseif($code == "ji"){
-                    try{
-                        $data = DB::select('select 
-                        dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at
-                        from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
-                        and dcji01.personnel_id = ?',[$client,$select_list]);
-                    }catch(\Exception $e){
-                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                        DatabaseException::common($e);
-                    }
-                   array_push($personnel_data,$data[0]);
-                }else{
-
-                }
-            }
-            //登録日付を6桁に変換
-            $date = new Date();
-            $date->formatDate($top_department);
-            
+           
             //選択したデータ及び配下データを取得
             $lists = $hierarchical->subordinateGet($select_lists,$client);
             $department_data = $lists[0];
             $personnel_data = $lists[1];
+
+            //登録日付を6桁に変換
+            $date = new Date();
+            $date->formatDate($department_data);
+            $date->formatDate($personnel_data);
 
             //ページネーション
             $pagination = new Pagination();
@@ -389,6 +359,7 @@ class Pa0001Controller extends Controller
             $departments = $pagination->pagination($department_data,count($department_data),$count_department);
             $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+            
             //責任者を名前で取得
             $responsible = new ResponsiblePerson();
             $responsible_lists = $responsible->getResponsibleLists($client,$departments);
@@ -455,45 +426,46 @@ class Pa0001Controller extends Controller
             $lists = $hierarchical->subordinateGet($select_lists,$client);
             $department_data = $lists[0];
             $personnel_data = $lists[1];
-        }
-        //登録日付を6桁に変換
-        $date = new Date();
-        $date->formatDate($click_personnel_data);
 
-        //ページネーション
-        $pagination = new Pagination();
-        $department_max = $pagination->pageMax($department_data,count($department_data));
-        $departments = $pagination->pagination($department_data,count($department_data),$count_department);
-        $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
-        $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+            //登録日付を6桁に変換
+            $date = new Date();
+            $date->formatDate($click_personnel_data);
 
-        //責任者を名前で取得
-        $responsible = new ResponsiblePerson();
-        $responsible_lists = $responsible->getResponsibleLists($client,$departments);
+            //ページネーション
+            $pagination = new Pagination();
+            $department_max = $pagination->pageMax($department_data,count($department_data));
+            $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+            $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
+            $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
-        //管理者を名前で取得
-        if(isset($departments)){
-            $management_lists = $responsible->getManagementLists($client,$departments);
-        }
-        if(isset($names)){
-            $personnel_management_lists = $responsible->getManagementLists($client,$names);
-        }
-        if(isset($click_personnel_data)){
-            $click_management_lists = $responsible->getManagementLists($client,$click_personnel_data);
-        }
+            //責任者を名前で取得
+            $responsible = new ResponsiblePerson();
+            $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
-        //上位階層取得
-        $hierarchical = new Hierarchical();
-        $department_high = $hierarchical->upperHierarchyName($departments);
-        $personnel_high = $hierarchical->upperHierarchyName($names);
+            //管理者を名前で取得
+            if(isset($departments)){
+                $management_lists = $responsible->getManagementLists($client,$departments);
+            }
+            if(isset($names)){
+                $personnel_management_lists = $responsible->getManagementLists($client,$names);
+            }
+            if(isset($click_personnel_data)){
+                $click_management_lists = $responsible->getManagementLists($client,$click_personnel_data);
+            }
+
+            //上位階層取得
+            $hierarchical = new Hierarchical();
+            $department_high = $hierarchical->upperHierarchyName($departments);
+            $personnel_high = $hierarchical->upperHierarchyName($names);
         
-        //ツリーデータ取得
-        $tree = new PtcmtrController();
-        $tree_data = $tree->set_view_treedata();
+            //ツリーデータ取得
+            $tree = new PtcmtrController();
+            $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('management_lists','personnel_management_lists','departments','names','count_department','count_personnel',
-        'department_max','personnel_max','department_high','click_management_lists',
-        'personnel_high','responsible_lists','client','select_id','click_personnel_data'));
+            return view('pacm01.pacm01',compact('management_lists','personnel_management_lists','departments','names','count_department','count_personnel',
+            'department_max','personnel_max','department_high','click_management_lists',
+            'personnel_high','responsible_lists','client','select_id','click_personnel_data'));
+        }
     }
 
     /**

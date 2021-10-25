@@ -119,7 +119,7 @@ class Pa0001Controller extends Controller
         return view('pacm01.pacm01',compact('top_management','management_lists',
         'top_department','top_responsible','departments','names','count_department',
         'count_personnel','department_max','personnel_max','department_high',
-        'personnel_high','responsible_lists'));
+        'personnel_high','responsible_lists','personnel_data'));
     }
 
     /**
@@ -282,7 +282,7 @@ class Pa0001Controller extends Controller
         return view('pacm01.pacm01',compact('top_department','top_responsible','management_lists',
         'top_management','departments','names','count_department','count_personnel',
         'department_max','personnel_max','department_high',
-        'personnel_high','responsible_lists'));
+        'personnel_high','responsible_lists','personnel_data'));
     }
 
     /**
@@ -359,7 +359,7 @@ class Pa0001Controller extends Controller
             $departments = $pagination->pagination($department_data,count($department_data),$count_department);
             $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
-            
+
             //責任者を名前で取得
             $responsible = new ResponsiblePerson();
             $responsible_lists = $responsible->getResponsibleLists($client,$departments);
@@ -382,7 +382,7 @@ class Pa0001Controller extends Controller
 
             return view('pacm01.pacm01',compact('management_lists','departments','personnel_management_lists',
             'names','count_department','count_personnel','department_max','personnel_max','department_high',
-            'personnel_high','responsible_lists','client','select_id'));
+            'personnel_high','responsible_lists','client','select_id','personnel_data'));
         }else{
             //選択した人員のデータを取得
             try{
@@ -464,7 +464,7 @@ class Pa0001Controller extends Controller
 
             return view('pacm01.pacm01',compact('management_lists','personnel_management_lists','departments','names','count_department','count_personnel',
             'department_max','personnel_max','department_high','click_management_lists',
-            'personnel_high','responsible_lists','client','select_id','click_personnel_data'));
+            'personnel_high','responsible_lists','client','select_id','click_personnel_data','personnel_data'));
         }
     }
 

@@ -249,7 +249,7 @@ class Psbs01Controller extends Controller
 
             return view('pacm01.pacm01',compact('management_lists','departments','personnel_management_lists',
             'names','count_department','count_personnel','department_max','personnel_max','department_high',
-            'personnel_high','responsible_lists','client','select_id'));
+            'personnel_high','responsible_lists','client','select_id','personnel_data'));
             
         }else{
             //選択した人員のデータを取得
@@ -337,7 +337,7 @@ class Psbs01Controller extends Controller
             return view('pacm01.pacm01',compact('management_lists','departments','personnel_management_lists',
             'names','count_department','count_personnel','department_max','personnel_max','department_high',
             'personnel_high','responsible_lists','client','select_id','click_personnel_data',
-            'click_management_lists'));
+            'click_management_lists','personnel_data'));
         }
     }
 

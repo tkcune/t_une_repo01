@@ -61,11 +61,12 @@
                         責任者:
                         <select name="management_personnel_id" data-toggle="tooltip" title="部署の責任者を選択します">
                         <option>{{$top_responsible[0]}}</option>
-                        @foreach($names as $name)
-                            @if($name->high_id == $top_department[0]->department_id)
-                                <option value="{{$name->personnel_id}}" >{{$name->name}}</option>
+                       
+                        @for($i = 0;$i < count($personnel_data);$i++)
+                            @if($personnel_data[$i]->high_id == $top_department[0]->department_id)
+                                <option value="{{$personnel_data[$i]->personnel_id}}" >{{$personnel_data[$i]->name}}</option>
                             @endif
-                        @endforeach
+                        @endfor
                         </select>
                         </p>
                     </div>
@@ -166,11 +167,11 @@
                         責任者:
                         <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
                         <option>{{$responsible_lists[0]}}</option>
-                        @foreach($names as $name)
-                            @if($name->high_id == $departments[0]->department_id)
-                                <option value="{{$name->personnel_id}}">{{$name->name}}</option>
+                        @for($i = 0;$i < count($personnel_data);$i++)
+                            @if($personnel_data[$i]->high_id == $departments[0]->department_id)
+                                <option value="{{$personnel_data[$i]->personnel_id}}">{{$personnel_data[$i]->name}}</option>
                             @endif
-                        @endforeach
+                        @endfor
                         </select>
                         </p>
                     </div>

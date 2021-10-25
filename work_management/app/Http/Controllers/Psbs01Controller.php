@@ -374,8 +374,8 @@ class Psbs01Controller extends Controller
         $department_id = $request->department_id;
         $name = $request->name;
         $management_number = $request->management_number;
+        $responsible_person_id = $request->responsible_person_id;
         $status = $request->status;
-
         
         //入力された番号の人員が存在するかの確認
         try{
@@ -399,8 +399,8 @@ class Psbs01Controller extends Controller
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
         
             try{
-                DB::update('update dcbs01 set name = ?,status = ?,management_personnel_id = ?,operation_start_date = ? where client_id = ? and department_id = ?',
-                [$name,$status,$management_number,$operation_start_date,$client_id,$department_id]);
+                DB::update('update dcbs01 set responsible_person_id = ?,name = ?,status = ?,management_personnel_id = ?,operation_start_date = ? where client_id = ? and department_id = ?',
+                [$responsible_person_id,$name,$status,$management_number,$operation_start_date,$client_id,$department_id]);
             }catch(\Exception $e){
                 //エラー処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -413,8 +413,8 @@ class Psbs01Controller extends Controller
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
         
             try{
-                DB::update('update dcbs01 set name = ?,status = ?,management_personnel_id = ?,operation_end_date = ? where client_id = ? and department_id = ?',
-                [$name,$status,$management_number,$operation_end_date,$client_id,$department_id]); 
+                DB::update('update dcbs01 set responsible_person_id = ?,name = ?,status = ?,management_personnel_id = ?,operation_end_date = ? where client_id = ? and department_id = ?',
+                [$responsible_person_id,$name,$status,$management_number,$operation_end_date,$client_id,$department_id]); 
             }catch(\Exception $e){
                 //エラー処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
@@ -424,8 +424,8 @@ class Psbs01Controller extends Controller
         }else{
             //上記以外なら状態と名前のみ更新
             try{
-                DB::update('update dcbs01 set name = ?,status = ?,management_personnel_id = ? where client_id = ? and department_id = ?',
-                [$name,$status,$management_number,$client_id,$department_id]);
+                DB::update('update dcbs01 set responsible_person_id = ?,name = ?,status = ?,management_personnel_id = ? where client_id = ? and department_id = ?',
+                [$responsible_person_id,$name,$status,$management_number,$client_id,$department_id]);
             }catch(\Exception $e){
                 //エラー及びログ処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
@@ -438,7 +438,7 @@ class Psbs01Controller extends Controller
             $message = Message::get_message('mhcmok0002',[0=>'']);
             session(['message'=>$message[0]]);
 
-        return redirect()->route('index');
+        return back();
     }
 
     /** 階層構造を更新

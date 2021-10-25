@@ -61,6 +61,11 @@
                         責任者:
                         <select name="management_personnel_id" data-toggle="tooltip" title="部署の責任者を選択します">
                         <option>{{$top_responsible[0]}}</option>
+                        @foreach($names as $name)
+                            @if($name->high_id == $top_department[0]->department_id)
+                                <option value="{{$name->personnel_id}}" >{{$name->name}}</option>
+                            @endif
+                        @endforeach
                         </select>
                         </p>
                     </div>
@@ -159,8 +164,13 @@
                         <option value="18" @if($departments[0]->status == "18") selected @endif>廃止</option>
                         </select>
                         責任者:
-                        <select name="management_personnel_id" data-toggle="tooltip" title="部署の責任者を選択します">
+                        <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
                         <option>{{$responsible_lists[0]}}</option>
+                        @foreach($names as $name)
+                            @if($name->high_id == $departments[0]->department_id)
+                                <option value="{{$name->personnel_id}}">{{$name->name}}</option>
+                            @endif
+                        @endforeach
                         </select>
                         </p>
                     </div>
@@ -492,7 +502,7 @@
                                 @break
                             @endswitch
                             </td>
-                            <td><a href="#">{{ $responsible_lists[$loop->index] }}</a></td>
+                            <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}">{{ $responsible_lists[$loop->index] }}</a></td>
                             <td>【<a href="#">コピー</a>】</td>
                             </tr>
                             @endforeach

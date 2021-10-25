@@ -83,8 +83,8 @@ class TreeData{
     }
 
 
-    //@param PDO $dbh データベースのドライバー
-    //@param array $database_chain データベースの上下関係のオブジェクトのデータ(idだけ)
+    //@param array $tree_id_chain 階層ごとに分かれたツリー配列
+    //@param array $database_id_name idとnameが紐づいた配列
     //@return array 上下関係のオブジェクトのデータの配列
     //上下関係のオブジェクトのデータを作成する
     private static function create_hierarchy($tree_id_chain, $database_id_name){
@@ -185,7 +185,6 @@ class TreeData{
         return $db_table;
     }
 
-    //@param PDO $dbh データベースのドライバー
     //@return array 上下関係のオブジェクトのデータ(idだけ)
     //上下関係のオブジェクトのデータのidの配列を返す
     private static function create_chain(){
@@ -200,7 +199,8 @@ class TreeData{
     }
 
     //データベースのデータをidと名称の形式にする
-    //@param array データベースのデータを一つにまとめた配列
+    //@param array $db_table データベースのデータを一つにまとめた配列
+    //@return array $database_id_name データベースのidとnameが紐づいた配列
     private static function change_id_name($db_table){
         //@var array データベースのidのカラム名
         $database_colmns_id = ['department_id', 'personnel_id'];
@@ -247,8 +247,8 @@ class TreeData{
     }
 
     //投影データをidと名称にする
-    //@param array 投影データ
-    //@param array テーブルのidと名前
+    //@param array $projection_chain 投影データ
+    //@param array $database_id_name テーブルのidと名前
     //@return array 投影データのidと名称
     private static function change_projection_name($projection_chain, $database_id_name){
         //@var array 返り値の配列
@@ -263,7 +263,7 @@ class TreeData{
     }
 
     //階層テーブルのデータをhigh_idとlower_idがキーの連想配列にする
-    //@param array データベースのキーとバリュー
+    //@param array $query_key_value データベースのキーとバリュー
     //@return array 階層テーブルのデータを連想配列にした配列
     private static function change_high_low($query_key_value){
         //@var array 返り値の配列

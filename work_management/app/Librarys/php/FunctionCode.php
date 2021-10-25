@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 //機能コードクラス
 class FunctionCode{
     //機能の文字から機能コードを返す
-    //$param string 機能
+    //$param string $function 機能
     //@return string 機能コード
     public static function get_functioncode($function){
         //@var array 機能コードのリスト

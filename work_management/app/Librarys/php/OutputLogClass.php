@@ -25,9 +25,11 @@ class OutputLogClass{
         $this->debug_mode = $debug_mode;
     }
 
-    //公開メソッド
+    //ログ出力メソッド
     //@param string $program_pass プログラムのパス
-    //@param array $log_arg ログ出力の可変引数
+    //@param string $type 種別
+    //@param string $function 機能
+    //@param string $log ログ
     public function log($program_pass, $type, $function, $log){
         
         //@var string 機能コード
@@ -38,6 +40,10 @@ class OutputLogClass{
         $this->output_log($type, $function, $log, $program_pass);
     }
 
+    //メッセージログ出力メソッド
+    //@param string $program_pass プログラムのパス
+    //@param string $message_code メッセージ番号
+    //@param array $message_string メッセージに挿入する文字列の配列
     public function message_log($program_pass, $message_code, ...$message_string){
         //種別でなければ、メッセージ番号とみなす
         //@var array ログメッセージと種別と機能
@@ -97,7 +103,7 @@ class OutputLogClass{
         }
     }
 
-    //@var array $log_csv ログファイルに出力するcsv
+    //@param array $log_csv ログファイルに出力するcsv
     //ログファイルを出力する
     private function write_log_csv($log_csv){
         //@var boolean ログファイルが存在するか判断
@@ -121,7 +127,7 @@ class OutputLogClass{
         }
     }
 
-    //@var array $log_csv システムログファイルに出力するcsv
+    //@param array $log_csv システムログファイルに出力するcsv
     //システムログファイルを出力する
     private function write_system_log_csv($system_log_csv){
         //@var boolean システムログファイルが存在するか判断
@@ -145,7 +151,7 @@ class OutputLogClass{
         }
     }
 
-    //@var string $type 種別
+    //@param string $type 種別
     //@return boolean ログファイルを出力するか、論理値
     //ログファイルに出力するか、判断する
     private function is_output_log_csv($type){
@@ -158,7 +164,7 @@ class OutputLogClass{
         }
     }
 
-    //@var string $type 種別
+    //@param string $type 種別
     //@return boolean システムログファイルを出力するか、論理値
     //システムログファイルに出力するか、判断する
     private function is_output_systemlog_csv($type){
@@ -177,10 +183,10 @@ class OutputLogClass{
         }
     }
 
-    //@var date $created_at 現在時刻
-    //@var string $type 種別
-    //@var string $function 機能
-    //@var string $log ログ
+    //@param date $created_at 現在時刻
+    //@param string $type 種別
+    //@param string $function 機能
+    //@param string $log ログ
     //@return array ログファイルに出力するcsv
     //ログファイルに出力するcsvの作成
     private function create_log_csv($created_at, $type, $function, $log){
@@ -189,11 +195,11 @@ class OutputLogClass{
         return [$created_at, $type, $this->user, $function, $log];
     }
 
-    //@var date $created_at 現在時刻
-    //@var string $type 種別
-    //@var string $program_pass プログラムのパス
-    //@var string $function 機能
-    //@var string $log ログ
+    //@param date $created_at 現在時刻
+    //@param string $type 種別
+    //@param string $program_pass プログラムのパス
+    //@param string $function 機能
+    //@param string $log ログ
     //@return array システムログファイルに出力するcsv
     //システムログファイルに出力するcsvの作成
     private function create_system_log_csv($created_at, $type, $program_pass, $function, $log){
@@ -226,8 +232,8 @@ class OutputLogClass{
     }
 
     //関数名から呼び出し元のクラス名と関数名を取得する
-    //@var string $program_row プログラムのパス
-    //@var string プログラムのパス
+    //@param string $program_row プログラムのパス
+    //@return string プログラムのパス
     private function get_program_path($program_pass){
 
         //@var array デバックトレース

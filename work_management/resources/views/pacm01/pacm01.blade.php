@@ -61,6 +61,11 @@
                         責任者:
                         <select name="management_personnel_id" data-toggle="tooltip" title="部署の責任者を選択します">
                         <option>{{$top_responsible[0]}}</option>
+                        @foreach($names as $name)
+                            @if($name->high_id == $top_department[0]->department_id)
+                                <option value="{{$name->personnel_id}}" >{{$name->name}}</option>
+                            @endif
+                        @endforeach
                         </select>
                         </p>
                     </div>
@@ -159,8 +164,13 @@
                         <option value="18" @if($departments[0]->status == "18") selected @endif>廃止</option>
                         </select>
                         責任者:
-                        <select name="management_personnel_id" data-toggle="tooltip" title="部署の責任者を選択します">
+                        <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
                         <option>{{$responsible_lists[0]}}</option>
+                        @foreach($names as $name)
+                            @if($name->high_id == $departments[0]->department_id)
+                                <option value="{{$name->personnel_id}}">{{$name->name}}</option>
+                            @endif
+                        @endforeach
                         </select>
                         </p>
                     </div>
@@ -184,7 +194,6 @@
                     @method('post')
                     <input type="submit" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
-
 
                     <form action="{{ route('clipboard',$departments[0]->department_id)}}" method="get">
                     @csrf
@@ -330,7 +339,14 @@
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
-                    <p>登録日:140809 修正日:140809 運用開始日:140809 運用終了日:140809</p>
+                    <p>登録日:{{$click_personnel_data[0]->created_at}} 修正日:{{$click_personnel_data[0]->updated_at}}
+                    @if($click_personnel_data[0]->operation_start_date)
+                    運用開始日:{{$click_personnel_data[0]->operation_start_date}}
+                    @endif
+                    @if($click_personnel_data[0]->operation_end_date)
+                    運用終了日:{{$click_personnel_data[0]->operation_end_date}}
+                    @endif
+                    </p>
                     </div>
                 </div>
             </div>
@@ -485,7 +501,7 @@
                                 @break
                             @endswitch
                             </td>
-                            <td><a href="#">{{ $responsible_lists[$loop->index] }}</a></td>
+                            <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}">{{ $responsible_lists[$loop->index] }}</a></td>
                             <td>【<a href="#">コピー</a>】</td>
                             </tr>
                             @endforeach

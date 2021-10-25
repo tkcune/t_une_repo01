@@ -276,6 +276,15 @@ class Psji01Controller extends Controller
     public function destroy($id,$id2)
     {
         try{
+            $high_id = DB::select('select 
+                high_id from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                and dcji01.personnel_id = ?',[$id,$id2]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+        try{
             DB::delete('delete from dcji01 where client_id = ? and personnel_id = ?',[$id,$id2]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
@@ -286,7 +295,7 @@ class Psji01Controller extends Controller
         OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
         $message = Message::get_message('mhcmok0003',[0=>'']);
         session(['message'=>$message[0]]);
-        PtcmtrController::delete_node($personnel_id);
+        PtcmtrController::delete_node($high_id[0]);
         return redirect()->route('index');
     }
 
@@ -332,13 +341,19 @@ class Psji01Controller extends Controller
             return redirect()->route('index');
         }
         try{
-            $personnel_data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?
+            $personnel_data = DB::select('select 
+            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?
             where dcji01.name like ?',[$client_id,'%'.$request->search.'%']);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
+        //日付を6桁にする
+        $date = new Date();
+        $date->formatDate($department_data);
+        $date->formatDate($personnel_data);
 
         //ページネーション
         $pagination = new Pagination();

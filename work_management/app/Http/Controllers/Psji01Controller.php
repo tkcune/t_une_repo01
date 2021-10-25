@@ -286,7 +286,7 @@ class Psji01Controller extends Controller
         OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
         $message = Message::get_message('mhcmok0003',[0=>'']);
         session(['message'=>$message[0]]);
-        PtcmtrController::delete_node($personnel_id);
+        PtcmtrController::delete_node($id2);
         return redirect()->route('index');
     }
 
@@ -341,7 +341,7 @@ class Psji01Controller extends Controller
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-        //日付を６桁にする
+        //日付を6桁にする
         $date = new Date();
         $date->formatDate($department_data);
         $date->formatDate($personnel_data);

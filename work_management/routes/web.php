@@ -51,7 +51,9 @@ Route::patch('/',[Psbs01Controller::class,'update'])->name('psbs01.update');
 
 Route::patch('/{id}',[Psbs01Controller::class,'hierarchyUpdate'])->name('psbs01.hierarchyUpdate');
 
-Route::post('/{id}/{id2}',[Psbs01Controller::class,'delete'])->name('psbs01.delete');
+Route::post('/delete/{id}/{id2}',[Psbs01Controller::class,'delete'])->name('psbs01.delete');
+
+Route::post('/jidestroy/{id}/{id2}',[Psji01Controller::class,'destroy'])->name('psji01.destroy');
 
 
 

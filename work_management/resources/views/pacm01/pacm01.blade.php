@@ -195,7 +195,6 @@
                     <input type="submit" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
-
                     <form action="{{ route('clipboard',$departments[0]->department_id)}}" method="get">
                     @csrf
                     <input type="submit" value="複写" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">

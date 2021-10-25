@@ -276,6 +276,15 @@ class Psji01Controller extends Controller
     public function destroy($id,$id2)
     {
         try{
+            $high_id = DB::select('select 
+                high_id from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                and dcji01.personnel_id = ?',[$id,$id2]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+        try{
             DB::delete('delete from dcji01 where client_id = ? and personnel_id = ?',[$id,$id2]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
@@ -286,7 +295,7 @@ class Psji01Controller extends Controller
         OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
         $message = Message::get_message('mhcmok0003',[0=>'']);
         session(['message'=>$message[0]]);
-        PtcmtrController::delete_node($id2);
+        PtcmtrController::delete_node($high_id[0]);
         return redirect()->route('index');
     }
 

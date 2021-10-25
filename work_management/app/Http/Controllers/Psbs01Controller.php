@@ -16,10 +16,6 @@ use App\Librarys\php\ResponsiblePerson;
 use App\Http\Controllers\PtcmtrController;
 use App\Models\Date;
 
-//BsResource
-//作成者：日置慎一
-use App\Http\Resources\BsResource as BsResource;
-
 /**
  * 部署データを操作するコントローラー
  */
@@ -748,65 +744,5 @@ class Psbs01Controller extends Controller
         $message = Message::get_message('mhcmok0009',[0=>'']);
         session(['message'=>$message[0]]);
         return back();
-    }
-
-    /*
-     詳細行の画面に表示するデータを送るAPIメソッド
-     * 作成者:日置慎一
-     * 
-     * @param string id 部署bsのid
-     * @return json 詳細行に表示するデータ
-     * 
-     */
-    public function send_bs_resource(Request $request){
-        //@var array リソースに渡す連想配列
-        $json = array();
-        try {
-            //テーブルから取得するid
-            $id = $request->id;
-
-            //投影テーブルのidなら、投影元のidを取得する
-            if(substr($id, 0, 2) == 'ta'){
-                $id = DB::select('select projection_source_id from dccmta where projection_id = ?', [$id])[0]->projection_source_id;
-            }
-            //@var array 部署テーブルから詳細行に表示するデータを取得する
-            $data = DB::select('select * from dcbs01 where department_id = ?', [$id]);
-            //@var array 人事テーブルから責任者を取得する
-            $responsible_person = DB::select('select name from dcji01 where personnel_id = ?', [$data[0]->responsible_person_id]);
-            //@var array 人事テーブルから登録者を取得する
-            $management_person = DB::select('select name from dcji01 where personnel_id = ?', [$data[0]->management_personnel_id]);
-            //@var array 階層テーブルから上位のidを取得する
-            $high = DB::select('select high_id from dccmks where lower_id = ?', [$data[0]->department_id]);
-            
-            //部署のidを設定する
-            $json['id'] = $data[0]->department_id;
-            //部署の名前を設定する
-            $json['title'] = $data[0]->name;
-            //上位について設定する
-            if($high == []){
-                //上位がなければ、"部署"を設定する
-                $json['high'] = '部署';
-            }else{
-                //@var array 上位があれば、部署テーブルから名前を取得する
-                $high_bs = DB::select('select name from dcbs01 where department_id = ?', [$high[0]->high_id]);
-                //上位の部署の名前を設定する
-                $json['high'] = $high_bs[0]->name;
-            }
-            //部署のステータスを設定する
-            $json['status'] = $data[0]->status;
-            //部署の責任者を設定する
-            $json['responsible_person'] = $responsible_person[0]->name;
-            //部署の登録日をフォーマットして、設定する
-            $json['created_at'] = substr(date('Ymd', strtotime($data[0]->created_at)),2);
-            //部署の登録者を設定する
-            $json['manegement_person'] = $management_person[0]->name;
-            //jsonを返す
-            return new BsResource($json);
-        } catch (\Exception $e) {
-            //エラーログを出力する
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            //エラーメッセージを返す
-            return response()->json(['message' => $e->getMessage(),'status' => '500'], 500);
-        }
     }
 }

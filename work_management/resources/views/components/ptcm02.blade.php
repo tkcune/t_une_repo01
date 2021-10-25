@@ -5,14 +5,15 @@
                 <img src="/image/lg.png" class="btndisplay" id="openTree">
                 <div class="btnclose" onclick="display()"><<</div>
             </div>
-        </div>
-        <script>
+            <script>
             let treeChain = @json($tree_chain);
             let projectionChain = @json($projection_chain);
-        </script>
-        @if(isset($treeaction_chain))
-            <script>let treeaction_chain = @json($treeaction_chain);</script>
-        @else
-            <script>let treeaction_chain = null;</script>
-        @endif
+            </script>
+            @if(isset($treeaction_chain))
+                <script>let treeactionChain = @json($treeaction_chain);</script>
+            @else
+                <script>let treeactionChain = null;</script>
+            @endif
+            <input type="hidden" id="hidden_client_id" value="{{ session('client_id') }}">
+        </div>
     {{-- コメント　ツリー画面ここまで --}}

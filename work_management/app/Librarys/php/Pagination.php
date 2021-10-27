@@ -15,7 +15,7 @@
          * var const MAX 1ページの記事の表示数
          */
         private array $array;
-        private int $array_num; 
+        private int $arrayNum; 
         const MAX = 5; 
 
         /**

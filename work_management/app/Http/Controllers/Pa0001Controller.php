@@ -65,9 +65,6 @@ class Pa0001Controller extends Controller
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
         }
-        //登録日付を6桁に変換
-        $date = new Date();
-        $date->formatDate($top_department);
 
         //全体の部署データの取得
         try{
@@ -88,6 +85,11 @@ class Pa0001Controller extends Controller
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
         }
+
+        //登録日付を6桁に変換
+        $date = new Date();
+        $date->formatDate($top_department);
+        $date->formatDate($personnel_data);
 
         //ページネーション
         $pagination = new Pagination();
@@ -254,6 +256,7 @@ class Pa0001Controller extends Controller
         //登録日付を6桁に変換
         $date = new Date();
         $date->formatDate($top_department);
+        $date->formatDate($personnel_data);
 
         //ページネーション
         $pagination = new Pagination();

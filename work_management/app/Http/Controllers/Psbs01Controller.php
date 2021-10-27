@@ -240,6 +240,7 @@ class Psbs01Controller extends Controller
             //日付を6桁に変換
             $date = new Date();
             $date->formatDate($click_department_data);
+            $date->formatDate($personnel_data);
        
             //上位階層取得
             $hierarchical = new Hierarchical();
@@ -318,6 +319,7 @@ class Psbs01Controller extends Controller
                 //日付を6桁にする
                 $date = new Date();
                 $date->formatDate($click_personnel_data);
+                $date->formatDate($personnel_data);
 
                 //ページネーション
                 $pagination = new Pagination();
@@ -357,10 +359,6 @@ class Psbs01Controller extends Controller
 
             array_push($lists,$affiliation_data[0]->high_id);
 
-            //日付を6桁表記にする
-            $date = new Date();
-            $date->formatDate($click_personnel_data);
-
             //取得した部署IDを元に配下を取得
             $hierarchical = new Hierarchical();
             $select_lists = $hierarchical->subordinateSearch($lists,$client);
@@ -369,6 +367,11 @@ class Psbs01Controller extends Controller
             $lists = $hierarchical->subordinateGet($select_lists,$client);
             $department_data = $lists[0];
             $personnel_data = $lists[1];
+
+            //日付を6桁表記にする
+            $date = new Date();
+            $date->formatDate($click_personnel_data);
+            $date->formatDate($personnel_data);
             
             //ページネーション
             $pagination = new Pagination();

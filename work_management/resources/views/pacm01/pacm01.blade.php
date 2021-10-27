@@ -118,25 +118,25 @@
     <form action="{{ route('psbs01.update') }}" method="post">
             @csrf
             @method('patch')
-            <input type="hidden" id="department_id" name="department_id" value="{{$departments[0]->department_id}}">
+            <input type="hidden" id="department_id" name="department_id" value="{{$click_department_data[0]->department_id}}">
             <input type="hidden" name="client_id" value="{{ session('client_id') }}">
 
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4">
-                        <p id="palent">部署名<input type="text" name="name" value="{{$departments[0]->name}}" data-toggle="tooltip" title="部署の名称を入力します"></p>
+                        <p id="palent">部署名<input type="text" name="name" value="{{$click_department_data[0]->name}}" data-toggle="tooltip" title="部署の名称を入力します"></p>
                     </div>
                     <div class="col">
-                        <p>番号:{{$departments[0]->department_id}}</p>
+                        <p>番号:{{$click_department_data[0]->department_id}}</p>
                     </div>
                     <div class="col">
-                        <p>上位:<a href="{{ route('plbs01.show',[session('client_id'),$departments[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$department_high[0]->name}}</a></p>
+                        <p>上位:<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$department_high[0]->name}}</a></p>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" name="management_number" value="{{$departments[0]->management_personnel_id}}" style="width:100px;"
+                        <p>管理者番号：<input type="text" name="management_number" value="{{$click_department_data[0]->management_personnel_id}}" style="width:100px;"
                         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
@@ -157,18 +157,18 @@
                     <div class="col">
                         <p>状態:
                         <select name="status" data-toggle="tooltip" title="部署の状態を選択します">
-                        <option value="10" @if($departments[0]->status == "10") selected @endif>開設提案</option>
-                        <option value="11" @if($departments[0]->status == "11") selected @endif>審査</option>
-                        <option value="12" @if($departments[0]->status == "12") selected @endif>開設待</option>
-                        <option value="13" @if($departments[0]->status == "13") selected @endif>稼働中</option>
-                        <option value="14" @if($departments[0]->status == "14") selected @endif>休止</option>
-                        <option value="18" @if($departments[0]->status == "18") selected @endif>廃止</option>
+                        <option value="10" @if($click_department_data[0]->status == "10") selected @endif>開設提案</option>
+                        <option value="11" @if($click_department_data[0]->status == "11") selected @endif>審査</option>
+                        <option value="12" @if($click_department_data[0]->status == "12") selected @endif>開設待</option>
+                        <option value="13" @if($click_department_data[0]->status == "13") selected @endif>稼働中</option>
+                        <option value="14" @if($click_department_data[0]->status == "14") selected @endif>休止</option>
+                        <option value="18" @if($click_department_data[0]->status == "18") selected @endif>廃止</option>
                         </select>
                         責任者:
                         <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
                         <option>{{$responsible_lists[0]}}</option>
                         @for($i = 0;$i < count($personnel_data);$i++)
-                            @if($personnel_data[$i]->high_id == $departments[0]->department_id)
+                            @if($personnel_data[$i]->high_id == $click_department_data[0]->department_id)
                                 <option value="{{$personnel_data[$i]->personnel_id}}">{{$personnel_data[$i]->name}}</option>
                             @endif
                         @endfor
@@ -187,16 +187,16 @@
                     <form action="{{ route('psbs01.index') }}" method="get">
                     @csrf
                     <input type="submit" value="新規" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
-                    <input type="hidden" id="high_new" name="high" value="{{$departments[0]->department_id}}">
+                    <input type="hidden" id="high_new" name="high" value="{{$click_department_data[0]->department_id}}">
                     </form>
 
-                    <form action="{{ route('psbs01.delete',[session('client_id'),$departments[0]->department_id])}}" method="post">
+                    <form action="{{ route('psbs01.delete',[session('client_id'),$click_department_data[0]->department_id])}}" method="post">
                     @csrf
                     @method('post')
                     <input type="submit" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
-                    <form action="{{ route('clipboard',$departments[0]->department_id)}}" method="get">
+                    <form action="{{ route('clipboard',$click_department_data[0]->department_id)}}" method="get">
                     @csrf
                     <input type="submit" value="複写" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
@@ -215,7 +215,7 @@
                     
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
-                    登録日:{{$departments[0]->created_at}} 登録者:<a href="#">{{$responsible_lists[0]}}</a></p>
+                    登録日:{{$click_department_data[0]->created_at}} 登録者:<a href="#">{{$responsible_lists[0]}}</a></p>
                     </div>
                 </div>
             </div>
@@ -407,6 +407,41 @@
                         {{-- ツリー操作機能ここまで　--}}
 
                         {{-- ページネーション--}}
+@if(isset($select_id))
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-sm">
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count2',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+    @if($count_department == 1)
+                                <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+    @else
+                                <a class="page-link" href="{{ route('count2',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+    @endif
+                                    <span aria-hidden="true">&lt;</span>
+                                </a>
+                                </li>
+                                {{$count_department}}/{{$department_max}}
+                                <li class="page-item">
+    @if($count_department<$department_max)
+                                    <a class="page-link" href="{{ route('count2',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+    @else
+                                    <a class="page-link" href="{{ route('count2',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+    @endif
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count2',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+@else
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
@@ -415,21 +450,21 @@
                                     </a>
                                 </li>
                                 <li class="page-item">
-@if($count_department == 1)
+    @if($count_department == 1)
                                 <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
-@else
+    @else
                                 <a class="page-link" href="{{ route('count',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
-@endif
+    @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
                                 {{$count_department}}/{{$department_max}}
                                 <li class="page-item">
-@if($count_department<$department_max)
+    @if($count_department<$department_max)
                                     <a class="page-link" href="{{ route('count',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
-@else
+    @else
                                     <a class="page-link" href="{{ route('count',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
-@endif
+    @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
@@ -440,9 +475,8 @@
                                 </li>
                             </ul>
                         </nav>
+@endif
                         {{-- ページネーションここまで--}}
-
-                        
 
                         {{-- 検索機能　--}}
                         <form action="{{ route('psbs01.search',[session('client_id')])}}" method="post">

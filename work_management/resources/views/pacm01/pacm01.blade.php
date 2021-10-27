@@ -114,9 +114,13 @@
                     登録日:{{$top_department[0]->created_at}} 修正日:{{$top_department[0]->updated_at}}
                     @if($top_department[0]->operation_start_date)
                     運用開始日:{{$top_department[0]->operation_start_date}}
+                    @else
+                    運用開始日:保留
                     @endif
                     @if($top_department[0]->operation_end_date)
                     運用終了日:{{$top_department[0]->operation_end_date}}
+                    @else
+                    運用終了日:未定
                     @endif
                     </p>
                     </div>
@@ -227,9 +231,13 @@
                     登録日:{{$click_department_data[0]->created_at}} 修正日:{{$click_department_data[0]->updated_at}}
                     @if($click_department_data[0]->operation_start_date)
                     運用開始日:{{$click_department_data[0]->operation_start_date}}
+                    @else
+                    運用開始日:保留
                     @endif
                     @if($click_department_data[0]->operation_end_date)
                     運用終了日:{{$click_department_data[0]->operation_end_date}}
+                    @else
+                    運用終了日:未定
                     @endif
                     </p>
                     </div>
@@ -286,7 +294,7 @@
                         <p>メールアドレス<input type="email" name="mail"></p>
                     </div>
                     <div class="col-4" style="padding:0px">
-                        <p id="login" @if($click_personnel_data[0]->login_authority == "0") visibility hidden @endif >パスワード<input id="password" type="password" name="mail"><input type="checkbox" onclick="passwordOn()"></p>
+                        <p id="login" @if($click_personnel_data[0]->login_authority == "0") visibility hidden @endif >パスワード<input id="password" type="password" name="password"><input type="checkbox" onclick="passwordOn()"></p>
                     </div>
                     <div class="col">
                         <button>メール送信</button>
@@ -359,9 +367,13 @@
                     <p>登録日:{{$click_personnel_data[0]->created_at}} 修正日:{{$click_personnel_data[0]->updated_at}}
                     @if($click_personnel_data[0]->operation_start_date)
                     運用開始日:{{$click_personnel_data[0]->operation_start_date}}
+                    @else
+                    運用開始日:保留
                     @endif
                     @if($click_personnel_data[0]->operation_end_date)
                     運用終了日:{{$click_personnel_data[0]->operation_end_date}}
+                    @else
+                    運用開始日:未定
                     @endif
                     </p>
                     </div>
@@ -553,7 +565,9 @@
                             @endswitch
                             </td>
                             <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}">{{ $responsible_lists[$loop->index] }}</a></td>
-                            <td>【<a href="#">コピー</a>】</td>
+                            <td>
+                            【<a href="{{ route('clipboard',$department->department_id)}}">複写</a>】
+                            </td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -750,7 +764,7 @@
                             <td>aaa02</td>
                             <td>{{$name->password_update_day}}</td>
                             <td>---------</td>
-                            <td>【<a href="#">コピー</a>】</td>
+                            <td>【<a href="{{ route('clipboard',$name->personnel_id)}}">複写</a>】</td>
                             </tr>
                         @endforeach
                         </tbody>

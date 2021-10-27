@@ -51,18 +51,18 @@ class Psbs01Controller extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * 
-     * @param  string $client_id  顧客ID
-     * @param  string $responsible_person_id  責任者ID
-     * @param  string $name  部署名
-     * @param  string $status  状態
-     * @param  string $management_personnel_id　管理者ID
-     * @param  string $high　上位部署のID番号
-     * @param  string $id　顧客IDに対応した最新の部署IDを格納する因数
-     * @param  App\Librarys\php\ZeroPadding $padding
-     * @param  App\Librarys\php\StatusCheck $check
-     * @param  string $operation_start_date　稼働開始日
-     * @param  string $operation_end_date　稼働終了日
-     * @param  int $department_id 部署ID
+     * @var  string $client_id  顧客ID
+     * @var  string $responsible_person_id  責任者ID
+     * @var  string $name  部署名
+     * @var  string $status  状態
+     * @var  string $management_personnel_id　管理者ID
+     * @var  string $high　上位部署のID番号
+     * @var  string $id　顧客IDに対応した最新の部署IDを格納する因数
+     * @var  App\Librarys\php\ZeroPadding $padding
+     * @var  App\Librarys\php\StatusCheck $check
+     * @var  string $operation_start_date　稼働開始日
+     * @var  string $operation_end_date　稼働終了日
+     * @var  int $department_id 部署ID
      * 
      * @return \Illuminate\Http\Response
      */
@@ -149,32 +149,32 @@ class Psbs01Controller extends Controller
      * @param  string $client 顧客ID
      * @param  string $select_id 選択した部署ID
      * 
-     * @param  array $lists 選択した部署
-     * @param  array $responsible_lists 責任者リスト
-     * @param　int $count_department 部署ページネーションのページ数
-     * @param　int $count_personnel  人員ページネーションのページ数
-     * @param  array $department_data 部署データ
-     * @param  array $personnel_data 人員データ
-     * @param  string $select_code 選択したIDのコード
-     * @param  array $projection_code 投影元のデータコード
-     * @param  array $select_lists 選択した部署の配下データ
-     * @param  string $code 機能コード
-     * @param  array  $data 取得したデータ
-     * @param  App\Librarys\php\Pagination $pagination 
-     * @param  int $department_max 部署データページネーションの最大値
-     * @param  array $departments ページネーション後の部署データ
-     * @param  int $personnel_max 人員データページネーションの最大値
-     * @param  array $names ページネーション後の人員データ
-     * @param  App\Librarys\php\ResponsiblePerson $responsible
-     * @param  array $top_responsible 最上位の責任者データ
-     * @param  array $responsible_lists 責任者リスト
-     * @param  array $top_management 最上位の管理者データ
-     * @param  array $management_lists 管理者データ
-     * @param  App\Librarys\php\Hierarchical $hierarchical
-     * @param  array $department_high 部署データの上位階層
-     * @param  array $personnel_high 人員データの上位階層
-     * @param  App\Http\Controllers\PtcmtrController $tree
-     * @param  array $tree_data ツリーデータ
+     * @var  array $lists 選択した部署
+     * @var  array $responsible_lists 責任者リスト
+     * @var　int $count_department 部署ページネーションのページ数
+     * @var　int $count_personnel  人員ページネーションのページ数
+     * @var  array $department_data 部署データ
+     * @var  array $personnel_data 人員データ
+     * @var  string $select_code 選択したIDのコード
+     * @var  array $projection_code 投影元のデータコード
+     * @var  array $select_lists 選択した部署の配下データ
+     * @var  string $code 機能コード
+     * @var  array  $data 取得したデータ
+     * @var  App\Librarys\php\Pagination $pagination 
+     * @var  int $department_max 部署データページネーションの最大値
+     * @var  array $departments ページネーション後の部署データ
+     * @var  int $personnel_max 人員データページネーションの最大値
+     * @var  array $names ページネーション後の人員データ
+     * @var  App\Librarys\php\ResponsiblePerson $responsible
+     * @var  array $top_responsible 最上位の責任者データ
+     * @var  array $responsible_lists 責任者リスト
+     * @var  array $top_management 最上位の管理者データ
+     * @var  array $management_lists 管理者データ
+     * @var  App\Librarys\php\Hierarchical $hierarchical
+     * @var  array $department_high 部署データの上位階層
+     * @var  array $personnel_high 人員データの上位階層
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -426,13 +426,14 @@ class Psbs01Controller extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * 
-     * @param  string  $client_id　顧客ID
-     * @param  string  $department_id　部署ID
-     * @param  string  $name　名前
-     * @param  string  $status　状態
-     * @param  \App\Librarys\php\StatusCheck $check
-     * @param  string  $operation_start_date 稼働開始日
-     * @param  string  $operation_end_date 稼働終了日
+     * @var  string  $client_id　顧客ID
+     * @var  string  $department_id　部署ID
+     * @var  string  $name　名前
+     * @var  string  $status　状態
+     * @var  \App\Librarys\php\StatusCheck $check
+     * @var  string  $operation_start_date 稼働開始日
+     * @var  string  $operation_end_date 稼働終了日
+     * @var  string  $message メッセージ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -662,7 +663,10 @@ class Psbs01Controller extends Controller
 
         PtcmtrController::delete_node($delete_data[0]->high_id);
         
-        return redirect()->route('index');
+        if($delete_data[0]->high_id == "bs"){
+            redirect()->route('index');
+        }
+        return redirect()->route('plbs01.show',[$client,$delete_data[0]->high_id]);
     
     }
 
@@ -672,21 +676,24 @@ class Psbs01Controller extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $client_id 顧客ID
      * 
-     * @param  int $count_department 部署ページネーションのページ数
-     * @param  int $count_personnel 人員ページネーションのページ数
-     * @param  App\Librarys\php\Pagination $pagination 
-     * @param  int $department_max 部署データページネーションの最大値
-     * @param  array $departments ページネーション後の部署データ
-     * @param  int $personnel_max 人員データページネーションの最大値
-     * @param  array $names ページネーション後の人員データ
-     * @param  App\Librarys\php\ResponsiblePerson $responsible
-     * @param  array $responsible_lists 責任者リスト
-     * @param  array $management_lists 管理者データ
-     * @param  App\Librarys\php\Hierarchical $hierarchical
-     * @param  array $department_high 部署データの上位階層
-     * @param  array $personnel_high 人員データの上位階層
-     * @param  App\Http\Controllers\PtcmtrController $tree
-     * @param  array $tree_data ツリーデータ
+     * @var  int $count_department 部署ページネーションのページ数
+     * @var  int $count_personnel 人員ページネーションのページ数
+     * @var  array $department_data 部署データ
+     * @var  array $personnel_data 人員データ
+     * @var  App\Models\Date $date 
+     * @var  App\Librarys\php\Pagination $pagination 
+     * @var  int $department_max 部署データページネーションの最大値
+     * @var  array $departments ページネーション後の部署データ
+     * @var  int $personnel_max 人員データページネーションの最大値
+     * @var  array $names ページネーション後の人員データ
+     * @var  App\Librarys\php\ResponsiblePerson $responsible
+     * @var  array $responsible_lists 責任者リスト
+     * @var  array $management_lists 管理者データ
+     * @var  App\Librarys\php\Hierarchical $hierarchical
+     * @var  array $department_high 部署データの上位階層
+     * @var  array $personnel_high 人員データの上位階層
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -753,12 +760,13 @@ class Psbs01Controller extends Controller
      * 複製したデータを挿入するメソッド
      * @param  \Illuminate\Http\Request  $request
      * 
-     * @param string $client_id 顧客ID
-     * @param string $copy_id 複製するID
-     * @param string $high 複製IDが所属する上位階層ID
-     * @param array  $copy_department 複製するデータ
-     * @param string $department_id 登録する部署ID
-     * @param App\Librarys\php\ZeroPadding $padding
+     * @var string $client_id 顧客ID
+     * @var string $copy_id 複製するID
+     * @var string $high 複製IDが所属する上位階層ID
+     * @var array  $copy_department 複製するデータ
+     * @var array  $id 存在する部署内での最新の部署ID
+     * @var string $department_id 登録する部署ID
+     * @var App\Librarys\php\ZeroPadding $padding
      * 
      * @return \Illuminate\Http\Response
      */

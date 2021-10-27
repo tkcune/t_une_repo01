@@ -25,8 +25,8 @@ class Psji01Controller extends Controller
     /**
      * 人員新規登録画面表示
      *
-     * @param  App\Http\Controllers\PtcmtrController $tree
-     * @param  array $tree_data ツリーデータ
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -51,22 +51,23 @@ class Psji01Controller extends Controller
      * 新規人員データ登録
      * 
      * @param  \Illuminate\Http\Request  $request
-     * @param  string $client_id 顧客ID
-     * @param  string $name 名前
-     * @param　string $email メールアドレス
-     * @param　string $password パスワード
-     * @param　int $status 状態
-     * @param  int $login_authority ログイン権限
-     * @param  int $login_authority 管理者権限
-     * @param  int $high 上位部署
-     * @param  App\Models\Date $date
-     * @param  App\Librarys\php\StatusCheck $check
-     * @param  string $id　顧客IDに対応した最新の部署IDを格納する因数
-     * @param  string $personnel_id 最新の人員ID
-     * @param  App\Librarys\php\ZeroPadding $padding
-     * @param  App\Librarys\php\StatusCheck $check
-     * @param  string $operation_start_date　稼働開始日
-     * @param  string $operation_end_date　稼働終了日
+     * 
+     * @var  string $client_id 顧客ID
+     * @var  string $name 名前
+     * @var　string $email メールアドレス
+     * @var　string $password パスワード
+     * @var　int $status 状態
+     * @var  int $login_authority ログイン権限
+     * @var  int $system_management システム管理者権限
+     * @var  int $high 上位部署
+     * @var  App\Models\Date $date
+     * @var  App\Librarys\php\StatusCheck $check
+     * @var  array $id　顧客IDに対応した最新の部署IDを格納する因数
+     * @var  string $personnel_id 最新の人員ID
+     * @var  App\Librarys\php\ZeroPadding $padding
+     * @var  App\Librarys\php\StatusCheck $check
+     * @var  string $operation_start_date　稼働開始日
+     * @var  string $operation_end_date　稼働終了日
      * 
      * @return \Illuminate\Http\Response
      */
@@ -270,7 +271,10 @@ class Psji01Controller extends Controller
      *
      * @param  string  $id　顧客ID　
      * @param  string  $id2 人員ID
-     * @param  string  $message ログメッセージ
+     * 
+     * @var array $high_id　上位ID
+     * @var string  $message ログメッセージ
+     * 
      * @return \Illuminate\Http\Response
      */
     public function destroy($id,$id2)
@@ -316,27 +320,28 @@ class Psji01Controller extends Controller
     /**
      * データ検索
      *
-     * @param  @param  \Illuminate\Http\Request  $request
-     * @param  string  $client_id　顧客ID
-     * @param  int $count_department 部署ページネーションのページ数
-     * @param  int $count_personnel 人員ページネーションのページ数
-     * @param  array $department_data 部署データ
-     * @param  array $personnel_data 人員データ
-     * @param  App\Librarys\php\Pagination $pagination 
-     * @param  int $department_max 部署データページネーションの最大値
-     * @param  array $departments ページネーション後の部署データ
-     * @param  int $personnel_max 人員データページネーションの最大値
-     * @param  array $names ページネーション後の人員データ
-     * @param  App\Librarys\php\ResponsiblePerson $responsible
-     * @param  array $top_responsible 最上位の責任者データ
-     * @param  array $responsible_lists 責任者リスト
-     * @param  array $top_management 最上位の管理者データ
-     * @param  array $management_lists 管理者データ
-     * @param  App\Librarys\php\Hierarchical $hierarchical
-     * @param  array $department_high 部署データの上位階層
-     * @param  array $personnel_high 人員データの上位階層
-     * @param  App\Http\Controllers\PtcmtrController $tree
-     * @param  array $tree_data ツリーデータ
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @var  string  $client_id　顧客ID
+     * @var  int $count_department 部署ページネーションのページ数
+     * @var  int $count_personnel 人員ページネーションのページ数
+     * @var  array $department_data 部署データ
+     * @var  array $personnel_data 人員データ
+     * @var  App\Models\Date; $date
+     * @var  App\Librarys\php\Pagination $pagination 
+     * @var  int $department_max 部署データページネーションの最大値
+     * @var  array $departments ページネーション後の部署データ
+     * @var  int $personnel_max 人員データページネーションの最大値
+     * @var  array $names ページネーション後の人員データ
+     * @var  App\Librarys\php\ResponsiblePerson $responsible
+     * @var  array $top_responsible 最上位の責任者データ
+     * @var  array $responsible_lists 責任者リスト
+     * @var  array $management_lists 管理者データ
+     * @var  App\Librarys\php\Hierarchical $hierarchical
+     * @var  array $department_high 部署データの上位階層
+     * @var  array $personnel_high 人員データの上位階層
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -399,12 +404,17 @@ class Psji01Controller extends Controller
     /**
      * 
      * 複製したデータを挿入するメソッド
-     * @param string $client_id 顧客ID
-     * @param string $copy_id 複製するID
-     * @param string $high 複製IDが所属する上位階層ID
-     * @param array  $copy_personnel 複製するデータ
-     * @param string $department_id 登録する部署ID
-     * @param App\Librarys\php\ZeroPadding $padding
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @var string $client_id 顧客ID
+     * @var string $copy_id 複製するID
+     * @var string $high 複製IDが所属する上位階層ID
+     * @var array  $copy_personnel 複製するデータ
+     * @var array  $id 存在している最新のID
+     * @var string $department_id 登録する部署ID
+     * @var string $personnel_id 登録する人員ID
+     * @var App\Librarys\php\ZeroPadding $padding
+     * @var  App\Models\Date; $date
      * 
      * @return \Illuminate\Http\Response
      */

@@ -167,7 +167,6 @@ class Psbs01Controller extends Controller
      * @var  array $names ページネーション後の人員データ
      * @var  App\Librarys\php\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
-     * @var  array $responsible_lists 責任者リスト
      * @var  array $top_management 最上位の管理者データ
      * @var  array $management_lists 管理者データ
      * @var  App\Librarys\php\Hierarchical $hierarchical
@@ -429,6 +428,9 @@ class Psbs01Controller extends Controller
      * @var  string  $client_id　顧客ID
      * @var  string  $department_id　部署ID
      * @var  string  $name　名前
+     * @var  string  $management_number 管理者人員番号
+     * @var  string  $responsible_person_id 責任者番号
+     * @var  array   $management_personnel_id　管理者ID
      * @var  string  $status　状態
      * @var  \App\Librarys\php\StatusCheck $check
      * @var  string  $operation_start_date 稼働開始日
@@ -519,6 +521,7 @@ class Psbs01Controller extends Controller
      * @var string $client_id 顧客ID
      * @var string $high_id 上位ID
      * @var string $lower_id 下位ID
+     * @var string $message メッセージ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -556,6 +559,8 @@ class Psbs01Controller extends Controller
      * @var  \App\Librarys\php\Hierarchical $hierarchical
      * @var  array   $delete_lists 削除予定のIDを格納した配列
      * @var  int     $code 機能コードの頭2文字
+     * @var  array $delete_projections 削除元
+     * @var  string $message メッセージ
      * 
      * @return \Illuminate\Http\Response
      */

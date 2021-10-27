@@ -38,13 +38,14 @@ class Ptcm01Controller extends Controller
     /**
      * 投影データの登録
      * @param  \Illuminate\Http\Request  $request
-     * @param  string $client_id　顧客ID
-     * @param  string $high_id 上位ID
-     * @param  string $projection_source_id　投影元ID
-     * @param  string $id 現時点で最新の投影ID
-     * @param  string $projection_id　作成する投影ID 
-     * @param  string $message ログメッセージ
-     * @param  App\Librarys\php\ZeroPadding $padding
+     * 
+     * @var  string $client_id　顧客ID
+     * @var  string $high_id 上位ID
+     * @var  string $projection_source_id　投影元ID
+     * @var  string $id 現時点で最新の投影ID
+     * @var string $projection_id　作成する投影ID 
+     * @var string $message ログメッセージ
+     * @var App\Librarys\php\ZeroPadding $padding
      * 
      * @return \Illuminate\Http\Response
      */
@@ -132,6 +133,7 @@ class Ptcm01Controller extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
+     * 
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -144,7 +146,8 @@ class Ptcm01Controller extends Controller
      *
      * @param  string  $id 顧客ID
      * @param  string  $id2　投影ID
-     * @param  string  $message ログメッセージ
+     * 
+     * @var  string  $message ログメッセージ
      * 
      * @return \Illuminate\Http\Response
      */

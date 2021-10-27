@@ -298,12 +298,14 @@ class Pa0001Controller extends Controller
      * @var  int  $select_id 選択したID
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
-     * @var  App\Librarys\php\Hierarchical $hierarchical
+     * @var  array $click_department_data 選択した部署データ
      * @var  array $select_lists 選択した部署の配下データ
      * @var  string $code 機能コード
      * @var  array  $data 取得した配下データ
      * @var  array  $department_data 部署データ
      * @var  array  $personnel_data 人員データ
+     * @var  array  $click_personnel_data 選択した人員データ
+     * @var  array  $affiliation_data　選択した人員の所属部署データ
      * @var  App\Librarys\php\Pagination $pagination 
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ

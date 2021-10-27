@@ -275,6 +275,10 @@ class Psji01Controller extends Controller
      */
     public function destroy($id,$id2)
     {
+        //削除する人員が部署の責任者及び管理者となっていないかどうかの確認
+        //if(isset()){
+
+        //}
         try{
             $high_id = DB::select('select 
                 high_id from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
@@ -286,6 +290,16 @@ class Psji01Controller extends Controller
         }
         try{
             DB::delete('delete from dcji01 where client_id = ? and personnel_id = ?',[$id,$id2]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+
+        //データの階層構造を削除
+        try{
+            DB::delete('delete from dccmks where client_id = ? 
+            and lower_id = ?',[$id,$id2]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);

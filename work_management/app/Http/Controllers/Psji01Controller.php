@@ -182,15 +182,18 @@ class Psji01Controller extends Controller
      * 人員情報の更新
      * 
      * @param  \Illuminate\Http\Request  $request
-     * @param  string  $client_id　顧客ID
-     * @param  string  $personnel_id　人員ID
-     * @param  string  $name　名前
-     * @param  string  $management_number 管理者ID
-     * @param  string  $management_personnel_id 管理者番号
-     * @param  string  $status　状態
-     * @param  App\Librarys\php\StatusCheck $check
-     * @param  string  $operation_start_date 稼働開始日
-     * @param  string  $operation_end_date 稼働終了日
+     * 
+     * @var  string  $client_id　顧客ID
+     * @var  string  $personnel_id　人員ID
+     * @var  string  $name　名前
+     * @var  string  $mail　メールアドレス
+     * @var  string  $mail　メールアドレス
+     * @var  string  $management_number 管理者ID
+     * @var  string  $management_personnel_id 管理者番号
+     * @var  string  $status　状態
+     * @var  App\Librarys\php\StatusCheck $check
+     * @var  string  $operation_start_date 稼働開始日
+     * @var  string  $operation_end_date 稼働終了日
      * 
      * @return \Illuminate\Http\Response
      */
@@ -199,6 +202,8 @@ class Psji01Controller extends Controller
         $client_id = $request->client_id;
         $personnel_id = $request->personnel_id;
         $name = $request->name;
+        $mail = $request->mail;
+        $password = Hash::make($request->password);
         $management_number = $request->management_number;
         $status = $request->status;
 
@@ -223,8 +228,8 @@ class Psji01Controller extends Controller
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
        
             try{
-               DB::update('update dcji01 set name = ?,status = ?,management_personnel_id = ?,operation_start_date = ? where client_id = ? and personnel_id = ?',
-               [$name,$status,$management_number,$operation_start_date,$client_id,$personnel_id]);
+               DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,operation_start_date = ? where client_id = ? and personnel_id = ?',
+               [$name,$status,$mail,$password,$management_number,$operation_start_date,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -237,8 +242,8 @@ class Psji01Controller extends Controller
             list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
        
             try{
-                DB::update('update dcji01 set name = ?,status = ?,management_personnel_id = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
-                [$name,$status,$management_number,$operation_end_date,$client_id,$personnel_id]);
+                DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$password,$management_number,$operation_end_date,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -247,8 +252,8 @@ class Psji01Controller extends Controller
         }else{
            //上記以外なら状態と名前のみ更新
             try{
-                DB::update('update  dcji01 set name = ?,status = ?,management_personnel_id = ? where client_id = ? and personnel_id = ?',
-                [$name,$status,$management_number,$client_id,$personnel_id]);
+                DB::update('update  dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$password,$management_number,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);

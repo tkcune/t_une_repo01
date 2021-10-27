@@ -59,8 +59,8 @@
                         <option value="18" @if($top_department[0]->status == "18") selected @endif>廃止</option>
                         </select>
                         責任者:
-                        <select name="management_personnel_id" data-toggle="tooltip" title="部署の責任者を選択します">
-                        <option>{{$top_responsible[0]}}</option>
+                        <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
+                        <option value="{{$top_department[0]->responsible_person_id}}">{{$top_responsible[0]}}</option>
                        
                         @for($i = 0;$i < count($personnel_data);$i++)
                             @if($personnel_data[$i]->high_id == $top_department[0]->department_id)
@@ -110,7 +110,15 @@
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
-                    登録日:{{$top_department[0]->created_at}} 登録者:<a href="#">{{$top_responsible[0]}}</a></p>
+                    <p>
+                    登録日:{{$top_department[0]->created_at}} 修正日:{{$top_department[0]->updated_at}}
+                    @if($top_department[0]->operation_start_date)
+                    運用開始日:{{$top_department[0]->operation_start_date}}
+                    @endif
+                    @if($top_department[0]->operation_end_date)
+                    運用終了日:{{$top_department[0]->operation_end_date}}
+                    @endif
+                    </p>
                     </div>
                 </div>
             </div>
@@ -166,7 +174,7 @@
                         </select>
                         責任者:
                         <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
-                        <option>{{$responsible_lists[0]}}</option>
+                        <option value="{{$click_department_data[0]->responsible_person_id}}">{{$responsible_lists[0]}}</option>
                         @for($i = 0;$i < count($personnel_data);$i++)
                             @if($personnel_data[$i]->high_id == $click_department_data[0]->department_id)
                                 <option value="{{$personnel_data[$i]->personnel_id}}">{{$personnel_data[$i]->name}}</option>
@@ -215,7 +223,15 @@
                     
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
-                    登録日:{{$click_department_data[0]->created_at}} 登録者:<a href="#">{{$responsible_lists[0]}}</a></p>
+                    <p>
+                    登録日:{{$click_department_data[0]->created_at}} 修正日:{{$click_department_data[0]->updated_at}}
+                    @if($click_department_data[0]->operation_start_date)
+                    運用開始日:{{$click_department_data[0]->operation_start_date}}
+                    @endif
+                    @if($click_department_data[0]->operation_end_date)
+                    運用終了日:{{$click_department_data[0]->operation_end_date}}
+                    @endif
+                    </p>
                     </div>
                 </div>
             </div>

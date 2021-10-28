@@ -24,6 +24,7 @@
                     <div class="col">
                     <input type="submit" value="ツリー表示" onclick="displayOn()"
                     data-toggle="tooltip" title="ツリーを表示します">
+                    <a href="#">ログ確認</a>
                     </div>
                 </div>
 
@@ -41,8 +42,13 @@
                         <input type="search" list="keywords" style="width:150px;"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
-                        <option value="山田一郎">
+@for($j = 0; $j < count($personnel_data);$j++)
+@if($personnel_data[$j]->system_management == 1)
+                            <option value="{{$personnel_data[$j]->name}}" data-id="{{$personnel_data[$j]->personnel_id}}"></option>
+@endif
+@endfor
                         </datalist>
+                        <input type="submit" value="表示" onclick="search()">
                     </p>
                     </div>
                 </div>
@@ -122,6 +128,7 @@
                     @else
                     運用終了日:未定
                     @endif
+                    登録者:<a href="#">{{$top_responsible[0]}}</a>
                     </p>
                     </div>
                 </div>
@@ -138,11 +145,16 @@
                     <div class="col-4">
                         <p id="palent">部署名<input type="text" name="name" value="{{$click_department_data[0]->name}}" data-toggle="tooltip" title="部署の名称を入力します"></p>
                     </div>
-                    <div class="col">
+                    <div class="col-3">
                         <p>番号:{{$click_department_data[0]->department_id}}</p>
                     </div>
-                    <div class="col">
+                    <div class="col-3">
                         <p>上位:<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$department_high[0]->name}}</a></p>
+                    </div>
+                    <div class="col-2">
+                    <input type="submit" value="ツリー表示" onclick="displayOn()"
+                    data-toggle="tooltip" title="ツリーを表示します">
+                    <a href="#">ログ確認</a>
                     </div>
                 </div>
 
@@ -159,7 +171,11 @@
                         <input type="search" list="keywords" style="width:150px;"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
-                        <option value="山田一郎">
+@for($j = 0; $j < count($personnel_data);$j++)
+@if($personnel_data[$j]->system_management == 1)
+                            <option value="{{$personnel_data[$j]->name}}" data-id="{{$personnel_data[$j]->personnel_id}}"></option>
+@endif
+@endfor
                         </datalist>
                     </p>
                     </div>
@@ -239,6 +255,7 @@
                     @else
                     運用終了日:未定
                     @endif
+                    登録者:<a href="#">{{$responsible_lists[0]}}</a>
                     </p>
                     </div>
                 </div>
@@ -258,11 +275,21 @@
                     <div class="col-4">
                         <p id="palent">名前<input type="text" name="name" value="{{$click_personnel_data[0]->name}}" data-toggle="tooltip" title="人員の名称を入力します"></p>
                     </div>
-                    <div class="col">
+                    <div class="col-3">
                         <p>番号:{{$click_personnel_data[0]->personnel_id}}</p>
                     </div>
-                    <div class="col">
-                        <p>上位:山田一郎</p>
+                    <div class="col-3">
+                        上位:
+                        @if(isset($top_department))
+                        <a href="{{ route('index')}}">{{$top_department[0]->name}}</a>
+                        @else
+                        <a href="{{ route('plbs01.show',[session('client_id'),$click_personnel_data[0]->high_id])}}">{{$data[0]->name}}</a>
+                        @endif
+                    </div>
+                    <div class="col-2">
+                    <input type="submit" value="ツリー表示" onclick="displayOn()"
+                    data-toggle="tooltip" title="ツリーを表示します">
+                    <a href="#">ログ確認</a>
                     </div>
 
                     <div class="col" style="padding:0px">
@@ -283,7 +310,11 @@
                         <input type="search" list="keywords" style="width:150px;"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
-                        <option value="山田太郎">
+@for($j = 0; $j < count($personnel_data);$j++)
+@if($personnel_data[$j]->system_management == 1)
+                            <option value="{{$personnel_data[$j]->name}}" data-id="{{$personnel_data[$j]->personnel_id}}"></option>
+@endif
+@endfor
                         </datalist>
                     </p>
                     </div>

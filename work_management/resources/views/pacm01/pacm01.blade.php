@@ -24,13 +24,13 @@
                     <div class="col">
                     <input type="submit" value="ツリー表示" onclick="displayOn()"
                     data-toggle="tooltip" title="ツリーを表示します">
-                    <a href="#">ログ確認</a>
+                    <a href="{{ route('log') }}">ログ確認</a>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" name="management_number" data-toggle="tooltip" 
+                        <p>管理者番号：<input type="text" id="management_number" name="management_number" data-toggle="tooltip" 
                         title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"
                         value="{{$top_department[0]->management_personnel_id}}" style="width:100px;"></p>
                     </div>
@@ -39,7 +39,7 @@
                     </div>
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
-                        <input type="search" list="keywords" style="width:150px;"
+                        <input type="text" list="keywords" style="width:150px;"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
 @for($j = 0; $j < count($personnel_data);$j++)
@@ -154,7 +154,7 @@
                     <div class="col-2">
                     <input type="submit" value="ツリー表示" onclick="displayOn()"
                     data-toggle="tooltip" title="ツリーを表示します">
-                    <a href="#">ログ確認</a>
+                    <a href="{{ route('log') }}">ログ確認</a>
                     </div>
                 </div>
 
@@ -289,7 +289,7 @@
                     <div class="col-2">
                     <input type="submit" value="ツリー表示" onclick="displayOn()"
                     data-toggle="tooltip" title="ツリーを表示します">
-                    <a href="#">ログ確認</a>
+                    <a href="{{ route('log') }}">ログ確認</a>
                     </div>
 
                     <div class="col" style="padding:0px">

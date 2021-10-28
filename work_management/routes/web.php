@@ -29,6 +29,8 @@ Route::resource('ptcm01', Ptcm01Controller::class);
 
 Route::get('/',[Pa0001Controller::class,'index'])->name('index');
 
+Route::get('/log',[Pa0001Controller::class,'log'])->name('log');
+
 Route::get('/count',[Pa0001Controller::class,'count'])->name('count');
 
 Route::get('/count2',[Pa0001Controller::class,'count2'])->name('count2');

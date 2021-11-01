@@ -45,9 +45,9 @@ Route::post('/bscopy',[Psbs01Controller::class,'copy'])->name('psbs01.copy');
 
 Route::post('/jicopy',[Psji01Controller::class,'copy'])->name('psji01.copy');
 
-Route::post('/bssearch/{id}',[Psbs01Controller::class,'search'])->name('psbs01.search');
+Route::post('/bssearch/{id}/{id2}',[Psbs01Controller::class,'search'])->name('psbs01.search');
 
-Route::post('/jisearch/{id}',[Psji01Controller::class,'search'])->name('psji01.search');
+Route::post('/jisearch/{id}/{id2}',[Psji01Controller::class,'search'])->name('psji01.search');
 
 Route::patch('/',[Psbs01Controller::class,'update'])->name('psbs01.update');
 
@@ -56,6 +56,8 @@ Route::patch('/{id}',[Psbs01Controller::class,'hierarchyUpdate'])->name('psbs01.
 Route::post('/delete/{id}/{id2}',[Psbs01Controller::class,'delete'])->name('psbs01.delete');
 
 Route::post('/jidestroy/{id}/{id2}',[Psji01Controller::class,'destroy'])->name('psji01.destroy');
+
+Route::post('/ptcmdelete/{id}/{id2}',[Ptcm01Controller::class,'delete'])->name('ptcm01.delete');
 
 
 

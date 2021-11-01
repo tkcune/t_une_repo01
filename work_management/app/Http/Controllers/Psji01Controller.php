@@ -16,6 +16,7 @@ use App\Librarys\php\OutputLog;
 use App\Librarys\php\Message;
 use App\Librarys\php\ZeroPadding;
 use App\Http\Controllers\PtcmtrController;
+use Illuminate\Support\Facades\View;
 
 /**
  * 人員データを操作するコントローラー
@@ -290,8 +291,8 @@ class Psji01Controller extends Controller
         //}
         try{
             $high_id = DB::select('select 
-                high_id from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
-                and dcji01.personnel_id = ?',[$id,$id2]);
+            high_id from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+            and dcji01.personnel_id = ?',[$id,$id2]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -350,11 +351,16 @@ class Psji01Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function search(Request $request,$id)
+    public function search(Request $request,$id,$id2)
     {
         $client_id = $id;
+        $select_id = $id2;
+
         $count_department = Config::get('startcount.count');
         $count_personnel = Config::get('startcount.count');
+
+        $click_id = $select_id;
+        View::share('click_id', $click_id);
 
         //データベースの検索
         try{
@@ -368,16 +374,101 @@ class Psji01Controller extends Controller
             $personnel_data = DB::select('select 
             dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
             from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?
-            where dcji01.name like ?',[$client_id,'%'.$request->search.'%']);
+            where dcji01.name like ?',[$client_id,'%'.$request->search2.'%']);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
+
+        //検索結果が0件なら戻る
+        if(empty($personnel_data)){
+            return redirect()->route('plbs01.show',[$client_id,$select_id]);
+        }
+
+        //画面表示データの取得
+        $select_code = substr($select_id,0,2);
+
+        if($select_code == "ta"){
+            //選択部署がtaだった場合は対応するIDを取得
+            $projection_code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$select_id]);
+            $select_id = $projection_code[0]->projection_source_id;
+            $select_code = substr($projection_code[0]->projection_source_id,0,2);
+        }
+        
+        if($select_code == "bs"){
+            //選択した部署のデータを取得
+            try{
+                $click_department_data = DB::select('select 
+                dcbs01.client_id,department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ? and department_id = ?',[$client_id,$select_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+            }
+            View::share('click_department_data', $click_department_data);
+            //部署データが存在しない場合、選択部署が最上位部署か判別
+            if(empty($click_department_data)){
+                $top_department = DB::select('select * from dcbs01 where client_id = ? and department_id = ?',[$client_id,$select_id]);
+
+                View::share('top_department', $top_department);
+            }
+        
+        }else{
+            //選択した人員のデータを取得
+            try{
+                $click_personnel_data = DB::select('select 
+                dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+                from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                and dcji01.personnel_id = ?',[$client_id,$select_id]);
+            }catch(\Exception $e){
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            View::share('click_personnel_data', $click_personnel_data);
+
+            //選択した人員の所属部署を取得
+            try{
+                $affiliation_data = DB::select('select high_id from dccmks where client_id = ?
+                and lower_id = ?',[$client_id,$select_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            
+            //取得した部署IDを元に部署データを取得
+            try{
+                $data = DB::select('select 
+                dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                and dcbs01.department_id = ?',[$client_id,$affiliation_data[0]->high_id]);
+            }catch(\Exception $e){
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            View::share('data', $data);
+        }
+
         //日付を6桁にする
         $date = new Date();
         $date->formatDate($department_data);
         $date->formatDate($personnel_data);
+
+        if(isset($top_department)){
+            $date->formatDate($top_department);
+        }
+
+        if(isset($click_department_data)){
+            $date->formatDate($click_department_data);
+        }
+        if(isset($click_personnel_data)){
+            $date->formatDate($click_personnel_data);
+        }
 
         //ページネーション
         $pagination = new Pagination();
@@ -388,21 +479,45 @@ class Psji01Controller extends Controller
 
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
+        if(isset($top_department)){
+            $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
+            View::share('top_responsible', $top_responsible);
+        }
+        if(isset($click_department_data)){
+            $click_responsible_lists = $responsible->getResponsibleLists($client_id,$click_department_data);
+            View::share('click_responsible_lists', $click_responsible_lists);
+        }
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
         //管理者を名前で取得
         $management_lists = $responsible->getManagementLists($client_id,$departments);
+        if(isset($top_department)){
+            $top_management = $responsible->getManagementLists($client_id,$top_department);
+            View::share('top_management', $top_management);
+        }
+        if(isset($click_department_data)){
+            $click_management_lists = $responsible->getManagementLists($client_id,$click_department_data);
+            View::share('click_management_lists', $click_management_lists);
+        }
+        if(isset($click_personnel_data)){
+            $click_management_lists = $responsible->getManagementLists($client_id,$departments);
+            View::share('click_management_lists', $click_management_lists);
+        }
 
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
+        if(isset($click_department_data)){
+            $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
+            View::share('click_department_high', $click_department_high);
+        }
         $personnel_high = $hierarchical->upperHierarchyName($names);
 
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('management_lists','departments','names','count_department',
+        return view('pacm01.pacm01',compact('management_lists','departments','names','count_department','personnel_data','select_id',
         'count_personnel','department_max','personnel_max','department_high','personnel_high','responsible_lists'));
     }
 

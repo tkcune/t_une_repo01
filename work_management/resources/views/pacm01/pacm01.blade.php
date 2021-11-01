@@ -149,7 +149,7 @@
                         <p>番号:{{$click_department_data[0]->department_id}}</p>
                     </div>
                     <div class="col-3">
-                        <p>上位:<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$department_high[0]->name}}</a></p>
+                        <p>上位:<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$click_department_high[0]->name}}</a></p>
                     </div>
                     <div class="col-2">
                     <input type="submit" value="ツリー表示" onclick="displayOn()"
@@ -164,7 +164,7 @@
                         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
-                        <p>管理者名：{{$management_lists[0]}}</p>
+                        <p>管理者名：{{$click_management_lists[0]}}</p>
                     </div>
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
@@ -194,7 +194,7 @@
                         </select>
                         責任者:
                         <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
-                        <option value="{{$click_department_data[0]->responsible_person_id}}">{{$responsible_lists[0]}}</option>
+                        <option value="{{$click_department_data[0]->responsible_person_id}}">{{$click_responsible_lists[0]}}</option>
                         @for($i = 0;$i < count($personnel_data);$i++)
                             @if($personnel_data[$i]->high_id == $click_department_data[0]->department_id)
                                 <option value="{{$personnel_data[$i]->personnel_id}}">{{$personnel_data[$i]->name}}</option>
@@ -218,7 +218,11 @@
                     <input type="hidden" id="high_new" name="high" value="{{$click_department_data[0]->department_id}}">
                     </form>
 
+                    @if(substr($click_id,0,2) == "ta")
+                    <form action="{{ route('ptcm01.delete',[session('client_id'),$click_id])}}" method="post">
+                    @else
                     <form action="{{ route('psbs01.delete',[session('client_id'),$click_department_data[0]->department_id])}}" method="post">
+                    @endif
                     @csrf
                     @method('post')
                     <input type="submit" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
@@ -255,7 +259,7 @@
                     @else
                     運用終了日:未定
                     @endif
-                    登録者:<a href="#">{{$responsible_lists[0]}}</a>
+                    登録者:<a href="#">{{$click_responsible_lists[0]}}</a>
                     </p>
                     </div>
                 </div>
@@ -366,7 +370,11 @@
                     <input type="hidden" id="high_new" name="high" value="{{$click_personnel_data[0]->high_id}}">
                     </form>
 
+                    @if(substr($click_id,0,2) == "ta")
+                    <form action="{{ route('ptcm01.delete',[session('client_id'),$click_id])}}" method="post">
+                    @else
                     <form action="{{ route('psji01.destroy',[session('client_id'),$click_personnel_data[0]->personnel_id])}}" method="post">
+                    @endif
                     @csrf
                     @method('post')
                     <input type="submit" id="delete" value="削除" data-toggle="tooltip" 
@@ -538,7 +546,13 @@
                         {{-- ページネーションここまで--}}
 
                         {{-- 検索機能　--}}
-                        <form action="{{ route('psbs01.search',[session('client_id')])}}" method="post">
+                        @if(isset($top_department))
+                        <form action="{{ route('psbs01.search',[session('client_id'),$top_department[0]->department_id])}}" method="post">
+                        @elseif(isset($click_department_data))
+                        <form action="{{ route('psbs01.search',[session('client_id'),$click_department_data[0]->department_id])}}" method="post">
+                        @else
+                        <form action="{{ route('psbs01.search',[session('client_id'),$click_personnel_data[0]->personnel_id])}}" method="post">
+                        @endif
                         @csrf
                         @method('post')
                         <button data-toggle="tooltip" 
@@ -732,16 +746,22 @@
                         {{-- ページネーションここまで --}}
 
                         {{-- 検索機能　--}}
-                        <form action="{{ route('psji01.search',[session('client_id')])}}" method="post">
+                        @if(isset($top_department))
+                        <form action="{{ route('psji01.search',[session('client_id'),$top_department[0]->department_id])}}" method="post">
+                        @elseif(isset($click_department_data))
+                        <form action="{{ route('psji01.search',[session('client_id'),$click_department_data[0]->department_id])}}" method="post">
+                        @else
+                        <form action="{{ route('psji01.search',[session('client_id'),$click_personnel_data[0]->personnel_id])}}" method="post">
+                        @endif
                         @csrf
                         @method('post')
                         <button type="submit"　data-toggle="tooltip"
                         title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します"
                         >検索</button>
-                        @if(!empty($_POST['search']))
-                        氏名<input type="text" name="search" value="{{ $_POST['search'] }}">
+                        @if(!empty($_POST['search2']))
+                        氏名<input type="text" name="search2" value="{{ $_POST['search2'] }}">
                         @else
-                        氏名<input type="text" name="search">
+                        氏名<input type="text" name="search2">
                         @endif
                         </form>
                         {{-- 検索機能ここまで　--}}

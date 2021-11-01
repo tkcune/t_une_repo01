@@ -326,7 +326,7 @@
 
                 <div class="row">
                     <div class="col-5">
-                        <p>メールアドレス<input type="email" name="mail"></p>
+                        <p>メールアドレス<input type="email" name="mail" value="{{$click_personnel_data[0]->email}}"></p>
                     </div>
                     <div class="col-4" style="padding:0px">
                         <p id="login" @if($click_personnel_data[0]->login_authority == "0") visibility hidden @endif >パスワード<input id="password" type="password" name="password"><input type="checkbox" onclick="passwordOn()"></p>

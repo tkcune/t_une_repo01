@@ -1,6 +1,7 @@
 @extends('pc0001.pc0001')
 
 @section('content')
+<div class="col border border-primary" style="padding:10px;">
 <div class="container-fluid">
     <div class="row"></div>
     <form method="" action="">
@@ -125,5 +126,6 @@
     </form>
 
 
+</div>
 </div>
 @endsection

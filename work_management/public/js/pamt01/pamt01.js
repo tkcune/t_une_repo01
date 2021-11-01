@@ -21,8 +21,8 @@ var display=function() {
 
 /**
  * 画面の隠蔽表示メソッド
- * @param string div 対象のdiv
- * @param string state 対象のdivの状態
+ * @var string div 対象のdiv
+ * @var string state 対象のdivの状態
  */
 
  var displayOn=function() {
@@ -81,8 +81,8 @@ function passwordOn()
 
 /**
  * ツリーの隠蔽表示メソッド
- * @param string id 対象のid
- * @param string state 対象のdivの状態
+ * @var string id 対象のid
+ * @var string state 対象のdivの状態
  */
 
 function treeDisabled()
@@ -102,7 +102,7 @@ function treeDisabled()
 
 /**
  * 複写した部署のIDを取得し各種フォームのvalueに当てはめるメソッド
- * @param string id 対象のID
+ * @var string id 対象のID
  * 
  */
 function clickSave()
@@ -118,7 +118,7 @@ function clickSave()
 
 /**
  * 複写した部署を取り消すメソッド
- * @param string id IDを空にするための引数
+ * @var string id IDを空にするための引数
  * 
  */
 
@@ -132,4 +132,20 @@ function clickDelete()
   document.getElementById("ji_lower_move").defaultValue = id;
 
 }
+
+/**
+ * 管理者検索メソッド
+ * @var string id IDを格納する引数
+ * 
+ */
+
+ function search()
+ {
+   document.getElementById("keywords").data();
+  
+   console.log( result );
+   
+   document.getElementById("management_number").defaultValue = id;
+
+ }
 

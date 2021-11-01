@@ -12,6 +12,7 @@ use App\Librarys\php\Hierarchical;
 use App\Http\Controllers\PtcmtrController;
 use App\Librarys\php\OutputLog;
 use App\Models\Date;
+use Illuminate\Support\Facades\View;
 
 
 
@@ -339,6 +340,9 @@ class Pa0001Controller extends Controller
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
 
+        $click_id = $select_id;
+        View::share('click_id', $click_id);
+
         //選択したツリーで場合分け
         if(substr($select_id,0,2) == "bs"){
             //選択した部署のデータを取得
@@ -378,6 +382,10 @@ class Pa0001Controller extends Controller
 
             //責任者を名前で取得
             $responsible = new ResponsiblePerson();
+            if($click_department_data){
+                $click_responsible_lists = $responsible->getResponsibleLists($client,$click_department_data);
+                View::share('click_responsible_lists', $click_responsible_lists);
+            }
             $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
             //管理者を名前で取得
@@ -394,13 +402,14 @@ class Pa0001Controller extends Controller
             //上位階層取得
             $hierarchical = new Hierarchical();
             $department_high = $hierarchical->upperHierarchyName($departments);
+            $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
             $personnel_high = $hierarchical->upperHierarchyName($names);
            
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
 
-            return view('pacm01.pacm01',compact('click_department_data','management_lists','departments','personnel_management_lists',
-            'names','count_department','count_personnel','department_max','personnel_max','department_high',
+            return view('pacm01.pacm01',compact('click_department_data','management_lists','departments','personnel_management_lists','click_management_lists',
+            'names','count_department','count_personnel','department_max','personnel_max','department_high','click_department_high',
             'personnel_high','responsible_lists','client','select_id','personnel_data'));
         }else{
             //選択した人員のデータを取得

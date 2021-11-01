@@ -154,6 +154,16 @@ class Ptcm01Controller extends Controller
     public function delete($id,$id2)
     {
         try{
+            $high_id = DB::select('select 
+            high_id from dccmks where client_id = ?
+            and lower_id = ?',[$id,$id2]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+
+        try{
             DB::delete('delete from dccmta where client_id = ? and projection_id = ?',
             [$id,$id2]);
         }catch(\Exception $e){
@@ -162,10 +172,19 @@ class Ptcm01Controller extends Controller
             DatabaseException::common($e);
         }
 
+        try{
+            DB::delete('delete from dccmks where client_id = ? 
+            and lower_id = ?',[$id,$id2]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+
         OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
         $message = Message::get_message('mhcmok0003',[0=>'']);
         session(['message'=>$message[0]]);
-        PtcmtrController::delete_node($id2);
+        PtcmtrController::delete_node($high_id);
         return redirect()->route('index');
     }
 }

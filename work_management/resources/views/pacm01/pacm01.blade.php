@@ -16,7 +16,7 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4">
-                        <p id="palent">部署名<input type="text" name="name" data-toggle="tooltip" title="部署の名称を入力します" value="{{$top_department[0]->name}}"></p>
+                        <p id="palent">部署名<input type="text" name="name" maxlength="32" data-toggle="tooltip" title="部署の名称を入力します" value="{{$top_department[0]->name}}"></p>
                     </div>
                     <div class="col">
                         <p>番号:{{$top_department[0]->department_id}}</p>
@@ -30,7 +30,7 @@
 
                 <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" id="management_number" name="management_number" data-toggle="tooltip" 
+                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" data-toggle="tooltip" 
                         title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"
                         value="{{$top_department[0]->management_personnel_id}}" style="width:100px;"></p>
                     </div>
@@ -143,7 +143,7 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4">
-                        <p id="palent">部署名<input type="text" name="name" value="{{$click_department_data[0]->name}}" data-toggle="tooltip" title="部署の名称を入力します"></p>
+                        <p id="palent">部署名<input type="text" name="name" maxlength="32" value="{{$click_department_data[0]->name}}" data-toggle="tooltip" title="部署の名称を入力します"></p>
                     </div>
                     <div class="col-3">
                         <p>番号:{{$click_department_data[0]->department_id}}</p>
@@ -160,7 +160,7 @@
 
                 <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" name="management_number" value="{{$click_department_data[0]->management_personnel_id}}" style="width:100px;"
+                        <p>管理者番号：<input type="text" name="management_number" maxlength="10" value="{{$click_department_data[0]->management_personnel_id}}" style="width:100px;"
                         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
@@ -277,7 +277,7 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4">
-                        <p id="palent">名前<input type="text" name="name" value="{{$click_personnel_data[0]->name}}" data-toggle="tooltip" title="人員の名称を入力します"></p>
+                        <p id="palent">名前<input type="text" name="name" maxlength="32" value="{{$click_personnel_data[0]->name}}" data-toggle="tooltip" title="人員の名称を入力します"></p>
                     </div>
                     <div class="col-3">
                         <p>番号:{{$click_personnel_data[0]->personnel_id}}</p>
@@ -303,7 +303,7 @@
 
                 <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" name="management_number" value="{{$click_personnel_data[0]->management_personnel_id}}" style="width:100px;"
+                        <p>管理者番号：<input type="text" name="management_number" maxlength="10" value="{{$click_personnel_data[0]->management_personnel_id}}" style="width:100px;"
                         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
@@ -326,10 +326,10 @@
 
                 <div class="row">
                     <div class="col-5">
-                        <p>メールアドレス<input type="email" name="mail" value="{{$click_personnel_data[0]->email}}"></p>
+                        <p>メールアドレス<input type="email" name="mail" maxlength="64" value="{{$click_personnel_data[0]->email}}"></p>
                     </div>
                     <div class="col-4" style="padding:0px">
-                        <p id="login" @if($click_personnel_data[0]->login_authority == "0") visibility hidden @endif >パスワード<input id="password" type="password" name="password"><input type="checkbox" onclick="passwordOn()"></p>
+                        <p id="login" @if($click_personnel_data[0]->login_authority == "0") visibility hidden @endif >パスワード<input id="password" type="password" maxlength="32" name="password"><input type="checkbox" onclick="passwordOn()"></p>
                     </div>
                     <div class="col">
                         <button>メール送信</button>
@@ -559,10 +559,11 @@
                         title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" 
                         type="submit">検索</button>
                         @if(!empty($_POST['search']))
-                        部署<input type="text" name="search" value="{{ $_POST['search'] }}">
+                        部署<input type="text" name="search" maxlength="32" value="{{ $_POST['search'] }}">
                         @else
-                        部署<input type="text" name="search">
+                        部署<input type="text" name="search" maxlength="32">
                         @endif
+
                         </form>
                         </div>
                     </div>
@@ -612,6 +613,10 @@
                             <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}">{{ $responsible_lists[$loop->index] }}</a></td>
                             <td>
                             【<a href="{{ route('clipboard',$department->department_id)}}">複写</a>】
+                            【<a href="#" style="pointer-events: none;" onclick="event.preventDefault(); document.getElementById('bs_delete{{$loop->index}}').submit();">削除</a>】
+                            <form id="bs_delete{{$loop->index}}" action="{{ route('psbs01.delete',[session('client_id'),$department->department_id])}}" method="post" style="display: none;">
+                            @csrf
+                            </form>
                             </td>
                             </tr>
                             @endforeach
@@ -642,7 +647,7 @@
                         @else
                         <input type="hidden" id="ji_high_move" name="high_id" value="{{$departments[0]->department_id}}">
                         @endif
-                        <input type="hidden" id="ji_lower_move" name="lower_id" value="{{session('clipboard_ji_id')}}"> 
+                        <input type="hidden" id="ji_lower_move" name="lower_id" value="{{session('clipboard_id')}}"> 
                         <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します　移動元からは抹消されます">移動</button>
                         </form>
 
@@ -655,14 +660,14 @@
                         @else
                         <input type="hidden" name="high_id" value="{{$departments[0]->department_id}}">
                         @endif
-                        <input type="hidden" id="ji_copy_id" name="copy_id" value="{{session('clipboard_ji_id')}}">
+                        <input type="hidden" id="ji_copy_id" name="copy_id" value="{{session('clipboard_id')}}">
                         <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します　移動元は消えません">挿入</button>
                         </form>
 
                         <form action="{{ route('ptcm01.store') }}" method="post">
                         @csrf
                         @method('post')
-                        <input type="hidden" name="projection_source_id" value="{{session('clipboard_ji_id')}}">
+                        <input type="hidden" name="projection_source_id" value="{{session('clipboard_id')}}">
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         @if(isset($top_department))
                         <input type="hidden" id="ji_high_projection" name="high_id" value="{{$top_department[0]->department_id}}">
@@ -759,9 +764,9 @@
                         title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します"
                         >検索</button>
                         @if(!empty($_POST['search2']))
-                        氏名<input type="text" name="search2" value="{{ $_POST['search2'] }}">
+                        氏名<input type="text" name="search2" maxlength="32" value="{{ $_POST['search2'] }}">
                         @else
-                        氏名<input type="text" name="search2">
+                        氏名<input type="text" name="search2" maxlength="32">
                         @endif
                         </form>
                         {{-- 検索機能ここまで　--}}
@@ -815,7 +820,12 @@
                             <td>aaa02</td>
                             <td>{{$name->password_update_day}}</td>
                             <td>---------</td>
-                            <td>【<a href="{{ route('clipboard',$name->personnel_id)}}">複写</a>】</td>
+                            <td>【<a href="{{ route('clipboard',$name->personnel_id)}}">複写</a>】
+                            【<a href="#" name="bs_delete" style="pointer-events: none;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</a>】
+                            <form id="delete{{$loop->index}}" action="{{ route('psji01.destroy',[session('client_id'),$name->personnel_id])}}" method="post" style="display: none;">
+                            @csrf
+                            </form>
+                            </td>
                             </tr>
                         @endforeach
                         </tbody>

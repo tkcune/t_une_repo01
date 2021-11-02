@@ -614,16 +614,16 @@ TreeAction.chainparser = (() => {
       //@return boolean flag 結果
       let isDisplay = function isDisplay(node){
         //@var boolean trueでなければ、falseを返す
-        let flag = false;
+        let flag = true;
         //expand系のツリーの場合
         if(node.className === 'expandtree' || node.className === 'lastexpandtree'){
           if(node.element.children[0].classList.value.includes('unexpand') === true){
-            flag = true;
+            flag = false;
           }
         }else{
           //expand系以外のツリーの場合
           if(node.element.classList.value.includes('unexpand') === true){
-            flag = true;
+            flag = false;
           }
         }
 
@@ -863,13 +863,13 @@ TreeAction.chainparser = (() => {
       //隠蔽ノードを表示に替える
       //@var Nodeクラス child 表示するノード
       //@var Nodeクラス palent 表示するノードの親ノード
-      let displayOpen = function displayOpen(child, palent){
+      let displayOpen = function displayOpen(child){
         //ノードを表示にする
         child.openDisplayNode();
 
         //隣のノードのcss名を変更する
         //子ノードが親ノードの先頭にあるなら
-        if(isEqual(child, palent.child[0])){
+        if(child.element.previousElementSibling === null){
           if(child.element.nextElementSibling !== null){
             //@var string 子ノードの次のノードのcss名
             let className = child.element.nextElementSibling.className;
@@ -882,7 +882,7 @@ TreeAction.chainparser = (() => {
             }
           }
           //子ノードが親ノードの最後にあるなら
-        }else if(isEqual(child, palent.child[palent.child.length - 1])){
+        }else if(child.element.nextElementSibling === null){
           if(child.element.previousElementSibling !== null){
             //@var string 子ノードの一つ前のノード
             let className = child.element.previousElementSibling.className;
@@ -903,14 +903,14 @@ TreeAction.chainparser = (() => {
       //ノードを非表示にして、隣のノードの表示を変える
       //@var Nodeクラス child 非表示にするノード
       //@var Nodeクラス palent 非表示にするノードの親ノード
-      let displayNone = function displayNone(child, palent){
+      let displayNone = function displayNone(child) {
     
         //ノードを非表示にする
         child.noneDisplayNode();
 
         //隣のノードのcss名を変更する
         //子ノードが親ノードの先頭にあるなら
-        if(isEqual(child, palent.child[0])){
+        if(child.element.previousElementSibling === null){
           if(child.element.nextElementSibling !== null){
             //@var string 子ノードの次のノードのcss名
             let className = child.element.nextElementSibling.className;
@@ -923,7 +923,7 @@ TreeAction.chainparser = (() => {
             }
           }
         //子ノードが親ノードの最後にあるなら
-        }else if(isEqual(child, palent.child[palent.child.length - 1])){
+        }else if(child.element.nextElementSibling === null){
           if(child.element.previousElementSibling !== null){
             //@var string 子ノードの一つ前のノード
             let className = child.element.previousElementSibling.className;
@@ -1256,7 +1256,9 @@ TreeAction = ((treesepalete, projectionChain) => {
     //@var Nodeクラス 表示するノードの親ノード
     let palent = chainparser.searchPalentNode(node.id, tree);
     //ノードを表示する
-    chainparser.displayOpen(node, palent);
+    if(palent.element.children[0].children[0].innerText === '-'){
+      chainparser.displayOpen(node);
+    }
     //表示ノードに投影先があるなら、投影先も表示する
     if(node.toLink !== []){
       //投影先のidをループする
@@ -1265,13 +1267,13 @@ TreeAction = ((treesepalete, projectionChain) => {
         let linkNode = chainparser.searchNodeId(linkNodeId, tree);
         //displayを変更する
         linkNode.hide = false;
+        //@var Nodeクラス 投影先の親ノード
+        let linkPalent = chainparser.searchPalentNode(linkNodeId, tree);
 
         //表示されているツリー内であれば、表示する
-        if(chainparser.isDisplay(linkNode) === true){
-          //@var Nodeクラス 投影先の親ノード
-          let linkPalent = chainparser.searchPalentNode(linkNodeId, tree);
+        if(linkPalent.element.children[0].children[0].innerText === '-'){
           //投影先を表示する
-          chainparser.displayOpen(linkNode, linkPalent);
+          chainparser.displayOpen(linkNode);
         }
       });
     }
@@ -1327,7 +1329,9 @@ TreeAction = ((treesepalete, projectionChain) => {
   //@param string ディレクトリ
   let getLinetreeDir = (dom) => {
     //ユーザー情報とログアウトは、notitleを付けて、返す
-    if(dom.children[0].innerText === 'ユーザ情報' || dom.children[0].innerText === 'ログアウト' || dom.children[0].innerText === 'ログ確認'){
+    if(dom.children[0].innerText === 'ユーザ情報' || 
+      dom.children[0].innerText === 'ログアウト' || 
+      dom.children[0].innerText === 'ログ確認'){
       return '/notitle/' + dom.children[0].innerText;
     }else{
       //ユーザー情報とログアウト以外は、マイツリーを付けて、返す
@@ -1478,7 +1482,9 @@ TreeAction = ((treesepalete, projectionChain) => {
         //@var Nodeクラス カレントにするノード 
         let node = chainparser.searchNodeId(clipboard.getCurrentId(), tree);
         if(node !== null && node !== undefined){
+          node.openBottomUpTree();
           node.focus();
+          currentClipboard(node);
         }
       }
     }

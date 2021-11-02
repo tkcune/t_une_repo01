@@ -2573,16 +2573,16 @@ TreeAction.chainparser = function () {
 
   var isDisplay = function isDisplay(node) {
     //@var boolean trueでなければ、falseを返す
-    var flag = false; //expand系のツリーの場合
+    var flag = true; //expand系のツリーの場合
 
     if (node.className === 'expandtree' || node.className === 'lastexpandtree') {
       if (node.element.children[0].classList.value.includes('unexpand') === true) {
-        flag = true;
+        flag = false;
       }
     } else {
       //expand系以外のツリーの場合
       if (node.element.classList.value.includes('unexpand') === true) {
-        flag = true;
+        flag = false;
       }
     }
 
@@ -2804,12 +2804,12 @@ TreeAction.chainparser = function () {
   //@var Nodeクラス palent 表示するノードの親ノード
 
 
-  var displayOpen = function displayOpen(child, palent) {
+  var displayOpen = function displayOpen(child) {
     //ノードを表示にする
     child.openDisplayNode(); //隣のノードのcss名を変更する
     //子ノードが親ノードの先頭にあるなら
 
-    if (isEqual(child, palent.child[0])) {
+    if (child.element.previousElementSibling === null) {
       if (child.element.nextElementSibling !== null) {
         //@var string 子ノードの次のノードのcss名
         var className = child.element.nextElementSibling.className; //firsttreeならば、次のノードは、normaltree
@@ -2821,7 +2821,7 @@ TreeAction.chainparser = function () {
         }
       } //子ノードが親ノードの最後にあるなら
 
-    } else if (isEqual(child, palent.child[palent.child.length - 1])) {
+    } else if (child.element.nextElementSibling === null) {
       if (child.element.previousElementSibling !== null) {
         //@var string 子ノードの一つ前のノード
         var _className = child.element.previousElementSibling.className; //lastexpandtreeならば、前のノードは、expandtreeになる
@@ -2840,12 +2840,12 @@ TreeAction.chainparser = function () {
   //@var Nodeクラス palent 非表示にするノードの親ノード
 
 
-  var displayNone = function displayNone(child, palent) {
+  var displayNone = function displayNone(child) {
     //ノードを非表示にする
     child.noneDisplayNode(); //隣のノードのcss名を変更する
     //子ノードが親ノードの先頭にあるなら
 
-    if (isEqual(child, palent.child[0])) {
+    if (child.element.previousElementSibling === null) {
       if (child.element.nextElementSibling !== null) {
         //@var string 子ノードの次のノードのcss名
         var className = child.element.nextElementSibling.className; //normaltreeならば、次のノードは、先頭になるので、firstree
@@ -2857,7 +2857,7 @@ TreeAction.chainparser = function () {
         }
       } //子ノードが親ノードの最後にあるなら
 
-    } else if (isEqual(child, palent.child[palent.child.length - 1])) {
+    } else if (child.element.nextElementSibling === null) {
       if (child.element.previousElementSibling !== null) {
         //@var string 子ノードの一つ前のノード
         var _className2 = child.element.previousElementSibling.className; //expandtreeならば、前のノードは、最後のexpandtreeになる
@@ -3204,7 +3204,10 @@ TreeAction = function (treesepalete, projectionChain) {
 
     var palent = chainparser.searchPalentNode(node.id, tree); //ノードを表示する
 
-    chainparser.displayOpen(node, palent); //表示ノードに投影先があるなら、投影先も表示する
+    if (palent.element.children[0].children[0].innerText === '-') {
+      chainparser.displayOpen(node);
+    } //表示ノードに投影先があるなら、投影先も表示する
+
 
     if (node.toLink !== []) {
       //投影先のidをループする
@@ -3212,13 +3215,13 @@ TreeAction = function (treesepalete, projectionChain) {
         //@var Nodeクラス 表示先のノード
         var linkNode = chainparser.searchNodeId(linkNodeId, tree); //displayを変更する
 
-        linkNode.hide = false; //表示されているツリー内であれば、表示する
+        linkNode.hide = false; //@var Nodeクラス 投影先の親ノード
 
-        if (chainparser.isDisplay(linkNode) === true) {
-          //@var Nodeクラス 投影先の親ノード
-          var linkPalent = chainparser.searchPalentNode(linkNodeId, tree); //投影先を表示する
+        var linkPalent = chainparser.searchPalentNode(linkNodeId, tree); //表示されているツリー内であれば、表示する
 
-          chainparser.displayOpen(linkNode, linkPalent);
+        if (linkPalent.element.children[0].children[0].innerText === '-') {
+          //投影先を表示する
+          chainparser.displayOpen(linkNode);
         }
       });
     }
@@ -3423,7 +3426,11 @@ TreeAction = function (treesepalete, projectionChain) {
         var _node9 = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getCurrentId(), tree);
 
         if (_node9 !== null && _node9 !== undefined) {
+          _node9.openBottomUpTree();
+
           _node9.focus();
+
+          currentClipboard(_node9);
         }
       }
     }

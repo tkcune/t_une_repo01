@@ -108,6 +108,7 @@ class TreeData{
                 //notitleの場合
                 //'0.notitle'をキーの名前。指定の文字列をバリューとする
                 $chain[] = array($database_index_chain[$index] => 'ur.ユーザ情報');
+                $chain[] = array($database_index_chain[$index] => 'ld.ログ確認');
                 $chain[] = array($database_index_chain[$index] => 'lg.ログアウト');
             }else{
                 //マイツリーでもnotitleでもない場合

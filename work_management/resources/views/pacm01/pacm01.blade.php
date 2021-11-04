@@ -132,6 +132,14 @@
                     </p>
                     </div>
                 </div>
+                <div class="row">
+                    <div>
+                        備考
+                    </div>
+                    <div>
+                        <textarea maxlength="512" style="width:800px; height: 100px;"></textarea>
+                    </div>
+                </div>
             </div>
     @else
     <form action="{{ route('psbs01.update') }}" method="post">
@@ -140,7 +148,11 @@
             <input type="hidden" id="department_id" name="department_id" value="{{$click_department_data[0]->department_id}}">
             <input type="hidden" name="client_id" value="{{ session('client_id') }}">
 
+            @if(substr($click_id,0,2) == "ta")
+            <div class="details-area border border-dark bg-info" style="padding:10px;" id="parent">
+            @else
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
+            @endif
                 <div class="row">
                     <div class="col-4">
                         <p id="palent">部署名<input type="text" name="name" maxlength="32" value="{{$click_department_data[0]->name}}" data-toggle="tooltip" title="部署の名称を入力します"></p>
@@ -263,6 +275,14 @@
                     </p>
                     </div>
                 </div>
+                <div class="row">
+                    <div>
+                        備考
+                    </div>
+                    <div>
+                        <textarea maxlength="512" style="width:800px; height: 100px;"></textarea>
+                    </div>
+                </div>
             </div>
     @endif
     {{-- 部署の詳細表示　ここまで--}}
@@ -274,7 +294,11 @@
             <input type="hidden" id="personnel_id" name="personnel_id" value="{{$click_personnel_data[0]->personnel_id}}">
             <input type="hidden" name="client_id" value="{{ session('client_id') }}">
 
+            @if(substr($click_id,0,2) == "ta")
+            <div class="details-area border border-dark bg-info" style="padding:10px;" id="parent">
+            @else
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
+            @endif
                 <div class="row">
                     <div class="col-4">
                         <p id="palent">名前<input type="text" name="name" maxlength="32" value="{{$click_personnel_data[0]->name}}" data-toggle="tooltip" title="人員の名称を入力します"></p>
@@ -417,9 +441,21 @@
                     </p>
                     </div>
                 </div>
+                <div class="row">
+                    <div>
+                        備考
+                    </div>
+                    <div>
+                        <textarea maxlength="512" style="width:800px; height: 100px;"></textarea>
+                    </div>
+                </div>
             </div>
     {{-- 人員の詳細表示　ここまで--}}
     @endif
+        <div id="list-open-button" style="display:none;" onclick="listOn()">
+            <p style="text-align:center;">↓</p>
+        </div>
+        <div class="list-area" id="list">
             <div class="department-area">
                 <div class="row">
                     <div class="col" style="padding-top:15px">
@@ -565,7 +601,10 @@
                         @endif
 
                         </form>
+                        <div style="padding-left:100px;"onclick="listOn()">
+                            <p>✕</p>
                         </div>
+                        </div>  
                     </div>
                 </div>
 
@@ -613,7 +652,7 @@
                             <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}">{{ $responsible_lists[$loop->index] }}</a></td>
                             <td>
                             【<a href="{{ route('clipboard',$department->department_id)}}">複写</a>】
-                            【<a href="#" style="pointer-events: none;" onclick="event.preventDefault(); document.getElementById('bs_delete{{$loop->index}}').submit();">削除</a>】
+                            【<p id="bs_list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline;" onclick="event.preventDefault(); document.getElementById('bs_delete{{$loop->index}}').submit();">削除</p>】
                             <form id="bs_delete{{$loop->index}}" action="{{ route('psbs01.delete',[session('client_id'),$department->department_id])}}" method="post" style="display: none;">
                             @csrf
                             </form>
@@ -821,7 +860,7 @@
                             <td>{{$name->password_update_day}}</td>
                             <td>---------</td>
                             <td>【<a href="{{ route('clipboard',$name->personnel_id)}}">複写</a>】
-                            【<a href="#" name="bs_delete" style="pointer-events: none;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</a>】
+                            【<p id="list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
                             <form id="delete{{$loop->index}}" action="{{ route('psji01.destroy',[session('client_id'),$name->personnel_id])}}" method="post" style="display: none;">
                             @csrf
                             </form>
@@ -834,6 +873,7 @@
                     </div>
                 </div>
             </div>
+        </div>
     </div>
     {{-- コメント　詳細画面ここまで --}}
 

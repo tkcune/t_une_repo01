@@ -411,7 +411,7 @@ class Psbs01Controller extends Controller
 
             //責任者を名前で取得
             $responsible = new ResponsiblePerson();
-            $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
+            $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
             //上位階層取得
             $hierarchical = new Hierarchical();
@@ -424,7 +424,7 @@ class Psbs01Controller extends Controller
             session(['click_code'=>$select_code]);
 
             return view('pacm01.pacm01',compact('data','count_department','count_personnel','department_max','departments','personnel_max','names',
-            'department_high','personnel_high','client','select_id','click_personnel_data','click_management_lists','personnel_data'));
+            'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists','personnel_data'));
         }
     }
 

@@ -17,7 +17,6 @@ use App\Librarys\php\Message;
 use App\Librarys\php\ZeroPadding;
 use App\Http\Controllers\PtcmtrController;
 use Illuminate\Support\Facades\View;
-use App\Librarys\php\ListDisplay;
 
 /**
  * 人員データを操作するコントローラー
@@ -341,7 +340,14 @@ class Psji01Controller extends Controller
      * @var  App\Librarys\php\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
      * @var  App\Librarys\php\Hierarchical $hierarchical
-     * @var  App\Librarys\php\ListDisplay $list_display
+     * @var  App\Librarys\php\Pagination $pagination
+     * @var  int $department_max 部署データページネーションの最大値
+     * @var  array $departments ページネーション後の部署データ
+     * @var  int $personnel_max 人員データページネーションの最大値
+     * @var  array $names ページネーション後の人員データ
+     * @var  array $responsible_lists 責任者リスト
+     * @var  array $department_high 部署データの上位階層
+     * @var  array $personnel_high 人員データの上位階層
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
      * 
@@ -495,14 +501,31 @@ class Psji01Controller extends Controller
         }
 
         //部署・人員の一覧表示領域のデータ表示
-        $list_display = new ListDisplay();
-        $list_display->listDisplay($department_data,$personnel_data,$count_department,$count_personnel,$client_id);
+        //日付フォーマットを6桁にする
+        $date = new Date();
+        $date->formatDate($department_data);
+        $date->formatDate($personnel_data);
+
+        //基本ページネーション設定
+        $pagination = new Pagination();
+        $department_max = $pagination->pageMax($department_data,count($department_data));
+        $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+        $personnel_max = $pagination->pageMax($personnel_data,count($personnel_data));
+        $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //責任者を名前で取得
+        $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
+
+        //上位階層取得
+        $department_high = $hierarchical->upperHierarchyName($departments);
+        $personnel_high = $hierarchical->upperHierarchyName($names);
 
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','count_personnel',));
+        return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','count_personnel','department_max',
+        'departments','personnel_max','names','responsible_lists','department_high','personnel_high'));
     }
 
     /**
@@ -606,6 +629,6 @@ class Psji01Controller extends Controller
         }
         //ツリー開閉
         PtcmtrController::open_node($personnel_id);
-        return redirect()->route('index');
+        return back();
     }
 }

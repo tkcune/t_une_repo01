@@ -64,8 +64,7 @@ class Ptcm01Controller extends Controller
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-        if(empty($id))
-        {
+        if(empty($id)){
             $projection_id = "ta00000001";
         }else{
 

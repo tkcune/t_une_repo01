@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="col border border-primary" style="padding:10px;">
+<div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
 <div class="container-fluid">
     <div class="row"></div>
     <form method="" action="">
@@ -126,6 +127,7 @@
     </form>
 
 
+</div>
 </div>
 </div>
 @endsection

@@ -5,6 +5,7 @@ use App\Http\Controllers\Pa0001Controller;
 use App\Http\Controllers\Psbs01Controller;
 use App\Http\Controllers\Psji01Controller;
 use App\Http\Controllers\Ptcm01Controller;
+use App\Http\Controllers\Pslg01Controller;
 use App\Http\Controllers\LogController;
 
 /*
@@ -59,6 +60,7 @@ Route::post('/jidestroy/{id}/{id2}',[Psji01Controller::class,'destroy'])->name('
 
 Route::post('/ptcmdelete/{id}/{id2}',[Ptcm01Controller::class,'delete'])->name('ptcm01.delete');
 
+Route::get('/test', [Pslg01Controller::class,'index']);
 
 
 

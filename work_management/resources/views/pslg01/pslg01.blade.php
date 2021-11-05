@@ -2,8 +2,21 @@
 
 @section('content')
 <div class="col border border-primary" style="padding:10px;">
+<<<<<<< HEAD
     <div class="container-fluid">
         <div class="row">
+=======
+<div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
+<div class="container-fluid">
+    <div class="row"></div>
+    <form method="" action="">
+        @csrf
+        <P style="text-align: center">―　ログ確認　―</P>
+        <div class="mb-3">
+            <h7 style="color:red;"> 【注意点】 ※のマークは各項目の注意点やメモとして記載してます</h7>
+            <h7 style="color:red;"> 現在レイアウトの時点なので、各項目の前に数字が記載中、完成ともに項目番号は消す。</h7>
+        </div>
+>>>>>>> 98717f12c658993259959f84536e5bac65124f53
 
 
 
@@ -114,6 +127,7 @@
 
     </div>
     </form>
+</div>
 </div>
 </div>
 @endsection

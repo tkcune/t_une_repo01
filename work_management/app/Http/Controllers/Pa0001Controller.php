@@ -12,6 +12,7 @@ use App\Librarys\php\Hierarchical;
 use App\Http\Controllers\PtcmtrController;
 use App\Librarys\php\OutputLog;
 use App\Models\Date;
+use App\Librarys\php\ListDisplay;
 use Illuminate\Support\Facades\View;
 
 
@@ -32,16 +33,15 @@ class Pa0001Controller extends Controller
      * @var  App\Models\Date $date
      * @var  array $department_data 全体部署データ
      * @var  array $personnel_data 全体人員データ
-     * @var  App\Librarys\php\Pagination $pagination 
+     * @var  App\Librarys\php\ResponsiblePerson $responsible
+     * @var  array $top_responsible 最上位の責任者データ
+     * @var  array $top_management 最上位の管理者データ
+     * @var  App\Librarys\php\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
      * @var  array $names ページネーション後の人員データ
-     * @var  App\Librarys\php\ResponsiblePerson $responsible
-     * @var  array $top_responsible 最上位の責任者データ
      * @var  array $responsible_lists 責任者リスト
-     * @var  array $top_management 最上位の管理者データ
-     * @var  array $management_lists 管理者データ
      * @var  App\Librarys\php\Hierarchical $hierarchical
      * @var  array $department_high 部署データの上位階層
      * @var  array $personnel_high 人員データの上位階層
@@ -90,9 +90,19 @@ class Pa0001Controller extends Controller
         //登録日付を6桁に変換
         $date = new Date();
         $date->formatDate($top_department);
+
+        //責任者を名前で取得
+        $responsible = new ResponsiblePerson();
+        $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
+
+        //管理者を名前で取得
+        $top_management = $responsible->getManagementLists($client_id,$top_department);
+
+        //一覧表示のデータ取得
+        $date->formatDate($department_data);
         $date->formatDate($personnel_data);
 
-        //ページネーション
+        //基本ページネーション設定
         $pagination = new Pagination();
         $department_max = $pagination->pageMax($department_data,count($department_data));
         $departments = $pagination->pagination($department_data,count($department_data),$count_department);
@@ -100,19 +110,13 @@ class Pa0001Controller extends Controller
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
         //責任者を名前で取得
-        $responsible = new ResponsiblePerson();
-        $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
-        //管理者を名前で取得
-        $top_management = $responsible->getManagementLists($client_id,$top_department);
-        $management_lists = $responsible->getManagementLists($client_id,$departments);
-       
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
         $personnel_high = $hierarchical->upperHierarchyName($names);
-        
+
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
@@ -120,10 +124,9 @@ class Pa0001Controller extends Controller
         //クリックコードの保存
         session(['click_code'=>'bs']);
 
-        return view('pacm01.pacm01',compact('top_management','management_lists',
-        'top_department','top_responsible','departments','names','count_department',
-        'count_personnel','department_max','personnel_max','department_high',
-        'personnel_high','responsible_lists','personnel_data'));
+        return view('pacm01.pacm01',compact('top_management','department_max','departments','personnel_max','names',
+        'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
+        'count_personnel','personnel_data'));
     }
 
     /**
@@ -204,19 +207,10 @@ class Pa0001Controller extends Controller
      * @var  App\Models\Date $date
      * @var  array $department_data 部署データ
      * @var  array $personnel_data 人員データ
-     * @var  App\Librarys\php\Pagination $pagination 
-     * @var  int $department_max 部署データページネーションの最大値
-     * @var  array $departments ページネーション後の部署データ
-     * @var  int $personnel_max 人員データページネーションの最大値
-     * @var  array $names ページネーション後の人員データ
      * @var  App\Librarys\php\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
-     * @var  array $responsible_lists 責任者リスト
      * @var  array $top_management 最上位の管理者データ
-     * @var  array $management_lists 管理者データ
-     * @var  App\Librarys\php\Hierarchical $hierarchical
-     * @var  array $department_high 部署データの上位階層
-     * @var  array $personnel_high 人員データの上位階層
+     * @var  App\Librarys\php\ListDisplay $list_display
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
      *
@@ -257,9 +251,19 @@ class Pa0001Controller extends Controller
         //登録日付を6桁に変換
         $date = new Date();
         $date->formatDate($top_department);
+
+        //責任者を名前で取得
+        $responsible = new ResponsiblePerson();
+        $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
+
+        //管理者を名前で取得
+        $top_management = $responsible->getManagementLists($client_id,$top_department);
+        
+        //日付フォーマットを6桁にする
+        $date->formatDate($department_data);
         $date->formatDate($personnel_data);
 
-        //ページネーション
+        //基本ページネーション設定
         $pagination = new Pagination();
         $department_max = $pagination->pageMax($department_data,count($department_data));
         $departments = $pagination->pagination($department_data,count($department_data),$count_department);
@@ -268,26 +272,19 @@ class Pa0001Controller extends Controller
 
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
-        $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
-
-        //管理者を名前で取得
-        $top_management = $responsible->getManagementLists($client_id,$top_department);
-        $management_lists = $responsible->getManagementLists($client_id,$departments);
 
         //上位階層取得
         $hierarchical = new Hierarchical();
         $department_high = $hierarchical->upperHierarchyName($departments);
         $personnel_high = $hierarchical->upperHierarchyName($names);
-        
+
         //ツリーデータ取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('top_department','top_responsible','management_lists',
-        'top_management','departments','names','count_department','count_personnel',
-        'department_max','personnel_max','department_high',
-        'personnel_high','responsible_lists','personnel_data'));
+        return view('pacm01.pacm01',compact('top_department','top_responsible','department_max','departments','personnel_max','names',
+        'responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data'));
     }
 
     /**
@@ -310,16 +307,15 @@ class Pa0001Controller extends Controller
      * @var  array  $personnel_data 人員データ
      * @var  array  $click_personnel_data 選択した人員データ
      * @var  array  $affiliation_data　選択した人員の所属部署データ
-     * @var  App\Librarys\php\Pagination $pagination 
+     * @var  App\Librarys\php\ResponsiblePerson $responsible
+     * @var  array $top_responsible 最上位の責任者データ
+     * @var  array $top_management 最上位の管理者データ
+     * @var  App\Librarys\php\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
      * @var  array $names ページネーション後の人員データ
-     * @var  App\Librarys\php\ResponsiblePerson $responsible
-     * @var  array $top_responsible 最上位の責任者データ
      * @var  array $responsible_lists 責任者リスト
-     * @var  array $top_management 最上位の管理者データ
-     * @var  array $management_lists 管理者データ
      * @var  App\Librarys\php\Hierarchical $hierarchical
      * @var  array $department_high 部署データの上位階層
      * @var  array $personnel_high 人員データの上位階層
@@ -370,15 +366,6 @@ class Pa0001Controller extends Controller
             //登録日付を6桁に変換
             $date = new Date();
             $date->formatDate($click_department_data);
-            $date->formatDate($department_data);
-            $date->formatDate($personnel_data);
-
-            //ページネーション
-            $pagination = new Pagination();
-            $department_max = $pagination->pageMax($department_data,count($department_data));
-            $departments = $pagination->pagination($department_data,count($department_data),$count_department);
-            $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
-            $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
             //責任者を名前で取得
             $responsible = new ResponsiblePerson();
@@ -386,31 +373,41 @@ class Pa0001Controller extends Controller
                 $click_responsible_lists = $responsible->getResponsibleLists($client,$click_department_data);
                 View::share('click_responsible_lists', $click_responsible_lists);
             }
-            $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
             //管理者を名前で取得
-            if(isset($departments)){
-                $management_lists = $responsible->getManagementLists($client,$departments);
-            }
-            if(isset($names)){
-                $personnel_management_lists = $responsible->getManagementLists($client,$names);
-            }
             if(isset($click_department_data)){
                 $click_management_lists = $responsible->getManagementLists($client,$click_department_data);
             }
        
             //上位階層取得
             $hierarchical = new Hierarchical();
-            $department_high = $hierarchical->upperHierarchyName($departments);
             $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
-            $personnel_high = $hierarchical->upperHierarchyName($names);
            
+            //部署・人員の一覧表示領域のデータ表示
+            //日付フォーマットを6桁にする
+            $date->formatDate($department_data);
+            $date->formatDate($personnel_data);
+
+            //基本ページネーション設定
+            $pagination = new Pagination();
+            $department_max = $pagination->pageMax($department_data,count($department_data));
+            $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+            $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
+            $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+            //責任者を名前で取得
+            $responsible_lists = $responsible->getResponsibleLists($client,$departments);
+
+            //上位階層取得
+            $hierarchical = new Hierarchical();
+            $department_high = $hierarchical->upperHierarchyName($departments);
+            $personnel_high = $hierarchical->upperHierarchyName($names);
+
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
 
-            return view('pacm01.pacm01',compact('click_department_data','management_lists','departments','personnel_management_lists','click_management_lists',
-            'names','count_department','count_personnel','department_max','personnel_max','department_high','click_department_high',
-            'personnel_high','responsible_lists','client','select_id','personnel_data'));
+            return view('pacm01.pacm01',compact('click_department_data','click_management_lists','department_max','departments','personnel_max','names','responsible_lists',
+            'department_high','personnel_high','count_department','count_personnel','click_department_high','client','select_id','personnel_data'));
         }else{
             //選択した人員のデータを取得
             try{
@@ -471,35 +468,25 @@ class Pa0001Controller extends Controller
                 $date = new Date();
                 $date->formatDate($click_personnel_data);
 
-                //ページネーション
-                $pagination = new Pagination();
-                $department_max = $pagination->pageMax($department_data,count($department_data));
-                $departments = $pagination->pagination($department_data,count($department_data),$count_department);
-                $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
-                $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
-
                 //責任者を名前で取得
                 $responsible = new ResponsiblePerson();
                 $top_responsible = $responsible->getResponsibleLists($client,$top_department);
-                $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
                 //管理者を名前で取得
                 $top_management = $responsible->getManagementLists($client,$top_department);
                 $click_management_lists = $responsible->getManagementLists($client,$click_personnel_data);
-       
-                //上位階層取得
-                $hierarchical = new Hierarchical();
-                $department_high = $hierarchical->upperHierarchyName($departments);
-                $personnel_high = $hierarchical->upperHierarchyName($names);
+
+                //部署・人員の一覧表示領域のデータ表示
+                $list_display = new ListDisplay();
+                $list_display->listDisplay($department_data,$personnel_data,$count_department,$count_personnel,$client);
         
                 //ツリーデータの取得
                 $tree = new PtcmtrController();
                 $tree_data = $tree->set_view_treedata();
 
                 return view('pacm01.pacm01',compact('top_management','click_management_lists',
-                'top_department','top_responsible','departments','names','count_department',
-                'count_personnel','department_max','personnel_max','department_high','client','select_id',
-                'personnel_high','responsible_lists','personnel_data','click_personnel_data'));
+                'top_department','top_responsible','count_department','count_personnel','client',
+                'select_id','personnel_data','click_personnel_data'));
             }
             array_push($department_data,$data[0]);
 
@@ -517,7 +504,18 @@ class Pa0001Controller extends Controller
             $date = new Date();
             $date->formatDate($click_personnel_data);
 
-            //ページネーション
+            //責任者を名前で取得
+            $responsible = new ResponsiblePerson();
+            if(isset($click_personnel_data)){
+                $click_management_lists = $responsible->getManagementLists($client,$click_personnel_data);
+            }
+
+            //部署・人員の一覧表示領域のデータ表示
+            //日付フォーマットを6桁にする
+            $date->formatDate($department_data);
+            $date->formatDate($personnel_data);
+
+            //基本ページネーション設定
             $pagination = new Pagination();
             $department_max = $pagination->pageMax($department_data,count($department_data));
             $departments = $pagination->pagination($department_data,count($department_data),$count_department);
@@ -525,19 +523,7 @@ class Pa0001Controller extends Controller
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
             //責任者を名前で取得
-            $responsible = new ResponsiblePerson();
-            $responsible_lists = $responsible->getResponsibleLists($client,$departments);
-
-            //管理者を名前で取得
-            if(isset($departments)){
-                $management_lists = $responsible->getManagementLists($client,$departments);
-            }
-            if(isset($names)){
-                $personnel_management_lists = $responsible->getManagementLists($client,$names);
-            }
-            if(isset($click_personnel_data)){
-                $click_management_lists = $responsible->getManagementLists($client,$click_personnel_data);
-            }
+            $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
             //上位階層取得
             $hierarchical = new Hierarchical();
@@ -548,9 +534,8 @@ class Pa0001Controller extends Controller
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
 
-            return view('pacm01.pacm01',compact('management_lists','personnel_management_lists','departments','names','count_department','count_personnel',
-            'department_max','personnel_max','department_high','click_management_lists',
-            'personnel_high','responsible_lists','client','select_id','click_personnel_data','personnel_data'));
+            return view('pacm01.pacm01',compact('count_department','count_personnel','click_management_lists','data','department_max','departments',
+            'personnel_max','names','responsible_lists','department_high','personnel_high','client','select_id','click_personnel_data','personnel_data'));
         }
     }
 

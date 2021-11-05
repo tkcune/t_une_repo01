@@ -100,9 +100,9 @@ class Psji01Controller extends Controller
             $personnel_id = "ji00000001";
         }else{
 
-        //登録する番号を作成
-        $padding = new ZeroPadding();
-        $personnel_id = $padding->padding($id[0]->personnel_id);
+            //登録する番号を作成
+            $padding = new ZeroPadding();
+            $personnel_id = $padding->padding($id[0]->personnel_id);
         }
 
         list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
@@ -327,23 +327,25 @@ class Psji01Controller extends Controller
      * データ検索
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id　顧客ID
+     * @param  string  $id2　選択ID
      * 
      * @var  string  $client_id　顧客ID
+     * @var  string  $select_id  選択ID
      * @var  int $count_department 部署ページネーションのページ数
      * @var  int $count_personnel 人員ページネーションのページ数
      * @var  array $department_data 部署データ
      * @var  array $personnel_data 人員データ
      * @var  App\Models\Date; $date
-     * @var  App\Librarys\php\Pagination $pagination 
+     * @var  App\Librarys\php\ResponsiblePerson $responsible
+     * @var  array $top_responsible 最上位の責任者データ
+     * @var  App\Librarys\php\Hierarchical $hierarchical
+     * @var  App\Librarys\php\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
      * @var  array $names ページネーション後の人員データ
-     * @var  App\Librarys\php\ResponsiblePerson $responsible
-     * @var  array $top_responsible 最上位の責任者データ
      * @var  array $responsible_lists 責任者リスト
-     * @var  array $management_lists 管理者データ
-     * @var  App\Librarys\php\Hierarchical $hierarchical
      * @var  array $department_high 部署データの上位階層
      * @var  array $personnel_high 人員データの上位階層
      * @var  App\Http\Controllers\PtcmtrController $tree
@@ -456,26 +458,15 @@ class Psji01Controller extends Controller
 
         //日付を6桁にする
         $date = new Date();
-        $date->formatDate($department_data);
-        $date->formatDate($personnel_data);
-
         if(isset($top_department)){
             $date->formatDate($top_department);
         }
-
         if(isset($click_department_data)){
             $date->formatDate($click_department_data);
         }
         if(isset($click_personnel_data)){
             $date->formatDate($click_personnel_data);
         }
-
-        //ページネーション
-        $pagination = new Pagination();
-        $department_max = $pagination->pageMax($department_data,count($department_data));
-        $departments = $pagination->pagination($department_data,count($department_data),$count_department);
-        $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
-        $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
@@ -487,10 +478,8 @@ class Psji01Controller extends Controller
             $click_responsible_lists = $responsible->getResponsibleLists($client_id,$click_department_data);
             View::share('click_responsible_lists', $click_responsible_lists);
         }
-        $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
         //管理者を名前で取得
-        $management_lists = $responsible->getManagementLists($client_id,$departments);
         if(isset($top_department)){
             $top_management = $responsible->getManagementLists($client_id,$top_department);
             View::share('top_management', $top_management);
@@ -500,25 +489,43 @@ class Psji01Controller extends Controller
             View::share('click_management_lists', $click_management_lists);
         }
         if(isset($click_personnel_data)){
-            $click_management_lists = $responsible->getManagementLists($client_id,$departments);
+            $click_management_lists = $responsible->getManagementLists($client_id,$click_personnel_data);
             View::share('click_management_lists', $click_management_lists);
         }
 
         //上位階層取得
         $hierarchical = new Hierarchical();
-        $department_high = $hierarchical->upperHierarchyName($departments);
         if(isset($click_department_data)){
             $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
             View::share('click_department_high', $click_department_high);
         }
+
+        //部署・人員の一覧表示領域のデータ表示
+        //日付フォーマットを6桁にする
+        $date = new Date();
+        $date->formatDate($department_data);
+        $date->formatDate($personnel_data);
+
+        //基本ページネーション設定
+        $pagination = new Pagination();
+        $department_max = $pagination->pageMax($department_data,count($department_data));
+        $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+        $personnel_max = $pagination->pageMax($personnel_data,count($personnel_data));
+        $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //責任者を名前で取得
+        $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
+
+        //上位階層取得
+        $department_high = $hierarchical->upperHierarchyName($departments);
         $personnel_high = $hierarchical->upperHierarchyName($names);
 
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('management_lists','departments','names','count_department','personnel_data','select_id',
-        'count_personnel','department_max','personnel_max','department_high','personnel_high','responsible_lists'));
+        return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','count_personnel','department_max',
+        'departments','personnel_max','names','responsible_lists','department_high','personnel_high'));
     }
 
     /**
@@ -622,6 +629,6 @@ class Psji01Controller extends Controller
         }
         //ツリー開閉
         PtcmtrController::open_node($personnel_id);
-       return redirect()->route('index');
+        return back();
     }
 }

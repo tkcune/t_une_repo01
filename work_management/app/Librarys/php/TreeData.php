@@ -92,7 +92,7 @@ class TreeData{
         $tree_chain = [];
 
         //@var array ツリーの第一階層のidとタイトル
-        $database_index_chain = ['bs.部署', '0.notitle'];
+        $database_index_chain = ['bs.部署', 'ss.システム設計', '0.notitle'];
     
         //一つ一つのテーブルから上下関係のオブジェクトのデータを作成する
         //@var int $index ループのインデックス
@@ -108,9 +108,15 @@ class TreeData{
                 //notitleの場合
                 //'0.notitle'をキーの名前。指定の文字列をバリューとする
                 $chain[] = array($database_index_chain[$index] => 'ur.ユーザ情報');
-                $chain[] = array($database_index_chain[$index] => 'ld.ログ確認');
-                $chain[] = array($database_index_chain[$index] => 'lg.ログアウト');
-            }else{
+                $chain[] = array($database_index_chain[$index] => 'lo.ログアウト');
+            }else if($database_index_chain[$index] == 'ss.システム設計'){
+                //システム設計の場合
+                $chain[] = array($database_index_chain[$index] => 'ssfi.ファイル取込');
+                $chain[] = array($database_index_chain[$index] => 'ssfo.ファイル出力');
+                $chain[] = array($database_index_chain[$index] => 'sslg.ログ表示');
+                $chain[] = array($database_index_chain[$index] => 'ssns.ネットワーク設定');
+                $chain[] = array($database_index_chain[$index] => 'sscs.カスタマイズ');
+            }else {
                 //マイツリーでもnotitleでもない場合
                 //第一階層の下のデータを探して代入していく
                 foreach($database_id_name as $key =>$value){

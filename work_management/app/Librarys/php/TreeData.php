@@ -92,7 +92,7 @@ class TreeData{
         $tree_chain = [];
 
         //@var array ツリーの第一階層のidとタイトル
-        $database_index_chain = ['bs.部署', 'ss.システム設計', '0.notitle'];
+        $database_index_chain = ['bs.部署', 'ss.システム設定', '0.notitle'];
     
         //一つ一つのテーブルから上下関係のオブジェクトのデータを作成する
         //@var int $index ループのインデックス
@@ -109,7 +109,7 @@ class TreeData{
                 //'0.notitle'をキーの名前。指定の文字列をバリューとする
                 $chain[] = array($database_index_chain[$index] => 'ur.ユーザ情報');
                 $chain[] = array($database_index_chain[$index] => 'lo.ログアウト');
-            }else if($database_index_chain[$index] == 'ss.システム設計'){
+            }else if($database_index_chain[$index] == 'ss.システム設定'){
                 //システム設計の場合
                 $chain[] = array($database_index_chain[$index] => 'ssfi.ファイル取込');
                 $chain[] = array($database_index_chain[$index] => 'ssfo.ファイル出力');

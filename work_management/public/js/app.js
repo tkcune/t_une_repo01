@@ -2500,12 +2500,12 @@ TreeAction.node = /*#__PURE__*/function () {
       } else if (this.id.substr(0, 2) === 'ur') {
         //ユーザー情報の場合
         imgName = 'ur';
-      } else if (this.id.substr(0, 2) === 'lg') {
+      } else if (this.id.substr(0, 2) === 'lo') {
         //ログアウトの場合
-        imgName = 'lg';
-      } else if (this.id.substr(0, 2) === 'ld') {
-        //ログ確認
-        imgName = 'ur';
+        imgName = 'lo';
+      } else if (this.id.substr(0, 2) === 'ss') {
+        //システム設計の場合
+        imgName = 'ss';
       }
 
       return imgName;
@@ -2539,18 +2539,16 @@ TreeAction.chainparser = function () {
 
 
   var decisionTreeClass = function decisionTreeClass(topNode) {
-    //@var boolean isChild 子要素の子要素があるか表す変数
-    var isChild = false;
-    topNode.child.forEach(function (child) {
-      //子要素の子要素が空でなければ、true
-      if (child.child.length !== 0) {
-        isChild = true;
-      }
-    }); //子要素があれば、展開されるボックスのあるツリー(expandtree)
+    var isExpand = false;
 
-    if (isChild === true) {
+    if (topNode.id === 'bs' || topNode.id === 'ss') {
+      isExpand = true;
+    } //子要素があれば、展開されるボックスのあるツリー(expandtree)
+
+
+    if (isExpand === true) {
       topNode.className = 'expandtree';
-    } else if (isChild === false) {
+    } else if (isExpand === false) {
       topNode.className = 'linetree';
     }
   }; //同じノードオブジェクトか比較。
@@ -2566,27 +2564,6 @@ TreeAction.chainparser = function () {
     }
 
     return true;
-  }; //表示しているか、判断する
-  //@param Nodeクラス node ノード
-  //@return boolean flag 結果
-
-
-  var isDisplay = function isDisplay(node) {
-    //@var boolean trueでなければ、falseを返す
-    var flag = true; //expand系のツリーの場合
-
-    if (node.className === 'expandtree' || node.className === 'lastexpandtree') {
-      if (node.element.children[0].classList.value.includes('unexpand') === true) {
-        flag = false;
-      }
-    } else {
-      //expand系以外のツリーの場合
-      if (node.element.classList.value.includes('unexpand') === true) {
-        flag = false;
-      }
-    }
-
-    return flag;
   }; //子要素のクラス名を決定していく。
   //@param Nodeクラス node 階層のノード
   //@param Nodeクラス palent nodeの親ノード
@@ -2804,73 +2781,209 @@ TreeAction.chainparser = function () {
   //@var Nodeクラス palent 表示するノードの親ノード
 
 
-  var displayOpen = function displayOpen(child) {
+  var displayOpen = function displayOpen(child, palent) {
     //ノードを表示にする
     child.openDisplayNode(); //隣のノードのcss名を変更する
     //子ノードが親ノードの先頭にあるなら
 
-    if (child.element.previousElementSibling === null) {
-      if (child.element.nextElementSibling !== null) {
-        //@var string 子ノードの次のノードのcss名
-        var className = child.element.nextElementSibling.className; //firsttreeならば、次のノードは、normaltree
+    if (getIndexNodeOpen(child, palent) === 0) {
+      //@var Nodeクラス 次のノードクラス
+      var nextNode = getNextNode(child, palent);
 
-        if (className === 'firsttree') {
-          child.element.nextElementSibling.className = 'normaltree'; //lastnormalreeならば、次のノードは、最後なので、lasttree
-        } else if (className === 'lastnormaltree') {
-          child.element.nextElementSibling.className = 'lasttree';
+      if (nextNode !== null) {
+        //firsttreeならば、次のノードは、normaltree
+        if (nextNode.element.className === 'firsttree') {
+          nextNode.element.className = 'normaltree'; //lastnormalreeならば、次のノードは、最後なので、lasttree
+        } else if (nextNode.element.className === 'lastnormaltree') {
+          nextNode.element.className = 'lasttree';
         }
       } //子ノードが親ノードの最後にあるなら
 
-    } else if (child.element.nextElementSibling === null) {
-      if (child.element.previousElementSibling !== null) {
-        //@var string 子ノードの一つ前のノード
-        var _className = child.element.previousElementSibling.className; //lastexpandtreeならば、前のノードは、expandtreeになる
+    } else if (getIndexNodeOpen(child, palent) === getLengthChildOpen(palent)) {
+      //@var Nodeクラス 次のノードクラス
+      var backNode = getBackNode(child, palent);
 
-        if (_className === 'lastexpandtree') {
-          child.element.previousElementSibling.className = 'expandntree'; //lastnormaltreeならば、最初のtreeになる
-        } else if (_className === 'lastnormaltree') {
-          child.element.previousElementSibling.className = 'firsttree'; //lasttreeならば、normaltreeとなる
-        } else if (_className === 'lasttree') {
-          child.element.previousElementSibling.className = 'normaltree';
+      if (backNode !== null) {
+        //lastexpandtreeならば、前のノードは、expandtreeになる
+        if (backNode.element.className === 'lastexpandtree') {
+          backNode.element.className = 'expandtree'; //lastnormaltreeならば、最初のtreeになる
+        } else if (backNode.element.className === 'lastnormaltree') {
+          backNode.element.className = 'firsttree'; //lasttreeならば、normaltreeとなる
+        } else if (backNode.element.className === 'lasttree') {
+          backNode.element.className = 'normaltree';
         }
       }
+    } else {
+      //中間はchildを元に戻す
+      child.element.className = child.className;
     }
   }; //ノードを非表示にして、隣のノードの表示を変える
   //@var Nodeクラス child 非表示にするノード
   //@var Nodeクラス palent 非表示にするノードの親ノード
 
 
-  var displayNone = function displayNone(child) {
+  var displayNone = function displayNone(child, palent) {
     //ノードを非表示にする
     child.noneDisplayNode(); //隣のノードのcss名を変更する
     //子ノードが親ノードの先頭にあるなら
 
-    if (child.element.previousElementSibling === null) {
-      if (child.element.nextElementSibling !== null) {
-        //@var string 子ノードの次のノードのcss名
-        var className = child.element.nextElementSibling.className; //normaltreeならば、次のノードは、先頭になるので、firstree
+    if (getIndexNodeHide(child, palent) === 0) {
+      //@var Nodeクラス 次のノードクラス
+      var nextNode = getNextNode(child, palent); //次ノードクラスがあるなら
 
-        if (className === 'normaltree') {
-          child.element.nextElementSibling.className = 'firsttree'; //lastreeならば、次のノードは、1つしかないので、lastnormaltree
-        } else if (className === 'lasttree') {
-          child.element.nextElementSibling.className = 'lastnormaltree';
+      if (nextNode !== null) {
+        //normaltreeならば、次のノードは、先頭になるので、firstree
+        if (nextNode.element.className === 'normaltree') {
+          nextNode.element.className = 'firsttree'; //lastreeならば、次のノードは、1つしかないので、lastnormaltree
+        } else if (nextNode.element.className === 'lasttree') {
+          nextNode.element.className = 'lastnormaltree';
         }
       } //子ノードが親ノードの最後にあるなら
 
-    } else if (child.element.nextElementSibling === null) {
-      if (child.element.previousElementSibling !== null) {
-        //@var string 子ノードの一つ前のノード
-        var _className2 = child.element.previousElementSibling.className; //expandtreeならば、前のノードは、最後のexpandtreeになる
+    } else if (getIndexNodeHide(child, palent) === getLengthChild(palent)) {
+      //@var Nodeクラス 次のノードクラス
+      var backNode = getBackNode(child, palent); //後ろのノードクラスがあるなら
 
-        if (_className2 === 'expandtree') {
-          child.element.previousElementSibling.className = 'lastexpandntree'; //firsttreeならば、最後のnormaltreeになる
-        } else if (_className2 === 'firsttree') {
-          child.element.previousElementSibling.className = 'lastnormaltree'; //normaltreeならば、最後のtreeになる
-        } else if (_className2 === 'normaltree') {
-          child.element.previousElementSibling.className = 'lasttree';
+      if (backNode !== null) {
+        //expandtreeならば、前のノードは、最後のexpandtreeになる
+        if (backNode.element.className === 'expandtree') {
+          backNode.element.className = 'lastexpandtree'; //firsttreeならば、最後のnormaltreeになる
+        } else if (backNode.element.className === 'firsttree') {
+          backNode.element.className = 'lastnormaltree'; //normaltreeならば、最後のtreeになる
+        } else if (backNode.element.className === 'normaltree') {
+          backNode.element.className = 'lasttree';
         }
       }
     }
+  }; //hideを抜いたノードクラスのインデックス
+  //@param Nodeクラス node インデックスを探すノードクラス
+  //@param Nodeクラス palent 親クラス
+  //@return int インデックス
+
+
+  var getIndexNodeHide = function getIndexNodeHide(node, palent) {
+    //@var int インデックス
+    var index = 0;
+
+    for (var i = 0; i < palent.child.length; i++) {
+      //隠蔽していて、目的のノードクラスか、調べる
+      if (palent.child[i].hide === true && isEqual(node, palent.child[i]) === true) {
+        return index;
+      } else if (palent.child[i].hide !== true) {
+        //見つからないなら、インデックスを増やす
+        index++;
+      }
+    }
+
+    return index;
+  }; //ノードクラスのインデックス
+  //@param Nodeクラス node インデックスを探すノードクラス
+  //@param Nodeクラス palent 親クラス
+  //@return int インデックス
+
+
+  var getIndexNodeOpen = function getIndexNodeOpen(node, palent) {
+    //@var int インデックス
+    var index = 0;
+
+    for (var i = 0; i < palent.child.length; i++) {
+      //隠蔽していて、目的のノードクラスか、調べる
+      if (palent.child[i].hide === false && isEqual(node, palent.child[i]) === true) {
+        return index;
+      } else if (palent.child[i].hide !== true) {
+        //見つからないなら、インデックスを増やす
+        index++;
+      }
+    }
+
+    return index;
+  }; //hideを抜いた親クラスのchildの数を数える
+  //@param Nodeクラス palent 数える親クラス
+  //@return int childの数
+
+
+  var getLengthChild = function getLengthChild(palent) {
+    //@var int 数
+    var length = 0;
+
+    for (var i = 0; i < palent.child.length; i++) {
+      //隠蔽していないchildを数える
+      if (palent.child[i].hide === false) {
+        length++;
+      }
+    }
+
+    return length;
+  }; //隠蔽から表示の時の子ノードの数を数える
+  //@param Nodeクラス palent 親クラス
+  //@return int 子ノードの数
+
+
+  var getLengthChildOpen = function getLengthChildOpen(palent) {
+    //@var int 数
+    var length = 0;
+
+    for (var i = 0; i < palent.child.length; i++) {
+      //隠蔽していないchildを数える
+      if (palent.child[i].hide === false) {
+        length++;
+      }
+    }
+
+    return length - 1;
+  }; //hideを除いた次のノードクラスを取得する。
+  //@param Nodeクラス child　次の基準となるノードクラス
+  //@param Nodeクラス palent 親クラス
+  //@return Nodeクラス 次のノードクラスなければ、null
+
+
+  var getNextNode = function getNextNode(child, palent) {
+    //@var int childのインデックス
+    var index; //@var Nodeクラス 次のノードクラスを代入する
+
+    var search = null; //childのインデックスを探す
+
+    for (var i = 0; i < palent.child.length; i++) {
+      if (isEqual(child, palent.child[i]) === true) {
+        index = i;
+      }
+    } //indexの位置から、次のノードクラスを取得する(間の子ノードがhideがtrueでないノード)
+
+
+    for (var _i = index + 1; _i < palent.child.length - 1; _i++) {
+      if (palent.child[_i].hide === false) {
+        search = palent.child[_i];
+        break;
+      }
+    }
+
+    return search;
+  }; //hideを除いた後ろのノードクラスを取得する。
+  //@param Nodeクラス child　次の基準となるノードクラス
+  //@param Nodeクラス palent 親クラス
+  //@return Nodeクラス 後ろのノードクラスなければ、null
+
+
+  var getBackNode = function getBackNode(child, palent) {
+    //@var int childのインデックス
+    var index; //@var Nodeクラス 後ろのノードクラスを代入する
+
+    var search = null; //childのインデックスを探す
+
+    for (var i = 0; i < palent.child.length; i++) {
+      if (isEqual(child, palent.child[i]) === true) {
+        index = i;
+      }
+    }
+
+    for (var _i2 = index - 1; _i2 >= 0; _i2--) {
+      if (palent.child[_i2].hide === false) {
+        search = palent.child[_i2];
+        break;
+      }
+    }
+
+    return search;
   };
 
   return {
@@ -2878,11 +2991,8 @@ TreeAction.chainparser = function () {
     concatNode: concatNode,
     searchNodeId: searchNodeId,
     searchNodeDir: searchNodeDir,
-    decisionExpandTreeClass: decisionExpandTreeClass,
-    decisionLineTreeClass: decisionLineTreeClass,
     decisionChildClass: decisionChildClass,
     isEqual: isEqual,
-    isDisplay: isDisplay,
     decisionTreeClass: decisionTreeClass,
     exceptSepalete: exceptSepalete,
     syncLink: syncLink,
@@ -3072,83 +3182,83 @@ TreeAction = function (treesepalete, projectionChain) {
         });
       }
 
-      for (var _i = 0; _i < firsttreeArray.length; _i++) {
+      for (var _i3 = 0; _i3 < firsttreeArray.length; _i3++) {
         //@var string firsttreeのディレクトリ
-        var firsttreeDir = getTitleboxDir(firsttreeArray[_i]) + '/' + firsttreeArray[_i].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
+        var firsttreeDir = getTitleboxDir(firsttreeArray[_i3]) + '/' + firsttreeArray[_i3].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
 
 
         var _node = chainparser.searchNodeDir(firsttreeDir, tree); //idを引数にして、クリックイベントを追加する
 
 
-        firsttreeArray[_i].children[0].addEventListener('click', {
+        firsttreeArray[_i3].children[0].addEventListener('click', {
           id: _node.id,
           handleEvent: callback
         });
       }
 
-      for (var _i2 = 0; _i2 < normaltreeArray.length; _i2++) {
+      for (var _i4 = 0; _i4 < normaltreeArray.length; _i4++) {
         //@var string normaltreeのディレクトリ
-        var normaltreeDir = getTitleboxDir(normaltreeArray[_i2]) + '/' + normaltreeArray[_i2].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
+        var normaltreeDir = getTitleboxDir(normaltreeArray[_i4]) + '/' + normaltreeArray[_i4].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
 
 
         var _node2 = chainparser.searchNodeDir(normaltreeDir, tree); //idを引数にして、クリックイベントを追加する
 
 
-        normaltreeArray[_i2].children[0].addEventListener('click', {
+        normaltreeArray[_i4].children[0].addEventListener('click', {
           id: _node2.id,
           handleEvent: callback
         });
       }
 
-      for (var _i3 = 0; _i3 < lastnormaltreeArray.length; _i3++) {
+      for (var _i5 = 0; _i5 < lastnormaltreeArray.length; _i5++) {
         //@var string normaltreeのディレクトリ
-        var lastnormaltreeDir = getTitleboxDir(lastnormaltreeArray[_i3]) + '/' + lastnormaltreeArray[_i3].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
+        var lastnormaltreeDir = getTitleboxDir(lastnormaltreeArray[_i5]) + '/' + lastnormaltreeArray[_i5].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
 
 
         var _node3 = chainparser.searchNodeDir(lastnormaltreeDir, tree); //idを引数にして、クリックイベントを追加する
 
 
-        lastnormaltreeArray[_i3].children[0].addEventListener('click', {
+        lastnormaltreeArray[_i5].children[0].addEventListener('click', {
           id: _node3.id,
           handleEvent: callback
         });
       }
 
-      for (var _i4 = 0; _i4 < lasttreeArray.length; _i4++) {
+      for (var _i6 = 0; _i6 < lasttreeArray.length; _i6++) {
         //@var string lasttreeのディレクトリ
-        var lasttreeDir = getTitleboxDir(lasttreeArray[_i4]) + '/' + lasttreeArray[_i4].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
+        var lasttreeDir = getTitleboxDir(lasttreeArray[_i6]) + '/' + lasttreeArray[_i6].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
 
 
         var _node4 = chainparser.searchNodeDir(lasttreeDir, tree); //idを引数にして、クリックイベントを追加する
 
 
-        lasttreeArray[_i4].children[0].addEventListener('click', {
+        lasttreeArray[_i6].children[0].addEventListener('click', {
           id: _node4.id,
           handleEvent: callback
         });
       }
 
-      for (var _i5 = 0; _i5 < secondtreeArray.length; _i5++) {
+      for (var _i7 = 0; _i7 < secondtreeArray.length; _i7++) {
         //@var string secondtreeのディレクトリ
-        var secondtreeDir = getLinetreeDir(secondtreeArray[_i5]); //@var Nodeクラス クリック処理を追加するノード
+        var secondtreeDir = getLinetreeDir(secondtreeArray[_i7]); //@var Nodeクラス クリック処理を追加するノード
 
         var _node5 = chainparser.searchNodeDir(secondtreeDir, tree); //idを引数にして、クリックイベントを追加する
 
 
-        secondtreeArray[_i5].children[0].addEventListener('click', {
+        secondtreeArray[_i7].children[0].addEventListener('click', {
           id: _node5.id,
           handleEvent: callback
         });
       }
 
-      for (var _i6 = 0; _i6 < endtreeArray.length; _i6++) {
+      for (var _i8 = 0; _i8 < endtreeArray.length; _i8++) {
         //@var string endtreeのディレクトリ
-        var endtreeDir = getLinetreeDir(endtreeArray[_i6]); //@var Nodeクラス クリック処理を追加するノード
+        var endtreeDir = getLinetreeDir(endtreeArray[_i8]); //@var Nodeクラス クリック処理を追加するノード
 
         var _node6 = chainparser.searchNodeDir(endtreeDir, tree); //idを引数にして、クリックイベントを追加する
 
 
-        endtreeArray[_i6].children[0].addEventListener('click', {
+        endtreeArray[_i8].children[0].addEventListener('click', {
           id: _node6.id,
           handleEvent: callback
         });
@@ -3205,7 +3315,7 @@ TreeAction = function (treesepalete, projectionChain) {
     var palent = chainparser.searchPalentNode(node.id, tree); //ノードを表示する
 
     if (palent.element.children[0].children[0].innerText === '-') {
-      chainparser.displayOpen(node);
+      chainparser.displayOpen(node, palent);
     } //表示ノードに投影先があるなら、投影先も表示する
 
 
@@ -3221,7 +3331,7 @@ TreeAction = function (treesepalete, projectionChain) {
 
         if (linkPalent.element.children[0].children[0].innerText === '-') {
           //投影先を表示する
-          chainparser.displayOpen(linkNode);
+          chainparser.displayOpen(linkNode, linkPalent);
         }
       });
     }
@@ -3233,7 +3343,9 @@ TreeAction = function (treesepalete, projectionChain) {
     chainparser.concatNode(tree).forEach(function (node) {
       if (node.hide === true) {
         //displayがfalseならば、隠蔽しているので、表示する
-        displayOpenNode(node);
+        //@var Nodeクラス 表示するノードの親ノード
+        var palent = chainparser.searchPalentNode(node.id, tree);
+        displayOpenNode(node, palent);
       }
     });
   }; //@var string nodeId 再表示するノードのid
@@ -3370,7 +3482,7 @@ TreeAction = function (treesepalete, projectionChain) {
 
     openNodeAfterPageMove(); //ページ移動前に隠蔽していたノードを閉じる
 
-    noneDisplayAfterPageMove(); //一覧表示からのノードの表示
+    hideDisplayAfterPageMove(); //一覧表示からのノードの表示
 
     if (document.location.pathname.split('/')[1] === 'show') {
       //@var Nodeクラス 開くノード
@@ -3474,7 +3586,7 @@ TreeAction = function (treesepalete, projectionChain) {
   }; //ページ移動前に、隠蔽していたノードを、ページ移動後にも隠蔽する
 
 
-  var noneDisplayAfterPageMove = function noneDisplayAfterPageMove() {
+  var hideDisplayAfterPageMove = function hideDisplayAfterPageMove() {
     //@var array 隠蔽していたノードのid
     var hiddenStorage = JSON.parse(localStorage.getItem('hiddenId'));
     Object.keys(hiddenStorage).forEach(function (id) {
@@ -3497,7 +3609,7 @@ TreeAction = function (treesepalete, projectionChain) {
 
 
 TreeAction.addNodeClickEvent(function () {
-  if (this.id === 'ld') {
+  if (this.id === 'sslg') {
     //ログ確認の場合
     window.location = 'http://localhost:8000/log';
   } else {

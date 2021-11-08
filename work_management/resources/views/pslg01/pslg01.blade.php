@@ -19,22 +19,22 @@
                             <form action="{{ route('pslg01.create') }}" method="post">
                                 @csrf
 
-                                <p>顧客番号： <input type="text" style="width:100px;" placeholder="半角英数字で入力"></p>
+                                <p>顧客番号： <input type="text" name="name" style="width:100px;" placeholder="半角英数字で入力"></p>
                                 <p>顧客名　： <a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">　(例)前川一号生</a></p>
                                 <p class="box" title="入力に該当した顧客の候補を一覧に表示します。表示された人員を選択した場合、その番号が顧客番号に表示されます">顧客検索：　
                                     <select class="box" style="width:100px;">
-                                      
-                                        <option selected value=""></option>
-                                      
-                                        @foreach( $name_data as $name)
-                                          <option value="{{$name->personnel_id}}"> {{$name->name}}</option>
+
+                                        <option selected name="kokyaku_id" value=""></option>
+
+                                        @foreach($name_data as $parson)
+                                        <option name="kokyaku_id" value="{{$parson->client_id}}"> {{$parson->client_id}}</option>
                                         @endforeach
                                     </select>
                                 </p>
                         </div>
                         <div class="col-4">
                             <p title="入力に該当した顧客の候補を一覧に表示します。表示された人員を選択した場合、その番号が顧客番号に表示されます。">部署人員番号：
-                                <input type="text" style="width: 100px;">
+                                <input type="text" name="zinin" style="width: 100px;">
                                 <!-- <input type="text" style="width: 100px;" placeholder="半角英数字以外はNG出力対象とする部署番号　未入力で全ての部署人員"> -->
                             </p>
 
@@ -42,13 +42,15 @@
 
                             <p>部署人員名　：　<a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">前川一号生</a></p>
                             <!-- ※　クリックにより、顧客詳細に遷移する。 顧客番号に該当する部署の名称 -->
-                            <!-- <label for="formGroupExampleInput6" class="form-label"> 6 部署人員名 </label> -->
 
                             <p title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が部署番号に表示されます。"> 部署人員検索：
                                 <input list="lists" id="myList" name="myList" style="width:100px" />
                                 <datalist id="lists">
-                                    <option value="全角、半角英数字">
-                                    <option value="入力に該当した部署の候補を一覧表示し、選択とその番号が部署番号に表示される">
+                                    @foreach($name_data as $parson)
+                                    <option value="{{$parson->personnel_id}}"> {{$parson->name}}</option>
+                                    @endforeach
+                                    <!-- <option value="全角、半角英数字">
+                                    <option value="入力に該当した部署の候補を一覧表示し、選択とその番号が部署番号に表示される"> -->
                                 </datalist>
                             </p>
                         </div>
@@ -63,31 +65,31 @@
 
                     <div class="row justify-content-start">
                         <div class="col-4">
-                            　<input type="checkbox" title="通常メッセージログを表示するかどうかを指定します"> 通常メッセージ
+                            　<input type="checkbox" name="check" title="通常メッセージログを表示するかどうかを指定します"> 通常メッセージ
                         </div>
                         <div class="col-4">
-                            　<input type="checkbox" title="警告メッセージログを表示するかどうかを指定します" checked> 警告メッセージ
+                            　<input type="checkbox" name="check" title="警告メッセージログを表示するかどうかを指定します" checked> 警告メッセージ
                         </div>
                         <div class="col-4">
-                            　<input type="checkbox" title="異常メッセージログを表示するかどうかを指定します" checked> 異常メッセージ
+                            　<input type="checkbox" name="check" title="異常メッセージログを表示するかどうかを指定します" checked> 異常メッセージ
                         </div>
                     </div>
 
                     <div class="row justify-content-start">
                         <div class="col-4">
-                            　<input type="checkbox" title="正常メッセージログを表示するかどうかを指定します" checked> 正常メッセージ
+                            　<input type="checkbox" name="check" title="正常メッセージログを表示するかどうかを指定します" checked> 正常メッセージ
                         </div>
                         <div class="col-4">
-                            <input type="checkbox" title="システム情報メッセージログを表示するかどうかを指定します"> システム情報メッセージ
+                            <input type="checkbox" name="check" title="システム情報メッセージログを表示するかどうかを指定します"> システム情報メッセージ
                         </div>
                         <div class="col-4">
-                            <input type="checkbox" title="システム異常メッセージログを表示するかどうかを指定します"> システム異常メッセージ
+                            <input type="checkbox" name="check" title="システム異常メッセージログを表示するかどうかを指定します"> システム異常メッセージ
                         </div>
                     </div>
 
                     <div class="row mt-3">
                         <!-- <div class="col-1"></div> -->
-                        <div class="col-10">　文字検索：<input type="text" style="width:32rem;" placeholder="入力可能な文字数は３２  全角、半角英数字、一覧操作領域">
+                        <div class="col-10">　文字検索：<input type="text" name="kensaku" style="width:32rem;" placeholder="入力可能な文字数は３２  全角、半角英数字、一覧操作領域">
 
                         </div>
                         <div class="col-2">
@@ -97,15 +99,6 @@
                     </form>
                     <div class="row mt-3">
                         <div class="col-10">
-                            @isset($items)
-                            <div class="wrapper" style="overflow-y: scroll; background-color:white;">
-                                @foreach($items as $item)
-                                <div class="contents">
-                                    {{$item->program_pass}}
-                                </div>
-                                @endforeach
-                            </div>
-                            @endif
                         </div>
                         <div class="col-2">
                             @isset($count)
@@ -113,8 +106,52 @@
                             @endif
                         </div>
                     </div>
+                    <div class="row">
+                        @isset($items)
+                        <div class="wrapper" style="overflow-y: scroll; background-color:white;">
+                            <table class="table">
+
+                                <thead>
+                                    <tr>
+                                        <th scope="col">開始日 </th>
+                                        <th scope="col">終了日</th>
+                                        <th scope="col">log</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($items as $item)
+                                    @php
+                                    $start_date = $item->created_at;
+                                    $finish_date = $item->updated_at;
+                                    @endphp
+
+                                    <tr>
+                                        <td> {{date('Y年m月d日', strtotime($start_date))}}0時0分</td>
+                                        <td> {{date('Y年m月d日', strtotime($finish_date))}}</td>
+                                        <td> {{$item->log}}</td>
+                                    </tr>
+                                    @endforeach
+
+                                </tbody>
+                            </table>
+
+                            <!-- <div class="contents">
+                                    {{$item->program_pass}}
+                                </div> -->
+
+                        </div>
+                        <!-- <div class="wrapper" style="overflow-y: scroll; background-color:white;">
+                                @foreach($items as $item)
+                                <div class="contents">
+                                    {{$item->program_pass}}
+                                </div>
+                                @endforeach
+                            </div> -->
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    @endsection
+</div>
+@endsection

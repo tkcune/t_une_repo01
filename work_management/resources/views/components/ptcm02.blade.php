@@ -2,7 +2,7 @@
         <div class="col-3 bg-white border p-2" id="tree">
             <div id="chaintree"></div>
             <div class="twobutton">
-                <img src="/image/lg.png" class="btndisplay" id="openTree">
+                <img src="/image/lo.png" class="btndisplay" id="openTree">
                 <div class="btnclose" onclick="display()"><<</div>
             </div>
 

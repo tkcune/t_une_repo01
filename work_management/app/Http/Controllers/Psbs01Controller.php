@@ -908,10 +908,13 @@ class Psbs01Controller extends Controller
      * @var string $client_id 顧客ID
      * @var string $copy_id 複製するID
      * @var string $high 複製IDが所属する上位階層ID
-     * @var array  $copy_department 複製するデータ
-     * @var array  $id 存在する部署内での最新の部署ID
-     * @var string $department_id 登録する部署ID
-     * @var App\Librarys\php\ZeroPadding $padding
+     * @var string $id 複製前の最新の部署ID
+     * @var string $id2 複製前の最新の人員ID
+     * @var string $id_num 複製前の最新の部署IDの数字部分
+     * @var string $id2_num 複製前の最新の部署IDの数字部分
+     * @var string $number 8桁に0埋めした複製前の最新の部署IDの数字部分
+     * @var string $number2　8桁に0埋めした複製前の最新の人員IDの数字部分
+     * @var App\Librarys\php\Hierarchical $hierarchical
      * 
      * @return \Illuminate\Http\Response
      */
@@ -924,17 +927,9 @@ class Psbs01Controller extends Controller
         if($request->copy_id == null){
             return redirect()->route('index');
         }
-        //複製するデータの取得
-        try{
-            $copy_department = DB::select('select * from dcbs01 where client_id = ? 
-            and department_id = ?',[$client_id,$copy_id]);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('index');
-        }
 
-        //顧客IDに対応した最新の部署IDを取得
+        //複製動作
+        //複製前の最新の部署番号を取得
         try{
             $id = DB::select('select department_id from dcbs01 where client_id = ? 
             order by department_id desc limit 1',[$client_id]);
@@ -943,48 +938,21 @@ class Psbs01Controller extends Controller
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-
-        //登録する番号を作成
-        $padding = new ZeroPadding();
-        $department_id = $padding->padding($id[0]->department_id);
-
-        //データベースに部署情報を登録
+        //複製前の最新の人員番号を取得
         try{
-            DB::insert('insert into dcbs01
-            (client_id,
-            department_id,
-            responsible_person_id,
-            name,
-            status,
-            management_personnel_id,
-            operation_start_date,
-            operation_end_date)
-            VALUE (?,?,?,?,?,?,?,?)',
-            [$client_id,
-            $department_id,
-            $copy_department[0]->responsible_person_id,
-            $copy_department[0]->name,
-            $copy_department[0]->status,
-            $copy_department[0]->management_personnel_id,
-            $copy_department[0]->operation_start_date,
-            $copy_department[0]->operation_end_date]);
+            $id2 = DB::select('select personnel_id from dcji01 where client_id = ? 
+            order by personnel_id desc limit 1',[$client_id]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-
-        //データベースに階層情報を登録
-        try{
-            DB::insert('insert into dccmks
-            (client_id,lower_id,high_id)
-            VALUE (?,?,?)',
-            [$client_id,$department_id,$high]);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('index');
-        }
+        $id_num = substr($id[0]->department_id,3);
+        $id2_num = substr($id2[0]->personnel_id,3);
+        $number = str_pad($id_num, 8, '0', STR_PAD_LEFT);
+        $number2 = str_pad($id2_num, 8, '0', STR_PAD_LEFT);
+        $hierarchical = new Hierarchical();
+        $hierarchical->subordinateCopy($copy_id,$client_id,$high,$number,$number2);
 
         //ログ処理
         OutputLog::message_log(__FUNCTION__, 'mhcmok0009');

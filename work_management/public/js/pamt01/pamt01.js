@@ -73,8 +73,8 @@ function deleteOn()
     for(i=0; i<5 ;i++){
       var id= "bs_list_delete"+ i;
       var id2= "list_delete"+ i;
-      document.getElementById(id).setAttribute("style","pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline;");
-      document.getElementById(id2).setAttribute("style","pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline;");
+      document.getElementById(id).setAttribute("style","pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px");
+      document.getElementById(id2).setAttribute("style","pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px;");
     }
 	}else{
 		// disabled属性を設定
@@ -82,8 +82,8 @@ function deleteOn()
     for(i=0; i<5 ;i++){
       var id= "bs_list_delete"+ i;
       var id2= "list_delete"+ i;
-      document.getElementsByName('list_delete').setAttribute("style","pointer-events: none; display:inline-block; text-decoration:underline;");
-      document.getElementById(id2).setAttribute("style","pointer-events: none; display:inline-block; text-decoration:underline;");
+      document.getElementById(id).setAttribute("style","pointer-events: none; display:inline-block; cursor: auto; text-decoration:underline; margin:0px;");
+      document.getElementById(id2).setAttribute("style","pointer-events: none; display:inline-block; cursor: auto; text-decoration:underline; margin:0px;");
     }
 	}
 }

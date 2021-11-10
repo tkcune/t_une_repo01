@@ -73,8 +73,8 @@ function deleteOn()
     for(i=0; i<5 ;i++){
       var id= "bs_list_delete"+ i;
       var id2= "list_delete"+ i;
-      document.getElementById(id).setAttribute("style","pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px");
-      document.getElementById(id2).setAttribute("style","pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px;");
+      document.getElementById(id).setAttribute("style","pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px; color:blue;");
+      document.getElementById(id2).setAttribute("style","pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px; color:blue;");
     }
 	}else{
 		// disabled属性を設定

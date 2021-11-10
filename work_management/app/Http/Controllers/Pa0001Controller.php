@@ -12,6 +12,7 @@ use App\Librarys\php\Hierarchical;
 use App\Http\Controllers\PtcmtrController;
 use App\Librarys\php\OutputLog;
 use App\Models\Date;
+use App\Librarys\php\Message;
 use App\Librarys\php\ListDisplay;
 use Illuminate\Support\Facades\View;
 
@@ -114,8 +115,14 @@ class Pa0001Controller extends Controller
 
         //上位階層取得
         $hierarchical = new Hierarchical();
-        $department_high = $hierarchical->upperHierarchyName($departments);
-        $personnel_high = $hierarchical->upperHierarchyName($names);
+        try{
+            $department_high = $hierarchical->upperHierarchyName($departments);
+            $personnel_high = $hierarchical->upperHierarchyName($names);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::dataCatchMiss($e);
+            return redirect()->route('errormsg');
+        }
 
         //ツリーデータの取得
         $tree = new PtcmtrController();
@@ -276,8 +283,14 @@ class Pa0001Controller extends Controller
 
         //上位階層取得
         $hierarchical = new Hierarchical();
-        $department_high = $hierarchical->upperHierarchyName($departments);
-        $personnel_high = $hierarchical->upperHierarchyName($names);
+        try{
+            $department_high = $hierarchical->upperHierarchyName($departments);
+            $personnel_high = $hierarchical->upperHierarchyName($names);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::dataCatchMiss($e);
+            return redirect()->route('errormsg');
+        }
 
         //ツリーデータ取得
         $tree = new PtcmtrController();
@@ -400,8 +413,14 @@ class Pa0001Controller extends Controller
 
             //上位階層取得
             $hierarchical = new Hierarchical();
-            $department_high = $hierarchical->upperHierarchyName($departments);
-            $personnel_high = $hierarchical->upperHierarchyName($names);
+            try{
+                $department_high = $hierarchical->upperHierarchyName($departments);
+                $personnel_high = $hierarchical->upperHierarchyName($names);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::dataCatchMiss($e);
+                return redirect()->route('errormsg');
+            }
 
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
@@ -527,8 +546,14 @@ class Pa0001Controller extends Controller
 
             //上位階層取得
             $hierarchical = new Hierarchical();
-            $department_high = $hierarchical->upperHierarchyName($departments);
-            $personnel_high = $hierarchical->upperHierarchyName($names);
+            try{
+                $department_high = $hierarchical->upperHierarchyName($departments);
+                $personnel_high = $hierarchical->upperHierarchyName($names);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::dataCatchMiss($e);
+                return redirect()->route('errormsg');
+            }
         
             //ツリーデータ取得
             $tree = new PtcmtrController();
@@ -550,6 +575,11 @@ class Pa0001Controller extends Controller
 
         session(['clipboard_id'=>$id]);
 
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0004');
+        $message = Message::get_message('mhcmok0004',[0=>$id]);
+        session(['message'=>$message[0]]);
+
         return back();
     }
 
@@ -562,6 +592,11 @@ class Pa0001Controller extends Controller
 
         session()->forget('clipboard_id');
 
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0005');
+        $message = Message::get_message('mhcmok0005',[0=>'']);
+        session(['message'=>$message[0]]);
+
         return back();
     }
 
@@ -572,6 +607,22 @@ class Pa0001Controller extends Controller
         $tree_data = $tree->set_view_treedata();
         
         return view('pslg01.pslg01');
+    }
+
+    /**
+     * エラーメッセージページ遷移
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function errorMsg()
+    {
+        //ツリーデータ取得
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
+
+        return view('pcms01.pcms01');
     }
 
 }

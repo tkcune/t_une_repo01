@@ -4,6 +4,8 @@
 
     use Illuminate\Support\Facades\DB;
     use App\Models\Date;
+    use App\Librarys\php\DatabaseException;
+    use App\Librarys\php\OutputLog;
 
     /**
      * 階層構造機能クラス
@@ -39,25 +41,23 @@
             $name_list = [];
             foreach($array as $value){
             //頭2文字を判定
-            $code = substr($value->high_id,0,2);
+                    $code = substr($value->high_id,0,2);
             
-                if ($code == "bs"){
-                    $name_data = DB::select('select * from dcbs01 where client_id = ? 
-                    and department_id = ?',[$value->client_id,$value->high_id]);
-                }elseif($code == "ji"){
-                    $name_data = DB::select('select * from dcji01 where client_id = ? 
-                    and personnel_id = ?',[$value->client_id,$value->high_id]);
-                }else{
+                        if ($code == "bs"){
+                            $name_data = DB::select('select * from dcbs01 where client_id = ? 
+                            and department_id = ?',[$value->client_id,$value->high_id]);
+                        }elseif($code == "ji"){
+                            $name_data = DB::select('select * from dcji01 where client_id = ? 
+                            and personnel_id = ?',[$value->client_id,$value->high_id]);
+                        }else{
 
-                }
-
-                //データの取得ミスの際の分岐がいる
-                //if($data == null){
-
-                    //return view(特定のエラーページ)
-                //}
-
-            array_push($name_list,$name_data[0]);
+                        }
+                        //データの取得ミスの際の分岐
+                        if(empty($name_data)){
+                            throw new \Exception("データの取得に失敗しました");
+                        }
+                
+                    array_push($name_list,$name_data[0]);
             }
             
             return $name_list;
@@ -127,28 +127,22 @@
  
                 //対応したデータの取得
                 if ($code == "bs"){
-                    try{
-                        $data = DB::select('select 
-                        dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                        from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
-                        and dcbs01.department_id = ?',[$client,$select_list]);
-                    }catch(\Exception $e){
-
-                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                        DatabaseException::common($e);
-                        return redirect()->route('index');
+                    
+                    $data = DB::select('select 
+                    dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+                    from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                    and dcbs01.department_id = ?',[$client,$select_list]);
+  
+                    if(empty($data)){
+                        throw new \Exception("データの取得に失敗しました");
                     }
                     array_push($department_data,$data[0]);
  
                 }elseif($code == "ji"){
-                    try{
-                        $data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
-                        and dcji01.personnel_id = ?',[$client,$select_list]);
-                    }catch(\Exception $e){
-
-                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                        DatabaseException::common($e);
-                        return redirect()->route('index');
+                    $data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                    and dcji01.personnel_id = ?',[$client,$select_list]);
+                    if(empty($data)){
+                        throw new \Exception("データの取得に失敗しました");
                     }
                     array_push($personnel_data,$data[0]);
                 }else{

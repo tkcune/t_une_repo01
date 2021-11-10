@@ -493,13 +493,6 @@ class Psji01Controller extends Controller
             View::share('click_management_lists', $click_management_lists);
         }
 
-        //上位階層取得
-        $hierarchical = new Hierarchical();
-        if(isset($click_department_data)){
-            $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
-            View::share('click_department_high', $click_department_high);
-        }
-
         //部署・人員の一覧表示領域のデータ表示
         //日付フォーマットを6桁にする
         $date = new Date();
@@ -517,8 +510,19 @@ class Psji01Controller extends Controller
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
         //上位階層取得
-        $department_high = $hierarchical->upperHierarchyName($departments);
-        $personnel_high = $hierarchical->upperHierarchyName($names);
+        $hierarchical = new Hierarchical();
+        try{
+            if(isset($click_department_data)){
+                $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
+                View::share('click_department_high', $click_department_high);
+            }
+            $department_high = $hierarchical->upperHierarchyName($departments);
+            $personnel_high = $hierarchical->upperHierarchyName($names);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::dataCatchMiss($e);
+            return redirect()->route('errormsg');
+        }
 
         //ツリーデータの取得
         $tree = new PtcmtrController();

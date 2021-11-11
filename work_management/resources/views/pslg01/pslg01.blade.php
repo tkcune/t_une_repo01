@@ -7,7 +7,6 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="container-fluid">
                     <div class="row">
-                        <!-- <P style="text-align: center">―　ログ確認　―</P> -->
                         <div class="col-3"></div>
                         <div class="col-6"></div>
                         <div class="col-3" style="text-align: right">―　ログページ　―</div>
@@ -16,43 +15,49 @@
                     <div class="row">
                         <p style="text-align: center">検索したい条件などを入力して「検索」ボタンを押してください</p>
                         <div class="col-4">
-                            <form action="{{ route('pslg01.create') }}" method="post">
-                                @csrf
 
-                                <p>顧客番号： <input type="text" name="name" style="width:100px;" placeholder="半角英数字で入力"></p>
-                                <p>顧客名　： <a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">　(例)前川一号生</a></p>
-                                <p class="box" title="入力に該当した顧客の候補を一覧に表示します。表示された人員を選択した場合、その番号が顧客番号に表示されます">顧客検索：　
-                                    <select class="box" style="width:100px;">
 
-                                        <option selected name="kokyaku_id" value=""></option>
+                            <p>顧客番号： <input type="text" name="name" style="width:100px;" placeholder="半角英数字で入力"></p>
+                            <p>顧客名　： <a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">　(例)前川一号生</a></p>
+                            <p class="box" title="入力に該当した顧客の候補を一覧に表示します。表示された人員を選択した場合、その番号が顧客番号に表示されます">顧客検索：　
+                                <select class="box" style="width:100px;">
 
-                                        @foreach($name_data as $parson)
-                                        <option name="kokyaku_id" value="{{$parson->client_id}}"> {{$parson->client_id}}</option>
-                                        @endforeach
-                                    </select>
-                                </p>
+                                    <option selected name="kokyaku_id" value=""></option>
+
+                                    @foreach($name_data as $parson)
+                                    <option name="kokyaku_id" value="{{old($parson->client_id)}}"> {{$parson->client_id}}</option>
+                                    @endforeach
+                                </select>
+                            </p>
+
                         </div>
                         <div class="col-4">
                             <p title="入力に該当した顧客の候補を一覧に表示します。表示された人員を選択した場合、その番号が顧客番号に表示されます。">部署人員番号：
-                                <input type="text" name="zinin" style="width: 100px;">
-                                <!-- <input type="text" style="width: 100px;" placeholder="半角英数字以外はNG出力対象とする部署番号　未入力で全ての部署人員"> -->
-                            </p>
-
-
+                           
+                            @isset($select_id)
+                                   <input type="text" name="zinin" value="{{old($select_id->personnel_id)}}" style="width: 100px;">
+                           @else
+                           <input type="text" name="zinin" value="{{old('zinin')}}" style="width: 100px;">
+                           @endif
+                                </p>
 
                             <p>部署人員名　：　<a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">前川一号生</a></p>
                             <!-- ※　クリックにより、顧客詳細に遷移する。 顧客番号に該当する部署の名称 -->
 
-                            <p title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が部署番号に表示されます。"> 部署人員検索：
-                                <input list="lists" id="myList" name="myList" style="width:100px" />
-                                <datalist id="lists">
+
+                            <form method="POST" action="{{route('pslg01.select')}}" id="one_answer_form">
+                                @csrf
+                                <span title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が部署番号に表示されます。"> 部署人員検索：</span>
+                                　<select onchange="submit(this.form)" name="one_answer" id="one_answer" style="width: 100px;">
+                                    <option selected></option> 　
                                     @foreach($name_data as $parson)
-                                    <option value="{{$parson->personnel_id}}"> {{$parson->name}}</option>
-                                    @endforeach
-                                    <!-- <option value="全角、半角英数字">
-                                    <option value="入力に該当した部署の候補を一覧表示し、選択とその番号が部署番号に表示される"> -->
-                                </datalist>
-                            </p>
+                                    <option name="personnel_id" value="{{old($parson->personnel_id)}}"> {{$parson->name}}</option>
+                                    　　@endforeach
+                                </select>
+
+                            </form>
+
+
                         </div>
                         <div class="col-4">
                             <?php $date = new DateTime('now'); ?>
@@ -88,7 +93,7 @@
                     </div>
 
                     <div class="row mt-3">
-                        <!-- <div class="col-1"></div> -->
+
                         <div class="col-10">　文字検索：<input type="text" name="kensaku" style="width:32rem;" placeholder="入力可能な文字数は３２  全角、半角英数字、一覧操作領域">
 
                         </div>
@@ -96,7 +101,7 @@
                             <input type="submit" id="formGroupExampleInput17" value="表示する">
                         </div>
                     </div>
-                    </form>
+
                     <div class="row mt-3">
                         <div class="col-10">
                         </div>
@@ -135,18 +140,8 @@
                                 </tbody>
                             </table>
 
-                            <!-- <div class="contents">
-                                    {{$item->program_pass}}
-                                </div> -->
-
                         </div>
-                        <!-- <div class="wrapper" style="overflow-y: scroll; background-color:white;">
-                                @foreach($items as $item)
-                                <div class="contents">
-                                    {{$item->program_pass}}
-                                </div>
-                                @endforeach
-                            </div> -->
+
                         @endif
                     </div>
                 </div>

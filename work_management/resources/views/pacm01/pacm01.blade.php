@@ -440,7 +440,7 @@
                     @if($click_personnel_data[0]->operation_end_date)
                     運用終了日:{{$click_personnel_data[0]->operation_end_date}}
                     @else
-                    運用開始日:未定
+                    運用終了日:未定
                     @endif
                     </p>
                     </div>

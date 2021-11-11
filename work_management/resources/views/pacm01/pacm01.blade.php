@@ -350,10 +350,14 @@
 
                 <div class="row">
                     <div class="col-5">
-                        <p>メールアドレス<input type="email" name="mail" maxlength="64" value="{{$click_personnel_data[0]->email}}"></p>
+                        <p>メールアドレス<input type="email" name="email" maxlength="64" value="{{$click_personnel_data[0]->email}}"></p>
                     </div>
                     <div class="col-4" style="padding:0px">
-                        <p id="login" @if($click_personnel_data[0]->login_authority == "0") visibility hidden @endif >パスワード<input id="password" type="password" maxlength="32" name="password"><input type="checkbox" onclick="passwordOn()"></p>
+                    @if($click_personnel_data[0]->login_authority == "1") 
+                        <p id="login">パスワード<input id="password" type="password" maxlength="32" name="password"><input type="checkbox" onclick="passwordOn()"></p>
+                    @else
+                        <input type="hidden" maxlength="32" name="password" value="ValidationOK">
+                    @endif
                     </div>
                     <div class="col">
                         <button>メール送信</button>
@@ -436,7 +440,7 @@
                     @if($click_personnel_data[0]->operation_end_date)
                     運用終了日:{{$click_personnel_data[0]->operation_end_date}}
                     @else
-                    運用開始日:未定
+                    運用終了日:未定
                     @endif
                     </p>
                     </div>
@@ -652,7 +656,7 @@
                             <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}">{{ $responsible_lists[$loop->index] }}</a></td>
                             <td>
                             【<a href="{{ route('clipboard',$department->department_id)}}">複写</a>】
-                            【<p id="bs_list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline;" onclick="event.preventDefault(); document.getElementById('bs_delete{{$loop->index}}').submit();">削除</p>】
+                            【<p id="bs_list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('bs_delete{{$loop->index}}').submit();">削除</p>】
                             <form id="bs_delete{{$loop->index}}" action="{{ route('psbs01.delete',[session('client_id'),$department->department_id])}}" method="post" style="display: none;">
                             @csrf
                             </form>
@@ -860,7 +864,7 @@
                             <td>{{$name->password_update_day}}</td>
                             <td>---------</td>
                             <td>【<a href="{{ route('clipboard',$name->personnel_id)}}">複写</a>】
-                            【<p id="list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
+                            【<p id="list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
                             <form id="delete{{$loop->index}}" action="{{ route('psji01.destroy',[session('client_id'),$name->personnel_id])}}" method="post" style="display: none;">
                             @csrf
                             </form>

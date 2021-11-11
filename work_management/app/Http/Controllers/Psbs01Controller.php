@@ -77,6 +77,14 @@ class Psbs01Controller extends Controller
         $management_personnel_id = $request->management_personnel_id;
         $high = $request->high;
 
+        //リクエストに空白が無いかどうかの確認
+        if(empty($name) || empty($status)){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
+            $message = Message::get_message('mhcmer0003',[0=>'']);
+            session(['message'=>$message[0]]);
+            return back();
+        }
+
         //顧客IDに対応した最新の部署IDを取得
         try{
             $id = DB::select('select department_id from dcbs01 where client_id = ? 
@@ -215,10 +223,16 @@ class Psbs01Controller extends Controller
 
             //選択した部署の配下を取得
             $hierarchical = new Hierarchical();
+            
             $select_lists = $hierarchical->subordinateSearch($lists,$client);
-          
             //選択したデータ及び配下データを取得
-            $lists = $hierarchical->subordinateGet($select_lists,$client);
+            try{
+                $lists = $hierarchical->subordinateGet($select_lists,$client);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::dataCatchMiss($e);
+                return redirect()->route('errormsg');
+            }
             $department_data = $lists[0];
             $personnel_data = $lists[1];
 
@@ -236,10 +250,6 @@ class Psbs01Controller extends Controller
             //日付を6桁に変換
             $date = new Date();
             $date->formatDate($click_department_data);
-       
-            //上位階層取得
-            $hierarchical = new Hierarchical();
-            $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
            
             //一覧表示データの取得
 
@@ -258,8 +268,16 @@ class Psbs01Controller extends Controller
             $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
             //上位階層取得
-            $department_high = $hierarchical->upperHierarchyName($departments);
-            $personnel_high = $hierarchical->upperHierarchyName($names);
+            $hierarchical = new Hierarchical();
+            try{
+                $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
+                $department_high = $hierarchical->upperHierarchyName($departments);
+                $personnel_high = $hierarchical->upperHierarchyName($names);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::dataCatchMiss($e);
+                return redirect()->route('errormsg');
+            }
 
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
@@ -359,8 +377,14 @@ class Psbs01Controller extends Controller
 
                 //上位階層取得
                 $hierarchical = new Hierarchical();
-                $department_high = $hierarchical->upperHierarchyName($departments);
-                $personnel_high = $hierarchical->upperHierarchyName($names);
+                try{
+                    $department_high = $hierarchical->upperHierarchyName($departments);
+                    $personnel_high = $hierarchical->upperHierarchyName($names);
+                }catch(\Exception $e){
+                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                    DatabaseException::dataCatchMiss($e);
+                    return redirect()->route('errormsg');
+                }
 
                 //ツリーデータの取得
                 $tree = new PtcmtrController();
@@ -415,8 +439,14 @@ class Psbs01Controller extends Controller
 
             //上位階層取得
             $hierarchical = new Hierarchical();
-            $department_high = $hierarchical->upperHierarchyName($departments);
-            $personnel_high = $hierarchical->upperHierarchyName($names);
+            try{
+                $department_high = $hierarchical->upperHierarchyName($departments);
+                $personnel_high = $hierarchical->upperHierarchyName($names);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::dataCatchMiss($e);
+                return redirect()->route('errormsg');
+            }
            
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
@@ -467,6 +497,14 @@ class Psbs01Controller extends Controller
         $management_number = $request->management_number;
         $responsible_person_id = $request->responsible_person_id;
         $status = $request->status;
+
+        //リクエストに空白が無いかどうかの確認
+        if(empty($name) || empty($status) || empty($management_number)){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
+            $message = Message::get_message('mhcmer0003',[0=>'']);
+            session(['message'=>$message[0]]);
+            return back();
+        }
         
         //入力された番号の人員が存在するかの確認
         try{
@@ -866,13 +904,6 @@ class Psbs01Controller extends Controller
             View::share('click_management_lists', $click_management_lists);
         }
 
-        //上位階層取得
-        $hierarchical = new Hierarchical();
-        if(isset($click_department_data)){
-            $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
-            View::share('click_department_high', $click_department_high);
-        }
-
         //部署・人員の一覧表示領域のデータ表示
         //日付フォーマットを6桁にする
         $date = new Date();
@@ -890,8 +921,19 @@ class Psbs01Controller extends Controller
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
         //上位階層取得
-        $department_high = $hierarchical->upperHierarchyName($departments);
-        $personnel_high = $hierarchical->upperHierarchyName($names);
+        $hierarchical = new Hierarchical();
+        try{
+            if(isset($click_department_data)){
+                $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
+                View::share('click_department_high', $click_department_high);
+            }
+            $department_high = $hierarchical->upperHierarchyName($departments);
+            $personnel_high = $hierarchical->upperHierarchyName($names);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::dataCatchMiss($e);
+            return redirect()->route('errormsg');
+        }
 
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
@@ -908,10 +950,13 @@ class Psbs01Controller extends Controller
      * @var string $client_id 顧客ID
      * @var string $copy_id 複製するID
      * @var string $high 複製IDが所属する上位階層ID
-     * @var array  $copy_department 複製するデータ
-     * @var array  $id 存在する部署内での最新の部署ID
-     * @var string $department_id 登録する部署ID
-     * @var App\Librarys\php\ZeroPadding $padding
+     * @var string $id 複製前の最新の部署ID
+     * @var string $id2 複製前の最新の人員ID
+     * @var string $id_num 複製前の最新の部署IDの数字部分
+     * @var string $id2_num 複製前の最新の部署IDの数字部分
+     * @var string $number 8桁に0埋めした複製前の最新の部署IDの数字部分
+     * @var string $number2　8桁に0埋めした複製前の最新の人員IDの数字部分
+     * @var App\Librarys\php\Hierarchical $hierarchical
      * 
      * @return \Illuminate\Http\Response
      */
@@ -924,17 +969,9 @@ class Psbs01Controller extends Controller
         if($request->copy_id == null){
             return redirect()->route('index');
         }
-        //複製するデータの取得
-        try{
-            $copy_department = DB::select('select * from dcbs01 where client_id = ? 
-            and department_id = ?',[$client_id,$copy_id]);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('index');
-        }
 
-        //顧客IDに対応した最新の部署IDを取得
+        //複製動作
+        //複製前の最新の部署番号を取得
         try{
             $id = DB::select('select department_id from dcbs01 where client_id = ? 
             order by department_id desc limit 1',[$client_id]);
@@ -943,48 +980,21 @@ class Psbs01Controller extends Controller
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-
-        //登録する番号を作成
-        $padding = new ZeroPadding();
-        $department_id = $padding->padding($id[0]->department_id);
-
-        //データベースに部署情報を登録
+        //複製前の最新の人員番号を取得
         try{
-            DB::insert('insert into dcbs01
-            (client_id,
-            department_id,
-            responsible_person_id,
-            name,
-            status,
-            management_personnel_id,
-            operation_start_date,
-            operation_end_date)
-            VALUE (?,?,?,?,?,?,?,?)',
-            [$client_id,
-            $department_id,
-            $copy_department[0]->responsible_person_id,
-            $copy_department[0]->name,
-            $copy_department[0]->status,
-            $copy_department[0]->management_personnel_id,
-            $copy_department[0]->operation_start_date,
-            $copy_department[0]->operation_end_date]);
+            $id2 = DB::select('select personnel_id from dcji01 where client_id = ? 
+            order by personnel_id desc limit 1',[$client_id]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-
-        //データベースに階層情報を登録
-        try{
-            DB::insert('insert into dccmks
-            (client_id,lower_id,high_id)
-            VALUE (?,?,?)',
-            [$client_id,$department_id,$high]);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('index');
-        }
+        $id_num = substr($id[0]->department_id,3);
+        $id2_num = substr($id2[0]->personnel_id,3);
+        $number = str_pad($id_num, 8, '0', STR_PAD_LEFT);
+        $number2 = str_pad($id2_num, 8, '0', STR_PAD_LEFT);
+        $hierarchical = new Hierarchical();
+        $hierarchical->subordinateCopy($copy_id,$client_id,$high,$number,$number2);
 
         //ログ処理
         OutputLog::message_log(__FUNCTION__, 'mhcmok0009');

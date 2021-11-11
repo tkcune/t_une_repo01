@@ -77,6 +77,14 @@ class Psbs01Controller extends Controller
         $management_personnel_id = $request->management_personnel_id;
         $high = $request->high;
 
+        //リクエストに空白が無いかどうかの確認
+        if(empty($name) || empty($status)){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
+            $message = Message::get_message('mhcmer0003',[0=>'']);
+            session(['message'=>$message[0]]);
+            return back();
+        }
+
         //顧客IDに対応した最新の部署IDを取得
         try{
             $id = DB::select('select department_id from dcbs01 where client_id = ? 
@@ -489,6 +497,14 @@ class Psbs01Controller extends Controller
         $management_number = $request->management_number;
         $responsible_person_id = $request->responsible_person_id;
         $status = $request->status;
+
+        //リクエストに空白が無いかどうかの確認
+        if(empty($name) || empty($status) || empty($management_number)){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
+            $message = Message::get_message('mhcmer0003',[0=>'']);
+            session(['message'=>$message[0]]);
+            return back();
+        }
         
         //入力された番号の人員が存在するかの確認
         try{

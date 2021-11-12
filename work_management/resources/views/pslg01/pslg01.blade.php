@@ -16,16 +16,20 @@
                         <p style="text-align: center">検索したい条件などを入力して「検索」ボタンを押してください</p>
                         <div class="col-4">
 
+                            <form action="{{route('pslg01.create')}}" method="post" id="create">
+                                @csrf
+                            </form>
 
                             <p>顧客番号： <input type="text" name="name" style="width:100px;" placeholder="半角英数字で入力"></p>
                             <p>顧客名　： <a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">　(例)前川一号生</a></p>
+
                             <p class="box" title="入力に該当した顧客の候補を一覧に表示します。表示された人員を選択した場合、その番号が顧客番号に表示されます">顧客検索：　
                                 <select class="box" style="width:100px;">
 
                                     <option selected name="kokyaku_id" value=""></option>
+                                    @foreach($session_names as $parson)
 
-                                    @foreach($name_data as $parson)
-                                    <option name="kokyaku_id" value="{{old($parson->client_id)}}"> {{$parson->client_id}}</option>
+                                    <option name="client_id" value="{{$parson->client_id}}"> {{$parson->client_id}}</option>
                                     @endforeach
                                 </select>
                             </p>
@@ -33,74 +37,86 @@
                         </div>
                         <div class="col-4">
                             <p title="入力に該当した顧客の候補を一覧に表示します。表示された人員を選択した場合、その番号が顧客番号に表示されます。">部署人員番号：
-                           
-                            @isset($select_id)
-                                   <input type="text" name="zinin" value="{{old($select_id->personnel_id)}}" style="width: 100px;">
-                           @else
-                           <input type="text" name="zinin" value="{{old('zinin')}}" style="width: 100px;">
-                           @endif
-                                </p>
+
+                                <?php if (isset($select_id)) : ?>
+                                    <input type="text" name="zinin" value="{{$select_id}}" style="width: 100px;">
+
+                                <?php else : ?>
+                                    <input type="text" name="zinin" value="{{old('zinin')}}" style="width: 100px;" form="create">
+                                <?php endif ?>
+
 
                             <p>部署人員名　：　<a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">前川一号生</a></p>
                             <!-- ※　クリックにより、顧客詳細に遷移する。 顧客番号に該当する部署の名称 -->
 
 
-                            <form method="POST" action="{{route('pslg01.select')}}" id="one_answer_form">
+                            <form method="POST" action="{{route('pslg01.select')}}" id="one_answer_form" style="display:inline-flex">
                                 @csrf
-                                <span title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が部署番号に表示されます。"> 部署人員検索：</span>
-                                　<select onchange="submit(this.form)" name="one_answer" id="one_answer" style="width: 100px;">
-                                    <option selected></option> 　
-                                    @foreach($name_data as $parson)
-                                    <option name="personnel_id" value="{{old($parson->personnel_id)}}"> {{$parson->name}}</option>
+                                <p class="box" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が部署番号に表示されます。"> 部署人員検索：</p>
+                                　<select onchange="submit(this.form)" name="one_answer" id="one_answer" class="box" style="width:100px; height:25px;">
+                                    　
+                                    @foreach($session_names as $session_name)
+                                    <option name="personnel_id" value="{{$session_name->personnel_id}}"> {{$session_name->name}}</option>
                                     　　@endforeach
+                                    @isset($select_name)
+                                    <option name="personnel_id" value="{{$session_name->personnel_id}}" selected>{{$select_name}}</option>
+                                    @endif
                                 </select>
 
                             </form>
 
 
+
                         </div>
                         <div class="col-4">
                             <?php $date = new DateTime('now'); ?>
-                            <p>開始年月日：<input type="date" name="startdate" style="width:120px;"></p>
-                            <p>終了年月日：<input type="date" name="finishdate" style="width:120px;"></p>
-                            <!-- <p title="開始年月日時刻を表示します"> 開始年月日時刻　： <?= $date->format('m月d日'); ?>　0時0分</p>
-                <p title="終了年月日時刻を表示します"> 終了年月日時刻　： <?= $date->format('m月d日'); ?></p> -->
+                            <p>開始年月日：<input type="date" name="startdate" style="width:120px;" form="create"></p>
+                            <p>終了年月日：<input type="date" name="finishdate" style="width:120px;" form="create"></p>
+
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+                    <div class="row justify-content-start">
+                        <div class="col-4">
+                            　<input type="checkbox" name="check[]" value="nm" title="通常メッセージログを表示するかどうかを指定します" form="create"> 通常メッセージ
+                        </div>
+                        <div class="col-4">
+                            　<input type="checkbox" name="check[]" value="wn" title="警告メッセージログを表示するかどうかを指定します" form="create" checked> 警告メッセージ
+                        </div>
+                        <div class="col-4">
+                            　<input type="checkbox" name="check[]" value="er" title="異常メッセージログを表示するかどうかを指定します" form="create" checked> 異常メッセージ
                         </div>
                     </div>
 
                     <div class="row justify-content-start">
                         <div class="col-4">
-                            　<input type="checkbox" name="check" title="通常メッセージログを表示するかどうかを指定します"> 通常メッセージ
+                            <input type="checkbox" name="check[]" value="ok" title="正常メッセージログを表示するかどうかを指定します" checked form="create"> 正常メッセージ
                         </div>
                         <div class="col-4">
-                            　<input type="checkbox" name="check" title="警告メッセージログを表示するかどうかを指定します" checked> 警告メッセージ
+                            <input type="checkbox" name="check[]" value="si" title="システム情報メッセージログを表示するかどうかを指定します" form="create"> システム情報メッセージ
                         </div>
                         <div class="col-4">
-                            　<input type="checkbox" name="check" title="異常メッセージログを表示するかどうかを指定します" checked> 異常メッセージ
-                        </div>
-                    </div>
-
-                    <div class="row justify-content-start">
-                        <div class="col-4">
-                            　<input type="checkbox" name="check" title="正常メッセージログを表示するかどうかを指定します" checked> 正常メッセージ
-                        </div>
-                        <div class="col-4">
-                            <input type="checkbox" name="check" title="システム情報メッセージログを表示するかどうかを指定します"> システム情報メッセージ
-                        </div>
-                        <div class="col-4">
-                            <input type="checkbox" name="check" title="システム異常メッセージログを表示するかどうかを指定します"> システム異常メッセージ
+                            <input type="checkbox" name="check[]" value="sy" title="システム異常メッセージログを表示するかどうかを指定します" form="create"> システム異常メッセージ
                         </div>
                     </div>
 
                     <div class="row mt-3">
 
-                        <div class="col-10">　文字検索：<input type="text" name="kensaku" style="width:32rem;" placeholder="入力可能な文字数は３２  全角、半角英数字、一覧操作領域">
+                        <div class="col-10">　文字検索：<input type="text" name="kensaku" style="width:32rem;" placeholder="入力可能な文字数は３２  全角、半角英数字、一覧操作領域" form="create">
 
                         </div>
                         <div class="col-2">
-                            <input type="submit" id="formGroupExampleInput17" value="表示する">
+                            <input type="submit" value="表示する" form="create">
                         </div>
+
                     </div>
+
 
                     <div class="row mt-3">
                         <div class="col-10">

@@ -458,7 +458,7 @@
     {{-- 人員の詳細表示　ここまで--}}
     @endif
         <div id="list-open-button" style="display:none;" onclick="listOn()">
-            <p style="text-align:center;">↓</p>
+            <p style="text-align:center; cursor: hand; cursor:pointer; background:#99CCFF; border:solid 1px;">↓</p>
         </div>
         <div class="list-area" id="list">
             <div class="department-area">
@@ -607,7 +607,7 @@
 
                         </form>
                         <div style="padding-left:100px;"onclick="listOn()">
-                            <p>✕</p>
+                            <p style="cursor: hand; cursor:pointer;">✕</p>
                         </div>
                         </div>  
                     </div>

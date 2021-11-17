@@ -740,7 +740,11 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
+                                @if($personnel_max == 0)
+                                0/0
+                                @else
                                 {{$count_personnel}}/{{$personnel_max}}
+                                @endif
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
                                     <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">

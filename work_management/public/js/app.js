@@ -1991,15 +1991,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "TreeAction": () => (/* binding */ TreeAction)
 /* harmony export */ });
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _ptcmcb__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ptcmcb */ "./resources/js/work_js/ptcmcb.js");
+/* harmony import */ var _ptcmcb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ptcmcb */ "./resources/js/work_js/ptcmcb.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
 
  //@var TreeActionクラス 公開するクラス,ツリー機能クラス
 
@@ -2239,9 +2236,9 @@ TreeAction.node = /*#__PURE__*/function () {
 
       this.node.focus(); //クリップボードに選択したノードクラスのidとディレクトリを保存する
 
-      _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.select(this.node.dir, this.node.id); //選択したノードがカレントノード
+      _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(this.node.dir, this.node.id); //選択したノードがカレントノード
 
-      _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.current(_ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getSelectDir(), _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getSelectId()); //選択したノードの親要素がマイツリーである場合は、本来のノードクラスまでツリーを開く
+      _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectDir(), _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectId()); //選択したノードの親要素がマイツリーである場合は、本来のノードクラスまでツリーを開く
 
       if (topDir === "マイツリー") {
         //@var string id 選択したノードクラスのid
@@ -2257,7 +2254,7 @@ TreeAction.node = /*#__PURE__*/function () {
     key: "focus",
     value: function focus() {
       //@var string beforeSelectId 前回選択したid
-      var beforeSelectId = _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getCurrentId(); //@var Nodeクラス beforeSelect　前回選択したノードクラス
+      var beforeSelectId = _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(); //@var Nodeクラス beforeSelect　前回選択したノードクラス
 
       var beforeSelect = this.prototype.chainparser.searchNodeId(beforeSelectId, this.prototype.tree); //前回選択したノードクラスのフォーカスを消す
 
@@ -3360,8 +3357,8 @@ TreeAction = function (treesepalete, projectionChain) {
 
     node.focus(); //クリップボードのデータをカレントにする
 
-    _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.select(node.dir, node.id);
-    _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.current(node.dir, node.id);
+    _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(node.dir, node.id);
+    _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(node.dir, node.id);
   }; //titleboxのディレクトリを取得する
   //@var dom 取得したいディレクトリのdom
   //@return string ディレクトリ
@@ -3506,23 +3503,23 @@ TreeAction = function (treesepalete, projectionChain) {
       node.focus(); //クリップボードのデータをカレントにする
 
       currentClipboard(node);
+    } else if (document.location.pathname.split('/')[1] === '') {
+      //indexルートの場合
+      //@var Nodeクラス カレントにするノード 
+      var _node7 = chainparser.searchNodeId('bs00000001', tree);
+
+      if (_node7 !== null && _node7 !== undefined) {
+        _node7.openBottomUpTree();
+
+        _node7.focus();
+
+        currentClipboard(_node7);
+      }
     } else {
       //複写、移動、削除の場合
       if (document.getElementById('back_treeaction').value === 'delete') {
         //@var Nodeクラス ツリーの開くノード
-        var _node7 = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree); //ノードを開く
-
-
-        _node7.openBottomUpTree(); //ノードをカレントにする
-
-
-        _node7.focus(); //クリップボードのデータをカレントにする
-
-
-        currentClipboard(_node7);
-      } else if (document.getElementById('back_treeaction').value === 'open') {
-        //@var Nodeクラス ツリーの開くノード
-        var _node8 = chainparser.searchPalentNode(document.getElementById('action_node_id').value, tree); //ノードを開く
+        var _node8 = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree); //ノードを開く
 
 
         _node8.openBottomUpTree(); //ノードをカレントにする
@@ -3532,42 +3529,54 @@ TreeAction = function (treesepalete, projectionChain) {
 
 
         currentClipboard(_node8);
+      } else if (document.getElementById('back_treeaction').value === 'open') {
+        //@var Nodeクラス ツリーの開くノード
+        var _node9 = chainparser.searchPalentNode(document.getElementById('action_node_id').value, tree); //ノードを開く
+
+
+        _node9.openBottomUpTree(); //ノードをカレントにする
+
+
+        _node9.focus(); //クリップボードのデータをカレントにする
+
+
+        currentClipboard(_node9);
       } else {
         //showルーティングでも、ツリー機能ルーティングでもない場合
         //@var Nodeクラス カレントにするノード 
-        var _node9 = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getCurrentId(), tree);
+        var _node10 = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(), tree);
 
-        if (_node9 !== null && _node9 !== undefined) {
-          _node9.openBottomUpTree();
+        if (_node10 !== null && _node10 !== undefined) {
+          _node10.openBottomUpTree();
 
-          _node9.focus();
+          _node10.focus();
 
-          currentClipboard(_node9);
+          currentClipboard(_node10);
         }
       }
     }
   }); //ページ移動前のクリップボードのデータの保存
 
   var storeClipboard = function storeClipboard() {
-    localStorage.setItem('currentId', _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getCurrentId());
-    localStorage.setItem('currentDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getCurrentDir());
-    localStorage.setItem('selectId', _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getSelectId());
-    localStorage.setItem('selectDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getSelectDir());
-    localStorage.setItem('copyId', _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getCopyId());
-    localStorage.setItem('copyDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getCopyDir());
+    localStorage.setItem('currentId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId());
+    localStorage.setItem('currentDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentDir());
+    localStorage.setItem('selectId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectId());
+    localStorage.setItem('selectDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectDir());
+    localStorage.setItem('copyId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCopyId());
+    localStorage.setItem('copyDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCopyDir());
   }; //ページ移動後のクリップボードのデータの復元
 
 
   var restoreClipboard = function restoreClipboard() {
-    _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.current(localStorage.getItem('currentDir'), localStorage.getItem('currentId'));
-    _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.select(localStorage.getItem('selectDir'), localStorage.getItem('selectId'));
-    _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.copyNode(localStorage.getItem('copyDir'), localStorage.getItem('copyId'));
+    _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(localStorage.getItem('currentDir'), localStorage.getItem('currentId'));
+    _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(localStorage.getItem('selectDir'), localStorage.getItem('selectId'));
+    _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.copyNode(localStorage.getItem('copyDir'), localStorage.getItem('copyId'));
   }; //カレントのデータをクリップボードのデータに代入する
 
 
   var currentClipboard = function currentClipboard(node) {
-    _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.current(node.dir, node.id);
-    _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.select(node.dir, node.id);
+    _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(node.dir, node.id);
+    _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(node.dir, node.id);
   }; //ページ移動後にページ移動前のノードを開く
 
 
@@ -21131,18 +21140,6 @@ process.umask = function() { return 0; };
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
 /******/ 		};
 /******/ 	})();
 /******/ 	

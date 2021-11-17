@@ -1,4 +1,3 @@
-import { toUpper } from 'lodash';
 import {clipboard} from './ptcmcb';
 
 //@var TreeActionクラス 公開するクラス,ツリー機能クラス
@@ -1561,6 +1560,16 @@ TreeAction = ((treesepalete, projectionChain) => {
       node.focus();
       //クリップボードのデータをカレントにする
       currentClipboard(node);
+    }else if(document.location.pathname.split('/')[1] === ''){
+      //indexルートの場合
+      //@var Nodeクラス カレントにするノード 
+      let node = chainparser.searchNodeId('bs00000001', tree);
+      
+      if(node !== null && node !== undefined){
+        node.openBottomUpTree();
+        node.focus();
+        currentClipboard(node);
+      }
     }else{
       //複写、移動、削除の場合
       if(document.getElementById('back_treeaction').value === 'delete'){

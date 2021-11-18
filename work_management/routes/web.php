@@ -65,6 +65,7 @@ Route::post('/ptcmdelete/{id}/{id2}',[Ptcm01Controller::class,'delete'])->name('
 Route::get('/test', [Pslg01Controller::class,'index'])->name('test');
 Route::post('/create', [Pslg01Controller::class,'create'])->name('pslg01.create');
 Route::post('/test', [Pslg01Controller::class,'select'])->name('pslg01.select');
+Route::post('/test/download', [Pslg01Controller::class,'download'])->name('pslg01.download');
 // Route::post('/test', [Pslg01Controller::class,'select'])->name('pslg01.client');
 ;
 

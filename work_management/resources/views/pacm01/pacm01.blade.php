@@ -38,19 +38,20 @@
                         <p>管理者名：{{$top_management[0]}}</p>
                     </div>
                     <div class="col" style="padding:0px">
+
                     <p>管理者検索：
-                        <input type="text" list="keywords" style="width:150px;"
+                        <input type="text" id="search-list" list="keywords" style="width:150px;"autocomplete="on"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
 @for($j = 0; $j < count($personnel_data);$j++)
 @if($personnel_data[$j]->system_management == 1)
-                            <option value="{{$personnel_data[$j]->name}}" data-id="{{$personnel_data[$j]->personnel_id}}"></option>
+                            <option value="{{$personnel_data[$j]->name}}" label="{{$personnel_data[$j]->personnel_id}}"></option>
 @endif
 @endfor
                         </datalist>
-                        <input type="submit" value="表示" onclick="search()">
                     </p>
                     </div>
+                    <div id="output_message"></div>
                 </div>
 
                 <div class="row">
@@ -172,7 +173,7 @@
 
                 <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" name="management_number" maxlength="10" value="{{$click_department_data[0]->management_personnel_id}}" style="width:100px;"
+                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$click_department_data[0]->management_personnel_id}}" style="width:100px;"
                         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
@@ -180,12 +181,12 @@
                     </div>
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
-                        <input type="search" list="keywords" style="width:150px;"
+                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
 @for($j = 0; $j < count($personnel_data);$j++)
 @if($personnel_data[$j]->system_management == 1)
-                            <option value="{{$personnel_data[$j]->name}}" data-id="{{$personnel_data[$j]->personnel_id}}"></option>
+                            <option value="{{$personnel_data[$j]->name}}" label="{{$personnel_data[$j]->personnel_id}}"></option>
 @endif
 @endfor
                         </datalist>
@@ -327,7 +328,7 @@
 
                 <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" name="management_number" maxlength="10" value="{{$click_personnel_data[0]->management_personnel_id}}" style="width:100px;"
+                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$click_personnel_data[0]->management_personnel_id}}" style="width:100px;"
                         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
@@ -335,12 +336,12 @@
                     </div>
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
-                        <input type="search" list="keywords" style="width:150px;"
+                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
 @for($j = 0; $j < count($personnel_data);$j++)
 @if($personnel_data[$j]->system_management == 1)
-                            <option value="{{$personnel_data[$j]->name}}" data-id="{{$personnel_data[$j]->personnel_id}}"></option>
+                            <option value="{{$personnel_data[$j]->name}}" label="{{$personnel_data[$j]->personnel_id}}"></option>
 @endif
 @endfor
                         </datalist>
@@ -457,7 +458,7 @@
     {{-- 人員の詳細表示　ここまで--}}
     @endif
         <div id="list-open-button" style="display:none;" onclick="listOn()">
-            <p style="text-align:center;">↓</p>
+            <p style="text-align:center; cursor: hand; cursor:pointer; background:#99CCFF; border:solid 1px;">↓</p>
         </div>
         <div class="list-area" id="list">
             <div class="department-area">
@@ -606,7 +607,7 @@
 
                         </form>
                         <div style="padding-left:100px;"onclick="listOn()">
-                            <p>✕</p>
+                            <p style="cursor: hand; cursor:pointer;">✕</p>
                         </div>
                         </div>  
                     </div>
@@ -739,7 +740,11 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
+                                @if($personnel_max == 0)
+                                0/0
+                                @else
                                 {{$count_personnel}}/{{$personnel_max}}
+                                @endif
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
                                     <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">

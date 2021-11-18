@@ -542,7 +542,7 @@ class Pa0001Controller extends Controller
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
             //責任者を名前で取得
-            $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
+            $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
             //上位階層取得
             $hierarchical = new Hierarchical();

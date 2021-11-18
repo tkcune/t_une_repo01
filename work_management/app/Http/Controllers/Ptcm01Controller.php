@@ -183,7 +183,7 @@ class Ptcm01Controller extends Controller
         OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
         $message = Message::get_message('mhcmok0003',[0=>'']);
         session(['message'=>$message[0]]);
-        PtcmtrController::delete_node($high_id);
-        return redirect()->route('index');
+        PtcmtrController::delete_node($high_id[0]->high_id);
+        return redirect()->route('plbs01.show',[$id,$high_id[0]->high_id]);
     }
 }

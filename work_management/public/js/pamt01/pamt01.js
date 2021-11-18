@@ -172,17 +172,28 @@ function clickDelete()
 
 /**
  * 管理者検索メソッド
- * @var string id IDを格納する引数
+ * @var string name  入力した人員名
+ * @var int    count optionの個数
+ * @var string label 入力した人員の人員番号   
  * 
  */
 
  function search()
  {
-   document.getElementById("keywords").data();
-  
-   console.log( result );
-   
-   document.getElementById("management_number").defaultValue = id;
+   //
+   var name = document.getElementById("search-list").value;
 
+   //optionの個数を判断する
+   const count = document.getElementById('search-list').list.options;
+
+   for(i=0;i<count.length;i++){
+     if(name == document.getElementById('search-list').list.options[i].value){
+       label = document.getElementById('search-list').list.options[i].getAttribute('label');
+     }
+   }
+
+   document.getElementById("management_number").defaultValue = label;
  }
+ document.getElementById("search-list").onchange = search;
+
 

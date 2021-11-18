@@ -19,13 +19,18 @@ class Pslg01Controller extends Controller
 
         $name_data = DB::table('dcji01')->get();
 
-      session()->put('name_data',$name_data);
-      $session_names = session()->get('name_data');
+        session()->put('name_data', $name_data);
+        $session_names = session()->get('name_data');
 
-    //   dd($session_names);
 
         return view('pslg01.pslg01', ['session_names' => $session_names]);
     }
+
+
+    /**
+     * 表示するをクリックによりログ一覧を表示する
+     * 
+     */
 
     public function create(Request $request)
     {
@@ -33,32 +38,25 @@ class Pslg01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        // $check = $request->input('check');
-
-        $check = $request->all();
-
-      
-
-
-        // $items = DB::table('dclg01')
-        //     ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
-        //     ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id')
-        //     ->where('dclg01.user', '=', 'yamada@itirou.com')
-        //     ->get();
-
-
+       
+        // ログ表示に該当するものをselectする
         $items = DB::table('dclg01')
-        ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
-        ->select('dclg01.*','dcji01.name','dcji01.personnel_id')
-        ->where('dclg01.user','=','yamada@itirou.com')                                  
-        ->orwhere('dclg01.check','=','$request->check')                                  
-        ->orwhere('dclg01.log','like',"%$request->log%")                                  
-        ->get();
-
+            ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
+            ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id')
+            ->where('dcji01.name','=',$request->select_name)
+            ->whereIn('dclg01.type', $request->check)
+            ->where('dclg01.created_at','like', "%$request->startdate%")
+            ->where('dclg01.updated_at','like', "%$request->finishdate%")
+            ->where('dclg01.log', 'like', "%$request->kensaku%")
+            ->get();
+        
+            dd($items);
+         
+        // ログの結果の件数を抽出する
         $count = count($items);
 
+        // データを抽出かつ、sessinからname_dataとselect_nameを抽出する
         $name_data = DB::table('dcji01')->get();
-
         $session_names = session()->get('name_data');
         $select_name = session()->get('select_name');
 
@@ -72,42 +70,59 @@ class Pslg01Controller extends Controller
         ]);
     }
 
-public function client(Request $request)
-{
-        // ツリーのデーターを宣言する
-        $tree = new PtcmtrController();
-        $tree_data = $tree->set_view_treedata();
-       
-        $client_all = DB::table('dcji01')->where('client_id','=',$request->client_id)->get();
 
-        session()->put('client_id',$client_all[0]->personnel_id);
-        session()->put('client_name',$client_all[0]->name);
-}
+    /**
+     * 顧客抽出する
+     * 
+     */
 
+    // public function client(Request $request)
+    // {
+    //     // ツリーのデーターを宣言する
+    //     $tree = new PtcmtrController();
+    //     $tree_data = $tree->set_view_treedata();
+
+    //     $client_all = DB::table('dcji01')->where('client_id', '=', $request->client_id)->get();
+
+    //     session()->put('client_id', $client_all[0]->personnel_id);
+    //     session()->put('client_name', $client_all[0]->name);
+    // }
+
+
+    /**
+     * セレクトボックスの名前から部員のIDと名前を表示する
+     */
     public function select(Request $request)
     {
         // ツリーのデーターを宣言する
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
-       
-       
-        $select_all = DB::table('dcji01')->where('personnel_id', '=', $request->one_answer)->get();
-         
 
-        session()->put('select_id',$select_all[0]->personnel_id);
-        session()->put('select_name',$select_all[0]->name);
+
+        if($request->personnel_id == '0'){
+            return back();
+        }else{
+
+       
+
+        // セレクトボックスで選択された部員の情報を抽出する
+        $select_all = DB::table('dcji01')->where('personnel_id', '=', $request->personnel_id)->get();
+
+        // 抽出したデータの部員IDと部員名をsessionで保存する
+        session()->put('select_id', $select_all[0]->personnel_id);
+        session()->put('select_name', $select_all[0]->name);
+        
+        // sessionから部員IDと部位名および部員検索で表示する部員一覧を取得する
         $select_id = session()->get('select_id');
         $select_name = session()->get('select_name');
-       
-
         $session_names = session()->get('name_data');
-     
-    
 
-        return view('pslg01.pslg01',[
-            'select_id'=>$select_id,
-            'select_name'=>$select_name,
+
+        return view('pslg01.pslg01', [
+            'select_id' => $select_id,
+            'select_name' => $select_name,
             'session_names' => $session_names
         ]);
+    }
     }
 }

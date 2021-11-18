@@ -62,7 +62,7 @@ Route::post('/jidestroy/{id}/{id2}',[Psji01Controller::class,'destroy'])->name('
 
 Route::post('/ptcmdelete/{id}/{id2}',[Ptcm01Controller::class,'delete'])->name('ptcm01.delete');
 
-Route::get('/test', [Pslg01Controller::class,'index']);
+Route::get('/test', [Pslg01Controller::class,'index'])->name('test');
 Route::post('/create', [Pslg01Controller::class,'create'])->name('pslg01.create');
 Route::post('/test', [Pslg01Controller::class,'select'])->name('pslg01.select');
 // Route::post('/test', [Pslg01Controller::class,'select'])->name('pslg01.client');

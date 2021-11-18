@@ -13,7 +13,7 @@
                     </div>
 
                     <div class="row">
-                        <p style="text-align: center">検索したい条件などを入力して「検索」ボタンを押してください</p>
+                        <p style="text-align: center">検索したい条件などを入力して「表示する」ボタンを押してください</p>
                         <div class="col-4">
 
                             <form action="{{route('pslg01.create')}}" method="post" id="create">
@@ -37,14 +37,12 @@
                         </div>
                         <div class="col-4">
                             <p title="入力に該当した顧客の候補を一覧に表示します。表示された人員を選択した場合、その番号が顧客番号に表示されます。">部署人員番号：
-
                                 <?php if (isset($select_id)) : ?>
-                                    <input type="text" name="zinin" value="{{$select_id}}" style="width: 100px;">
+                                    <input type="text" name="personnel_id" value="{{$select_id}}" style="width: 100px;" form="create">
 
                                 <?php else : ?>
-                                    <input type="text" name="zinin" value="{{old('zinin')}}" style="width: 100px;" form="create">
+                                    <input type="text"  name="personnel_id" value="{{old('personnel_id')}}" style="width: 100px;" form="create">
                                 <?php endif ?>
-
 
                             <p>部署人員名　：　<a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">前川一号生</a></p>
                             <!-- ※　クリックにより、顧客詳細に遷移する。 顧客番号に該当する部署の名称 -->
@@ -53,8 +51,8 @@
                             <form method="POST" action="{{route('pslg01.select')}}" id="one_answer_form" style="display:inline-flex">
                                 @csrf
                                 <p class="box" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が部署番号に表示されます。"> 部署人員検索：</p>
-                                　<select onchange="submit(this.form)" name="one_answer" id="one_answer" class="box" style="width:100px; height:25px;">
-                                    　
+                                　<select onchange="submit(this.form)" name="personnel_id" id="one_answer" class="box" style="width:100px; height:25px;" >
+                                　   <option name="personnel_id" value="0" selected> </option>
                                     @foreach($session_names as $session_name)
                                     <option name="personnel_id" value="{{$session_name->personnel_id}}"> {{$session_name->name}}</option>
                                     　　@endforeach
@@ -64,8 +62,9 @@
                                 </select>
 
                             </form>
-
-
+                            @isset($select_name)
+                            　<input type="hidden" name="select_name" value="{{$select_name}}"  form="create" >
+                            @endif
 
                         </div>
                         <div class="col-4">
@@ -75,12 +74,6 @@
 
                         </div>
                     </div>
-
-
-
-
-
-
 
                     <div class="row justify-content-start">
                         <div class="col-4">
@@ -129,14 +122,18 @@
                     </div>
                     <div class="row">
                         @isset($items)
-                        <div class="wrapper" style="overflow-y: scroll; background-color:white;">
-                            <table class="table">
+                        <div class="wrapper" style="overflow-y: scroll; background-color:white; height:20rem">
+                            <table class="table" style="font-size:12px; word-break : break-all;">
 
                                 <thead>
                                     <tr>
                                         <th scope="col">開始日 </th>
                                         <th scope="col">終了日</th>
-                                        <th scope="col">log</th>
+                                        <th scope="col">類別</th>
+                                        <th scope="col">アクセスユーザー</th>
+                                        <th scope="col">機能</th>
+                                        <th scope="col">プログラムパス</th>
+                                        <th scope="col">ログ</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -146,9 +143,13 @@
                                     $finish_date = $item->updated_at;
                                     @endphp
 
-                                    <tr>
+                                    <tr >
                                         <td> {{date('Y年m月d日', strtotime($start_date))}}0時0分</td>
                                         <td> {{date('Y年m月d日', strtotime($finish_date))}}</td>
+                                        <td> {{$item->type}}</td>
+                                        <td> {{$item->name}}</td>
+                                        <td> {{$item->function}}</td>
+                                        <td> {{$item->program_pass}}</td>
                                         <td> {{$item->log}}</td>
                                     </tr>
                                     @endforeach
@@ -159,6 +160,9 @@
                         </div>
 
                         @endif
+<input type="submit" value="ダウンロードする">
+
+                        
                     </div>
                 </div>
             </div>

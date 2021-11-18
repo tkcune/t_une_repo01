@@ -163,7 +163,7 @@ class Psji01Controller extends Controller
         }
 
         PtcmtrController::open_node($personnel_id);
-        return redirect()->route('index');
+        return redirect()->route('plbs01.show',[$client_id,$high]);
     }
 
     /**

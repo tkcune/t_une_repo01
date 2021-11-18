@@ -148,7 +148,7 @@ class Psbs01Controller extends Controller
         //メッセージの表示
         $request->session()->put('message',Config::get('message.mhcmok0001'));
         PtcmtrController::open_node($department_id);
-        return redirect()->route('index');
+        return redirect()->route('plbs01.show',[$client_id,$high]);
         
     }
 

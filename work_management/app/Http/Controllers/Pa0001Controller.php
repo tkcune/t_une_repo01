@@ -372,7 +372,13 @@ class Pa0001Controller extends Controller
             $select_lists = $hierarchical->subordinateSearch($lists,$client);
            
             //選択したデータ及び配下データを取得
-            $lists = $hierarchical->subordinateGet($select_lists,$client);
+            try{
+                $lists = $hierarchical->subordinateGet($select_lists,$client);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::dataCatchMiss($e);
+                return redirect()->route('errormsg');
+            }
             $department_data = $lists[0];
             $personnel_data = $lists[1];
 
@@ -394,7 +400,13 @@ class Pa0001Controller extends Controller
        
             //上位階層取得
             $hierarchical = new Hierarchical();
-            $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
+            try{
+                $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::dataCatchMiss($e);
+                return redirect()->route('errormsg');
+            }
            
             //部署・人員の一覧表示領域のデータ表示
             //日付フォーマットを6桁にする

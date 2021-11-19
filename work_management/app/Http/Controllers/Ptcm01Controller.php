@@ -102,7 +102,7 @@ class Ptcm01Controller extends Controller
         $message = Message::get_message('mhcmok0010',[0=>'']);
         session(['message'=>$message[0]]);
         PtcmtrController::open_node($projection_id);
-        return redirect()->route('index');
+        return redirect()->route('plbs01.show',[$client_id,$high_id]);
     }
 
     /**

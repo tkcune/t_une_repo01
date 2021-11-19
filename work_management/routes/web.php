@@ -30,7 +30,7 @@ Route::resource('ptcm01', Ptcm01Controller::class);
 
 Route::get('/',[Pa0001Controller::class,'index'])->name('index');
 
-Route::get('/log',[Pa0001Controller::class,'log'])->name('log');
+Route::get('/log',[Pa0001Controller::class,'log_redirct'])->name('log');
 
 Route::get('/errormsg',[Pa0001Controller::class,'errormsg'])->name('errormsg');
 
@@ -65,7 +65,8 @@ Route::post('/ptcmdelete/{id}/{id2}',[Ptcm01Controller::class,'delete'])->name('
 Route::get('/test', [Pslg01Controller::class,'index'])->name('test');
 Route::post('/create', [Pslg01Controller::class,'create'])->name('pslg01.create');
 Route::post('/test', [Pslg01Controller::class,'select'])->name('pslg01.select');
-// Route::post('/test', [Pslg01Controller::class,'select'])->name('pslg01.client');
+Route::post('/test/download', [Pslg01Controller::class,'download'])->name('pslg01.download');
+
 ;
 
 

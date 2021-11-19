@@ -161,7 +161,8 @@ class Psji01Controller extends Controller
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0001');
+        $request->session()->put('message',Config::get('message.mhcmok0001'));
         PtcmtrController::open_node($personnel_id);
         return redirect()->route('plbs01.show',[$client_id,$high]);
     }

@@ -588,7 +588,7 @@ class Pa0001Controller extends Controller
         session(['clipboard_id'=>$id]);
 
         //ログ処理
-        OutputLog::message_log(__FUNCTION__, 'mhcmok0004');
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0004',$id);
         $message = Message::get_message('mhcmok0004',[0=>$id]);
         session(['message'=>$message[0]]);
 
@@ -612,13 +612,10 @@ class Pa0001Controller extends Controller
         return back();
     }
 
-    public function log(){
+    public function log_redirct(){
 
-        //ツリーデータ取得
-        $tree = new PtcmtrController();
-        $tree_data = $tree->set_view_treedata();
         
-        return view('pslg01.pslg01');
+        return redirect()->route('test');
     }
 
     /**

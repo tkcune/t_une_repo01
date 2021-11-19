@@ -24,7 +24,6 @@
                     <div class="col">
                     <input type="submit" value="ツリー表示" onclick="displayOn()"
                     data-toggle="tooltip" title="ツリーを表示します">
-                    <a href="{{ route('log') }}">ログ確認</a>
                     </div>
                 </div>
 
@@ -167,7 +166,6 @@
                     <div class="col-2">
                     <input type="submit" value="ツリー表示" onclick="displayOn()"
                     data-toggle="tooltip" title="ツリーを表示します">
-                    <a href="{{ route('log') }}">ログ確認</a>
                     </div>
                 </div>
 
@@ -318,7 +316,6 @@
                     <div class="col-2">
                     <input type="submit" value="ツリー表示" onclick="displayOn()"
                     data-toggle="tooltip" title="ツリーを表示します">
-                    <a href="{{ route('log') }}">ログ確認</a>
                     </div>
 
                     <div class="col" style="padding:0px">

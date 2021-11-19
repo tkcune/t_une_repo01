@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PtcmtrController;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Pslg01Controller extends Controller
 {
@@ -27,6 +28,46 @@ class Pslg01Controller extends Controller
     }
 
 
+
+    /**
+     * セレクトボックスの名前から部員のIDと名前を表示する
+     */
+    public function select(Request $request)
+    {
+        // ツリーのデーターを宣言する
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
+
+        // 空白を選択されたらそのままバックする
+        if ($request->personnel_id == '0') {
+            return back();
+        } else {
+
+
+
+            // セレクトボックスで選択された部員の情報を抽出する
+            $select_all = DB::table('dcji01')->where('personnel_id', '=', $request->personnel_id)->get();
+
+            // 抽出したデータの部員IDと部員名をsessionで保存する
+            session()->put('select_id', $select_all[0]->personnel_id);
+            session()->put('select_name', $select_all[0]->name);
+
+            // sessionから部員IDと部位名および部員検索で表示する部員一覧を取得する
+            $select_id = session()->get('select_id');
+            $select_name = session()->get('select_name');
+            $session_names = session()->get('name_data');
+
+
+            return view('pslg01.pslg01', [
+                'select_id' => $select_id,
+                'select_name' => $select_name,
+                'session_names' => $session_names
+            ]);
+        }
+    }
+
+
+
     /**
      * 表示するをクリックによりログ一覧を表示する
      * 
@@ -39,19 +80,24 @@ class Pslg01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
        
+
         // ログ表示に該当するものをselectする
         $items = DB::table('dclg01')
             ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
             ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id')
-            ->where('dcji01.name','=',$request->select_name)
             ->whereIn('dclg01.type', $request->check)
-            ->where('dclg01.created_at','like', "%$request->startdate%")
-            ->where('dclg01.updated_at','like', "%$request->finishdate%")
+            ->where('dcji01.name', '=', $request->select_name)
+            -> orwhere('dcji01.personnel_id', '=', $request->personnel_id)
+            ->where('dclg01.created_at', 'like', "%$request->startdate%")
+            ->where('dclg01.updated_at', 'like', "%$request->finishdate%")
             ->where('dclg01.log', 'like', "%$request->kensaku%")
+           
             ->get();
-        
-            dd($items);
-         
+
+        session()->put('items', $items);
+
+   
+
         // ログの結果の件数を抽出する
         $count = count($items);
 
@@ -70,59 +116,63 @@ class Pslg01Controller extends Controller
         ]);
     }
 
-
-    /**
-     * 顧客抽出する
-     * 
-     */
-
-    // public function client(Request $request)
-    // {
-    //     // ツリーのデーターを宣言する
-    //     $tree = new PtcmtrController();
-    //     $tree_data = $tree->set_view_treedata();
-
-    //     $client_all = DB::table('dcji01')->where('client_id', '=', $request->client_id)->get();
-
-    //     session()->put('client_id', $client_all[0]->personnel_id);
-    //     session()->put('client_name', $client_all[0]->name);
-    // }
-
-
-    /**
-     * セレクトボックスの名前から部員のIDと名前を表示する
-     */
-    public function select(Request $request)
+   
+    public function download(Request $request)
     {
         // ツリーのデーターを宣言する
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
 
-        if($request->personnel_id == '0'){
-            return back();
-        }else{
+        $session_items = session()->get('items');
+        foreach ($session_items as $items) {
+            $cvsList[]= [$items->created_at, $items->type, $items->user, $items->function, $items->program_pass, $items->log];
+        }
+
+        $tuika[] =["出力日時","類別","アクセスユーザ","機能","プログラムパス","ログ"];
 
        
+        $download_data =(array_merge($tuika,$cvsList));
 
-        // セレクトボックスで選択された部員の情報を抽出する
-        $select_all = DB::table('dcji01')->where('personnel_id', '=', $request->personnel_id)->get();
-
-        // 抽出したデータの部員IDと部員名をsessionで保存する
-        session()->put('select_id', $select_all[0]->personnel_id);
-        session()->put('select_name', $select_all[0]->name);
+        $response = new StreamedResponse (function() use ($request, $download_data){
+                   $stream = fopen('php://output', 'w');
         
-        // sessionから部員IDと部位名および部員検索で表示する部員一覧を取得する
-        $select_id = session()->get('select_id');
-        $select_name = session()->get('select_name');
-        $session_names = session()->get('name_data');
+                   //　文字化け回避
+                   stream_filter_prepend($stream,'convert.iconv.utf-8/cp932//TRANSLIT');
+        
+                   // CSVデータ
+                   foreach($download_data as $key => $value) {
+                       fputcsv($stream, $value);
+                   }
+                   fclose($stream);
+               });
+               $response->headers->set('Content-Type', 'application/octet-stream');
+               $response->headers->set('Content-Disposition', 'attachment; filename="facmsl.log.csv"');
+        
+               return $response;
 
 
-        return view('pslg01.pslg01', [
-            'select_id' => $select_id,
-            'select_name' => $select_name,
-            'session_names' => $session_names
-        ]);
-    }
+
+    //     $cvsList = [
+    //         ['タイトル', '本文', '名前']
+    //         , ['テストタイトル１', 'テスト本文１', 'テスト１']
+    //         , ['テストタイトル２', 'テスト本文２', 'テスト２']
+    //    ];
+    //    $response = new StreamedResponse (function() use ($request, $cvsList){
+    //        $stream = fopen('php://output', 'w');
+
+    //        //　文字化け回避
+    //        stream_filter_prepend($stream,'convert.iconv.utf-8/cp932//TRANSLIT');
+
+    //        // CSVデータ
+    //        foreach($cvsList as $key => $value) {
+    //            fputcsv($stream, $value);
+    //        }
+    //        fclose($stream);
+    //    });
+    //    $response->headers->set('Content-Type', 'application/octet-stream');
+    //    $response->headers->set('Content-Disposition', 'attachment; filename="sample.csv"');
+
+    //    return $response;
     }
 }

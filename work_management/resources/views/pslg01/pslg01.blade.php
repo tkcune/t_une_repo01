@@ -158,9 +158,16 @@
                             </table>
 
                         </div>
+                       
+                        <form  action="{{route('pslg01.download')}}" method=post>
+                        @csrf
+                        <input type="submit" value="ダウンロードする">
 
+                        </form>
                         @endif
-<input type="submit" value="ダウンロードする">
+
+                     
+ 
 
                         
                     </div>

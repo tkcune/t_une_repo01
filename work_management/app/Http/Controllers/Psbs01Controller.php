@@ -600,8 +600,8 @@ class Psbs01Controller extends Controller
             return redirect()->route('index');
         }
         //ログ処理
-        OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
-        $message = Message::get_message('mhcmok0002',[0=>'']);
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0008');
+        $message = Message::get_message('mhcmok0008',[0=>'']);
         session(['message'=>$message[0]]);
         return back();
     }

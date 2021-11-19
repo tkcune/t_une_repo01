@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Librarys\php\OutputLog;
-use App\Librarys\php\Message;
-use App\Librarys\php\ZeroPadding;
-use App\Librarys\php\DatabaseException;
+use App\Libraries\php\OutputLog;
+use App\Libraries\php\Message;
+use App\Libraries\php\ZeroPadding;
+use App\Libraries\php\DatabaseException;
 use App\Http\Controllers\PtcmtrController;
 
 /**
@@ -45,7 +45,7 @@ class Ptcm01Controller extends Controller
      * @var  string $id 現時点で最新の投影ID
      * @var string $projection_id　作成する投影ID 
      * @var string $message ログメッセージ
-     * @var App\Librarys\php\ZeroPadding $padding
+     * @var App\Libraries\php\ZeroPadding $padding
      * 
      * @return \Illuminate\Http\Response
      */

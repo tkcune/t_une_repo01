@@ -5,16 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use App\Librarys\php\DatabaseException;
+use App\Libraries\php\DatabaseException;
 use App\Models\Date;
-use App\Librarys\php\StatusCheck;
-use App\Librarys\php\Pagination;
-use App\Librarys\php\Hierarchical;
-use App\Librarys\php\ResponsiblePerson;
+use App\Libraries\php\StatusCheck;
+use App\Libraries\php\Pagination;
+use App\Libraries\php\Hierarchical;
+use App\Libraries\php\ResponsiblePerson;
 use Illuminate\Support\Facades\Config;
-use App\Librarys\php\OutputLog;
-use App\Librarys\php\Message;
-use App\Librarys\php\ZeroPadding;
+use App\Libraries\php\OutputLog;
+use App\Libraries\php\Message;
+use App\Libraries\php\ZeroPadding;
 use App\Http\Controllers\PtcmtrController;
 use Illuminate\Support\Facades\View;
 use App\Http\Requests\PersonnelRequest;
@@ -63,11 +63,11 @@ class Psji01Controller extends Controller
      * @var  int $system_management システム管理者権限
      * @var  int $high 上位部署
      * @var  App\Models\Date $date
-     * @var  App\Librarys\php\StatusCheck $check
+     * @var  App\Libraries\php\StatusCheck $check
      * @var  array $id　顧客IDに対応した最新の部署IDを格納する因数
      * @var  string $personnel_id 最新の人員ID
-     * @var  App\Librarys\php\ZeroPadding $padding
-     * @var  App\Librarys\php\StatusCheck $check
+     * @var  App\Libraries\php\ZeroPadding $padding
+     * @var  App\Libraries\php\StatusCheck $check
      * @var  string $operation_start_date　稼働開始日
      * @var  string $operation_end_date　稼働終了日
      * 
@@ -161,7 +161,8 @@ class Psji01Controller extends Controller
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0001');
+        $request->session()->put('message',Config::get('message.mhcmok0001'));
         PtcmtrController::open_node($personnel_id);
         return redirect()->route('plbs01.show',[$client_id,$high]);
     }
@@ -201,7 +202,7 @@ class Psji01Controller extends Controller
      * @var  string  $management_number 管理者ID
      * @var  string  $management_personnel_id 管理者番号
      * @var  string  $status　状態
-     * @var  App\Librarys\php\StatusCheck $check
+     * @var  App\Libraries\php\StatusCheck $check
      * @var  string  $operation_start_date 稼働開始日
      * @var  string  $operation_end_date 稼働終了日
      * 
@@ -387,10 +388,10 @@ class Psji01Controller extends Controller
      * @var  array $department_data 部署データ
      * @var  array $personnel_data 人員データ
      * @var  App\Models\Date; $date
-     * @var  App\Librarys\php\ResponsiblePerson $responsible
+     * @var  App\Libraries\php\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
-     * @var  App\Librarys\php\Hierarchical $hierarchical
-     * @var  App\Librarys\php\Pagination $pagination
+     * @var  App\Libraries\php\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
@@ -594,7 +595,7 @@ class Psji01Controller extends Controller
      * @var array  $id 存在している最新のID
      * @var string $department_id 登録する部署ID
      * @var string $personnel_id 登録する人員ID
-     * @var App\Librarys\php\ZeroPadding $padding
+     * @var App\Libraries\php\ZeroPadding $padding
      * @var  App\Models\Date; $date
      * 
      * @return \Illuminate\Http\Response

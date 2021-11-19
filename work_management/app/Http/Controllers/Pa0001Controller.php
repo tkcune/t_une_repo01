@@ -612,7 +612,7 @@ class Pa0001Controller extends Controller
         return back();
     }
 
-    public function log(){
+    public function log_redirct(){
 
         
         return redirect()->route('test');

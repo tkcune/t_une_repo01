@@ -19,7 +19,6 @@
                             <form action="{{route('pslg01.create')}}" method="post" id="create">
                                 @csrf
                             </form>
-
                             <p>顧客番号： <input type="text" name="name" style="width:100px;" placeholder="半角英数字で入力"></p>
                             <p>顧客名　： <a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">　(例)前川一号生</a></p>
 
@@ -44,14 +43,17 @@
                                     <input type="text"  name="personnel_id" value="{{old('personnel_id')}}" style="width: 100px;" form="create">
                                 <?php endif ?>
 
-                            <p>部署人員名　：　<a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">前川一号生</a></p>
-                            <!-- ※　クリックにより、顧客詳細に遷移する。 顧客番号に該当する部署の名称 -->
+                                <?php if (isset($select_id)) : ?>
+                            <p>部署人員名　：　<a href= "show/aa00000001/{{$select_id}}"; style="color:black;" title="クリックにより顧客詳細に遷移します">{{$select_name}}</a></p>
+                            <?php else :?>
+                            <p>部署人員名　：　</p>
+                            <?php endif ?>
 
 
                             <form method="POST" action="{{route('pslg01.select')}}" id="one_answer_form" style="display:inline-flex">
                                 @csrf
                                 <p class="box" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が部署番号に表示されます。"> 部署人員検索：</p>
-                                　<select onchange="submit(this.form)" name="personnel_id" id="one_answer" class="box" style="width:100px; height:25px;" >
+                                　<select onchange="submit(this.form)" name="personnel_id" id="one_answer" class="box" style="width:100px; height:25px;" form="one_answer_form"　>
                                 　   <option name="personnel_id" value="0" selected> </option>
                                     @foreach($session_names as $session_name)
                                     <option name="personnel_id" value="{{$session_name->personnel_id}}"> {{$session_name->name}}</option>
@@ -65,13 +67,12 @@
                             @isset($select_name)
                             　<input type="hidden" name="select_name" value="{{$select_name}}"  form="create" >
                             @endif
-
                         </div>
                         <div class="col-4">
-                            <?php $date = new DateTime('now'); ?>
-                            <p>開始年月日：<input type="date" name="startdate" style="width:120px;" form="create"></p>
-                            <p>終了年月日：<input type="date" name="finishdate" style="width:120px;" form="create"></p>
-
+                            <p>開始日時： {{ \Carbon\Carbon::today() }}</p>
+                            <input type="hidden" name="startdate" value="{{ date('Y-m-d', strtotime('today')) }}" form="create">
+                            <p>終了日時： {{ \Carbon\Carbon::now() }}</p>
+                                <input type="hidden" name="finishdate" style="width:120px;" form="create"></p>
                         </div>
                     </div>
 

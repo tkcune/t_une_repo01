@@ -42,9 +42,6 @@ class Pslg01Controller extends Controller
         if ($request->personnel_id == '0') {
             return back();
         } else {
-
-
-
             // セレクトボックスで選択された部員の情報を抽出する
             $select_all = DB::table('dcji01')->where('personnel_id', '=', $request->personnel_id)->get();
 
@@ -67,7 +64,6 @@ class Pslg01Controller extends Controller
     }
 
 
-
     /**
      * 表示するをクリックによりログ一覧を表示する
      * 
@@ -79,24 +75,38 @@ class Pslg01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-       
+        // dd($request->personnel_id);
+              
 
-        // ログ表示に該当するものをselectする
-        $items = DB::table('dclg01')
-            ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
-            ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id')
-            ->whereIn('dclg01.type', $request->check)
-            ->where('dcji01.name', '=', $request->select_name)
-            -> orwhere('dcji01.personnel_id', '=', $request->personnel_id)
-            ->where('dclg01.created_at', 'like', "%$request->startdate%")
-            ->where('dclg01.updated_at', 'like', "%$request->finishdate%")
-            ->where('dclg01.log', 'like', "%$request->kensaku%")
-           
-            ->get();
+        // ログ表示に該当するものをselectする　
 
-        session()->put('items', $items);
+        if ($request->personnel_id == null) {
+            // パターン⓵　部署人員番号が未記入の設定　＝　部員全員分の当日一覧表示
 
-   
+            $items = DB::table('dclg01')
+                ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
+                ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id')
+                ->whereIn('dclg01.type', $request->check)
+                ->where('dclg01.created_at', 'like', "%$request->startdate%")
+                // ->where('dclg01.updated_at', 'like', "%$request->finishdate%")
+                ->where('dclg01.log', 'like', "%$request->kensaku%")
+                ->get();
+        } else {
+            // パターン⓶　部署人員番号が記入あり設定　＝　選択された部署人員の当日分を一覧表示
+
+            $items = DB::table('dclg01')
+                ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
+                ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id')
+                ->whereIn('dclg01.type', $request->check)
+                ->where('dcji01.name', '=', $request->select_name)
+                ->where('dcji01.personnel_id', '=', $request->personnel_id)
+                ->where('dclg01.created_at', 'like', "%$request->startdate%")
+                // ->where('dclg01.updated_at', 'like', "%$request->finishdate%")
+                ->where('dclg01.log', 'like', "%$request->kensaku%")
+                ->get();
+        }
+
+         session()->put('items', $items);
 
         // ログの結果の件数を抽出する
         $count = count($items);
@@ -116,7 +126,7 @@ class Pslg01Controller extends Controller
         ]);
     }
 
-   
+
     public function download(Request $request)
     {
         // ツリーのデーターを宣言する
@@ -126,53 +136,30 @@ class Pslg01Controller extends Controller
 
         $session_items = session()->get('items');
         foreach ($session_items as $items) {
-            $cvsList[]= [$items->created_at, $items->type, $items->user, $items->function, $items->program_pass, $items->log];
+            $cvsList[] = [$items->created_at, $items->type, $items->user, $items->function, $items->program_pass, $items->log];
         }
 
-        $tuika[] =["出力日時","類別","アクセスユーザ","機能","プログラムパス","ログ"];
-
-       
-        $download_data =(array_merge($tuika,$cvsList));
-
-        $response = new StreamedResponse (function() use ($request, $download_data){
-                   $stream = fopen('php://output', 'w');
-        
-                   //　文字化け回避
-                   stream_filter_prepend($stream,'convert.iconv.utf-8/cp932//TRANSLIT');
-        
-                   // CSVデータ
-                   foreach($download_data as $key => $value) {
-                       fputcsv($stream, $value);
-                   }
-                   fclose($stream);
-               });
-               $response->headers->set('Content-Type', 'application/octet-stream');
-               $response->headers->set('Content-Disposition', 'attachment; filename="facmsl.log.csv"');
-        
-               return $response;
+        $tuika[] = ["出力日時", "類別", "アクセスユーザ", "機能", "プログラムパス", "ログ"];
 
 
+        $download_data = (array_merge($tuika, $cvsList));
 
-    //     $cvsList = [
-    //         ['タイトル', '本文', '名前']
-    //         , ['テストタイトル１', 'テスト本文１', 'テスト１']
-    //         , ['テストタイトル２', 'テスト本文２', 'テスト２']
-    //    ];
-    //    $response = new StreamedResponse (function() use ($request, $cvsList){
-    //        $stream = fopen('php://output', 'w');
+        $response = new StreamedResponse(function () use ($request, $download_data) {
+            $stream = fopen('php://output', 'w');
 
-    //        //　文字化け回避
-    //        stream_filter_prepend($stream,'convert.iconv.utf-8/cp932//TRANSLIT');
+            //　文字化け回避
+            stream_filter_prepend($stream, 'convert.iconv.utf-8/cp932//TRANSLIT');
 
-    //        // CSVデータ
-    //        foreach($cvsList as $key => $value) {
-    //            fputcsv($stream, $value);
-    //        }
-    //        fclose($stream);
-    //    });
-    //    $response->headers->set('Content-Type', 'application/octet-stream');
-    //    $response->headers->set('Content-Disposition', 'attachment; filename="sample.csv"');
+            // CSVデータ
+            foreach ($download_data as $key => $value) {
+                fputcsv($stream, $value);
+            }
+            fclose($stream);
+        });
+        $response->headers->set('Content-Type', 'application/octet-stream');
+        $response->headers->set('Content-Disposition', 'attachment; filename="facmsl.log.csv"');
 
-    //    return $response;
+        return $response;
+
     }
 }

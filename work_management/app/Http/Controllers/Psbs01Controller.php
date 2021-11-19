@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Librarys\php\DatabaseException;
-use App\Librarys\php\Pagination;
-use App\Librarys\php\Hierarchical;
-use App\Librarys\php\StatusCheck;
-use App\Librarys\php\OutputLog;
-use App\Librarys\php\ZeroPadding;
+use App\Libraries\php\DatabaseException;
+use App\Libraries\php\Pagination;
+use App\Libraries\php\Hierarchical;
+use App\Libraries\php\StatusCheck;
+use App\Libraries\php\OutputLog;
+use App\Libraries\php\ZeroPadding;
 use Illuminate\Support\Facades\Config;
-use App\Librarys\php\Message;
-use App\Librarys\php\ResponsiblePerson;
+use App\Libraries\php\Message;
+use App\Libraries\php\ResponsiblePerson;
 use App\Http\Controllers\PtcmtrController;
 use App\Models\Date;
 use Illuminate\Support\Facades\View;
@@ -59,8 +59,8 @@ class Psbs01Controller extends Controller
      * @var  string $management_personnel_id　管理者ID
      * @var  string $high　上位部署のID番号
      * @var  string $id　顧客IDに対応した最新の部署IDを格納する因数
-     * @var  App\Librarys\php\ZeroPadding $padding
-     * @var  App\Librarys\php\StatusCheck $check
+     * @var  App\Libraries\php\ZeroPadding $padding
+     * @var  App\Libraries\php\StatusCheck $check
      * @var  string $operation_start_date　稼働開始日
      * @var  string $operation_end_date　稼働終了日
      * @var  int $department_id 部署ID
@@ -168,16 +168,16 @@ class Psbs01Controller extends Controller
      * @var  array $select_lists 選択した部署の配下データ
      * @var  string $code 機能コード
      * @var  array  $data 取得したデータ
-     * @var  App\Librarys\php\ResponsiblePerson $responsible
+     * @var  App\Libraries\php\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
      * @var  array $top_management 最上位の管理者データ
-     * @var  App\Librarys\php\Pagination $pagination
+     * @var  App\Libraries\php\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
      * @var  array $names ページネーション後の人員データ
      * @var  array $responsible_lists 責任者リスト
-     * @var  App\Librarys\php\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Hierarchical $hierarchical
      * @var  array $department_high 部署データの上位階層
      * @var  array $personnel_high 人員データの上位階層
      * @var  App\Http\Controllers\PtcmtrController $tree
@@ -481,7 +481,7 @@ class Psbs01Controller extends Controller
      * @var  string  $responsible_person_id 責任者番号
      * @var  array   $management_personnel_id　管理者ID
      * @var  string  $status　状態
-     * @var  \App\Librarys\php\StatusCheck $check
+     * @var  \App\Libraries\php\StatusCheck $check
      * @var  string  $operation_start_date 稼働開始日
      * @var  string  $operation_end_date 稼働終了日
      * @var  string  $message メッセージ
@@ -613,7 +613,7 @@ class Psbs01Controller extends Controller
      * @param  string  $delete 削除予定のID
      * 
      * @var  array   $lists 削除予定のIDを格納した配列
-     * @var  \App\Librarys\php\Hierarchical $hierarchical
+     * @var  \App\Libraries\php\Hierarchical $hierarchical
      * @var  array   $delete_lists 削除予定のIDを格納した配列
      * @var  int     $code 機能コードの頭2文字
      * @var  array $delete_projections 削除元
@@ -747,9 +747,9 @@ class Psbs01Controller extends Controller
      * @var  array $department_data 部署データ
      * @var  array $personnel_data 人員データ
      * @var  App\Models\Date $date 
-     * @var  App\Librarys\php\ResponsiblePerson $responsible
-     * @var  App\Librarys\php\Hierarchical $hierarchical
-     * @var  App\Librarys\php\Pagination $pagination
+     * @var  App\Libraries\php\ResponsiblePerson $responsible
+     * @var  App\Libraries\php\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
@@ -956,7 +956,7 @@ class Psbs01Controller extends Controller
      * @var string $id2_num 複製前の最新の部署IDの数字部分
      * @var string $number 8桁に0埋めした複製前の最新の部署IDの数字部分
      * @var string $number2　8桁に0埋めした複製前の最新の人員IDの数字部分
-     * @var App\Librarys\php\Hierarchical $hierarchical
+     * @var App\Libraries\php\Hierarchical $hierarchical
      * 
      * @return \Illuminate\Http\Response
      */

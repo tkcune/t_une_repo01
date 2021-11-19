@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Librarys\php;
+    namespace App\Libraries\php;
 
     /**
      *ページネーション機能クラス

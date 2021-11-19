@@ -1,11 +1,11 @@
 <?php
 
-    namespace App\Librarys\php;
+    namespace App\Libraries\php;
 
     use Illuminate\Support\Facades\DB;
     use App\Models\Date;
-    use App\Librarys\php\DatabaseException;
-    use App\Librarys\php\OutputLog;
+    use App\Libraries\php\DatabaseException;
+    use App\Libraries\php\OutputLog;
 
     /**
      * 階層構造機能クラス
@@ -168,7 +168,7 @@
          * @var array  $lists　配下リスト 
          * @var array  $id 存在する部署内での最新の部署ID
          * @var string $department_id 登録する部署ID
-         * @var App\Librarys\php\ZeroPadding $padding
+         * @var App\Libraries\php\ZeroPadding $padding
          * @var App\Models\Date $date
          * @var string $code コード
          */

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Librarys\php;
+namespace App\Libraries\php;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 

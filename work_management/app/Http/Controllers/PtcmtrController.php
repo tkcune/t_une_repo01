@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Librarys\php\TreeData;
+use App\Libraries\php\TreeData;
 use Illuminate\Support\Facades\View;
 
 //ツリーデータをblade側に渡すクラス

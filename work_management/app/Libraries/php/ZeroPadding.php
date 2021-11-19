@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Librarys\php;
+    namespace App\Libraries\php;
 
     /**
      * 作業管理システムIDの0埋め機能クラス

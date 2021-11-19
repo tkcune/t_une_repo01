@@ -1,8 +1,8 @@
 <?php
 
-    namespace App\Librarys\php;
+    namespace App\Libraries\php;
 
-    use App\Librarys\php\Message;
+    use App\Libraries\php\Message;
     use App\Http\Controllers\PtcmtrController;
 
     /**

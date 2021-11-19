@@ -614,11 +614,8 @@ class Pa0001Controller extends Controller
 
     public function log(){
 
-        //ツリーデータ取得
-        $tree = new PtcmtrController();
-        $tree_data = $tree->set_view_treedata();
         
-        return view('pslg01.pslg01');
+        return redirect()->route('test');
     }
 
     /**

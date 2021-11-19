@@ -79,20 +79,24 @@ class Pslg01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
+       
 
         // ログ表示に該当するものをselectする
         $items = DB::table('dclg01')
             ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
             ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id')
-            ->where('dcji01.name', '=', $request->select_name)
             ->whereIn('dclg01.type', $request->check)
+            ->where('dcji01.name', '=', $request->select_name)
+            -> orwhere('dcji01.personnel_id', '=', $request->personnel_id)
             ->where('dclg01.created_at', 'like', "%$request->startdate%")
             ->where('dclg01.updated_at', 'like', "%$request->finishdate%")
             ->where('dclg01.log', 'like', "%$request->kensaku%")
+           
             ->get();
 
         session()->put('items', $items);
 
+   
 
         // ログの結果の件数を抽出する
         $count = count($items);
@@ -122,36 +126,28 @@ class Pslg01Controller extends Controller
 
         $session_items = session()->get('items');
         foreach ($session_items as $items) {
-            $cvsList[]= [$items->user, $items->name, $items->log];
+            $cvsList[]= [$items->created_at, $items->type, $items->user, $items->function, $items->program_pass, $items->log];
         }
 
+        $tuika[] =["出力日時","類別","アクセスユーザ","機能","プログラムパス","ログ"];
 
-        // $cvsList = [
+       
+        $download_data =(array_merge($tuika,$cvsList));
 
-
-        //     ['タイトル', '本文', '名前']
-         
-        //      , ['テストタイトル１', 'テスト本文１', 'テスト１']
-        //      , ['テストタイトル２', 'テスト本文２', 'テスト２']
-        // ];
-        // $cvsList[] = $test;
-
-        // dd($cvsList);
-
-        $response = new StreamedResponse (function() use ($request, $cvsList){
+        $response = new StreamedResponse (function() use ($request, $download_data){
                    $stream = fopen('php://output', 'w');
         
                    //　文字化け回避
                    stream_filter_prepend($stream,'convert.iconv.utf-8/cp932//TRANSLIT');
         
                    // CSVデータ
-                   foreach($cvsList as $key => $value) {
+                   foreach($download_data as $key => $value) {
                        fputcsv($stream, $value);
                    }
                    fclose($stream);
                });
                $response->headers->set('Content-Type', 'application/octet-stream');
-               $response->headers->set('Content-Disposition', 'attachment; filename="sample.csv"');
+               $response->headers->set('Content-Disposition', 'attachment; filename="facmsl.log.csv"');
         
                return $response;
 

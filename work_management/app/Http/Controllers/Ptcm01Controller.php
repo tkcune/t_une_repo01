@@ -54,6 +54,18 @@ class Ptcm01Controller extends Controller
         $client_id = $request->client_id;
         $high_id = $request->high_id;
         $projection_source_id = $request->projection_source_id;
+
+        //送信元が投影だった場合は投影元のIDに変換
+        if(substr($projection_source_id,0,2) == "ta"){
+            try{
+                $code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$projection_source_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            $projection_source_id = $code[0]->projection_source_id;
+        }
         //最新の投影番号を生成
         try{
             $id = DB::select('select projection_id from dccmta where client_id = ? 

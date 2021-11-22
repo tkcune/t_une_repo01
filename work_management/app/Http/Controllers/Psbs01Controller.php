@@ -969,37 +969,95 @@ class Psbs01Controller extends Controller
         if($request->copy_id == null){
             return redirect()->route('index');
         }
-
-        //複製動作
-        //複製前の最新の部署番号を取得
+    //投影を複製する場合
+    if(substr($copy_id,0,2) == "ta"){
+            try{
+                $code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$copy_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            $projection_source_id = $code[0]->projection_source_id;
+        //最新の投影番号を生成
         try{
-            $id = DB::select('select department_id from dcbs01 where client_id = ? 
-            order by department_id desc limit 1',[$client_id]);
+            $id = DB::select('select projection_id from dccmta where client_id = ? 
+            order by projection_id desc limit 1',[$client_id]);
         }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-        //複製前の最新の人員番号を取得
+        if(empty($id)){
+            $projection_id = "ta00000001";
+        }else{
+
+        //登録する番号を作成
+        $padding = new ZeroPadding();
+        $projection_id = $padding->padding($id[0]->projection_id);
+        }
+
+        //データベースに投影情報を登録
         try{
-            $id2 = DB::select('select personnel_id from dcji01 where client_id = ? 
-            order by personnel_id desc limit 1',[$client_id]);
+            DB::insert('insert into dccmta
+            (client_id,projection_id,projection_source_id)
+            VALUE (?,?,?)',
+            [$client_id,$projection_id,$projection_source_id]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
+        }
+
+        //データベースに階層情報を登録
+        try{
+            DB::insert('insert into dccmks
+            (client_id,lower_id,high_id)
+            VALUE (?,?,?)',
+            [$client_id,$projection_id,$high]);
+        }catch(\Exception $e){
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
             return redirect()->route('index');
         }
-        $id_num = substr($id[0]->department_id,3);
-        $id2_num = substr($id2[0]->personnel_id,3);
-        $number = str_pad($id_num, 8, '0', STR_PAD_LEFT);
-        $number2 = str_pad($id2_num, 8, '0', STR_PAD_LEFT);
-        $hierarchical = new Hierarchical();
-        $hierarchical->subordinateCopy($copy_id,$client_id,$high,$number,$number2);
-
         //ログ処理
         OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
         $message = Message::get_message('mhcmok0009',[0=>'']);
         session(['message'=>$message[0]]);
         return back();
+    }else{
+            //複製動作
+            //複製前の最新の部署番号を取得
+            try{
+                $id = DB::select('select department_id from dcbs01 where client_id = ? 
+                order by department_id desc limit 1',[$client_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            //複製前の最新の人員番号を取得
+            try{
+                $id2 = DB::select('select personnel_id from dcji01 where client_id = ? 
+                order by personnel_id desc limit 1',[$client_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            $id_num = substr($id[0]->department_id,3);
+            $id2_num = substr($id2[0]->personnel_id,3);
+            $number = str_pad($id_num, 8, '0', STR_PAD_LEFT);
+            $number2 = str_pad($id2_num, 8, '0', STR_PAD_LEFT);
+            $hierarchical = new Hierarchical();
+            $hierarchical->subordinateCopy($copy_id,$client_id,$high,$number,$number2);
+
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
+            $message = Message::get_message('mhcmok0009',[0=>'']);
+            session(['message'=>$message[0]]);
+            return back();
+        }
     }
 }

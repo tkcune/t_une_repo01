@@ -239,7 +239,11 @@
                     <input type="submit" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
+                    @if(substr($click_id,0,2) == "ta")
+                    <form action="{{ route('clipboard',$click_id)}}" method="get">
+                    @else
                     <form action="{{ route('clipboard',$click_department_data[0]->department_id)}}" method="get">
+                    @endif
                     @csrf
                     <input type="submit" value="複写" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
@@ -408,7 +412,11 @@
                     disabled>
                     </form>
 
+                    @if(substr($click_id,0,2) == "ta")
+                    <form action="{{ route('clipboard',$click_id)}}" method="get">
+                    @else
                     <form action="{{ route('clipboard',$click_personnel_data[0]->personnel_id)}}" method="get">
+                    @endif
                     @csrf
                     <input type="submit" value="複写" id="copyTarget"
                     data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">

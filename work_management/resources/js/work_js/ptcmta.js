@@ -283,6 +283,18 @@ TreeAction.node = class Node {
       //本来のノードクラスまでツリーを開く
       selectNode.openBottomUpTree();
     }
+
+    if(this.node.id === 'sslg'){
+      //ログ確認の場合
+      window.location = 'http://localhost:8000/log';
+    }else{
+      //@var string Laravelのセッションid
+      let clientId = document.getElementById('hidden_client_id').value;
+      //@var string ノードのid
+      let nodeId = this.node.id;
+      //移動命令
+      window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
+    }
   }
 
   //選択したノードを太字にする
@@ -1228,84 +1240,6 @@ TreeAction = ((treesepalete, projectionChain) => {
   //@var Nodeクラス ツリーインスタンス
   let tree = TreeAction.createTree(treesepalete, projectionChain, Node, chainparser);
 
-  //クリックイベントを追加する
-  //@param object callback クリックイベントの処理
-  let addNodeClickEvent = (callback) => {
-    //@var array titleboxのdom
-    let titleboxArray = document.getElementsByClassName('titlebox');
-    //@var array firsttreeのdom
-    let firsttreeArray = document.getElementsByClassName('firsttree');
-    //@var array normaltreeのdom
-    let normaltreeArray = document.getElementsByClassName('normaltree');
-    //@var array lastnormaltreeのdom
-    let lastnormaltreeArray = document.getElementsByClassName('lastnormaltree');
-    //@var array lasttreeのdom
-    let lasttreeArray = document.getElementsByClassName('lasttree');
-    //@var array secondtreeのdom
-    let secondtreeArray = document.getElementsByClassName('secondtree');
-    //@var array endtreeのdom
-    let endtreeArray = document.getElementsByClassName('endtree');
-    //コールバック関数が存在するなら
-    if(callback){
-      for(let i = 0; i < titleboxArray.length; i++){
-        //@var string titleboxのディレクトリ
-        let titleboxDir = getTitleboxDir(titleboxArray[i]);
-        //@var Nodeクラス クリック処理を追加するノード
-        let node = chainparser.searchNodeDir(titleboxDir, tree);
-        //idを引数にして、クリックイベントを追加する
-        titleboxArray[i].addEventListener('click', {id: node.id, handleEvent: callback});
-      }
-      for(let i = 0; i < firsttreeArray.length; i++){
-        //@var string firsttreeのディレクトリ
-        let firsttreeDir = getTitleboxDir(firsttreeArray[i]) + '/' + firsttreeArray[i].children[0].innerText;
-        //@var Nodeクラス クリック処理を追加するノード
-        let node = chainparser.searchNodeDir(firsttreeDir, tree);
-        //idを引数にして、クリックイベントを追加する
-        firsttreeArray[i].children[0].addEventListener('click', {id: node.id, handleEvent: callback});
-      }
-      for(let i = 0; i < normaltreeArray.length; i++){
-        //@var string normaltreeのディレクトリ
-        let normaltreeDir = getTitleboxDir(normaltreeArray[i]) + '/' + normaltreeArray[i].children[0].innerText;
-        //@var Nodeクラス クリック処理を追加するノード
-        let node = chainparser.searchNodeDir(normaltreeDir, tree);
-        //idを引数にして、クリックイベントを追加する
-        normaltreeArray[i].children[0].addEventListener('click', {id: node.id, handleEvent: callback});
-      }
-      for(let i = 0; i < lastnormaltreeArray.length; i++){
-        //@var string normaltreeのディレクトリ
-        let lastnormaltreeDir = getTitleboxDir(lastnormaltreeArray[i]) + '/' + lastnormaltreeArray[i].children[0].innerText;
-        //@var Nodeクラス クリック処理を追加するノード
-        let node = chainparser.searchNodeDir(lastnormaltreeDir, tree);
-        //idを引数にして、クリックイベントを追加する
-        lastnormaltreeArray[i].children[0].addEventListener('click', {id: node.id, handleEvent: callback});
-      }
-      for(let i = 0; i < lasttreeArray.length; i++){
-        //@var string lasttreeのディレクトリ
-        let lasttreeDir = getTitleboxDir(lasttreeArray[i]) + '/' + lasttreeArray[i].children[0].innerText;
-        //@var Nodeクラス クリック処理を追加するノード
-        let node = chainparser.searchNodeDir(lasttreeDir, tree);
-        //idを引数にして、クリックイベントを追加する
-        lasttreeArray[i].children[0].addEventListener('click', {id: node.id, handleEvent: callback});
-      }
-      for(let i = 0; i < secondtreeArray.length; i++){
-        //@var string secondtreeのディレクトリ
-        let secondtreeDir = getLinetreeDir(secondtreeArray[i]);
-        //@var Nodeクラス クリック処理を追加するノード
-        let node = chainparser.searchNodeDir(secondtreeDir, tree);
-        //idを引数にして、クリックイベントを追加する
-        secondtreeArray[i].children[0].addEventListener('click', {id: node.id, handleEvent: callback});
-      }
-      for(let i = 0; i < endtreeArray.length; i++){
-        //@var string endtreeのディレクトリ
-        let endtreeDir = getLinetreeDir(endtreeArray[i]);
-        //@var Nodeクラス クリック処理を追加するノード
-        let node = chainparser.searchNodeDir(endtreeDir, tree);
-        //idを引数にして、クリックイベントを追加する
-        endtreeArray[i].children[0].addEventListener('click', {id: node.id, handleEvent: callback});
-      }
-    }
-  }
-
   //隠蔽/表示のメソッド
   //@param string nodeId 隠蔽するノードのid
   let changeDisplay = function changeDisplay(nodeId){
@@ -1405,41 +1339,6 @@ TreeAction = ((treesepalete, projectionChain) => {
     //クリップボードのデータをカレントにする
     clipboard.select(node.dir, node.id);
     clipboard.current(node.dir, node.id);
-  }
-
-  //titleboxのディレクトリを取得する
-  //@var dom 取得したいディレクトリのdom
-  //@return string ディレクトリ
-  let getTitleboxDir = function getTitleboxDir(dom){
-    if(dom.id !== 'chaintree'){
-      //@var string 親ノードのディレクトリ
-      let palentDir = getTitleboxDir(dom.parentElement);
-      //展開するボックスならタイトルをディレクトリにつける
-      if(dom.classList.value.match('expandtree') || dom.classList.value.match('lastexpandtree')){
-        //@var string ノードのタイトル
-        let title = dom.children[0].children[1].innerText;
-        return palentDir + '/' + title;
-      }
-      return palentDir;
-    }else if(dom.id === 'chaintree'){
-      //chaintreeから呼び出し元に返る
-      return '';
-    }
-  }
-
-  //linetreeのディレクトリを取得する
-  //@param dom ノードのdom
-  //@param string ディレクトリ
-  let getLinetreeDir = (dom) => {
-    //ユーザー情報とログアウトは、notitleを付けて、返す
-    if(dom.children[0].innerText === 'ユーザ情報' || 
-      dom.children[0].innerText === 'ログアウト' || 
-      dom.children[0].innerText === 'ログ確認'){
-      return '/notitle/' + dom.children[0].innerText;
-    }else{
-      //ユーザー情報とログアウト以外は、マイツリーを付けて、返す
-      return '/マイツリー/' + dom.children[0].innerText;
-    }
   }
 
   //現在のスパイラルでは使わない
@@ -1653,26 +1552,10 @@ TreeAction = ((treesepalete, projectionChain) => {
   
   return {
     openTree: openTree,
-    addNodeClickEvent: addNodeClickEvent,
     changeDisplay: changeDisplay,
     reOpenNode: reOpenNode
   }
 })(treeChain, projectionChain);
-
-//ツリーノードのクリックイベント
-TreeAction.addNodeClickEvent(function(){
-  if(this.id === 'sslg'){
-    //ログ確認の場合
-    window.location = 'http://localhost:8000/log';
-  }else{
-    //@var string Laravelのセッションid
-    let clientId = document.getElementById('hidden_client_id').value;
-    //@var string ノードのid
-    let nodeId = this.id;
-    //移動命令
-    window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
-  }
-});
 
 //隠蔽のイベント
 //詳細行の表示ではない時は、イベントを追加しない

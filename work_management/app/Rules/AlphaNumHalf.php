@@ -35,6 +35,6 @@ class AlphaNumHalf implements Rule
      */
     public function message()
     {
-        return ':attributeは半角英数字で入力してください';
+        return 'パスワードは半角英数字で入力してください';
     }
 }

@@ -570,7 +570,7 @@ class Psji01Controller extends Controller
             $department_high = $hierarchical->upperHierarchyName($departments);
             $personnel_high = $hierarchical->upperHierarchyName($names);
         }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
             DatabaseException::dataCatchMiss($e);
             return redirect()->route('errormsg');
         }

@@ -5,7 +5,13 @@
             <p>{{Config::get('config.system_name')}}</p>
         </div>
 
-        @if(session('message'))
+        @if ($errors->any())
+	    <div  class="col-5">
+	            @foreach ($errors->all() as $error)
+	            <p>{{ $error }}</p>
+	            @endforeach
+	    </div>
+        @elseif(session('message'))
         <div class="col-5">
             <p>{{ session('message') }}</p>
         </div>

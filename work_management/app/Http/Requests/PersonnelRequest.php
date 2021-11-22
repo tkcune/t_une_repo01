@@ -29,7 +29,7 @@ class PersonnelRequest extends FormRequest
             'personnel_id' =>'',
             'name' =>'',
             'email' =>'',
-            'password' => [new AlphaNumHalf],
+            'password' => ['required',new AlphaNumHalf],
             'management_number'=>'',
             'status'=>'',
         ];
@@ -38,6 +38,7 @@ class PersonnelRequest extends FormRequest
     public function messages()
     {
         return [
+            'password.required' => '入力されていない項目があります'
         ];
     }
 }

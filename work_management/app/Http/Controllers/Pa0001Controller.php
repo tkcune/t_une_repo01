@@ -66,6 +66,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
+            return redirect()->route('errormsg');
         }
 
         //全体の部署データの取得
@@ -76,6 +77,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
+            return redirect()->route('errormsg');
         }
 
         //全体の人員データの取得
@@ -86,6 +88,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
+            return redirect()->route('errormsg');
         }
 
         //登録日付を6桁に変換
@@ -119,7 +122,7 @@ class Pa0001Controller extends Controller
             $department_high = $hierarchical->upperHierarchyName($departments);
             $personnel_high = $hierarchical->upperHierarchyName($names);
         }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
             DatabaseException::dataCatchMiss($e);
             return redirect()->route('errormsg');
         }
@@ -287,7 +290,7 @@ class Pa0001Controller extends Controller
             $department_high = $hierarchical->upperHierarchyName($departments);
             $personnel_high = $hierarchical->upperHierarchyName($names);
         }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
             DatabaseException::dataCatchMiss($e);
             return redirect()->route('errormsg');
         }
@@ -375,7 +378,7 @@ class Pa0001Controller extends Controller
             try{
                 $lists = $hierarchical->subordinateGet($select_lists,$client);
             }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
                 DatabaseException::dataCatchMiss($e);
                 return redirect()->route('errormsg');
             }
@@ -403,7 +406,7 @@ class Pa0001Controller extends Controller
             try{
                 $click_department_high = $hierarchical->upperHierarchyName($click_department_data);
             }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
                 DatabaseException::dataCatchMiss($e);
                 return redirect()->route('errormsg');
             }
@@ -429,7 +432,7 @@ class Pa0001Controller extends Controller
                 $department_high = $hierarchical->upperHierarchyName($departments);
                 $personnel_high = $hierarchical->upperHierarchyName($names);
             }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
                 DatabaseException::dataCatchMiss($e);
                 return redirect()->route('errormsg');
             }
@@ -562,7 +565,7 @@ class Pa0001Controller extends Controller
                 $department_high = $hierarchical->upperHierarchyName($departments);
                 $personnel_high = $hierarchical->upperHierarchyName($names);
             }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
                 DatabaseException::dataCatchMiss($e);
                 return redirect()->route('errormsg');
             }

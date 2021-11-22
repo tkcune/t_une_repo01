@@ -2248,6 +2248,18 @@ TreeAction.node = /*#__PURE__*/function () {
 
         selectNode.openBottomUpTree();
       }
+
+      if (this.node.id === 'sslg') {
+        //ログ確認の場合
+        window.location = 'http://localhost:8000/log';
+      } else {
+        //@var string Laravelのセッションid
+        var clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
+
+        var nodeId = this.node.id; //移動命令
+
+        window.location = "http://localhost:8000/show/".concat(clientId, "/").concat(nodeId);
+      }
     } //選択したノードを太字にする
 
   }, {
@@ -3147,123 +3159,8 @@ TreeAction = function (treesepalete, projectionChain) {
 
   var chainparser = TreeAction.chainparser; //@var Nodeクラス ツリーインスタンス
 
-  var tree = TreeAction.createTree(treesepalete, projectionChain, Node, chainparser); //クリックイベントを追加する
-  //@param object callback クリックイベントの処理
-
-  var addNodeClickEvent = function addNodeClickEvent(callback) {
-    //@var array titleboxのdom
-    var titleboxArray = document.getElementsByClassName('titlebox'); //@var array firsttreeのdom
-
-    var firsttreeArray = document.getElementsByClassName('firsttree'); //@var array normaltreeのdom
-
-    var normaltreeArray = document.getElementsByClassName('normaltree'); //@var array lastnormaltreeのdom
-
-    var lastnormaltreeArray = document.getElementsByClassName('lastnormaltree'); //@var array lasttreeのdom
-
-    var lasttreeArray = document.getElementsByClassName('lasttree'); //@var array secondtreeのdom
-
-    var secondtreeArray = document.getElementsByClassName('secondtree'); //@var array endtreeのdom
-
-    var endtreeArray = document.getElementsByClassName('endtree'); //コールバック関数が存在するなら
-
-    if (callback) {
-      for (var i = 0; i < titleboxArray.length; i++) {
-        //@var string titleboxのディレクトリ
-        var titleboxDir = getTitleboxDir(titleboxArray[i]); //@var Nodeクラス クリック処理を追加するノード
-
-        var node = chainparser.searchNodeDir(titleboxDir, tree); //idを引数にして、クリックイベントを追加する
-
-        titleboxArray[i].addEventListener('click', {
-          id: node.id,
-          handleEvent: callback
-        });
-      }
-
-      for (var _i3 = 0; _i3 < firsttreeArray.length; _i3++) {
-        //@var string firsttreeのディレクトリ
-        var firsttreeDir = getTitleboxDir(firsttreeArray[_i3]) + '/' + firsttreeArray[_i3].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
-
-
-        var _node = chainparser.searchNodeDir(firsttreeDir, tree); //idを引数にして、クリックイベントを追加する
-
-
-        firsttreeArray[_i3].children[0].addEventListener('click', {
-          id: _node.id,
-          handleEvent: callback
-        });
-      }
-
-      for (var _i4 = 0; _i4 < normaltreeArray.length; _i4++) {
-        //@var string normaltreeのディレクトリ
-        var normaltreeDir = getTitleboxDir(normaltreeArray[_i4]) + '/' + normaltreeArray[_i4].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
-
-
-        var _node2 = chainparser.searchNodeDir(normaltreeDir, tree); //idを引数にして、クリックイベントを追加する
-
-
-        normaltreeArray[_i4].children[0].addEventListener('click', {
-          id: _node2.id,
-          handleEvent: callback
-        });
-      }
-
-      for (var _i5 = 0; _i5 < lastnormaltreeArray.length; _i5++) {
-        //@var string normaltreeのディレクトリ
-        var lastnormaltreeDir = getTitleboxDir(lastnormaltreeArray[_i5]) + '/' + lastnormaltreeArray[_i5].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
-
-
-        var _node3 = chainparser.searchNodeDir(lastnormaltreeDir, tree); //idを引数にして、クリックイベントを追加する
-
-
-        lastnormaltreeArray[_i5].children[0].addEventListener('click', {
-          id: _node3.id,
-          handleEvent: callback
-        });
-      }
-
-      for (var _i6 = 0; _i6 < lasttreeArray.length; _i6++) {
-        //@var string lasttreeのディレクトリ
-        var lasttreeDir = getTitleboxDir(lasttreeArray[_i6]) + '/' + lasttreeArray[_i6].children[0].innerText; //@var Nodeクラス クリック処理を追加するノード
-
-
-        var _node4 = chainparser.searchNodeDir(lasttreeDir, tree); //idを引数にして、クリックイベントを追加する
-
-
-        lasttreeArray[_i6].children[0].addEventListener('click', {
-          id: _node4.id,
-          handleEvent: callback
-        });
-      }
-
-      for (var _i7 = 0; _i7 < secondtreeArray.length; _i7++) {
-        //@var string secondtreeのディレクトリ
-        var secondtreeDir = getLinetreeDir(secondtreeArray[_i7]); //@var Nodeクラス クリック処理を追加するノード
-
-        var _node5 = chainparser.searchNodeDir(secondtreeDir, tree); //idを引数にして、クリックイベントを追加する
-
-
-        secondtreeArray[_i7].children[0].addEventListener('click', {
-          id: _node5.id,
-          handleEvent: callback
-        });
-      }
-
-      for (var _i8 = 0; _i8 < endtreeArray.length; _i8++) {
-        //@var string endtreeのディレクトリ
-        var endtreeDir = getLinetreeDir(endtreeArray[_i8]); //@var Nodeクラス クリック処理を追加するノード
-
-        var _node6 = chainparser.searchNodeDir(endtreeDir, tree); //idを引数にして、クリックイベントを追加する
-
-
-        endtreeArray[_i8].children[0].addEventListener('click', {
-          id: _node6.id,
-          handleEvent: callback
-        });
-      }
-    }
-  }; //隠蔽/表示のメソッド
+  var tree = TreeAction.createTree(treesepalete, projectionChain, Node, chainparser); //隠蔽/表示のメソッド
   //@param string nodeId 隠蔽するノードのid
-
 
   var changeDisplay = function changeDisplay(nodeId) {
     //@var Nodeクラス 隠蔽/表示するノード
@@ -3359,40 +3256,6 @@ TreeAction = function (treesepalete, projectionChain) {
 
     _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(node.dir, node.id);
     _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(node.dir, node.id);
-  }; //titleboxのディレクトリを取得する
-  //@var dom 取得したいディレクトリのdom
-  //@return string ディレクトリ
-
-
-  var getTitleboxDir = function getTitleboxDir(dom) {
-    if (dom.id !== 'chaintree') {
-      //@var string 親ノードのディレクトリ
-      var palentDir = getTitleboxDir(dom.parentElement); //展開するボックスならタイトルをディレクトリにつける
-
-      if (dom.classList.value.match('expandtree') || dom.classList.value.match('lastexpandtree')) {
-        //@var string ノードのタイトル
-        var title = dom.children[0].children[1].innerText;
-        return palentDir + '/' + title;
-      }
-
-      return palentDir;
-    } else if (dom.id === 'chaintree') {
-      //chaintreeから呼び出し元に返る
-      return '';
-    }
-  }; //linetreeのディレクトリを取得する
-  //@param dom ノードのdom
-  //@param string ディレクトリ
-
-
-  var getLinetreeDir = function getLinetreeDir(dom) {
-    //ユーザー情報とログアウトは、notitleを付けて、返す
-    if (dom.children[0].innerText === 'ユーザ情報' || dom.children[0].innerText === 'ログアウト' || dom.children[0].innerText === 'ログ確認') {
-      return '/notitle/' + dom.children[0].innerText;
-    } else {
-      //ユーザー情報とログアウト以外は、マイツリーを付けて、返す
-      return '/マイツリー/' + dom.children[0].innerText;
-    }
   }; //現在のスパイラルでは使わない
   // let getLinetreeDir = function 
   //linetreeにあるか判断する
@@ -3506,52 +3369,52 @@ TreeAction = function (treesepalete, projectionChain) {
     } else if (document.location.pathname.split('/')[1] === '') {
       //indexルートの場合
       //@var Nodeクラス カレントにするノード 
-      var _node7 = chainparser.searchNodeId('bs00000001', tree);
+      var _node = chainparser.searchNodeId('bs00000001', tree);
 
-      if (_node7 !== null && _node7 !== undefined) {
-        _node7.openBottomUpTree();
+      if (_node !== null && _node !== undefined) {
+        _node.openBottomUpTree();
 
-        _node7.focus();
+        _node.focus();
 
-        currentClipboard(_node7);
+        currentClipboard(_node);
       }
     } else {
       //複写、移動、削除の場合
       if (document.getElementById('back_treeaction').value === 'delete') {
         //@var Nodeクラス ツリーの開くノード
-        var _node8 = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree); //ノードを開く
+        var _node2 = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree); //ノードを開く
 
 
-        _node8.openBottomUpTree(); //ノードをカレントにする
+        _node2.openBottomUpTree(); //ノードをカレントにする
 
 
-        _node8.focus(); //クリップボードのデータをカレントにする
+        _node2.focus(); //クリップボードのデータをカレントにする
 
 
-        currentClipboard(_node8);
+        currentClipboard(_node2);
       } else if (document.getElementById('back_treeaction').value === 'open') {
         //@var Nodeクラス ツリーの開くノード
-        var _node9 = chainparser.searchPalentNode(document.getElementById('action_node_id').value, tree); //ノードを開く
+        var _node3 = chainparser.searchPalentNode(document.getElementById('action_node_id').value, tree); //ノードを開く
 
 
-        _node9.openBottomUpTree(); //ノードをカレントにする
+        _node3.openBottomUpTree(); //ノードをカレントにする
 
 
-        _node9.focus(); //クリップボードのデータをカレントにする
+        _node3.focus(); //クリップボードのデータをカレントにする
 
 
-        currentClipboard(_node9);
+        currentClipboard(_node3);
       } else {
         //showルーティングでも、ツリー機能ルーティングでもない場合
         //@var Nodeクラス カレントにするノード 
-        var _node10 = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(), tree);
+        var _node4 = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(), tree);
 
-        if (_node10 !== null && _node10 !== undefined) {
-          _node10.openBottomUpTree();
+        if (_node4 !== null && _node4 !== undefined) {
+          _node4.openBottomUpTree();
 
-          _node10.focus();
+          _node4.focus();
 
-          currentClipboard(_node10);
+          currentClipboard(_node4);
         }
       }
     }
@@ -3610,27 +3473,12 @@ TreeAction = function (treesepalete, projectionChain) {
 
   return {
     openTree: openTree,
-    addNodeClickEvent: addNodeClickEvent,
     changeDisplay: changeDisplay,
     reOpenNode: reOpenNode
   };
-}(treeChain, projectionChain); //ツリーノードのクリックイベント
-
-
-TreeAction.addNodeClickEvent(function () {
-  if (this.id === 'sslg') {
-    //ログ確認の場合
-    window.location = 'http://localhost:8000/log';
-  } else {
-    //@var string Laravelのセッションid
-    var clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
-
-    var nodeId = this.id; //移動命令
-
-    window.location = "http://localhost:8000/show/".concat(clientId, "/").concat(nodeId);
-  }
-}); //隠蔽のイベント
+}(treeChain, projectionChain); //隠蔽のイベント
 //詳細行の表示ではない時は、イベントを追加しない
+
 
 if (document.getElementById('tree_change_display')) {
   document.getElementById('tree_change_display').addEventListener('click', function () {

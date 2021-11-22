@@ -10,8 +10,16 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Pslg01Controller extends Controller
 {
+     /**
+     * ログページ表示
+     * 
+     *  @var  array $tree_data ツリーデータ
+     *  @var array $name_data 部署人員のデータ
+     *  @var array $session_names セッション保存した部署人員データ
+     *  
+     *  @return \Illuminate\Http\Response
+     */
 
-    //
     public function index()
     {
         // ツリーのデーターを宣言する
@@ -28,9 +36,17 @@ class Pslg01Controller extends Controller
     }
 
 
-
     /**
      * セレクトボックスの名前から部員のIDと名前を表示する
+     *  
+     *  @param  \Illuminate\Http\Request  $request
+     *  @var array $tree_data ツリーデータ 
+     *  @var array $select_all セレクトボックスで選択された部員の情報を抽出
+     *  @var string $select_id  選択された部員ID
+     *  @var string $select_name　選択された部員名
+     *  @var array $session_names　セッション保存した部署人員データ
+     *  
+     *  @return \Illuminate\Http\Response
      */
     public function select(Request $request)
     {
@@ -67,16 +83,21 @@ class Pslg01Controller extends Controller
     /**
      * 表示するをクリックによりログ一覧を表示する
      * 
+     *  @param  \Illuminate\Http\Request  $request
+     *  @var array $tree_data ツリーデータ
+     *  @var array $items 検索内容一覧表示
+     *  @var int $count 検索結果に基づくログの件数
+     *  @var string $select_name　選択された部員名
+     *  @var array $session_names　セッション保存した部署人員データ
+     * 
+     *  @return \Illuminate\Http\Response
      */
-
+   
     public function create(Request $request)
     {
         // ツリーのデーターを宣言する
         $tree = new PtcmtrController();
-        $tree_data = $tree->set_view_treedata();
-
-        // dd($request->personnel_id);
-              
+        $tree_data = $tree->set_view_treedata();              
 
         // ログ表示に該当するものをselectする　
 
@@ -88,8 +109,7 @@ class Pslg01Controller extends Controller
                 ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id')
                 ->whereIn('dclg01.type', $request->check)
                 ->where('dclg01.created_at', 'like', "%$request->startdate%")
-                // ->where('dclg01.updated_at', 'like', "%$request->finishdate%")
-                ->where('dclg01.log', 'like', "%$request->kensaku%")
+                ->where('dclg01.log', 'like', "%$request->search%")
                 ->get();
         } else {
             // パターン⓶　部署人員番号が記入あり設定　＝　選択された部署人員の当日分を一覧表示
@@ -101,8 +121,7 @@ class Pslg01Controller extends Controller
                 ->where('dcji01.name', '=', $request->select_name)
                 ->where('dcji01.personnel_id', '=', $request->personnel_id)
                 ->where('dclg01.created_at', 'like', "%$request->startdate%")
-                // ->where('dclg01.updated_at', 'like', "%$request->finishdate%")
-                ->where('dclg01.log', 'like', "%$request->kensaku%")
+                ->where('dclg01.log', 'like', "%$request->search%")
                 ->get();
         }
 
@@ -111,8 +130,7 @@ class Pslg01Controller extends Controller
         // ログの結果の件数を抽出する
         $count = count($items);
 
-        // データを抽出かつ、sessinからname_dataとselect_nameを抽出する
-        $name_data = DB::table('dcji01')->get();
+        // sessionからname_dataとselect_nameを抽出する
         $session_names = session()->get('name_data');
         $select_name = session()->get('select_name');
 
@@ -120,13 +138,25 @@ class Pslg01Controller extends Controller
         return view('pslg01.pslg01', [
             'items' => $items,
             'count' => $count,
-            'name_data' => $name_data,
             'session_names' => $session_names,
             'select_name' => $select_name
         ]);
     }
 
-
+    /**
+     * 一覧表示された内容をダウンロードする
+     * 
+     *  @param  \Illuminate\Http\Request  $request
+     *  @var array $tree_data       ツリーデータ
+     *  @var array $session_items 　sessionで保存された検索内容一覧表示
+     *  @var array $csvList         csv化するデーター
+     *  @var array $title　         csv化するタイトルテーマ名
+     *  @var array $session_names　セッション保存した部署人員データ
+     *  @var array $download_data   ダウンロードするデータ（$titleと$csvListを合わせたもの）
+     *  @var $stream    書き込みをオープンにする 
+     * 
+     *  @return \Illuminate\Http\Response
+     */
     public function download(Request $request)
     {
         // ツリーのデーターを宣言する
@@ -136,13 +166,11 @@ class Pslg01Controller extends Controller
 
         $session_items = session()->get('items');
         foreach ($session_items as $items) {
-            $cvsList[] = [$items->created_at, $items->type, $items->user, $items->function, $items->program_pass, $items->log];
+            $csvList[] = [$items->created_at, $items->type, $items->user, $items->function, $items->program_pass, $items->log];
         }
 
-        $tuika[] = ["出力日時", "類別", "アクセスユーザ", "機能", "プログラムパス", "ログ"];
-
-
-        $download_data = (array_merge($tuika, $cvsList));
+        $title[] = ["出力日時", "類別", "アクセスユーザ", "機能", "プログラムパス", "ログ"];
+        $download_data = (array_merge($title, $csvList));
 
         $response = new StreamedResponse(function () use ($request, $download_data) {
             $stream = fopen('php://output', 'w');

@@ -69,10 +69,13 @@
                             @endif
                         </div>
                         <div class="col-4">
-                            <p>開始日時： {{ \Carbon\Carbon::today() }}</p>
-                            <input type="hidden" name="startdate" value="{{ date('Y-m-d', strtotime('today')) }}" form="create">
-                            <p>終了日時： {{ \Carbon\Carbon::now() }}</p>
-                                <input type="hidden" name="finishdate" style="width:120px;" form="create"></p>
+                            <?php
+                            $now = date("Y-m-d H:i");
+                            echo $now;
+                            ?>
+                            <p>開始日時： <input type="datetime-local" name="startdate" value="{{date('Y-m-d', strtotime('today'))}}T00:00"  form="create"></p>
+                            <p>終了日時： <input type="datetime-local" name="finishdate" value="{{$now}}"></p>                        
+                                <!-- <input type="hidden" name="finishdate" style="width:120px;" form="create"></p> -->
                         </div>
                     </div>
 
@@ -102,7 +105,7 @@
 
                     <div class="row mt-3">
 
-                        <div class="col-10">　文字検索：<input type="text" name="kensaku" style="width:32rem;" placeholder="入力可能な文字数は３２  全角、半角英数字、一覧操作領域" form="create">
+                        <div class="col-10">　文字検索：<input type="text" name="search" style="width:32rem;" placeholder="入力可能な文字数は３２  全角、半角英数字、一覧操作領域" form="create">
 
                         </div>
                         <div class="col-2">

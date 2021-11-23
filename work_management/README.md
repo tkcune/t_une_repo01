@@ -1,62 +1,32 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# sagyokanri
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+本プログラムの動作のためには<BR>
+エンジニア系利用者向けマニュアル - ダウンロードしたLaravelプログラム資源を開発可能にする手順<BR>
+を実行後、以下を行う
+<P>
+データベース構築<BR>
+１・データベースを作成<BR>
+　1-1.PHPMyAdminにアクセスする。<BR>
+　1-2.画面左の新規作成をクリックする。<BR>
+　1-3.データベース名をwork_managementと入力し作成をクリック<BR>
+２・.envファイルの作成<BR>
+　2-1.env.exampleのファイル名を.envに変更<BR>
+　2-2.DB_DATABASE=laravelをDB_DATABASE=work_managementに変更<BR>
+３・.vendorファイルの作成<BR>
+  3-1.コマンドプロンプトを開きcdコマンドでwork_managementのpublicディレクトリに移動<BR>
+  3-2.composer installコマンドを実行<BR>
+４・データの挿入<BR>
+　4-1.PHPMyAdminにアクセスし、作成したwork_managementデータベースをクリック<BR>
+　4-2.インポートをクリック<BR>
+　4-3.アップロードファイル:ファイル選択をクリックし、04.内部設計の04.データベーステストデータにあるzipファイルを選択<BR>
+　4-4.右下にある実行ボタンをクリック
+４－２・データの挿入(別の方法)<BR>
+  4-2-1.コンソールがwork_manegement配下の時に、 php artisan migrateでデータベースのテーブルを作成する<BR>
+　4-2-2.続けて、 php artisan db:seedで、データベースにデータを挿入する<BR>
+５・APP_KEYの生成
+  5-1. php artisan key:generateの実行で、.envファイルのAPP_KEYが生成される<BR>
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+データベースのテーブルの初期化<BR>
+1. php artisan migrate:freshで、データベースのテーブルのデータを消去する<BR>
+2. php artisan db:seedで、データベースのテーブルにデータを挿入する

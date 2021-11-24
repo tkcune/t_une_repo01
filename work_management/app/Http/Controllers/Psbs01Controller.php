@@ -589,6 +589,17 @@ class Psbs01Controller extends Controller
         $high_id = $request->high_id;
         $lower_id = $request->lower_id;
 
+        //複写番号が空白の場合エラーメッセージを表示
+        if($request->lower_id == null){
+            //今後エラーIDの番号をまとめたconfigを作成した方が良い 11.24
+            //04は番号が空白の状態
+            $num = "04";
+            $e = "番号が空白です";
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
+            DatabaseException::commonError($e,$num);
+            return redirect()->route('index');
+        }
+
         //データベース更新
         try{
             DB::update('update dccmks set high_id = ? where client_id = ? and lower_id = ?',
@@ -967,10 +978,16 @@ class Psbs01Controller extends Controller
         $high = $request->high_id;
 
         if($request->copy_id == null){
+            //今後エラーIDの番号をまとめたconfigを作成した方が良い 11.24
+            //04は番号が空白の状態
+            $num = "04";
+            $e = "番号が空白です";
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
+            DatabaseException::commonError($e,$num);
             return redirect()->route('index');
         }
-    //投影を複製する場合
-    if(substr($copy_id,0,2) == "ta"){
+        //投影を複製する場合
+        if(substr($copy_id,0,2) == "ta"){
             try{
                 $code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$copy_id]);
             }catch(\Exception $e){

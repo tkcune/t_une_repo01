@@ -14,7 +14,8 @@
         /**
          * 汎用メッセージ処理
          * @param Illuminate\Database\QueryException $e エラー内容
-         * @param array $message メッセージ
+         * 
+         * @var array $message メッセージ
          */
         public static function common($e){
 
@@ -27,7 +28,8 @@
         /**
          * データ取得ミスメッセージ処理
          * @param Illuminate\Database\QueryException $e エラー内容
-         * @param array $message メッセージ
+         * 
+         * @var array $message メッセージ
          */
         public static function dataCatchMiss($e){
 
@@ -35,5 +37,20 @@
             $message = Message::get_message('mhcmer0001',[0=>'02']);
             session(['message'=>$message[0]]);
 
+        }
+
+        /**
+         * 汎用エラーメッセージ処理
+         * @param $e エラー内容
+         * @param $num エラー番号
+         * 
+         * @var array $message メッセージ
+         */
+        public static function commonError($e,$num){
+
+            OutputLog::log(__CLASS__, 'sy', '00', $e);
+            $message = Message::get_message('mhcmer0001',[0=>$num]);
+            session(['message'=>$message[0]]);
+            
         }
     }

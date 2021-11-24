@@ -608,14 +608,19 @@ class Psji01Controller extends Controller
 
         $date = new Date();
 
+        //複写番号が空白の場合エラーメッセージを表示
         if($request->copy_id == null){
-
+            //今後エラーIDの番号をまとめたconfigを作成した方が良い 11.24
+            //04は番号が空白の状態
+            $num = "04";
+            $e = "番号が空白です";
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
+            DatabaseException::commonError($e,$num);
             return redirect()->route('index');
-
         }
 
-    //投影を複製する場合
-    if(substr($copy_id,0,2) == "ta"){
+        //投影を複製する場合
+        if(substr($copy_id,0,2) == "ta"){
             try{
                 $code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$copy_id]);
             }catch(\Exception $e){
@@ -624,54 +629,65 @@ class Psji01Controller extends Controller
                 return redirect()->route('index');
             }
             $projection_source_id = $code[0]->projection_source_id;
-        //最新の投影番号を生成
-        try{
-            $id = DB::select('select projection_id from dccmta where client_id = ? 
-            order by projection_id desc limit 1',[$client_id]);
-        }catch(\Exception $e){
 
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-            DatabaseException::common($e);
-            return redirect()->route('index');
-        }
-        if(empty($id)){
-            $projection_id = "ta00000001";
+            //人員の配下に部署を複製しないように分岐
+            if(substr($projection_source_id,0,2) == "bs"){
+                //05は人員の配下に部署を複製しない
+                $num = "05";
+                $e = "人員の配下に部署は作成できません";
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
+                DatabaseException::commonError($e,$num);
+                return redirect()->route('index');
+            }
+
+            //最新の投影番号を生成
+            try{
+                $id = DB::select('select projection_id from dccmta where client_id = ? 
+                order by projection_id desc limit 1',[$client_id]);
+            }catch(\Exception $e){
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            if(empty($id)){
+                $projection_id = "ta00000001";
+            }else{
+
+            //登録する番号を作成
+            $padding = new ZeroPadding();
+            $projection_id = $padding->padding($id[0]->projection_id);
+            }
+
+            //データベースに投影情報を登録
+            try{
+                DB::insert('insert into dccmta
+                (client_id,projection_id,projection_source_id)
+                VALUE (?,?,?)',
+                [$client_id,$projection_id,$projection_source_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+            }
+
+            //データベースに階層情報を登録
+            try{
+                DB::insert('insert into dccmks
+                (client_id,lower_id,high_id)
+                VALUE (?,?,?)',
+                [$client_id,$projection_id,$high]);
+            }catch(\Exception $e){
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
+            $message = Message::get_message('mhcmok0009',[0=>'']);
+            session(['message'=>$message[0]]);
+            return back();
         }else{
-
-        //登録する番号を作成
-        $padding = new ZeroPadding();
-        $projection_id = $padding->padding($id[0]->projection_id);
-        }
-
-        //データベースに投影情報を登録
-        try{
-            DB::insert('insert into dccmta
-            (client_id,projection_id,projection_source_id)
-            VALUE (?,?,?)',
-            [$client_id,$projection_id,$projection_source_id]);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-        }
-
-        //データベースに階層情報を登録
-        try{
-            DB::insert('insert into dccmks
-            (client_id,lower_id,high_id)
-            VALUE (?,?,?)',
-            [$client_id,$projection_id,$high]);
-        }catch(\Exception $e){
-
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-            DatabaseException::common($e);
-            return redirect()->route('index');
-        }
-        //ログ処理
-        OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
-        $message = Message::get_message('mhcmok0009',[0=>'']);
-        session(['message'=>$message[0]]);
-        return back();
-    }else{
             try{
                 $copy_personnel = DB::select('select * from dcji01 where client_id = ? 
                 and personnel_id = ?',[$client_id,$copy_id]);
@@ -711,7 +727,7 @@ class Psji01Controller extends Controller
                 operation_start_date,
                 operation_end_date)
                 VALUE (?,?,?,?,?,?,?,?,?,?,?,?)',
-            [
+                [
                 $client_id,
                 $personnel_id,
                 $copy_personnel[0]->name,

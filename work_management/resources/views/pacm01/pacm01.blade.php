@@ -620,7 +620,7 @@
 
                 <div class="row">
                     <div class="col">
-                    <table class="table table-bordered border-dark">
+                    <table id="bs-table" class="table table-bordered border-dark">
                         <thead>
                             <tr>
                             <th>部署番号</th>
@@ -829,7 +829,7 @@
                 
                 <div class="row">
                     <div class="col">
-                    <table class="table table-bordered border-dark">
+                    <table id ="ji-table" class="table table-bordered border-dark">
                         <thead>
                             <tr>
                             <th>人員番号</th>

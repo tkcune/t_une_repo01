@@ -62,27 +62,36 @@ var display=function() {
 
 /**
  * 削除のON・OFF切替メソッド
+ * @var int count 部署一覧テーブルの行数
+ * @var int count2 人員一覧テーブルの行数
  * @var int id 部署一覧対象のID
  * @var int id2 人員対象のID
  */
 function deleteOn()
 {
+    var count = document.getElementById("bs-table").rows.length-1;
+    var count2 = document.getElementById("ji-table").rows.length-1;
+
     if (document.getElementById("delete").disabled === true){
 		// disabled属性を削除
 		document.getElementById("delete").removeAttribute("disabled");
-    for(i=0; i<5 ;i++){
+    for(i=0; i<count ;i++){
       var id= "bs_list_delete"+ i;
-      var id2= "list_delete"+ i;
       document.getElementById(id).setAttribute("style","pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px; color:blue;");
+    }
+    for(j=0; j<count2 ;j++){
+      var id2= "list_delete"+ j;
       document.getElementById(id2).setAttribute("style","pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px; color:blue;");
     }
 	}else{
 		// disabled属性を設定
 		document.getElementById("delete").setAttribute("disabled", true);
-    for(i=0; i<5 ;i++){
+    for(i=0; i<count ;i++){
       var id= "bs_list_delete"+ i;
-      var id2= "list_delete"+ i;
       document.getElementById(id).setAttribute("style","pointer-events: none; display:inline-block; cursor: auto; text-decoration:underline; margin:0px;");
+    }
+    for(j=0; j<count2 ;j++){
+      var id2= "list_delete"+ j;
       document.getElementById(id2).setAttribute("style","pointer-events: none; display:inline-block; cursor: auto; text-decoration:underline; margin:0px;");
     }
 	}

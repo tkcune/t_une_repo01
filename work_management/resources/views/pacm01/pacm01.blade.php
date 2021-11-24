@@ -22,7 +22,7 @@
                         <p>番号:{{$top_department[0]->department_id}}</p>
                     </div>
                     <div class="col">
-                    <input type="submit" value="ツリー表示" onclick="displayOn()"
+                    <input type="button" value="ツリー表示" onclick="displayOn()"
                     data-toggle="tooltip" title="ツリーを表示します">
                     </div>
                 </div>
@@ -164,7 +164,7 @@
                         <p>上位:<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$click_department_high[0]->name}}</a></p>
                     </div>
                     <div class="col-2">
-                    <input type="submit" value="ツリー表示" onclick="displayOn()"
+                    <input type="button" value="ツリー表示" onclick="displayOn()"
                     data-toggle="tooltip" title="ツリーを表示します">
                     </div>
                 </div>
@@ -318,7 +318,7 @@
                         @endif
                     </div>
                     <div class="col-2">
-                    <input type="submit" value="ツリー表示" onclick="displayOn()"
+                    <input type="button" value="ツリー表示" onclick="displayOn()"
                     data-toggle="tooltip" title="ツリーを表示します">
                     </div>
 

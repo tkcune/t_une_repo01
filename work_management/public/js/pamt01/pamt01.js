@@ -12,7 +12,7 @@ var display=function() {
     //非表示中のときの処理
     if(state=="none"){
          //スタイルを表示(inline)に切り替え
-         div.setAttribute("style","display:inline");
+         div.setAttribute("style","");
     }else{
          //スタイルを非表示(none)に切り替え
         div.setAttribute("style","display:none");
@@ -32,8 +32,8 @@ var display=function() {
   state=div.style.display;
   //非表示中のときの処理
   if(state=="none"){
-       //スタイルを表示(inline)に切り替え
-       div.setAttribute("style","display:inline");
+       //スタイルを切り替え
+       div.setAttribute("style","");
   }
 }
 

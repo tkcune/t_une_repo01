@@ -502,24 +502,39 @@ class Pa0001Controller extends Controller
                 $date = new Date();
                 $date->formatDate($click_personnel_data);
 
+                //基本ページネーション設定
+                $pagination = new Pagination();
+                $department_max = $pagination->pageMax($department_data,count($department_data));
+                $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+                $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
+                $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
                 //責任者を名前で取得
                 $responsible = new ResponsiblePerson();
                 $top_responsible = $responsible->getResponsibleLists($client,$top_department);
+                $responsible_lists = $responsible->getResponsibleLists($client,$departments);
+
+                //上位階層取得
+                $hierarchical = new Hierarchical();
+                try{
+                    $department_high = $hierarchical->upperHierarchyName($departments);
+                    $personnel_high = $hierarchical->upperHierarchyName($names);
+                }catch(\Exception $e){
+                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
+                    DatabaseException::dataCatchMiss($e);
+                    return redirect()->route('errormsg');
+                }
 
                 //管理者を名前で取得
                 $top_management = $responsible->getManagementLists($client,$top_department);
                 $click_management_lists = $responsible->getManagementLists($client,$click_personnel_data);
 
-                //部署・人員の一覧表示領域のデータ表示
-                $list_display = new ListDisplay();
-                $list_display->listDisplay($department_data,$personnel_data,$count_department,$count_personnel,$client);
-        
                 //ツリーデータの取得
                 $tree = new PtcmtrController();
                 $tree_data = $tree->set_view_treedata();
 
-                return view('pacm01.pacm01',compact('top_management','click_management_lists',
-                'top_department','top_responsible','count_department','count_personnel','client',
+                return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments',
+                'personnel_max','names','department_high','personnel_high','responsible_lists','top_department','top_responsible','count_department','count_personnel','client',
                 'select_id','personnel_data','click_personnel_data'));
             }
             array_push($department_data,$data[0]);

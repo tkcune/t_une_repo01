@@ -338,6 +338,7 @@
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
                         <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on"
+                        
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
 @for($j = 0; $j < count($personnel_data);$j++)

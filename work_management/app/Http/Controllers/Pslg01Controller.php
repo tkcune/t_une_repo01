@@ -54,12 +54,14 @@ class Pslg01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
+// dd($request->name);
+
         // 空白を選択されたらそのままバックする
-        if ($request->personnel_id == '0') {
+        if ($request->name == null) {
             return back();
         } else {
             // セレクトボックスで選択された部員の情報を抽出する
-            $select_all = DB::table('dcji01')->where('personnel_id', '=', $request->personnel_id)->get();
+            $select_all = DB::table('dcji01')->where('name', '=', $request->name)->get();
 
             // 抽出したデータの部員IDと部員名をsessionで保存する
             session()->put('select_id', $select_all[0]->personnel_id);
@@ -108,7 +110,9 @@ class Pslg01Controller extends Controller
                 ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
                 ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id')
                 ->whereIn('dclg01.type', $request->check)
-                ->where('dclg01.created_at', 'like', "%$request->startdate%")
+                ->where('dclg01.created_at', '>=', $request->startdate)
+                ->where('dclg01.created_at', '<=', $request->finishdate)
+                
                 ->where('dclg01.log', 'like', "%$request->search%")
                 ->get();
         } else {
@@ -120,11 +124,13 @@ class Pslg01Controller extends Controller
                 ->whereIn('dclg01.type', $request->check)
                 ->where('dcji01.name', '=', $request->select_name)
                 ->where('dcji01.personnel_id', '=', $request->personnel_id)
-                ->where('dclg01.created_at', 'like', "%$request->startdate%")
+                ->where('dclg01.created_at', '>=', $request->startdate)
+                ->where('dclg01.created_at', '<=', $request->finishdate)
                 ->where('dclg01.log', 'like', "%$request->search%")
                 ->get();
         }
 
+        // dd($items);
          session()->put('items', $items);
 
         // ログの結果の件数を抽出する

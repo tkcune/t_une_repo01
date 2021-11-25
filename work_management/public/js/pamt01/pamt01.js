@@ -203,6 +203,7 @@ function clickDelete()
 
    document.getElementById("management_number").defaultValue = label;
  }
+ 
  document.getElementById("search-list").onchange = search;
 
 

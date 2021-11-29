@@ -49,5 +49,6 @@
 <br>
 ５ APP_KEYの生成
   <br>
+  <br>
   5-1 php artisan key:generateの実行で、.envファイルのAPP_KEYが生成される
 <br>

@@ -40,11 +40,11 @@
 　4-4 右下にある実行ボタンをクリック
   <br>
   <br>
-４－２ データの挿入(別の方法)<BR>
+４ データの挿入(別の方法)<BR>
   <br>
-  4-2-1 コンソールがwork_manegement配下の時に、 php artisan migrateでデータベースのテーブ         ルを作成する<BR>
+  4-1 コンソールがwork_manegement配下の時に、 php artisan migrateでデータベースのテーブ         ルを作成する<BR>
 <br>  
-　4-2-2 続けて、 php artisan db:seedで、データベースにデータを挿入する<BR>
+　4-2 続けて、 php artisan db:seedで、データベースにデータを挿入する<BR>
   <br>
 <br>
 ５ APP_KEYの生成

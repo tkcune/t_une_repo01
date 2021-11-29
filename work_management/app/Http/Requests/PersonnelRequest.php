@@ -38,7 +38,7 @@ class PersonnelRequest extends FormRequest
     public function messages()
     {
         return [
-            'password.required' => '入力されていない項目があります'
+            
         ];
     }
 }

@@ -356,11 +356,7 @@
                         <p>メールアドレス<input type="email" name="email" maxlength="64" value="{{$click_personnel_data[0]->email}}"></p>
                     </div>
                     <div class="col-4" style="padding:0px">
-                    @if($click_personnel_data[0]->login_authority == "1") 
                         <p id="login">パスワード<input id="password" type="password" maxlength="32" name="password"><input type="checkbox" onclick="passwordOn()"></p>
-                    @else
-                        <input type="hidden" maxlength="32" name="password" value="ValidationOK">
-                    @endif
                     </div>
                     <div class="col">
                         <button>メール送信</button>

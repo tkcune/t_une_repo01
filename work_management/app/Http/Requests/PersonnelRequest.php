@@ -29,7 +29,7 @@ class PersonnelRequest extends FormRequest
             'personnel_id' =>'',
             'name' =>'',
             'email' =>'',
-            'password' => ['required',new AlphaNumHalf],
+            'password' => [new AlphaNumHalf],
             'management_number'=>'',
             'status'=>'',
         ];

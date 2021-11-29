@@ -88,7 +88,7 @@ class Psji01Controller extends Controller
         $check = new StatusCheck();
 
         //リクエストに空白が無いかどうかの確認
-        if(empty($name) || empty($email) || empty($request->password) || empty($status)){
+        if(empty($name) || empty($email) || empty($status)){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
             $message = Message::get_message('mhcmer0003',[0=>'']);
             session(['message'=>$message[0]]);

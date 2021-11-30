@@ -1,2 +1,0 @@
-プログラムは配下に配置している
-sagyokanri\work_management

@@ -32,6 +32,7 @@ class Pa0001Controller extends Controller
      * @var　int $count_personnel  人員ページネーションのページ数
      * @var  array $top_department 最上位の部署データ
      * @var  App\Models\Date $date
+     * @var  array $operation_date 運用日を格納した配列
      * @var  array $department_data 全体部署データ
      * @var  array $personnel_data 全体人員データ
      * @var  App\Libraries\php\ResponsiblePerson $responsible
@@ -93,7 +94,7 @@ class Pa0001Controller extends Controller
 
         //登録日付を6桁に変換
         $date = new Date();
-        $date->formatDate($top_department);
+        $operation_date = $date->formatOperationDate($top_department);
 
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
@@ -136,7 +137,7 @@ class Pa0001Controller extends Controller
 
         return view('pacm01.pacm01',compact('top_management','department_max','departments','personnel_max','names',
         'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
-        'count_personnel','personnel_data'));
+        'count_personnel','personnel_data','operation_date'));
     }
 
     /**
@@ -260,7 +261,7 @@ class Pa0001Controller extends Controller
         }
         //登録日付を6桁に変換
         $date = new Date();
-        $date->formatDate($top_department);
+        $operation_date = $date->formatOperationDate($top_department);
 
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
@@ -300,7 +301,7 @@ class Pa0001Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('top_department','top_responsible','department_max','departments','personnel_max','names',
-        'responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data'));
+        'responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data','operation_date'));
     }
 
     /**
@@ -387,7 +388,7 @@ class Pa0001Controller extends Controller
 
             //登録日付を6桁に変換
             $date = new Date();
-            $date->formatDate($click_department_data);
+            $operation_date = $date->formatOperationDate($click_department_data);
 
             //責任者を名前で取得
             $responsible = new ResponsiblePerson();
@@ -500,7 +501,7 @@ class Pa0001Controller extends Controller
                 }
                 //日付を6桁にする
                 $date = new Date();
-                $date->formatDate($click_personnel_data);
+                $operation_date = $date->formatOperationDate($click_personnel_data);
 
                 //基本ページネーション設定
                 $pagination = new Pagination();
@@ -535,7 +536,7 @@ class Pa0001Controller extends Controller
 
                 return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments',
                 'personnel_max','names','department_high','personnel_high','responsible_lists','top_department','top_responsible','count_department','count_personnel','client',
-                'select_id','personnel_data','click_personnel_data'));
+                'select_id','personnel_data','click_personnel_data','operation_date'));
             }
             array_push($department_data,$data[0]);
 
@@ -551,7 +552,7 @@ class Pa0001Controller extends Controller
 
             //登録日付を6桁に変換
             $date = new Date();
-            $date->formatDate($click_personnel_data);
+            $operation_date = $date->formatOperationDate($click_personnel_data);
 
             //責任者を名前で取得
             $responsible = new ResponsiblePerson();
@@ -590,7 +591,7 @@ class Pa0001Controller extends Controller
             $tree_data = $tree->set_view_treedata();
 
             return view('pacm01.pacm01',compact('count_department','count_personnel','click_management_lists','data','department_max','departments',
-            'personnel_max','names','responsible_lists','department_high','personnel_high','client','select_id','click_personnel_data','personnel_data'));
+            'personnel_max','names','responsible_lists','department_high','personnel_high','client','select_id','click_personnel_data','personnel_data','operation_date'));
         }
     }
 
@@ -650,6 +651,27 @@ class Pa0001Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pcms01.pcms01');
+    }
+
+    /**
+     * 再表示するメソッド
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function redirect(){
+
+        //クリックボードが保存されている場合は削除
+        if(!(null == session()->get('clipboard_id'))){
+
+            session()->forget('clipboard_id');
+
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmok0005');
+            $message = Message::get_message('mhcmok0005',[0=>'']);
+            session(['message'=>$message[0]]);
+        }
+
+        return back();
     }
 
 }

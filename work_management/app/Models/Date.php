@@ -50,4 +50,31 @@ use Carbon\Carbon;
             }
         }
     }
+
+    /**
+     * 運用開始日と運用終了日の表記を変換するメソッド
+     * @param array $datas DBデータ 
+     * 
+     * @var   array $date 変換後の日付を格納
+     * 
+     * @return array $date 
+     */
+    public function formatOperationDate($datas){
+
+        $date = array();
+        foreach($datas as $data){
+
+            $operation_start_date = null;
+            $operation_end_date = null;
+
+            $operation_start_date = Carbon::parse($data->operation_start_date)->format('Y-m-d');
+            if(isset($data->operation_end_date)){
+                $operation_end_date = Carbon::parse($data->operation_end_date)->format('Y-m-d');
+            }
+            $date = ["operation_start_date" => $operation_start_date,"operation_end_date" => $operation_end_date];
+
+        }
+        return $date;
+
+    }
 }

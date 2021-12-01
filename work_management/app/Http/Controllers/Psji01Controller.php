@@ -85,7 +85,6 @@ class Psji01Controller extends Controller
         $system_management = $request->system_management;
         $high = $request->high;
         $date = new Date();
-        $check = new StatusCheck();
 
         //リクエストに空白が無いかどうかの確認
         if(empty($name) || empty($email) || empty($status)){
@@ -108,13 +107,10 @@ class Psji01Controller extends Controller
         if(empty($id)){
             $personnel_id = "ji00000001";
         }else{
-
             //登録する番号を作成
             $padding = new ZeroPadding();
             $personnel_id = $padding->padding($id[0]->personnel_id);
         }
-
-        list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
 
         //データベースに登録
         try{
@@ -129,9 +125,9 @@ class Psji01Controller extends Controller
             management_personnel_id,
             login_authority,
             system_management,
-            operation_start_date,
-            operation_end_date)
-            VALUE (?,?,?,?,?,?,?,?,?,?,?,?)',
+            operation_start_date
+            )
+            VALUE (?,?,?,?,?,?,?,?,?,?,?)',
             [
             $client_id,
             $personnel_id,
@@ -143,8 +139,8 @@ class Psji01Controller extends Controller
             $personnel_id,
             $login_authority,
             $system_management,
-            $operation_start_date,
-            $operation_end_date]);
+            $date->today()
+            ]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -198,13 +194,13 @@ class Psji01Controller extends Controller
      * @var  string  $personnel_id　人員ID
      * @var  string  $name　名前
      * @var  string  $mail　メールアドレス
-     * @var  string  $mail　メールアドレス
+     * @var  string  $password　パスワード
      * @var  string  $management_number 管理者ID
      * @var  string  $management_personnel_id 管理者番号
      * @var  string  $status　状態
      * @var  App\Libraries\php\StatusCheck $check
-     * @var  string  $operation_start_date 稼働開始日
-     * @var  string  $operation_end_date 稼働終了日
+     * @var  string  $start_day 稼働開始日
+     * @var  string  $finish_day 稼働終了日
      * 
      * @return \Illuminate\Http\Response
      */
@@ -217,6 +213,9 @@ class Psji01Controller extends Controller
         $password = Hash::make($request->password);
         $management_number = $request->management_number;
         $status = $request->status;
+        $start_day = $request->start_day;
+        $finish_day = $request->finish_day;
+
 
         //リクエストに空白が無いかどうかの確認
         if(empty($name) || empty($mail) || empty($status) || empty($request->password) || empty($management_number)){
@@ -239,77 +238,24 @@ class Psji01Controller extends Controller
             return redirect()->route('index');
         }
 
-        //部署情報の更新
-        if($status == "13")
-        {
-            //状態が稼働中なら稼働開始日を更新
-            $check = new StatusCheck();
-            list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
-       
-            if($request->password == "ValidationOK"){
-                try{
-                    DB::update('update dcji01 set name = ?,status = ?,email = ?,management_personnel_id = ?,operation_start_date = ? where client_id = ? and personnel_id = ?',
-                    [$name,$status,$mail,$management_number,$operation_start_date,$client_id,$personnel_id]);
-                }catch(\Exception $e){
-                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                    DatabaseException::common($e);
-                    return redirect()->route('index');
-                }
-            }else{
-                try{
-                    DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,operation_start_date = ? where client_id = ? and personnel_id = ?',
-                    [$name,$status,$mail,$password,$management_number,$operation_start_date,$client_id,$personnel_id]);
-                }catch(\Exception $e){
-                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                    DatabaseException::common($e);
-                    return redirect()->route('index');
-                }
-            }
-
-        }else if($status == "18"){
-            //状態が廃止なら稼働終了日を更新
-            $check = new StatusCheck();
-            list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
-       
-            if($request->password == "ValidationOK"){
-                try{
-                    DB::update('update dcji01 set name = ?,status = ?,email = ?,management_personnel_id = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
-                    [$name,$status,$mail,$management_number,$operation_end_date,$client_id,$personnel_id]);
-                }catch(\Exception $e){
-                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                    DatabaseException::common($e);
-                    return redirect()->route('index');
-                }
-            }else{
-                try{
-                    DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
-                    [$name,$status,$mail,$password,$management_number,$operation_end_date,$client_id,$personnel_id]);
-                }catch(\Exception $e){
-                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                    DatabaseException::common($e);
-                    return redirect()->route('index');
-                }
+        //人員情報の更新
+        if($request->password == "ValidationOK"){
+            try{
+                DB::update('update dcji01 set name = ?,status = ?,email = ?,management_personnel_id = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$management_number,$start_day,$finish_day,$client_id,$personnel_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
             }
         }else{
-           //上記以外なら状態と名前のみ更新
-            if($request->password == "ValidationOK"){
-                try{
-                    DB::update('update  dcji01 set name = ?,status = ?,email = ?,management_personnel_id = ? where client_id = ? and personnel_id = ?',
-                    [$name,$status,$mail,$management_number,$client_id,$personnel_id]);
-                }catch(\Exception $e){
-                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                    DatabaseException::common($e);
-                    return redirect()->route('index');
-                }
-            }else{
-                try{
-                    DB::update('update  dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ? where client_id = ? and personnel_id = ?',
-                    [$name,$status,$mail,$password,$management_number,$client_id,$personnel_id]);
-                }catch(\Exception $e){
-                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                    DatabaseException::common($e);
-                    return redirect()->route('index');
-                }
+            try{
+                DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$password,$management_number,$start_day,$finish_day,$client_id,$personnel_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
             }
         }
 
@@ -510,13 +456,13 @@ class Psji01Controller extends Controller
         //日付を6桁にする
         $date = new Date();
         if(isset($top_department)){
-            $date->formatDate($top_department);
+            $operation_date = $date->formatOperationDate($top_department);
         }
         if(isset($click_department_data)){
-            $date->formatDate($click_department_data);
+            $operation_date = $date->formatOperationDate($click_department_data);
         }
         if(isset($click_personnel_data)){
-            $date->formatDate($click_personnel_data);
+            $operation_date = $date->formatOperationDate($click_personnel_data);
         }
 
         //責任者を名前で取得
@@ -580,7 +526,7 @@ class Psji01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','count_personnel','department_max',
-        'departments','personnel_max','names','responsible_lists','department_high','personnel_high'));
+        'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date'));
     }
 
     /**

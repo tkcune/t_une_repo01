@@ -1,7 +1,0 @@
-
-
-class Display{
-  static display(){
-    //
-  }
-}

@@ -2,8 +2,10 @@
 
 namespace Tests\Browser;
 
+//duskのテストデータ
 class TestDBDusk {
 
+    //部署作成のテストデータ
     public static function has_create_bs(){
         return [
             'dcbs01' => [
@@ -16,6 +18,7 @@ class TestDBDusk {
         ];
     }
     
+    //部署情報更新のテストデータ
     public static function has_update_bs(){
         return [
             'dcbs01' => [
@@ -28,6 +31,7 @@ class TestDBDusk {
         ];
     }
 
+    //人事情報更新のテストデータ
     public static function has_update_ji(){
         return [
             'dcji01' => [
@@ -40,14 +44,15 @@ class TestDBDusk {
         ];
     }
 
+    //部署の削除のテストデータ
     public static function has_miss_delete_bs(){
         return [
             'dcbs01' => [
                 [
-                    'personnel_id' => 'bs00000004'
+                    'department_id' => 'bs00000004'
                 ],
                 [
-                    'personnel_id' => 'bs00000008'
+                    'department_id' => 'bs00000008'
                 ]
             ],
             'dcji01' => [
@@ -91,33 +96,36 @@ class TestDBDusk {
         ];
     }
 
+    //人事削除のテストデータ
     public static function has_miss_delete_ji(){
         return [
             'dcji01' => [
                 [
-                    'personnel_id' => 'ji00000002'
+                    'personnel_id' => 'ji00000003'
                 ]
             ],
             'dccmks' => [
                 [
-                    'lower_id' => 'ji00000002',
+                    'lower_id' => 'ji00000003',
                     'high_id' => 'bs00000002'
                 ]
             ]
         ];
     }
 
+    //部署の移動の削除のテストデータ
     public static function has_miss_move_bs(){
         return [
             'dccmks' => [
                 [
                     'lower_id' => 'bs00000006',
-                    'high_id' => 'bs00000004'
+                    'high_id' => 'bs00000003'
                 ]
             ]
         ];
     }
 
+    //部署の移動のテストデータ
     public static function has_move_bs(){
         return [
             'dccmks' => [
@@ -148,38 +156,6 @@ class TestDBDusk {
                     'high_id' => 'bs00000002'
                 ]
             ]
-        ];
-    }
-
-    public static function has_copy_ji(){
-        return [
-            'dcji01' => [
-                [
-                    'personnel_id' => 'ji00000011'
-                ]
-            ],
-            'dccmks' => [
-                'lower_id' => 'ji00000011',
-                'high_id' => 'bs00000005'
-            ]
-        ];
-    }
-
-    public static function has_projection_bs(){
-        return [
-            'dccmta' => [
-                [
-                    'projection_id' => 'ta00000007',
-                    'projection_source_id' => 'bs00000001'
-                ]
-            ],
-            'dccmks' => [
-                [
-                    'lower_id' => 'ta00000007',
-                    'high_id' => 'bs00000001'
-                ]
-            ]
-
         ];
     }
 }

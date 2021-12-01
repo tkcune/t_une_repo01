@@ -80,6 +80,15 @@
 
                 <div class="row">
                     <div class="col">
+                        運用開始日<input name="start_day" type="date" value="{{$operation_date['operation_start_date']}}">
+                    </div>
+                    <div class="col">
+                        運用終了日<input name="finish_day" type="date" value="{{$operation_date['operation_end_date']}}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
                     <p>
                     <div style="display:inline-flex">
                     <input type="submit" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
@@ -118,17 +127,7 @@
                     </div>
                     <p>
                     登録日:{{$top_department[0]->created_at}} 修正日:{{$top_department[0]->updated_at}}
-                    @if($top_department[0]->operation_start_date)
-                    運用開始日:{{$top_department[0]->operation_start_date}}
-                    @else
-                    運用開始日:保留
-                    @endif
-                    @if($top_department[0]->operation_end_date)
-                    運用終了日:{{$top_department[0]->operation_end_date}}
-                    @else
-                    運用終了日:未定
-                    @endif
-                    登録者:<a href="#">{{$top_responsible[0]}}</a>
+                    登録者:<a href="{{ route('plbs01.show',[session('client_id'),$top_department[0]->responsible_person_id])}}">{{$top_responsible[0]}}</a>
                     </p>
                     </div>
                 </div>
@@ -218,6 +217,15 @@
 
                 <div class="row">
                     <div class="col">
+                        運用開始日<input name="start_day" type="date" value="{{$operation_date['operation_start_date']}}">
+                    </div>
+                    <div class="col">
+                        運用終了日<input name="finish_day" type="date" value="{{$operation_date['operation_end_date']}}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
                     <p>
                     <div style="display:inline-flex">
                     <input type="submit" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
@@ -264,17 +272,7 @@
                     </div>
                     <p>
                     登録日:{{$click_department_data[0]->created_at}} 修正日:{{$click_department_data[0]->updated_at}}
-                    @if($click_department_data[0]->operation_start_date)
-                    運用開始日:{{$click_department_data[0]->operation_start_date}}
-                    @else
-                    運用開始日:保留
-                    @endif
-                    @if($click_department_data[0]->operation_end_date)
-                    運用終了日:{{$click_department_data[0]->operation_end_date}}
-                    @else
-                    運用終了日:未定
-                    @endif
-                    登録者:<a href="#">{{$click_responsible_lists[0]}}</a>
+                    登録者:<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->responsible_person_id])}}">{{$click_responsible_lists[0]}}</a>
                     </p>
                     </div>
                 </div>
@@ -356,7 +354,11 @@
                         <p>メールアドレス<input type="email" name="email" maxlength="64" value="{{$click_personnel_data[0]->email}}"></p>
                     </div>
                     <div class="col-4" style="padding:0px">
-                        <p id="login">パスワード<input id="password" type="password" maxlength="32" name="password"><input type="checkbox" onclick="passwordOn()"></p>
+                        <p id="login">パスワード<input id="password" type="password" maxlength="32" name="password">
+                    @if($click_personnel_data[0]->login_authority == "1") 
+                        <input type="checkbox" onclick="passwordOn()">
+                    @endif
+                        </p>
                     </div>
                     <div class="col">
                         <button>メール送信</button>
@@ -380,6 +382,15 @@
                         ログイン：
                         <input type="checkbox" name="login" value="1" onclick="loginDisabled()" @if($click_personnel_data[0]->login_authority == "1") checked @endif>
                         </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        運用開始日<input name="start_day" type="date" value="{{$operation_date['operation_start_date']}}">
+                    </div>
+                    <div class="col">
+                        運用終了日<input name="finish_day" type="date" value="{{$operation_date['operation_end_date']}}">
                     </div>
                 </div>
 
@@ -434,18 +445,7 @@
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
-                    <p>登録日:{{$click_personnel_data[0]->created_at}} 修正日:{{$click_personnel_data[0]->updated_at}}
-                    @if($click_personnel_data[0]->operation_start_date)
-                    運用開始日:{{$click_personnel_data[0]->operation_start_date}}
-                    @else
-                    運用開始日:保留
-                    @endif
-                    @if($click_personnel_data[0]->operation_end_date)
-                    運用終了日:{{$click_personnel_data[0]->operation_end_date}}
-                    @else
-                    運用終了日:未定
-                    @endif
-                    </p>
+                        <p>登録日:{{$click_personnel_data[0]->created_at}} 修正日:{{$click_personnel_data[0]->updated_at}}</p>
                     </div>
                 </div>
                 <div class="row">

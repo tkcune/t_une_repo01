@@ -113,15 +113,16 @@
 
                     <form action="{{ route('deleteclipboard')}}" method="get">
                     @csrf
-                    <input type="submit" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します">
+                    <input type="submit" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                     <input type="button" value="隠蔽/表示" id="tree_change_display"
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <input type="submit" value="再表示" id="open_tree"
-                    data-toggle="tooltip" title="ツリーを再表示します">
+                    <form action="{{ route('redirect')}}" method="get">
+                        <input type="submit" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                    </form>
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
@@ -258,15 +259,16 @@
 
                     <form action="{{ route('deleteclipboard')}}" method="get">
                     @csrf
-                    <input type="submit" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します">
+                    <input type="submit" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                     <input type="button" value="隠蔽/表示" id="tree_change_display"
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <input type="button" value="再表示" id="open_tree"
-                    data-toggle="tooltip" title="ツリーを再表示します">
+                    <form action="{{ route('redirect')}}" method="get">
+                        <input type="submit" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                    </form>
                     
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
@@ -433,15 +435,16 @@
                     <form action="{{ route('deleteclipboard')}}" method="get">
                     @csrf
                     <input type="submit" value="取消"
-                    data-toggle="tooltip" title="クリップボードに複写した内容を抹消します">
+                    data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                     <input type="button" value="隠蔽/表示" id="tree_change_display"
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <input type="button" value="再表示" id="open_tree"
-                    data-toggle="tooltip" title="ツリーを再表示します">
+                    <form action="{{ route('redirect')}}" method="get">
+                        <input type="submit" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                    </form>
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>

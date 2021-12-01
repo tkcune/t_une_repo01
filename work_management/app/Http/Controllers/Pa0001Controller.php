@@ -653,4 +653,25 @@ class Pa0001Controller extends Controller
         return view('pcms01.pcms01');
     }
 
+    /**
+     * 再表示するメソッド
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function redirect(){
+
+        //クリックボードが保存されている場合は削除
+        if(!(null == session()->get('clipboard_id'))){
+
+            session()->forget('clipboard_id');
+
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmok0005');
+            $message = Message::get_message('mhcmok0005',[0=>'']);
+            session(['message'=>$message[0]]);
+        }
+
+        return back();
+    }
+
 }

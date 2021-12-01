@@ -42,6 +42,8 @@ Route::get('/clipboard/{id}',[Pa0001Controller::class,'clipboard'])->name('clipb
 
 Route::get('/deleteclipboard',[Pa0001Controller::class,'deleteclipboard'])->name('deleteclipboard');
 
+Route::get('/redirect',[Pa0001Controller::class,'redirect'])->name('redirect');
+
 Route::get('/show/{id}/{id2}',[Psbs01Controller::class,'show'])->name('plbs01.show');
 
 Route::post('/bscopy',[Psbs01Controller::class,'copy'])->name('psbs01.copy');

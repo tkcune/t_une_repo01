@@ -15,6 +15,8 @@ use App\Libraries\php\Message;
 use App\Libraries\php\ResponsiblePerson;
 use App\Libraries\php\OperationCheck;
 use App\Http\Controllers\PtcmtrController;
+use App\Libraries\php\DepartmentDataBase;
+use App\Libraries\php\PersonnelDataBase;
 use App\Models\Date;
 use Illuminate\Support\Facades\View;
 
@@ -212,9 +214,8 @@ class Psbs01Controller extends Controller
         if($select_code == "bs"){
             //選択した部署のデータを取得
             try{
-                $click_department_data = DB::select('select 
-                dcbs01.client_id,department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ? and department_id = ?',[$client,$select_id]);
+                $db = new DepartmentDataBase();
+                $click_department_data = $db->get($client,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -251,10 +252,6 @@ class Psbs01Controller extends Controller
             //日付を変換
             $date = new Date();
             $operation_date = $date->formatOperationDate($click_department_data);
-           
-            //一覧表示データの取得
-
-            //日付フォーマットを6桁にする
             $date->formatDate($department_data);
             $date->formatDate($personnel_data);
 
@@ -280,6 +277,7 @@ class Psbs01Controller extends Controller
                 return redirect()->route('errormsg');
             }
 
+            //ツリーデータの取得
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
 
@@ -296,12 +294,9 @@ class Psbs01Controller extends Controller
         }else{
             //選択した人員のデータを取得
             try{
-                $click_personnel_data = DB::select('select 
-                dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-                from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
-                and dcji01.personnel_id = ?',[$client,$select_id]);
+                $db = new PersonnelDataBase();
+                $click_personnel_data = $db->get($client,$select_id);
             }catch(\Exception $e){
-
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
                 return redirect()->route('index');
@@ -353,9 +348,6 @@ class Psbs01Controller extends Controller
                     OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                     DatabaseException::common($e);
                 }
-                //日付を6桁にする
-                $date = new Date();
-                $operation_date = $date->formatOperationDate($click_personnel_data);
 
                 //責任者を名前で取得
                 $responsible = new ResponsiblePerson();
@@ -365,7 +357,9 @@ class Psbs01Controller extends Controller
                 $top_management = $responsible->getManagementLists($client,$top_department);
                 $click_management_lists = $responsible->getManagementLists($client,$click_personnel_data);
         
-                //一覧表示のデータ取得
+                //日付フォーマットの変更
+                $date = new Date();
+                $operation_date = $date->formatOperationDate($click_personnel_data);
                 $date->formatDate($top_department);
                 $date->formatDate($department_data);
                 $date->formatDate($personnel_data);
@@ -806,9 +800,8 @@ class Psbs01Controller extends Controller
         if($select_code == "bs"){
             //選択した部署のデータを取得
             try{
-                $click_department_data = DB::select('select 
-                dcbs01.client_id,department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ? and department_id = ?',[$client_id,$select_id]);
+                $db = new DepartmentDataBase();
+                $click_department_data = $db->get($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -824,10 +817,8 @@ class Psbs01Controller extends Controller
         }else{
             //選択した人員のデータを取得
             try{
-                $click_personnel_data = DB::select('select 
-                dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-                from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
-                and dcji01.personnel_id = ?',[$client_id,$select_id]);
+                $db = new PersonnelDataBase();
+                $click_personnel_data = $db->get($client,$select_id);
             }catch(\Exception $e){
 
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');

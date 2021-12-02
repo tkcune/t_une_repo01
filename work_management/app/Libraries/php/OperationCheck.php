@@ -22,18 +22,19 @@ use App\Models\Date;
         //日付クラスの取得
         $date = new Date();
         $today = Carbon::parse($date->today())->format('Y-m-d');
+        
 
         foreach($datas as $data){
-            if($data->status == "13" && ($data->operation_start_date < $today || $data->operation_end_date < $today) ){
+            if($data->status == "13" && (Carbon::parse($data->operation_start_date)->format('Y-m-d') > $today || Carbon::parse($data->operation_end_date)->format('Y-m-d') < $today) ){
                 OutputLog::message_log(__FUNCTION__,'mhbswn0001');
                 $message = Message::get_message('mhbswn0001',[0=>'01']);
                 session(['message'=>$message[0]]);
-            }elseif($data->status == "18" && ($today < $data->operation_start_date || $today < $data->operation_end_date) ){
+            }
+            
+            if($data->status == "18" && (Carbon::parse($data->operation_start_date)->format('Y-m-d') < $today && $today < Carbon::parse($data->operation_end_date)->format('Y-m-d')) ){
                 OutputLog::message_log(__FUNCTION__, 'mhbswn0002');
                 $message = Message::get_message('mhbswn0002',[0=>'02']);
                 session(['message'=>$message[0]]);
-            }else{
-                
             }
 
         }

@@ -17,6 +17,8 @@ use App\Libraries\php\Message;
 use App\Libraries\php\ZeroPadding;
 use App\Http\Controllers\PtcmtrController;
 use Illuminate\Support\Facades\View;
+use App\Libraries\php\DepartmentDataBase;
+use App\Libraries\php\PersonnelDataBase;
 use App\Http\Requests\PersonnelRequest;
 
 /**
@@ -398,9 +400,8 @@ class Psji01Controller extends Controller
         if($select_code == "bs"){
             //選択した部署のデータを取得
             try{
-                $click_department_data = DB::select('select 
-                dcbs01.client_id,department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ? and department_id = ?',[$client_id,$select_id]);
+                $db = new DepartmentDataBase();
+                $click_department_data = $db->get($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -416,10 +417,8 @@ class Psji01Controller extends Controller
         }else{
             //選択した人員のデータを取得
             try{
-                $click_personnel_data = DB::select('select 
-                dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-                from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
-                and dcji01.personnel_id = ?',[$client_id,$select_id]);
+                $db = new PersonnelDataBase();
+                $click_personnel_data = $db->get($client,$select_id);
             }catch(\Exception $e){
 
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -490,11 +489,21 @@ class Psji01Controller extends Controller
             View::share('click_management_lists', $click_management_lists);
         }
 
-        //部署・人員の一覧表示領域のデータ表示
         //日付フォーマットを6桁にする
         $date = new Date();
         $date->formatDate($department_data);
         $date->formatDate($personnel_data);
+
+        //運用開始日、運用終了日のフォーマット変更
+        if(isset($top_department)){
+            $operation_date = $date->formatOperationDate($top_department);
+        }
+        if(!empty($click_department_data)){
+            $operation_date = $date->formatOperationDate($click_department_data);
+        }
+        if(isset($click_personnel_data)){
+            $operation_date = $date->formatOperationDate($click_personnel_data);
+        }
 
         //基本ページネーション設定
         $pagination = new Pagination();

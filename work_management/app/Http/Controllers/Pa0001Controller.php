@@ -93,10 +93,6 @@ class Pa0001Controller extends Controller
             return redirect()->route('errormsg');
         }
 
-        //登録日付を6桁に変換
-        $date = new Date();
-        $operation_date = $date->formatOperationDate($top_department);
-
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
         $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
@@ -104,7 +100,9 @@ class Pa0001Controller extends Controller
         //管理者を名前で取得
         $top_management = $responsible->getManagementLists($client_id,$top_department);
 
-        //一覧表示のデータ取得
+        //日付を変換
+        $date = new Date();
+        $operation_date = $date->formatOperationDate($top_department);
         $date->formatDate($department_data);
         $date->formatDate($personnel_data);
 
@@ -275,7 +273,7 @@ class Pa0001Controller extends Controller
         //管理者を名前で取得
         $top_management = $responsible->getManagementLists($client_id,$top_department);
         
-        //日付フォーマットを6桁にする
+        //日付フォーマットを変更する
         $date->formatDate($department_data);
         $date->formatDate($personnel_data);
 
@@ -421,8 +419,7 @@ class Pa0001Controller extends Controller
                 return redirect()->route('errormsg');
             }
            
-            //部署・人員の一覧表示領域のデータ表示
-            //日付フォーマットを6桁にする
+            //日付フォーマットを変更する
             $date->formatDate($department_data);
             $date->formatDate($personnel_data);
 
@@ -510,6 +507,7 @@ class Pa0001Controller extends Controller
                 }
                 //日付を6桁にする
                 $date = new Date();
+                $date->formatDate($click_personnel_data);
                 $operation_date = $date->formatOperationDate($click_personnel_data);
 
                 //基本ページネーション設定
@@ -605,6 +603,107 @@ class Pa0001Controller extends Controller
     }
 
     /**
+     * 部署トップのページネーションのページ数移動
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @var  int  $client_id 顧客ID　9/27現在　ダミーデータ(route indexでセッション保存)
+     * @var　int $count_department 部署ページネーションのページ数
+     * @var　int $count_personnel  人員ページネーションのページ数
+     * @var  array $top_department 最上位の部署データ
+     * @var  App\Models\Date $date
+     * @var  array $department_data 部署データ
+     * @var  array $personnel_data 人員データ
+     * @var  App\Libraries\php\ResponsiblePerson $responsible
+     * @var  array $top_responsible 最上位の責任者データ
+     * @var  array $top_management 最上位の管理者データ
+     * @var  App\Libraries\php\ListDisplay $list_display
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function count3(Request $request)
+    {
+        $client_id = session('client_id');
+        $count_department = $_GET['department_page'];
+        $count_personnel = $_GET['personnel_page'];
+
+        //一番上の部署を取得
+        try{
+            $top_department = DB::select('select * from dcbs01 where client_id = ? limit 1',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('errormsg');
+        }
+        
+        //部署データの取得
+        try{
+            $department_data = DB::select('select 
+            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+            from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+        }
+        //人員データの取得
+        try{
+            $personnel_data = DB::select('select 
+            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
+        }
+
+        //責任者を名前で取得
+        $responsible = new ResponsiblePerson();
+        $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
+
+        //管理者を名前で取得
+        $top_management = $responsible->getManagementLists($client_id,$top_department);
+        
+        //日付フォーマットを変更
+        $date = new Date();
+        $date->formatDate($department_data);
+        $date->formatDate($personnel_data);
+
+        //基本ページネーション設定
+        $pagination = new Pagination();
+        $department_max = $pagination->pageMax($department_data,count($department_data));
+        $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+        $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
+        $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //責任者を名前で取得
+        $responsible = new ResponsiblePerson();
+        $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
+
+        //上位階層取得
+        $hierarchical = new Hierarchical();
+        try{
+            $department_high = $hierarchical->upperHierarchyName($departments);
+            $personnel_high = $hierarchical->upperHierarchyName($names);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
+            DatabaseException::dataCatchMiss($e);
+            return redirect()->route('errormsg');
+        }
+
+        //ツリーデータ取得
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
+
+        //運用状況の確認
+        $operation_check = new OperationCheck();
+        $operation_check->check($top_department);
+
+        return view('pvbs01.pvbs01',compact('top_department','top_responsible','department_max','departments','personnel_max','names',
+        'responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data'));
+    }
+
+    /**
      * 選択した部署のIDを複写するメソッド
      * 
      * @param $id 選択したID
@@ -681,6 +780,91 @@ class Pa0001Controller extends Controller
         }
 
         return back();
+    }
+
+    /**
+     * 部署トップを表示するメソッド
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function top(){
+
+        //$client_idの数値はダミー(ログイン時にセッション保存する予定)
+        $client_id = "aa00000001";
+        session(['client_id'=>$client_id]);
+
+        $count_department = Config::get('startcount.count');
+        $count_personnel = Config::get('startcount.count');
+
+        //一番上の部署を取得
+        try{
+            $top_department = DB::select('select * from dcbs01 where client_id = ? limit 1',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('errormsg');
+        }
+
+        //全体の部署データの取得
+        try{
+            $department_data = DB::select('select 
+            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+            from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('errormsg');
+        }
+
+        //全体の人員データの取得
+        try{
+            $personnel_data = DB::select('select 
+            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('errormsg');
+        }      
+
+        //責任者を名前で取得
+        $responsible = new ResponsiblePerson();
+        $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
+
+        //日付フォーマット変更
+        $date = new Date();
+        $operation_date = $date->formatOperationDate($top_department);
+        $date->formatDate($department_data);
+        $date->formatDate($personnel_data);
+
+        //基本ページネーション設定
+        $pagination = new Pagination();
+        $department_max = $pagination->pageMax($department_data,count($department_data));
+        $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+        $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
+        $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //責任者を名前で取得
+        $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
+
+        //上位階層取得
+        $hierarchical = new Hierarchical();
+        try{
+            $department_high = $hierarchical->upperHierarchyName($departments);
+            $personnel_high = $hierarchical->upperHierarchyName($names);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
+            DatabaseException::dataCatchMiss($e);
+            return redirect()->route('errormsg');
+        }
+
+        //ツリーデータの取得
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
+
+        return view('pvbs01.pvbs01',compact('department_max','departments','personnel_max','names',
+        'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
+        'count_personnel','personnel_data','operation_date'));
     }
 
 }

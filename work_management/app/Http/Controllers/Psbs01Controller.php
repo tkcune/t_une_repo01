@@ -185,7 +185,10 @@ class Psbs01Controller extends Controller
      */
     public function show($client,$select_id)
     {
-        if($select_id == "bs00000001" or $select_id == "bs"){
+        if($select_id == "bs"){
+            return redirect()->route('top');
+        }
+        if($select_id == "bs00000001"){
             return redirect()->route('index');
         }
         $count_department = Config::get('startcount.count');
@@ -245,7 +248,7 @@ class Psbs01Controller extends Controller
                 $click_management_lists = $responsible->getManagementLists($client,$click_department_data);
             }
 
-            //日付を6桁に変換
+            //日付を変換
             $date = new Date();
             $operation_date = $date->formatOperationDate($click_department_data);
            
@@ -363,6 +366,7 @@ class Psbs01Controller extends Controller
                 $click_management_lists = $responsible->getManagementLists($client,$click_personnel_data);
         
                 //一覧表示のデータ取得
+                $date->formatDate($top_department);
                 $date->formatDate($department_data);
                 $date->formatDate($personnel_data);
 

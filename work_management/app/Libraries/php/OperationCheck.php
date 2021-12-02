@@ -33,7 +33,7 @@ use App\Models\Date;
                 $message = Message::get_message('mhbswn0002',[0=>'02']);
                 session(['message'=>$message[0]]);
             }else{
-                session()->forget('message');
+                
             }
 
         }

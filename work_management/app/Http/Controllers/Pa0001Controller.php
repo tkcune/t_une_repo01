@@ -14,6 +14,7 @@ use App\Libraries\php\OutputLog;
 use App\Models\Date;
 use App\Libraries\php\Message;
 use App\Libraries\php\ListDisplay;
+use App\Libraries\php\OperationCheck;
 use Illuminate\Support\Facades\View;
 
 
@@ -134,6 +135,10 @@ class Pa0001Controller extends Controller
 
         //クリックコードの保存
         session(['click_code'=>'bs']);
+
+        //運用状況の確認
+        $operation_check = new OperationCheck();
+        $operation_check->check($top_department);
 
         return view('pacm01.pacm01',compact('top_management','department_max','departments','personnel_max','names',
         'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
@@ -300,6 +305,10 @@ class Pa0001Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
+        //運用状況の確認
+        $operation_check = new OperationCheck();
+        $operation_check->check($top_department);
+
         return view('pacm01.pacm01',compact('top_department','top_responsible','department_max','departments','personnel_max','names',
         'responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data','operation_date'));
     }
@@ -442,7 +451,7 @@ class Pa0001Controller extends Controller
             $tree_data = $tree->set_view_treedata();
 
             return view('pacm01.pacm01',compact('click_department_data','click_management_lists','department_max','departments','personnel_max','names','responsible_lists',
-            'department_high','personnel_high','count_department','count_personnel','click_department_high','client','select_id','personnel_data'));
+            'department_high','personnel_high','count_department','count_personnel','click_department_high','client','select_id','personnel_data','operation_date'));
         }else{
             //選択した人員のデータを取得
             try{
@@ -533,7 +542,7 @@ class Pa0001Controller extends Controller
                 //ツリーデータの取得
                 $tree = new PtcmtrController();
                 $tree_data = $tree->set_view_treedata();
-
+                
                 return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments',
                 'personnel_max','names','department_high','personnel_high','responsible_lists','top_department','top_responsible','count_department','count_personnel','client',
                 'select_id','personnel_data','click_personnel_data','operation_date'));

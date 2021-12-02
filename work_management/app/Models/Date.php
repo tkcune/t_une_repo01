@@ -37,16 +37,14 @@ use Carbon\Carbon;
      */
     public function formatDate(&$datas){
         foreach($datas as $data){
-            $data->created_at = Carbon::parse($data->created_at)->format('ymd');
-            $data->updated_at = Carbon::parse($data->updated_at)->format('ymd');
             if(isset($data->operation_start_date)){
-                $data->operation_start_date = Carbon::parse($data->operation_start_date)->format('ymd');
+                $data->operation_start_date = Carbon::parse($data->operation_start_date)->format('Y-m-d');
             }
             if(isset($data->operation_end_date)){
-                $data->operation_end_date = Carbon::parse($data->operation_end_date)->format('ymd');
+                $data->operation_end_date = Carbon::parse($data->operation_end_date)->format('Y-m-d');
             }
             if(isset($data->password_update_day)){
-                $data->password_update_day = Carbon::parse($data->password_update_day)->format('ymd');
+                $data->password_update_day = Carbon::parse($data->password_update_day)->format('Y-m-d');
             }
         }
     }

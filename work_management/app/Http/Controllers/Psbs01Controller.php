@@ -13,6 +13,7 @@ use App\Libraries\php\ZeroPadding;
 use Illuminate\Support\Facades\Config;
 use App\Libraries\php\Message;
 use App\Libraries\php\ResponsiblePerson;
+use App\Libraries\php\OperationCheck;
 use App\Http\Controllers\PtcmtrController;
 use App\Models\Date;
 use Illuminate\Support\Facades\View;
@@ -281,6 +282,10 @@ class Psbs01Controller extends Controller
 
             session(['click_code'=>$select_code]);
 
+            //運用状況の確認
+            $operation_check = new OperationCheck();
+            $operation_check->check($click_department_data);
+
             return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel',
             'department_max','departments','personnel_max','names','responsible_lists','department_high','personnel_high',
             'click_department_high','click_management_lists','client','select_id','personnel_data','operation_date'));
@@ -387,6 +392,10 @@ class Psbs01Controller extends Controller
                 $tree = new PtcmtrController();
                 $tree_data = $tree->set_view_treedata();
 
+                //運用状況の確認
+                $operation_check = new OperationCheck();
+                $operation_check->check($top_department);
+
                 //クリックコードの保存
                 session(['click_code'=>$select_code]);
 
@@ -418,7 +427,7 @@ class Psbs01Controller extends Controller
                 $click_management_lists = $responsible->getManagementLists($client,$click_personnel_data);
             }
 
-            //日付フォーマットを6桁にする
+            //日付フォーマットを変更する
             $date = new Date();
             $date->formatDate($department_data);
             $date->formatDate($personnel_data);
@@ -449,6 +458,10 @@ class Psbs01Controller extends Controller
             $tree_data = $tree->set_view_treedata();
 
             session(['click_code'=>$select_code]);
+
+            //運用状況の確認
+            $operation_check = new OperationCheck();
+            $operation_check->check($click_personnel_data);
 
             return view('pacm01.pacm01',compact('data','count_department','count_personnel','department_max','departments','personnel_max','names',
             'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists','personnel_data','operation_date'));

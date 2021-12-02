@@ -45,43 +45,6 @@ class BsUpdateTest extends TestCase
         //--成功のリクエスト
         print("end seccess request complete update \n");
 
-        //--成功のリクエスト(status = 13)
-        //@var array リクエストの配列
-        $bs_update_data = ['client_id' => 'aa00000001', 'department_id' => 'bs00000001',
-        'name' => '部署X', 'management_number' => 'ji00000001', 'responsible_person_id' => 'ji00000001', 'status' => '13'];
-         //@var Response 更新のレスポンス
-        $response = $this->patch('/', $bs_update_data);
-        //データが更新されたか、確認する。
-        $this->assertDatabaseHas('dcbs01', ['client_id' => 'aa00000001', 'department_id' => 'bs00000001',
-        'name' => '部署X', 'responsible_person_id' => 'ji00000001', 'status' => '13']);
-        //運用開始日がnullでない事を確認する
-        $this->assertNotEmpty(DB::select('select operation_start_date from dcbs01 where department_id = ?', ['bs00000001'])[0]->operation_start_date);
-        //リダイレクトを確認する
-        $response->assertStatus(302);
-        //--成功のリクエスト
-        print("変更わかりやすくする為に現在時刻 ".now()."\n");
-        print("operation_start_date ".DB::select('select operation_start_date from dcbs01 where department_id = ?', ['bs00000001'])[0]->operation_start_date."\n");
-        print("end request status is 13 \n");
-
-        //--成功のリクエスト(status = 18)
-        //@var array リクエストの配列
-        $bs_update_data = ['client_id' => 'aa00000001', 'department_id' => 'bs00000001',
-        'name' => '部署X', 'management_number' => 'ji00000001', 'responsible_person_id' => 'ji00000001', 'status' => '18'];
-         //@var Response 更新のレスポンス
-        $response = $this->patch('/', $bs_update_data);
-        //データが更新されたか、確認する。
-        $this->assertDatabaseHas('dcbs01', ['client_id' => 'aa00000001', 'department_id' => 'bs00000001',
-        'name' => '部署X', 'responsible_person_id' => 'ji00000001', 'status' => '18']);
-        //運用開始日がnullでない事を確認する
-        $this->assertNotEmpty(DB::select('select operation_end_date from dcbs01 where department_id = ?', ['bs00000001'])[0]->operation_end_date);
-        //リダイレクトを確認する
-        $response->assertStatus(302);
-        //--成功のリクエスト
-        print("変更わかりやすくする為に現在時刻 ".now()."\n");
-        print("operation_end_date ".DB::select('select operation_end_date from dcbs01 where department_id = ?', ['bs00000001'])[0]->operation_end_date."\n");
-        print("end request status is 18 \n");
-
-
         //--失敗のリクエスト(nameが空文字)
         //@var array 失敗のリクエストの配列(nameが空文字)
         $bs_update_data = ['client_id' => 'aa00000001', 'department_id' => 'bs00000001',

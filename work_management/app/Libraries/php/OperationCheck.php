@@ -28,13 +28,14 @@ use App\Models\Date;
                 OutputLog::message_log(__FUNCTION__,'mhbswn0001');
                 $message = Message::get_message('mhbswn0001',[0=>'01']);
                 session(['message'=>$message[0]]);
-            }
-
-            if($data->status == "18" && ($today < $data->operation_start_date || $today < $data->operation_end_date) ){
+            }elseif($data->status == "18" && ($today < $data->operation_start_date || $today < $data->operation_end_date) ){
                 OutputLog::message_log(__FUNCTION__, 'mhbswn0002');
                 $message = Message::get_message('mhbswn0002',[0=>'02']);
                 session(['message'=>$message[0]]);
+            }else{
+                session()->forget('message');
             }
+
         }
     }
  }

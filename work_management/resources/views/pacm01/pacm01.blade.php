@@ -16,7 +16,7 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4">
-                        <p id="palent">部署名<input type="text" name="name" maxlength="32" data-toggle="tooltip" title="部署の名称を入力します" value="{{$top_department[0]->name}}"></p>
+                        <p id="palent">部署名<input type="text" name="name" maxlength="32" data-toggle="tooltip" title="部署の名称を入力します" @if(!empty(old('name'))) value="{{ old('name') }}" @else value= "{{$top_department[0]->name}}"@endif></p>
                     </div>
                     <div class="col">
                         <p>番号:{{$top_department[0]->department_id}}</p>
@@ -31,7 +31,8 @@
                     <div class="col-4">
                         <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" data-toggle="tooltip" 
                         title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"
-                        value="{{$top_department[0]->management_personnel_id}}" style="width:100px;"></p>
+                        @if(!empty(old('management_number'))) value="{{ old('management_number') }}" @else value="{{$top_department[0]->management_personnel_id}}" @endif 
+                        style="width:100px;"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
                         <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$top_department[0]->management_personnel_id])}}">{{$top_management[0]}}</a></p>
@@ -57,12 +58,21 @@
                     <div class="col">
                         <p>状態:
                         <select name="status" data-toggle="tooltip" title="部署の状態を選択します">
+                        @if(!empty(old('status')))
+                        <option value="10" @if(old('status') == "10") selected @endif>開設提案</option>
+                        <option value="11" @if(old('status') == "11") selected @endif>審査</option>
+                        <option value="12" @if(old('status') == "12") selected @endif>開設待</option>
+                        <option value="13" @if(old('status') == "13") selected @endif>稼働中</option>
+                        <option value="14" @if(old('status') == "14") selected @endif>休止</option>
+                        <option value="18" @if(old('status') == "18") selected @endif>廃止</option>
+                        @else
                         <option value="10" @if($top_department[0]->status == "10") selected @endif>開設提案</option>
                         <option value="11" @if($top_department[0]->status == "11") selected @endif>審査</option>
                         <option value="12" @if($top_department[0]->status == "12") selected @endif>開設待</option>
                         <option value="13" @if($top_department[0]->status == "13") selected @endif>稼働中</option>
                         <option value="14" @if($top_department[0]->status == "14") selected @endif>休止</option>
                         <option value="18" @if($top_department[0]->status == "18") selected @endif>廃止</option>
+                        @endif
                         </select>
                         責任者:
                         <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
@@ -80,10 +90,10 @@
 
                 <div class="row">
                     <div class="col">
-                        運用開始日<input name="start_day" type="date" value="{{$operation_date['operation_start_date']}}">
+                        運用開始日<input name="start_day" type="date" @if(!empty(old('start_day'))) value="{{ old('start_day')}}" @else value="{{$operation_date['operation_start_date']}}" @endif>
                     </div>
                     <div class="col">
-                        運用終了日<input name="finish_day" type="date" value="{{$operation_date['operation_end_date']}}">
+                        運用終了日<input name="finish_day" type="date" @if(!empty(old('finish_day'))) value="{{ old('finish_day')}}" @else value="{{$operation_date['operation_end_date']}}" @endif>
                     </div>
                 </div>
 
@@ -155,7 +165,7 @@
             @endif
                 <div class="row">
                     <div class="col-4">
-                        <p id="palent">部署名<input type="text" name="name" maxlength="32" value="{{$click_department_data[0]->name}}" data-toggle="tooltip" title="部署の名称を入力します"></p>
+                        <p id="palent">部署名<input type="text" name="name" maxlength="32" @if(!empty(old('name'))) value="{{ old('name') }}" @else value="{{$click_department_data[0]->name}}" @endif data-toggle="tooltip" title="部署の名称を入力します"></p>
                     </div>
                     <div class="col-3">
                         <p>番号:{{$click_department_data[0]->department_id}}</p>
@@ -171,8 +181,9 @@
 
                 <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$click_department_data[0]->management_personnel_id}}" style="width:100px;"
-                        data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
+                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" 
+                        @if(!empty(old('management_number'))) value="{{ old('management_number') }}" @else value="{{$click_department_data[0]->management_personnel_id}}" @endif 
+                        style="width:100px;" data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
                         <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->management_personnel_id])}}">{{$click_management_lists[0]}}</a></p>
@@ -196,12 +207,21 @@
                     <div class="col">
                         <p>状態:
                         <select name="status" data-toggle="tooltip" title="部署の状態を選択します">
+                        @if(!empty(old('status')))
+                        <option value="10" @if(old('status') == "10") selected @endif>開設提案</option>
+                        <option value="11" @if(old('status') == "11") selected @endif>審査</option>
+                        <option value="12" @if(old('status') == "12") selected @endif>開設待</option>
+                        <option value="13" @if(old('status') == "13") selected @endif>稼働中</option>
+                        <option value="14" @if(old('status') == "14") selected @endif>休止</option>
+                        <option value="18" @if(old('status') == "18") selected @endif>廃止</option>
+                        @else
                         <option value="10" @if($click_department_data[0]->status == "10") selected @endif>開設提案</option>
                         <option value="11" @if($click_department_data[0]->status == "11") selected @endif>審査</option>
                         <option value="12" @if($click_department_data[0]->status == "12") selected @endif>開設待</option>
                         <option value="13" @if($click_department_data[0]->status == "13") selected @endif>稼働中</option>
                         <option value="14" @if($click_department_data[0]->status == "14") selected @endif>休止</option>
                         <option value="18" @if($click_department_data[0]->status == "18") selected @endif>廃止</option>
+                        @endif
                         </select>
                         責任者:
                         <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
@@ -218,10 +238,10 @@
 
                 <div class="row">
                     <div class="col">
-                        運用開始日<input name="start_day" type="date" value="{{$operation_date['operation_start_date']}}">
+                        運用開始日<input name="start_day" type="date" @if(!empty(old('start_day'))) value="{{ old('start_day')}}" @else value="{{$operation_date['operation_start_date']}}" @endif >
                     </div>
                     <div class="col">
-                        運用終了日<input name="finish_day" type="date" value="{{$operation_date['operation_end_date']}}">
+                        運用終了日<input name="finish_day" type="date" @if(!empty(old('finish_day'))) value="{{ old('finish_day')}}" @else value="{{$operation_date['operation_end_date']}}" @endif>
                     </div>
                 </div>
 

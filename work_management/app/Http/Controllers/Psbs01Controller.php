@@ -19,6 +19,7 @@ use App\Libraries\php\DepartmentDataBase;
 use App\Libraries\php\PersonnelDataBase;
 use App\Models\Date;
 use Illuminate\Support\Facades\View;
+use App\Http\Requests\DepartmentRequest;
 
 /**
  * 部署データを操作するコントローラー
@@ -69,25 +70,17 @@ class Psbs01Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(DepartmentRequest $request)
     {
         //リクエストの取得
         $client_id = $request->client_id;
         $responsible_person_id = $request->responsible_person_id;
         $name = $request->name;
         $status = $request->status;
-        $management_personnel_id = $request->management_personnel_id;
+        $management_personnel_id = $request->management_number;
         $high = $request->high;
         $date = new Date();
         $operation_start_date = $date->today();
-
-        //リクエストに空白が無いかどうかの確認
-        if(empty($name) || empty($status)){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
-            $message = Message::get_message('mhcmer0003',[0=>'']);
-            session(['message'=>$message[0]]);
-            return back();
-        }
 
         //顧客IDに対応した最新の部署IDを取得
         try{
@@ -480,7 +473,7 @@ class Psbs01Controller extends Controller
     /**
      * 部署情報を更新
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\DepartmentRequest  $request
      * 
      * @var  string  $client_id　顧客ID
      * @var  string  $department_id　部署ID
@@ -496,7 +489,7 @@ class Psbs01Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(DepartmentRequest $request)
     {
         //リクエストの取得
         $client_id = $request->client_id;
@@ -507,14 +500,6 @@ class Psbs01Controller extends Controller
         $status = $request->status;
         $start_day = $request->start_day;
         $finish_day = $request->finish_day;
-
-        //リクエストに空白が無いかどうかの確認
-        if(empty($name) || empty($status) || empty($management_number)){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
-            $message = Message::get_message('mhcmer0003',[0=>'']);
-            session(['message'=>$message[0]]);
-            return back();
-        }
         
         //入力された番号の人員が存在するかの確認
         try{

@@ -395,7 +395,7 @@ class Pa0001Controller extends Controller
             $department_data = $lists[0];
             $personnel_data = $lists[1];
 
-            //登録日付を6桁に変換
+            //登録日付を変換
             $date = new Date();
             $operation_date = $date->formatOperationDate($click_department_data);
 

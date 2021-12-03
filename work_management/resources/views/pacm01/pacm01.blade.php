@@ -34,12 +34,12 @@
                         value="{{$top_department[0]->management_personnel_id}}" style="width:100px;"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
-                        <p>管理者名：{{$top_management[0]}}</p>
+                        <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$top_department[0]->management_personnel_id])}}">{{$top_management[0]}}</a></p>
                     </div>
                     <div class="col" style="padding:0px">
 
                     <p>管理者検索：
-                        <input type="text" id="search-list" list="keywords" style="width:150px;"autocomplete="on"
+                        <input type="text" id="search-list" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
 @for($j = 0; $j < count($personnel_data);$j++)
@@ -91,29 +91,29 @@
                     <div class="col">
                     <p>
                     <div style="display:inline-flex">
-                    <input type="submit" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                    <input type="button" onclick="submit();" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                     <form action="{{ route('psbs01.index') }}" method="get">
                     @csrf
-                    <input type="submit" value="新規" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
+                    <input type="button" onclick="submit();" value="新規" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
                     <input type="hidden" id="high_new" name="high" value="{{$top_department[0]->department_id}}">
                     </form>
 
                     <form action="{{ route('psbs01.delete',[session('client_id'),$top_department[0]->department_id])}}" method="post">
                     @csrf
                     @method('post')
-                    <input type="submit" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
+                    <input type="button" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
                     <form action="{{ route('clipboard',$top_department[0]->department_id)}}" method="get">
                     @csrf
-                    <input type="submit" value="複写" id="copyTarget"　data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
+                    <input type="button" onclick="submit();" value="複写" id="copyTarget"　data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
                     <form action="{{ route('deleteclipboard')}}" method="get">
                     @csrf
-                    <input type="submit" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
+                    <input type="button" onclick="submit();" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
@@ -121,7 +121,7 @@
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
                     <form action="{{ route('redirect')}}" method="get">
-                        <input type="submit" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                        <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
@@ -175,11 +175,11 @@
                         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
-                        <p>管理者名：{{$click_management_lists[0]}}</p>
+                        <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->management_personnel_id])}}">{{$click_management_lists[0]}}</a></p>
                     </div>
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
-                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on"
+                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
 @for($j = 0; $j < count($personnel_data);$j++)
@@ -229,12 +229,12 @@
                     <div class="col">
                     <p>
                     <div style="display:inline-flex">
-                    <input type="submit" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                    <input type="button" onclick="submit();" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                     <form action="{{ route('psbs01.index') }}" method="get">
                     @csrf
-                    <input type="submit" value="新規" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
+                    <input type="button" onclick="submit();" value="新規" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
                     <input type="hidden" id="high_new" name="high" value="{{$click_department_data[0]->department_id}}">
                     </form>
 
@@ -245,7 +245,7 @@
                     @endif
                     @csrf
                     @method('post')
-                    <input type="submit" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
+                    <input type="button" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
                     @if(substr($click_id,0,2) == "ta")
@@ -254,12 +254,12 @@
                     <form action="{{ route('clipboard',$click_department_data[0]->department_id)}}" method="get">
                     @endif
                     @csrf
-                    <input type="submit" value="複写" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
+                    <input type="button" onclick="submit();" value="複写" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
                     <form action="{{ route('deleteclipboard')}}" method="get">
                     @csrf
-                    <input type="submit" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
+                    <input type="button" onclick="submit();" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
@@ -267,7 +267,7 @@
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
                     <form action="{{ route('redirect')}}" method="get">
-                        <input type="submit" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                        <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
                     
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
@@ -333,11 +333,11 @@
                         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
-                        <p>管理者名：{{$click_management_lists[0]}}</p>
+                        <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$click_personnel_data[0]->management_personnel_id])}}">{{$click_management_lists[0]}}</a></p>
                     </div>
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
-                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on"
+                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32"
                         
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
@@ -363,7 +363,7 @@
                         </p>
                     </div>
                     <div class="col">
-                        <button>メール送信</button>
+                        <button type="button">メール送信</button>
                     </div>
                 </div>
 
@@ -399,13 +399,13 @@
                 <div class="row">
                     <div class="col">
                     <div style="display:inline-flex">
-                    <input type="submit" value="確定"
+                    <input type="button" onclick="submit();" value="確定"
                     data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                     <form action="{{ route('psji01.index') }}" method="get">
                     @csrf
-                    <input type="submit" value="新規"
+                    <input type="button" onclick="submit();" value="新規"
                     data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
                     <input type="hidden" id="high_new" name="high" value="{{$click_personnel_data[0]->high_id}}">
                     </form>
@@ -417,7 +417,7 @@
                     @endif
                     @csrf
                     @method('post')
-                    <input type="submit" id="delete" value="削除" data-toggle="tooltip" 
+                    <input type="button" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" 
                     title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" 
                     disabled>
                     </form>
@@ -428,13 +428,13 @@
                     <form action="{{ route('clipboard',$click_personnel_data[0]->personnel_id)}}" method="get">
                     @endif
                     @csrf
-                    <input type="submit" value="複写" id="copyTarget"
+                    <input type="button" onclick="submit();" value="複写" id="copyTarget"
                     data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
                     <form action="{{ route('deleteclipboard')}}" method="get">
                     @csrf
-                    <input type="submit" value="取消"
+                    <input type="button" onclick="submit();" value="取消"
                     data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
                     </form>
 
@@ -443,7 +443,7 @@
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
                     <form action="{{ route('redirect')}}" method="get">
-                        <input type="submit" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                        <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">

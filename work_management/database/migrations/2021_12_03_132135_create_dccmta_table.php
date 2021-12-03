@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDcta01Table extends Migration
+class CreateDccmtaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -18,8 +18,7 @@ class CreateDcta01Table extends Migration
             $table->string('client_id','10');
             $table->string('projection_id','10');
             $table->string('projection_source_id','10');
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrent();
+            $table->timestamps();
         });
     }
 
@@ -30,6 +29,6 @@ class CreateDcta01Table extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dcta01');
+        Schema::dropIfExists('dccmta');
     }
 }

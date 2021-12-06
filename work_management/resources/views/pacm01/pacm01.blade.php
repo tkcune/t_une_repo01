@@ -16,7 +16,7 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4">
-                        <p id="palent">部署名<input type="text" name="name" maxlength="32" data-toggle="tooltip" title="部署の名称を入力します" value="{{$top_department[0]->name}}"></p>
+                        <p id="palent">部署名<input type="text" name="name" maxlength="32" data-toggle="tooltip" title="部署の名称を入力します" @if(!empty(old('name'))) value="{{ old('name') }}" @else value= "{{$top_department[0]->name}}"@endif></p>
                     </div>
                     <div class="col">
                         <p>番号:{{$top_department[0]->department_id}}</p>
@@ -31,15 +31,16 @@
                     <div class="col-4">
                         <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" data-toggle="tooltip" 
                         title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"
-                        value="{{$top_department[0]->management_personnel_id}}" style="width:100px;"></p>
+                        @if(!empty(old('management_number'))) value="{{ old('management_number') }}" @else value="{{$top_department[0]->management_personnel_id}}" @endif 
+                        style="width:100px;"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
-                        <p>管理者名：{{$top_management[0]}}</p>
+                        <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$top_department[0]->management_personnel_id])}}">{{$top_management[0]}}</a></p>
                     </div>
                     <div class="col" style="padding:0px">
  
                     <p>管理者検索：
-                        <input type="text" id="search-list" list="keywords" style="width:150px;"autocomplete="on"
+                        <input type="text" id="search-list" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
 @for($j = 0; $j < count($personnel_data);$j++)
@@ -57,12 +58,21 @@
                     <div class="col">
                         <p>状態:
                         <select name="status" data-toggle="tooltip" title="部署の状態を選択します">
+                        @if(!empty(old('status')))
+                        <option value="10" @if(old('status') == "10") selected @endif>開設提案</option>
+                        <option value="11" @if(old('status') == "11") selected @endif>審査</option>
+                        <option value="12" @if(old('status') == "12") selected @endif>開設待</option>
+                        <option value="13" @if(old('status') == "13") selected @endif>稼働中</option>
+                        <option value="14" @if(old('status') == "14") selected @endif>休止</option>
+                        <option value="18" @if(old('status') == "18") selected @endif>廃止</option>
+                        @else
                         <option value="10" @if($top_department[0]->status == "10") selected @endif>開設提案</option>
                         <option value="11" @if($top_department[0]->status == "11") selected @endif>審査</option>
                         <option value="12" @if($top_department[0]->status == "12") selected @endif>開設待</option>
                         <option value="13" @if($top_department[0]->status == "13") selected @endif>稼働中</option>
                         <option value="14" @if($top_department[0]->status == "14") selected @endif>休止</option>
                         <option value="18" @if($top_department[0]->status == "18") selected @endif>廃止</option>
+                        @endif
                         </select>
                         責任者:
                         <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
@@ -80,55 +90,55 @@
 
                 <div class="row">
                     <div class="col">
+                        運用開始日<input name="start_day" type="date" @if(!empty(old('start_day'))) value="{{ old('start_day')}}" @else value="{{$operation_date['operation_start_date']}}" @endif>
+                    </div>
+                    <div class="col">
+                        運用終了日<input name="finish_day" type="date" @if(!empty(old('finish_day'))) value="{{ old('finish_day')}}" @else value="{{$operation_date['operation_end_date']}}" @endif>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
                     <p>
                     <div style="display:inline-flex">
-                    <input type="submit" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                    <input type="button" onclick="submit();" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                     <form action="{{ route('psbs01.index') }}" method="get">
                     @csrf
-                    <input type="submit" value="新規" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
+                    <input type="button" onclick="submit();" value="新規" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
                     <input type="hidden" id="high_new" name="high" value="{{$top_department[0]->department_id}}">
                     </form>
 
                     <form action="{{ route('psbs01.delete',[session('client_id'),$top_department[0]->department_id])}}" method="post">
                     @csrf
                     @method('post')
-                    <input type="submit" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
+                    <input type="button" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
                     <form action="{{ route('clipboard',$top_department[0]->department_id)}}" method="get">
                     @csrf
-                    <input type="submit" value="複写" id="copyTarget"　data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
+                    <input type="button" onclick="submit();" value="複写" id="copyTarget"　data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
                     <form action="{{ route('deleteclipboard')}}" method="get">
                     @csrf
-                    <input type="submit" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します">
+                    <input type="button" onclick="submit();" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                     <input type="button" value="隠蔽/表示" id="tree_change_display"
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <input type="submit" value="再表示" id="open_tree"
-                    data-toggle="tooltip" title="ツリーを再表示します">
+                    <form action="{{ route('redirect')}}" method="get">
+                        <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                    </form>
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
                     <p>
                     登録日:{{$top_department[0]->created_at}} 修正日:{{$top_department[0]->updated_at}}
-                    @if($top_department[0]->operation_start_date)
-                    運用開始日:{{$top_department[0]->operation_start_date}}
-                    @else
-                    運用開始日:保留
-                    @endif
-                    @if($top_department[0]->operation_end_date)
-                    運用終了日:{{$top_department[0]->operation_end_date}}
-                    @else
-                    運用終了日:未定
-                    @endif
-                    登録者:<a href="#">{{$top_responsible[0]}}</a>
+                    登録者:<a href="{{ route('plbs01.show',[session('client_id'),$top_department[0]->responsible_person_id])}}">{{$top_responsible[0]}}</a>
                     </p>
                     </div>
                 </div>
@@ -155,7 +165,7 @@
             @endif
                 <div class="row">
                     <div class="col-4">
-                        <p id="palent">部署名<input type="text" name="name" maxlength="32" value="{{$click_department_data[0]->name}}" data-toggle="tooltip" title="部署の名称を入力します"></p>
+                        <p id="palent">部署名<input type="text" name="name" maxlength="32" @if(!empty(old('name'))) value="{{ old('name') }}" @else value="{{$click_department_data[0]->name}}" @endif data-toggle="tooltip" title="部署の名称を入力します"></p>
                     </div>
                     <div class="col-3">
                         <p>番号:{{$click_department_data[0]->department_id}}</p>
@@ -171,15 +181,16 @@
 
                 <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$click_department_data[0]->management_personnel_id}}" style="width:100px;"
-                        data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
+                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" 
+                        @if(!empty(old('management_number'))) value="{{ old('management_number') }}" @else value="{{$click_department_data[0]->management_personnel_id}}" @endif 
+                        style="width:100px;" data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
-                        <p>管理者名：{{$click_management_lists[0]}}</p>
+                        <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->management_personnel_id])}}">{{$click_management_lists[0]}}</a></p>
                     </div>
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
-                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on"
+                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
 @for($j = 0; $j < count($personnel_data);$j++)
@@ -196,12 +207,21 @@
                     <div class="col">
                         <p>状態:
                         <select name="status" data-toggle="tooltip" title="部署の状態を選択します">
+                        @if(!empty(old('status')))
+                        <option value="10" @if(old('status') == "10") selected @endif>開設提案</option>
+                        <option value="11" @if(old('status') == "11") selected @endif>審査</option>
+                        <option value="12" @if(old('status') == "12") selected @endif>開設待</option>
+                        <option value="13" @if(old('status') == "13") selected @endif>稼働中</option>
+                        <option value="14" @if(old('status') == "14") selected @endif>休止</option>
+                        <option value="18" @if(old('status') == "18") selected @endif>廃止</option>
+                        @else
                         <option value="10" @if($click_department_data[0]->status == "10") selected @endif>開設提案</option>
                         <option value="11" @if($click_department_data[0]->status == "11") selected @endif>審査</option>
                         <option value="12" @if($click_department_data[0]->status == "12") selected @endif>開設待</option>
                         <option value="13" @if($click_department_data[0]->status == "13") selected @endif>稼働中</option>
                         <option value="14" @if($click_department_data[0]->status == "14") selected @endif>休止</option>
                         <option value="18" @if($click_department_data[0]->status == "18") selected @endif>廃止</option>
+                        @endif
                         </select>
                         責任者:
                         <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
@@ -218,14 +238,23 @@
 
                 <div class="row">
                     <div class="col">
+                        運用開始日<input name="start_day" type="date" @if(!empty(old('start_day'))) value="{{ old('start_day')}}" @else value="{{$operation_date['operation_start_date']}}" @endif >
+                    </div>
+                    <div class="col">
+                        運用終了日<input name="finish_day" type="date" @if(!empty(old('finish_day'))) value="{{ old('finish_day')}}" @else value="{{$operation_date['operation_end_date']}}" @endif>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
                     <p>
                     <div style="display:inline-flex">
-                    <input type="submit" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                    <input type="button" onclick="submit();" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                     <form action="{{ route('psbs01.index') }}" method="get">
                     @csrf
-                    <input type="submit" value="新規" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
+                    <input type="button" onclick="submit();" value="新規" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
                     <input type="hidden" id="high_new" name="high" value="{{$click_department_data[0]->department_id}}">
                     </form>
 
@@ -236,7 +265,7 @@
                     @endif
                     @csrf
                     @method('post')
-                    <input type="submit" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
+                    <input type="button" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
                     @if(substr($click_id,0,2) == "ta")
@@ -245,36 +274,27 @@
                     <form action="{{ route('clipboard',$click_department_data[0]->department_id)}}" method="get">
                     @endif
                     @csrf
-                    <input type="submit" value="複写" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
+                    <input type="button" onclick="submit();" value="複写" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
                     <form action="{{ route('deleteclipboard')}}" method="get">
                     @csrf
-                    <input type="submit" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します">
+                    <input type="button" onclick="submit();" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                     <input type="button" value="隠蔽/表示" id="tree_change_display"
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <input type="button" value="再表示" id="open_tree"
-                    data-toggle="tooltip" title="ツリーを再表示します">
+                    <form action="{{ route('redirect')}}" method="get">
+                        <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                    </form>
                     
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
                     <p>
                     登録日:{{$click_department_data[0]->created_at}} 修正日:{{$click_department_data[0]->updated_at}}
-                    @if($click_department_data[0]->operation_start_date)
-                    運用開始日:{{$click_department_data[0]->operation_start_date}}
-                    @else
-                    運用開始日:保留
-                    @endif
-                    @if($click_department_data[0]->operation_end_date)
-                    運用終了日:{{$click_department_data[0]->operation_end_date}}
-                    @else
-                    運用終了日:未定
-                    @endif
-                    登録者:<a href="#">{{$click_responsible_lists[0]}}</a>
+                    登録者:<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->responsible_person_id])}}">{{$click_responsible_lists[0]}}</a>
                     </p>
                     </div>
                 </div>
@@ -333,11 +353,11 @@
                         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
-                        <p>管理者名：{{$click_management_lists[0]}}</p>
+                        <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$click_personnel_data[0]->management_personnel_id])}}">{{$click_management_lists[0]}}</a></p>
                     </div>
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
-                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on"
+                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32"
                         
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
@@ -356,14 +376,14 @@
                         <p>メールアドレス<input type="email" name="email" maxlength="64" value="{{$click_personnel_data[0]->email}}"></p>
                     </div>
                     <div class="col-4" style="padding:0px">
+                        <p id="login">パスワード<input id="password" type="password" maxlength="32" name="password">
                     @if($click_personnel_data[0]->login_authority == "1") 
-                        <p id="login">パスワード<input id="password" type="password" maxlength="32" name="password"><input type="checkbox" onclick="passwordOn()"></p>
-                    @else
-                        <input type="hidden" maxlength="32" name="password" value="ValidationOK">
+                        <input type="checkbox" onclick="passwordOn()">
                     @endif
+                        </p>
                     </div>
                     <div class="col">
-                        <button>メール送信</button>
+                        <button type="button">メール送信</button>
                     </div>
                 </div>
 
@@ -389,14 +409,23 @@
 
                 <div class="row">
                     <div class="col">
+                        運用開始日<input name="start_day" type="date" value="{{$operation_date['operation_start_date']}}">
+                    </div>
+                    <div class="col">
+                        運用終了日<input name="finish_day" type="date" value="{{$operation_date['operation_end_date']}}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
                     <div style="display:inline-flex">
-                    <input type="submit" value="確定"
+                    <input type="button" onclick="submit();" value="確定"
                     data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                     <form action="{{ route('psji01.index') }}" method="get">
                     @csrf
-                    <input type="submit" value="新規"
+                    <input type="button" onclick="submit();" value="新規"
                     data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
                     <input type="hidden" id="high_new" name="high" value="{{$click_personnel_data[0]->high_id}}">
                     </form>
@@ -408,7 +437,7 @@
                     @endif
                     @csrf
                     @method('post')
-                    <input type="submit" id="delete" value="削除" data-toggle="tooltip" 
+                    <input type="button" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" 
                     title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" 
                     disabled>
                     </form>
@@ -419,37 +448,27 @@
                     <form action="{{ route('clipboard',$click_personnel_data[0]->personnel_id)}}" method="get">
                     @endif
                     @csrf
-                    <input type="submit" value="複写" id="copyTarget"
+                    <input type="button" onclick="submit();" value="複写" id="copyTarget"
                     data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
                     <form action="{{ route('deleteclipboard')}}" method="get">
                     @csrf
-                    <input type="submit" value="取消"
-                    data-toggle="tooltip" title="クリップボードに複写した内容を抹消します">
+                    <input type="button" onclick="submit();" value="取消"
+                    data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                     <input type="button" value="隠蔽/表示" id="tree_change_display"
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <input type="button" value="再表示" id="open_tree"
-                    data-toggle="tooltip" title="ツリーを再表示します">
+                    <form action="{{ route('redirect')}}" method="get">
+                        <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                    </form>
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     </div>
-                    <p>登録日:{{$click_personnel_data[0]->created_at}} 修正日:{{$click_personnel_data[0]->updated_at}}
-                    @if($click_personnel_data[0]->operation_start_date)
-                    運用開始日:{{$click_personnel_data[0]->operation_start_date}}
-                    @else
-                    運用開始日:保留
-                    @endif
-                    @if($click_personnel_data[0]->operation_end_date)
-                    運用終了日:{{$click_personnel_data[0]->operation_end_date}}
-                    @else
-                    運用終了日:未定
-                    @endif
-                    </p>
+                        <p>登録日:{{$click_personnel_data[0]->created_at}} 修正日:{{$click_personnel_data[0]->updated_at}}</p>
                     </div>
                 </div>
                 <div class="row">
@@ -636,7 +655,11 @@
                             @foreach($departments as $department)
                             <tr>
                             <td>{{$department->department_id}}</td>
-                            <td><a href="{{ route('plbs01.show',[session('client_id'),$department->department_id])}}">{{$department->name}}</a></td>
+                            @if($department->operation_start_date > \Carbon\Carbon::today()->format('Y-m-d') || (!(null == $department->operation_end_date) && \Carbon\Carbon::today()->format('Y-m-d') > $department->operation_end_date))
+                                <td><s><a href="{{ route('plbs01.show',[session('client_id'),$department->department_id])}}">{{$department->name}}</a></s></td>
+                            @else
+                                <td><a href="{{ route('plbs01.show',[session('client_id'),$department->department_id])}}">{{$department->name}}</a></td>
+                            @endif
                             <td><a href="{{ route('plbs01.show',[session('client_id'),$department_high[$loop->index]->department_id])}}">{{$department_high[$loop->index]->name}}</a></td>
                             <td>
                             @switch($department->status)
@@ -847,8 +870,12 @@
                         @foreach($names as $name)
                             <tr>
                             <td>{{ $name->personnel_id}}</td>
+                            @if($name->operation_start_date > \Carbon\Carbon::today()->format('Y-m-d') || (!(null == $name->operation_end_date) && \Carbon\Carbon::today()->format('Y-m-d') > $name->operation_end_date))
+                            <td><s><a href="{{ route('plbs01.show',[session('client_id'),$name->personnel_id])}}">{{$name->name}}</a> </s> </td>
+                            @else
                             <td><a href="{{ route('plbs01.show',[session('client_id'),$name->personnel_id])}}">{{$name->name}}</a></td>
-                            <td><a href="{{ route('plbs01.show',[session('client_id'),$personnel_high[$loop->index]->department_id])}}">{{$personnel_high[$loop->index]->name}}</a></td>
+                            @endif 
+                            <td><a href="{{ route('plbs01.show',[session('client_id'),$personnel_high[$loop->index]->department_id])}}">{{$personnel_high[$loop->index]->name}}</a>
                             <td>
                             @switch($name->status)
                                 @case(10)

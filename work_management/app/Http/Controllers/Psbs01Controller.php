@@ -13,9 +13,13 @@ use App\Libraries\php\ZeroPadding;
 use Illuminate\Support\Facades\Config;
 use App\Libraries\php\Message;
 use App\Libraries\php\ResponsiblePerson;
+use App\Libraries\php\OperationCheck;
 use App\Http\Controllers\PtcmtrController;
+use App\Libraries\php\DepartmentDataBase;
+use App\Libraries\php\PersonnelDataBase;
 use App\Models\Date;
 use Illuminate\Support\Facades\View;
+use App\Http\Requests\DepartmentRequest;
 
 /**
  * 部署データを操作するコントローラー
@@ -62,28 +66,21 @@ class Psbs01Controller extends Controller
      * @var  App\Libraries\php\ZeroPadding $padding
      * @var  App\Libraries\php\StatusCheck $check
      * @var  string $operation_start_date　稼働開始日
-     * @var  string $operation_end_date　稼働終了日
      * @var  int $department_id 部署ID
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(DepartmentRequest $request)
     {
         //リクエストの取得
         $client_id = $request->client_id;
         $responsible_person_id = $request->responsible_person_id;
         $name = $request->name;
         $status = $request->status;
-        $management_personnel_id = $request->management_personnel_id;
+        $management_personnel_id = $request->management_number;
         $high = $request->high;
-
-        //リクエストに空白が無いかどうかの確認
-        if(empty($name) || empty($status)){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
-            $message = Message::get_message('mhcmer0003',[0=>'']);
-            session(['message'=>$message[0]]);
-            return back();
-        }
+        $date = new Date();
+        $operation_start_date = $date->today();
 
         //顧客IDに対応した最新の部署IDを取得
         try{
@@ -103,10 +100,6 @@ class Psbs01Controller extends Controller
             $department_id = $padding->padding($id[0]->department_id);
         }
 
-        //部署状態を判別して稼働開始日・稼働終了日を決定させる
-        $check = new StatusCheck();
-        list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
-
         //データベースに部署情報を登録
         try{
             DB::insert('insert into dcbs01
@@ -116,17 +109,17 @@ class Psbs01Controller extends Controller
             name,
             status,
             management_personnel_id,
-            operation_start_date,
-            operation_end_date)
-            VALUE (?,?,?,?,?,?,?,?)',
+            operation_start_date
+            )
+            VALUE (?,?,?,?,?,?,?)',
             [$client_id,
             $department_id,
             $responsible_person_id,
             $name,
             $status,
             $management_personnel_id,
-            $operation_start_date,
-            $operation_end_date]);
+            $operation_start_date
+            ]);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
@@ -187,7 +180,10 @@ class Psbs01Controller extends Controller
      */
     public function show($client,$select_id)
     {
-        if($select_id == "bs00000001" or $select_id == "bs"){
+        if($select_id == "bs"){
+            return redirect()->route('top');
+        }
+        if($select_id == "bs00000001"){
             return redirect()->route('index');
         }
         $count_department = Config::get('startcount.count');
@@ -211,9 +207,8 @@ class Psbs01Controller extends Controller
         if($select_code == "bs"){
             //選択した部署のデータを取得
             try{
-                $click_department_data = DB::select('select 
-                dcbs01.client_id,department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ? and department_id = ?',[$client,$select_id]);
+                $db = new DepartmentDataBase();
+                $click_department_data = $db->get($client,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -247,13 +242,9 @@ class Psbs01Controller extends Controller
                 $click_management_lists = $responsible->getManagementLists($client,$click_department_data);
             }
 
-            //日付を6桁に変換
+            //日付を変換
             $date = new Date();
-            $date->formatDate($click_department_data);
-           
-            //一覧表示データの取得
-
-            //日付フォーマットを6桁にする
+            $operation_date = $date->formatOperationDate($click_department_data);
             $date->formatDate($department_data);
             $date->formatDate($personnel_data);
 
@@ -279,24 +270,26 @@ class Psbs01Controller extends Controller
                 return redirect()->route('errormsg');
             }
 
+            //ツリーデータの取得
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
 
             session(['click_code'=>$select_code]);
 
+            //運用状況の確認
+            $operation_check = new OperationCheck();
+            $operation_check->check($click_department_data);
+
             return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel',
             'department_max','departments','personnel_max','names','responsible_lists','department_high','personnel_high',
-            'click_department_high','click_management_lists','client','select_id','personnel_data'));
+            'click_department_high','click_management_lists','client','select_id','personnel_data','operation_date'));
             
         }else{
             //選択した人員のデータを取得
             try{
-                $click_personnel_data = DB::select('select 
-                dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-                from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
-                and dcji01.personnel_id = ?',[$client,$select_id]);
+                $db = new PersonnelDataBase();
+                $click_personnel_data = $db->get($client,$select_id);
             }catch(\Exception $e){
-
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
                 return redirect()->route('index');
@@ -348,9 +341,6 @@ class Psbs01Controller extends Controller
                     OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                     DatabaseException::common($e);
                 }
-                //日付を6桁にする
-                $date = new Date();
-                $date->formatDate($click_personnel_data);
 
                 //責任者を名前で取得
                 $responsible = new ResponsiblePerson();
@@ -360,7 +350,10 @@ class Psbs01Controller extends Controller
                 $top_management = $responsible->getManagementLists($client,$top_department);
                 $click_management_lists = $responsible->getManagementLists($client,$click_personnel_data);
         
-                //一覧表示のデータ取得
+                //日付フォーマットの変更
+                $date = new Date();
+                $operation_date = $date->formatOperationDate($click_personnel_data);
+                $date->formatDate($top_department);
                 $date->formatDate($department_data);
                 $date->formatDate($personnel_data);
 
@@ -390,12 +383,16 @@ class Psbs01Controller extends Controller
                 $tree = new PtcmtrController();
                 $tree_data = $tree->set_view_treedata();
 
+                //運用状況の確認
+                $operation_check = new OperationCheck();
+                $operation_check->check($top_department);
+
                 //クリックコードの保存
                 session(['click_code'=>$select_code]);
 
                 return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments','personnel_max','names',
                 'top_department','top_responsible','count_department','count_personnel','client','responsible_lists','department_high','personnel_high',
-                'select_id','personnel_data','click_personnel_data'));
+                'select_id','personnel_data','click_personnel_data','operation_date'));
             }
 
             array_push($department_data,$data[0]);
@@ -413,7 +410,7 @@ class Psbs01Controller extends Controller
 
             //日付を6桁表記にする
             $date = new Date();
-            $date->formatDate($click_personnel_data);
+            $operation_date = $date->formatOperationDate($click_personnel_data);
             
             //責任者を名前で取得
             $responsible = new ResponsiblePerson();
@@ -421,7 +418,7 @@ class Psbs01Controller extends Controller
                 $click_management_lists = $responsible->getManagementLists($client,$click_personnel_data);
             }
 
-            //日付フォーマットを6桁にする
+            //日付フォーマットを変更する
             $date = new Date();
             $date->formatDate($department_data);
             $date->formatDate($personnel_data);
@@ -453,8 +450,12 @@ class Psbs01Controller extends Controller
 
             session(['click_code'=>$select_code]);
 
+            //運用状況の確認
+            $operation_check = new OperationCheck();
+            $operation_check->check($click_personnel_data);
+
             return view('pacm01.pacm01',compact('data','count_department','count_personnel','department_max','departments','personnel_max','names',
-            'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists','personnel_data'));
+            'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists','personnel_data','operation_date'));
         }
     }
 
@@ -472,7 +473,7 @@ class Psbs01Controller extends Controller
     /**
      * 部署情報を更新
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\DepartmentRequest  $request
      * 
      * @var  string  $client_id　顧客ID
      * @var  string  $department_id　部署ID
@@ -482,13 +483,13 @@ class Psbs01Controller extends Controller
      * @var  array   $management_personnel_id　管理者ID
      * @var  string  $status　状態
      * @var  \App\Libraries\php\StatusCheck $check
-     * @var  string  $operation_start_date 稼働開始日
-     * @var  string  $operation_end_date 稼働終了日
+     * @var  string  $start_day 稼働開始日
+     * @var  string  $finish_day 稼働終了日
      * @var  string  $message メッセージ
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(DepartmentRequest $request)
     {
         //リクエストの取得
         $client_id = $request->client_id;
@@ -497,14 +498,8 @@ class Psbs01Controller extends Controller
         $management_number = $request->management_number;
         $responsible_person_id = $request->responsible_person_id;
         $status = $request->status;
-
-        //リクエストに空白が無いかどうかの確認
-        if(empty($name) || empty($status) || empty($management_number)){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
-            $message = Message::get_message('mhcmer0003',[0=>'']);
-            session(['message'=>$message[0]]);
-            return back();
-        }
+        $start_day = $request->start_day;
+        $finish_day = $request->finish_day;
         
         //入力された番号の人員が存在するかの確認
         try{
@@ -521,46 +516,14 @@ class Psbs01Controller extends Controller
         }
 
         //部署情報の更新
-        if($status == "13")
-        {
-            //状態が稼働中なら稼働開始日を更新
-            $check = new StatusCheck();
-            list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
-        
-            try{
-                DB::update('update dcbs01 set responsible_person_id = ?,name = ?,status = ?,management_personnel_id = ?,operation_start_date = ? where client_id = ? and department_id = ?',
-                [$responsible_person_id,$name,$status,$management_number,$operation_start_date,$client_id,$department_id]);
-            }catch(\Exception $e){
-                //エラー処理
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                DatabaseException::common($e);
-                return redirect()->route('index');
-            }
-        }else if($status == "18"){
-            //状態が廃止なら稼働終了日を更新
-            $check = new StatusCheck();
-            list($operation_start_date,$operation_end_date) = $check->statusCheck($request->status);
-        
-            try{
-                DB::update('update dcbs01 set responsible_person_id = ?,name = ?,status = ?,management_personnel_id = ?,operation_end_date = ? where client_id = ? and department_id = ?',
-                [$responsible_person_id,$name,$status,$management_number,$operation_end_date,$client_id,$department_id]); 
-            }catch(\Exception $e){
-                //エラー処理
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('index');
-            }
-        }else{
-            //上記以外なら状態と名前のみ更新
-            try{
-                DB::update('update dcbs01 set responsible_person_id = ?,name = ?,status = ?,management_personnel_id = ? where client_id = ? and department_id = ?',
-                [$responsible_person_id,$name,$status,$management_number,$client_id,$department_id]);
-            }catch(\Exception $e){
-                //エラー及びログ処理
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('index');
-            }
+        try{
+            DB::update('update dcbs01 set responsible_person_id = ?,name = ?,status = ?,management_personnel_id = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and department_id = ?',
+            [$responsible_person_id,$name,$status,$management_number,$start_day,$finish_day,$client_id,$department_id]);
+        }catch(\Exception $e){
+            //エラー処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
+            return redirect()->route('index');
         }
             //ログ処理
             OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
@@ -822,9 +785,8 @@ class Psbs01Controller extends Controller
         if($select_code == "bs"){
             //選択した部署のデータを取得
             try{
-                $click_department_data = DB::select('select 
-                dcbs01.client_id,department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ? and department_id = ?',[$client_id,$select_id]);
+                $db = new DepartmentDataBase();
+                $click_department_data = $db->get($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -840,10 +802,8 @@ class Psbs01Controller extends Controller
         }else{
             //選択した人員のデータを取得
             try{
-                $click_personnel_data = DB::select('select 
-                dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-                from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
-                and dcji01.personnel_id = ?',[$client_id,$select_id]);
+                $db = new PersonnelDataBase();
+                $click_personnel_data = $db->get($client,$select_id);
             }catch(\Exception $e){
 
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -877,16 +837,16 @@ class Psbs01Controller extends Controller
             View::share('data', $data);
         }
 
-        //日付を6桁にする
+        //運用開始日、運用終了日のフォーマット変更
         $date = new Date();
         if(isset($top_department)){
-            $date->formatDate($top_department);
+            $operation_date = $date->formatOperationDate($top_department);
         }
-        if(isset($click_department_data)){
-            $date->formatDate($click_department_data);
+        if(!empty($click_department_data)){
+            $operation_date = $date->formatOperationDate($click_department_data);
         }
         if(isset($click_personnel_data)){
-            $date->formatDate($click_personnel_data);
+            $operation_date = $date->formatOperationDate($click_personnel_data);
         }
 
         //責任者を名前で取得
@@ -950,7 +910,7 @@ class Psbs01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','department_max','departments','personnel_max',
-        'names','responsible_lists','department_high','personnel_high','count_personnel',));
+        'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date'));
     }
 
     /**

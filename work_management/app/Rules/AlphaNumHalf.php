@@ -37,4 +37,5 @@ class AlphaNumHalf implements Rule
     {
         return 'パスワードは半角英数字で入力してください';
     }
+
 }

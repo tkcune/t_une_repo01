@@ -38,9 +38,15 @@ Route::get('/count',[Pa0001Controller::class,'count'])->name('count');
 
 Route::get('/count2',[Pa0001Controller::class,'count2'])->name('count2');
 
+Route::get('/count3',[Pa0001Controller::class,'count3'])->name('count3');
+
 Route::get('/clipboard/{id}',[Pa0001Controller::class,'clipboard'])->name('clipboard');
 
 Route::get('/deleteclipboard',[Pa0001Controller::class,'deleteclipboard'])->name('deleteclipboard');
+
+Route::get('/redirect',[Pa0001Controller::class,'redirect'])->name('redirect');
+
+Route::get('/bs/top',[Pa0001Controller::class,'top'])->name('top');
 
 Route::get('/show/{id}/{id2}',[Psbs01Controller::class,'show'])->name('plbs01.show');
 

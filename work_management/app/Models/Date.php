@@ -37,17 +37,38 @@ use Carbon\Carbon;
      */
     public function formatDate(&$datas){
         foreach($datas as $data){
-            $data->created_at = Carbon::parse($data->created_at)->format('ymd');
-            $data->updated_at = Carbon::parse($data->updated_at)->format('ymd');
-            if(isset($data->operation_start_date)){
-                $data->operation_start_date = Carbon::parse($data->operation_start_date)->format('ymd');
-            }
-            if(isset($data->operation_end_date)){
-                $data->operation_end_date = Carbon::parse($data->operation_end_date)->format('ymd');
-            }
+            $data->created_at = Carbon::parse($data->created_at)->format('Y/m/d H:i:s');
+            $data->updated_at = Carbon::parse($data->updated_at)->format('Y/m/d H:i:s');
             if(isset($data->password_update_day)){
-                $data->password_update_day = Carbon::parse($data->password_update_day)->format('ymd');
+                $data->password_update_day = Carbon::parse($data->password_update_day)->format('Y-m-d');
             }
         }
+    }
+
+    /**
+     * 運用開始日と運用終了日の表記を変換するメソッド
+     * @param array $datas DBデータ 
+     * 
+     * @var   array $date 変換後の日付を格納
+     * 
+     * @return array $date 
+     */
+    public function formatOperationDate($datas){
+
+        $date = array();
+        foreach($datas as $data){
+
+            $operation_start_date = null;
+            $operation_end_date = null;
+
+            $operation_start_date = Carbon::parse($data->operation_start_date)->format('Y-m-d');
+            if(isset($data->operation_end_date)){
+                $operation_end_date = Carbon::parse($data->operation_end_date)->format('Y-m-d');
+            }
+            $date = ["operation_start_date" => $operation_start_date,"operation_end_date" => $operation_end_date];
+
+        }
+        return $date;
+
     }
 }

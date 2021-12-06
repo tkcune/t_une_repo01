@@ -38,7 +38,7 @@
                         <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$top_department[0]->management_personnel_id])}}">{{$top_management[0]}}</a></p>
                     </div>
                     <div class="col" style="padding:0px">
-
+ 
                     <p>管理者検索：
                         <input type="text" id="search-list" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">

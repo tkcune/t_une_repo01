@@ -192,6 +192,7 @@ function clickDelete()
    //
    var name = document.getElementById("search-list").value;
 
+   console.log(name);
    //optionの個数を判断する
    const count = document.getElementById('search-list').list.options;
 
@@ -202,8 +203,15 @@ function clickDelete()
    }
 
    document.getElementById("management_number").defaultValue = label;
+   document.getElementById("management_name").innerHTML = name;
+   document.getElementById("management_name").onclick = function(){
+    location.href = `show/aa00000001/${label}`;
+   }
+
  }
  
+
  document.getElementById("search-list").onchange = search;
 
 
+ 

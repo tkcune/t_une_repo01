@@ -803,7 +803,8 @@ class Psbs01Controller extends Controller
             //選択した人員のデータを取得
             try{
                 $db = new PersonnelDataBase();
-                $click_personnel_data = $db->get($client,$select_id);
+                $click_personnel_data = $db->get($client_id,$select_id);
+                
             }catch(\Exception $e){
 
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');

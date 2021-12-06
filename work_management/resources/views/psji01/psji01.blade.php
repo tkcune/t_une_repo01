@@ -10,6 +10,7 @@
             {{-- hiddenのvalueはダミーデータ　--}}
             <input type="hidden" name="client_id" value="aa00000001">
             <input type="hidden" name="high" value="{{ $_GET["high"] }}">
+            <input type="hidden" name="management_number" value="dummy">
 
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                     <div class="row">

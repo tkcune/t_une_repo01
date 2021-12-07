@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Libraries\php\OutputLogClass;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,31 +21,22 @@ class AppServiceProvider extends ServiceProvider
             $client_id = $app->request->input('client_id', 'kk00000000');
 
             //@var string ユーザーのメールアドレス
-            $user = $app->request->input('user', '');
+            $user = $app->request->input('user', 'august@roma.com');
 
-            if($user == ''){
-                //メールアドレスがなければ、ユーザーのidからメールアドレスを取得する
-                //@var string ユーザーのid
-                $personnel_id = $app->request->input('personnel_id', '');
-
-                if($personnel_id == ''){
-                    //ユーザーのidがなければ、仮の値
-                    $user = 'log@log.com';
+            //@var string デバックモードの値
+            $debug_mode = '0';
+            //config/config.phpがなければ、0
+            if(Config::get('config') == null){
+                $debug_mode = '0';
+            }else{
+                //debug_modeの記載がなければ、0
+                if(!array_key_exists('debug_mode', Config::get('config'))){
+                    $debug_mode = '0';
                 }else{
-
-                    //ユーザーのidがあれば、データベースから取得する
-                    $personnel_email = DB::select('select email from dcji01');
-                    
-                    if($personnel_email){
-                        $user = $personnel_email[0]->email;
-                    }else{
-                        //データベースに存在しないユーザーのidなら仮の値
-                        $user = 'log@log.com';
-                    }
+                    //config.phpがあり、debug_modeがあれば、取得する
+                    $debug_mode = Config::get('config')['debug_mode'];
                 }
             }
-            //@var string デバックモードの値
-            $debug_mode = $app->config['config']['debug_mode'];
             
             //インスタンスを作成し、返す
             return new OutputLogClass($client_id, $user, $debug_mode);

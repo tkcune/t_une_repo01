@@ -9,7 +9,7 @@ class FunctionCode{
     //機能の文字から機能コードを返す
     //$param string $function 機能
     //@return string 機能コード
-    public static function get_functioncode($function){
+    public static function get_functioncode(string $function){
         //@var array 機能コードのリスト
         $function_list = array(
             'その他' => '00',

@@ -7,6 +7,7 @@ use App\Http\Controllers\Psji01Controller;
 use App\Http\Controllers\Ptcm01Controller;
 use App\Http\Controllers\Pslg01Controller;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\PsnwController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,7 +74,8 @@ Route::post('/create', [Pslg01Controller::class,'create'])->name('pslg01.create'
 Route::post('/pslg', [Pslg01Controller::class,'select'])->name('pslg01.select');
 Route::post('/pslg/download', [Pslg01Controller::class,'download'])->name('pslg01.download');
 
-;
+Route::get('/psnw01',[PsnwController::class,'index'])->name('psnw01.index');
+Route::post('/psnw01',[PsnwController::class,'create'])->name('psnw01.create');
 
 
 

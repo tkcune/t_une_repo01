@@ -140,18 +140,9 @@ TreeAction.node = class Node {
       
     //@var dom li li要素
     let li = document.createElement('li');
-
-    //@var stirng アイコンの名前
-    let imgName = this.getImgName();
-
-    //li要素に、アイコンとタイトルを挿入する
-    li.innerHTML = '<img src = "/image/' + imgName + '.png" width = "15" height = "17">' + this.title;
-
-      
-    //クリック処理。テスト用のクリック処理
-    //クリックした要素を表示する
-    li.addEventListener('click', {node: this, handleEvent: this.displayDetail});
-    //
+    
+    //segmentというdiv要素を加える
+    li.appendChild(this.createSegment());
       
     ul.appendChild(li);
 
@@ -243,17 +234,31 @@ TreeAction.node = class Node {
     let div = document.createElement('div');
     //boxValueの0番目に、クラス名
     div.classList.add('titlebox');
+
+    //titleboxにsegmentを追加する
+    div.appendChild(this.createSegment());
+
+    return div;
+  }
+
+  //segmentというclass名をdiv要素を作成する
+  createSegment(){
+    //@var dom imgとタイトルを格納する
+    let segment = document.createElement('div');
+
+    //segmentというcss名を追加する
+    segment.classList.add('segment');
       
     //@var string アイコンの名前
     let imgName = this.getImgName();
 
     //div要素に、アイコンとタイトルを挿入する
-    div.innerHTML = '<img src = "/image/' + imgName + '.png" width = "15" height = "17">' + this.title;
+    segment.innerHTML = '<img src = "/image/' + imgName + '.png" width = "15" height = "17">' + this.title;
 
     //クリック処理を追加する
-    div.addEventListener('click', {node: this, handleEvent: this.displayDetail});
+    segment.addEventListener('click', {node: this, handleEvent: this.displayDetail});
 
-    return div;
+    return segment;
   }
 
   //詳細行に表示

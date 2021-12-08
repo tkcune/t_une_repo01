@@ -198,6 +198,8 @@ class Psji01Controller extends Controller
      * @var  string  $mail　メールアドレス
      * @var  string  $password　パスワード
      * @var  string  $management_number 管理者ID
+     * @var  string  $login_authority ログイン権限
+     * @var  string  $system_management システム管理者権限
      * @var  string  $management_personnel_id 管理者番号
      * @var  string  $status　状態
      * @var  App\Libraries\php\StatusCheck $check
@@ -214,10 +216,19 @@ class Psji01Controller extends Controller
         $mail = $request->email;
         $password = Hash::make($request->password);
         $management_number = $request->management_number;
+        if(isset($request->login_authority)){
+            $login_authority = $request->login_authority;
+        }else{
+            $login_authority = "0";
+        }
+        if(isset($request->system_management)){
+            $system_management = $request->system_management;
+        }else{
+            $system_management = "0";
+        }
         $status = $request->status;
         $start_day = $request->start_day;
         $finish_day = $request->finish_day;
-
 
         //リクエストに空白が無いかどうかの確認
         if(empty($name) || empty($mail) || empty($status) || empty($request->password) || empty($management_number)){
@@ -243,8 +254,8 @@ class Psji01Controller extends Controller
         //人員情報の更新
         if($request->password == "ValidationOK"){
             try{
-                DB::update('update dcji01 set name = ?,status = ?,email = ?,management_personnel_id = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
-                [$name,$status,$mail,$management_number,$start_day,$finish_day,$client_id,$personnel_id]);
+                DB::update('update dcji01 set name = ?,status = ?,email = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$management_number,$login_authority,$system_management,$start_day,$finish_day,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -252,8 +263,8 @@ class Psji01Controller extends Controller
             }
         }else{
             try{
-                DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
-                [$name,$status,$mail,$password,$management_number,$start_day,$finish_day,$client_id,$personnel_id]);
+                DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$password,$management_number,$login_authority,$system_management,$start_day,$finish_day,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);

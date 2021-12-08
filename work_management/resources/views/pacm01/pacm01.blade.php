@@ -399,10 +399,10 @@
                         <option value="18" @if($click_personnel_data[0]->status == "18") selected @endif>退職</option>
                         </select>
                         システム管理者:
-                        <input type="checkbox" value="1" data-toggle="tooltip" title="人員がシステム管理者かどうかを設定します"
+                        <input type="checkbox" name="system_management" value="1" data-toggle="tooltip" title="人員がシステム管理者かどうかを設定します"
                         @if($click_personnel_data[0]->system_management == "1") checked @endif>
                         ログイン：
-                        <input type="checkbox" name="login" value="1" onclick="loginDisabled()" @if($click_personnel_data[0]->login_authority == "1") checked @endif>
+                        <input name="login_authority" type="checkbox" value="1" onclick="loginDisabled()" @if($click_personnel_data[0]->login_authority == "1") checked @endif>
                         </p>
                     </div>
                 </div>

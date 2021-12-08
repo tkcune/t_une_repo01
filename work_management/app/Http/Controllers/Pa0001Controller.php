@@ -17,6 +17,7 @@ use App\Libraries\php\ListDisplay;
 use App\Libraries\php\OperationCheck;
 use Illuminate\Support\Facades\View;
 use App\Libraries\php\DepartmentDataBase;
+use App\Libraries\php\PersonnelDataBase;
 
 
 
@@ -65,6 +66,7 @@ class Pa0001Controller extends Controller
         $count_personnel = Config::get('startcount.count');
 
         $db = new DepartmentDataBase();
+        $db2 = new PersonnelDataBase();
 
         //一番上の部署を取得
         try{
@@ -86,14 +88,13 @@ class Pa0001Controller extends Controller
 
         //全体の人員データの取得
         try{
-            $personnel_data = DB::select('select 
-            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+            $all_personnel_data = $db2->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('errormsg');
         }
+        $personnel_data = $all_personnel_data;
 
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
@@ -142,7 +143,7 @@ class Pa0001Controller extends Controller
 
         return view('pacm01.pacm01',compact('top_management','department_max','departments','personnel_max','names',
         'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
-        'count_personnel','personnel_data','operation_date'));
+        'count_personnel','personnel_data','operation_date','all_personnel_data'));
     }
 
     /**
@@ -258,13 +259,12 @@ class Pa0001Controller extends Controller
         }
         //人員データの取得
         try{
-            $personnel_data = DB::select('select 
-            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+            $all_personnel_data = $db2->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
         }
+        $personnel_data = $all_personnel_data;
         //登録日付フォーマットを変更
         $date = new Date();
         $operation_date = $date->formatOperationDate($top_department);
@@ -311,7 +311,7 @@ class Pa0001Controller extends Controller
         $operation_check->check($top_department);
 
         return view('pacm01.pacm01',compact('top_department','top_responsible','department_max','departments','personnel_max','names',
-        'responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data','operation_date'));
+        'responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data','operation_date','all_personnel_data'));
     }
 
     /**
@@ -365,6 +365,15 @@ class Pa0001Controller extends Controller
 
         $click_id = $select_id;
         View::share('click_id', $click_id);
+
+        //人員データの取得
+        try{
+            $db2 = new PersonnelDataBase();
+            $all_personnel_data = $db2->getAll($client);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
+        }
 
         //選択したツリーで場合分け
         if(substr($select_id,0,2) == "bs"){
@@ -450,7 +459,7 @@ class Pa0001Controller extends Controller
             $tree_data = $tree->set_view_treedata();
 
             return view('pacm01.pacm01',compact('click_department_data','click_management_lists','department_max','departments','personnel_max','names','responsible_lists',
-            'department_high','personnel_high','count_department','count_personnel','click_department_high','client','select_id','personnel_data','operation_date'));
+            'department_high','personnel_high','count_department','count_personnel','click_department_high','client','select_id','personnel_data','operation_date','all_personnel_data'));
         }else{
             //選択した人員のデータを取得
             try{
@@ -546,7 +555,7 @@ class Pa0001Controller extends Controller
                 
                 return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments',
                 'personnel_max','names','department_high','personnel_high','responsible_lists','top_department','top_responsible','count_department','count_personnel','client',
-                'select_id','personnel_data','click_personnel_data','operation_date'));
+                'select_id','personnel_data','click_personnel_data','operation_date','all_personnel_data'));
             }
             array_push($department_data,$data[0]);
 
@@ -600,7 +609,7 @@ class Pa0001Controller extends Controller
             $tree_data = $tree->set_view_treedata();
 
             return view('pacm01.pacm01',compact('count_department','count_personnel','click_management_lists','data','department_max','departments',
-            'personnel_max','names','responsible_lists','department_high','personnel_high','client','select_id','click_personnel_data','personnel_data','operation_date'));
+            'personnel_max','names','responsible_lists','department_high','personnel_high','client','select_id','click_personnel_data','personnel_data','operation_date','all_personnel_data'));
         }
     }
 
@@ -613,6 +622,7 @@ class Pa0001Controller extends Controller
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
      * @var  App\Libraries\php\DepartmentDataBase $db
+     * @var  App\Libraries\php\PersonnelDataBase $db2
      * @var  array $top_department 最上位の部署データ
      * @var  App\Models\Date $date
      * @var  array $department_data 部署データ
@@ -632,6 +642,7 @@ class Pa0001Controller extends Controller
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
         $db = new DepartmentDataBase();
+        $db2 = new PersonnelDataBase();
 
         //一番上の部署を取得
         try{
@@ -651,9 +662,7 @@ class Pa0001Controller extends Controller
         }
         //人員データの取得
         try{
-            $personnel_data = DB::select('select 
-            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+            $personnel_data = $db2->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
@@ -742,6 +751,15 @@ class Pa0001Controller extends Controller
         $click_id = $select_id;
         View::share('click_id', $click_id);
 
+        //全体の人員データの取得
+        try{
+            $db2 = new PersonnelDataBase();
+            $all_personnel_data = $db2->getAll($client_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+        }
+
         //データベースの検索
         try{
             $department_data = DB::select('select 
@@ -754,9 +772,8 @@ class Pa0001Controller extends Controller
             return redirect()->route('index');
         }
         try{
-            $personnel_data = DB::select('select 
-            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+            $db2 = new PersonnelDataBase();
+            $personnel_data = $db2->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -906,7 +923,7 @@ class Pa0001Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','department_max','departments','personnel_max',
-        'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date'));
+        'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data'));
     }
 
     /**
@@ -949,6 +966,15 @@ class Pa0001Controller extends Controller
 
         $click_id = $select_id;
         View::share('click_id', $click_id);
+
+        //全体の人員データの取得
+        try{
+            $db = new PersonnelDataBase();
+            $all_personnel_data = $db->getAll($client_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+        }
 
         //データベースの検索
         try{
@@ -1122,7 +1148,7 @@ class Pa0001Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','count_personnel','department_max',
-        'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date'));
+        'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date','all_personnel_data'));
     }
 
     /**
@@ -1241,9 +1267,8 @@ class Pa0001Controller extends Controller
 
         //全体の人員データの取得
         try{
-            $personnel_data = DB::select('select 
-            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+            $db2 = new PersonnelDataBase();
+            $personnel_data = $db2->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);

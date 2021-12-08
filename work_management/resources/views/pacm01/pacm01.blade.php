@@ -43,9 +43,9 @@
                         <input type="text" id="search-list" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
-@for($j = 0; $j < count($personnel_data);$j++)
-@if($personnel_data[$j]->system_management == 1)
-                            <option value="{{$personnel_data[$j]->name}}" label="{{$personnel_data[$j]->personnel_id}}"></option>
+@for($j = 0; $j < count($all_personnel_data);$j++)
+@if($all_personnel_data[$j]->system_management == 1)
+                            <option value="{{$all_personnel_data[$j]->name}}" label="{{$all_personnel_data[$j]->personnel_id}}"></option>
 @endif
 @endfor
                         </datalist>
@@ -193,9 +193,9 @@
                         <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
-@for($j = 0; $j < count($personnel_data);$j++)
-@if($personnel_data[$j]->system_management == 1)
-                            <option value="{{$personnel_data[$j]->name}}" label="{{$personnel_data[$j]->personnel_id}}"></option>
+@for($j = 0; $j < count($all_personnel_data);$j++)
+@if($all_personnel_data[$j]->system_management == 1)
+                            <option value="{{$all_personnel_data[$j]->name}}" label="{{$all_personnel_data[$j]->personnel_id}}"></option>
 @endif
 @endfor
                         </datalist>
@@ -361,9 +361,10 @@
                         
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
-@for($j = 0; $j < count($personnel_data);$j++)
-@if($personnel_data[$j]->system_management == 1)
-                            <option value="{{$personnel_data[$j]->name}}" label="{{$personnel_data[$j]->personnel_id}}"></option>
+                        
+@for($j = 0; $j < count($all_personnel_data);$j++)
+@if($all_personnel_data[$j]->system_management == 1)
+                            <option value="{{$all_personnel_data[$j]->name}}" label="{{$all_personnel_data[$j]->personnel_id}}"></option>
 @endif
 @endfor
                         </datalist>

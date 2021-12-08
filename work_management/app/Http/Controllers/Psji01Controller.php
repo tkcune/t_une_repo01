@@ -374,6 +374,15 @@ class Psji01Controller extends Controller
         $click_id = $select_id;
         View::share('click_id', $click_id);
 
+        //全体の人員データの取得
+        try{
+            $db2 = new PersonnelDataBase();
+            $all_personnel_data = $db2->getAll($client_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+        }
+
         //データベースの検索
         try{
             $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
@@ -546,7 +555,7 @@ class Psji01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','count_personnel','department_max',
-        'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date'));
+        'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date','all_personnel_data'));
     }
 
     /**

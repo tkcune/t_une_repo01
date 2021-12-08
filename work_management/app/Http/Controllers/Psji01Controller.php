@@ -229,6 +229,7 @@ class Psji01Controller extends Controller
         $status = $request->status;
         $start_day = $request->start_day;
         $finish_day = $request->finish_day;
+        $remarks = $request->remarks;
 
         //リクエストに空白が無いかどうかの確認
         if(empty($name) || empty($mail) || empty($status) || empty($request->password) || empty($management_number)){
@@ -254,8 +255,8 @@ class Psji01Controller extends Controller
         //人員情報の更新
         if($request->password == "ValidationOK"){
             try{
-                DB::update('update dcji01 set name = ?,status = ?,email = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
-                [$name,$status,$mail,$management_number,$login_authority,$system_management,$start_day,$finish_day,$client_id,$personnel_id]);
+                DB::update('update dcji01 set name = ?,status = ?,email = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$management_number,$login_authority,$system_management,$start_day,$finish_day,$remarks,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -263,8 +264,8 @@ class Psji01Controller extends Controller
             }
         }else{
             try{
-                DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
-                [$name,$status,$mail,$password,$management_number,$login_authority,$system_management,$start_day,$finish_day,$client_id,$personnel_id]);
+                DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$password,$management_number,$login_authority,$system_management,$start_day,$finish_day,$remarks,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -393,7 +394,7 @@ class Psji01Controller extends Controller
         }
         try{
             $personnel_data = DB::select('select 
-            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,remarks,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
             from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?
             where dcji01.name like ?',[$client_id,'%'.$request->search2.'%']);
         }catch(\Exception $e){
@@ -472,7 +473,7 @@ class Psji01Controller extends Controller
             View::share('data', $data);
         }
 
-        //日付を6桁にする
+        //日付フォーマットの変更
         $date = new Date();
         if(isset($top_department)){
             $operation_date = $date->formatOperationDate($top_department);
@@ -700,8 +701,9 @@ class Psji01Controller extends Controller
                 login_authority,
                 system_management,
                 operation_start_date,
-                operation_end_date)
-                VALUE (?,?,?,?,?,?,?,?,?,?,?,?)',
+                operation_end_date,
+                remarks)
+                VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?)',
                 [
                 $client_id,
                 $personnel_id,
@@ -714,7 +716,8 @@ class Psji01Controller extends Controller
                 $copy_personnel[0]->login_authority,
                 $copy_personnel[0]->system_management,
                 $copy_personnel[0]->operation_start_date,
-                $copy_personnel[0]->operation_end_date]);
+                $copy_personnel[0]->operation_end_date,
+                $copy_personnel[0]->remarks]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);

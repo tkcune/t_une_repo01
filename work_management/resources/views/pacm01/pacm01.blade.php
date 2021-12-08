@@ -97,6 +97,8 @@
                     </div>
                 </div>
 
+                <input type="hidden" id="remarks" name="remarks" value="">
+
                 <div class="row">
                     <div class="col">
                     <p>
@@ -147,7 +149,7 @@
                         備考
                     </div>
                     <div>
-                        <textarea maxlength="512" style="width:800px; height: 100px;"></textarea>
+                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;">{{$top_department[0]->remarks}}</textarea>
                     </div>
                 </div>
             </div>
@@ -245,6 +247,8 @@
                     </div>
                 </div>
 
+                <input type="hidden" id="remarks" name="remarks" value="">
+
                 <div class="row">
                     <div class="col">
                     <p>
@@ -303,7 +307,7 @@
                         備考
                     </div>
                     <div>
-                        <textarea maxlength="512" style="width:800px; height: 100px;"></textarea>
+                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;">{{$click_department_data[0]->remarks}}</textarea>
                     </div>
                 </div>
             </div>
@@ -417,6 +421,8 @@
                     </div>
                 </div>
 
+                <input type="hidden" id="remarks" name="remarks" value="">
+
                 <div class="row">
                     <div class="col">
                     <div style="display:inline-flex">
@@ -477,7 +483,7 @@
                         備考
                     </div>
                     <div>
-                        <textarea maxlength="512" style="width:800px; height: 100px;"></textarea>
+                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;">{{$click_personnel_data[0]->remarks}}</textarea>
                     </div>
                 </div>
             </div>

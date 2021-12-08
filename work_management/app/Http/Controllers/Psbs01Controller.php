@@ -523,6 +523,7 @@ class Psbs01Controller extends Controller
         $status = $request->status;
         $start_day = $request->start_day;
         $finish_day = $request->finish_day;
+        $remarks = $request->remarks;
         
         //入力された番号の人員が存在するかの確認
         try{
@@ -540,8 +541,8 @@ class Psbs01Controller extends Controller
 
         //部署情報の更新
         try{
-            DB::update('update dcbs01 set responsible_person_id = ?,name = ?,status = ?,management_personnel_id = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and department_id = ?',
-            [$responsible_person_id,$name,$status,$management_number,$start_day,$finish_day,$client_id,$department_id]);
+            DB::update('update dcbs01 set responsible_person_id = ?,name = ?,status = ?,management_personnel_id = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and department_id = ?',
+            [$responsible_person_id,$name,$status,$management_number,$start_day,$finish_day,$remarks,$client_id,$department_id]);
         }catch(\Exception $e){
             //エラー処理
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -627,7 +628,7 @@ class Psbs01Controller extends Controller
         //選択した部署の部署情報を取得
         try{
             $delete_data = DB::select('select 
-            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id,high_id, dcbs01.created_at, dcbs01.updated_at
             from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
             and dcbs01.department_id = ?',[$client,$delete]);
         }catch(\Exception $e){
@@ -782,7 +783,7 @@ class Psbs01Controller extends Controller
         //データベースの検索
         try{
             $department_data = DB::select('select 
-            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
             from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?
             where dcbs01.name like ?',[$client_id,'%'.$request->search.'%']);
         }catch(\Exception $e){
@@ -857,7 +858,7 @@ class Psbs01Controller extends Controller
             //取得した部署IDを元に部署データを取得
             try{
                 $data = DB::select('select 
-                dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+                dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
                 from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
                 and dcbs01.department_id = ?',[$client_id,$affiliation_data[0]->high_id]);
             }catch(\Exception $e){

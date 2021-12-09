@@ -198,6 +198,8 @@ class Psji01Controller extends Controller
      * @var  string  $mail　メールアドレス
      * @var  string  $password　パスワード
      * @var  string  $management_number 管理者ID
+     * @var  string  $login_authority ログイン権限
+     * @var  string  $system_management システム管理者権限
      * @var  string  $management_personnel_id 管理者番号
      * @var  string  $status　状態
      * @var  App\Libraries\php\StatusCheck $check
@@ -214,18 +216,20 @@ class Psji01Controller extends Controller
         $mail = $request->email;
         $password = Hash::make($request->password);
         $management_number = $request->management_number;
+        if(isset($request->login_authority)){
+            $login_authority = $request->login_authority;
+        }else{
+            $login_authority = "0";
+        }
+        if(isset($request->system_management)){
+            $system_management = $request->system_management;
+        }else{
+            $system_management = "0";
+        }
         $status = $request->status;
         $start_day = $request->start_day;
         $finish_day = $request->finish_day;
-
-
-        //リクエストに空白が無いかどうかの確認
-        if(empty($name) || empty($mail) || empty($status) || empty($request->password) || empty($management_number)){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
-            $message = Message::get_message('mhcmer0003',[0=>'']);
-            session(['message'=>$message[0]]);
-            return back();
-        }
+        $remarks = $request->remarks;
 
         //入力された番号の人員が存在するかの確認
         try{
@@ -243,8 +247,8 @@ class Psji01Controller extends Controller
         //人員情報の更新
         if($request->password == "ValidationOK"){
             try{
-                DB::update('update dcji01 set name = ?,status = ?,email = ?,management_personnel_id = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
-                [$name,$status,$mail,$management_number,$start_day,$finish_day,$client_id,$personnel_id]);
+                DB::update('update dcji01 set name = ?,status = ?,email = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$management_number,$login_authority,$system_management,$start_day,$finish_day,$remarks,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -252,8 +256,8 @@ class Psji01Controller extends Controller
             }
         }else{
             try{
-                DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and personnel_id = ?',
-                [$name,$status,$mail,$password,$management_number,$start_day,$finish_day,$client_id,$personnel_id]);
+                DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$password,$management_number,$login_authority,$system_management,$start_day,$finish_day,$remarks,$client_id,$personnel_id]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -363,6 +367,15 @@ class Psji01Controller extends Controller
         $click_id = $select_id;
         View::share('click_id', $click_id);
 
+        //全体の人員データの取得
+        try{
+            $db2 = new PersonnelDataBase();
+            $all_personnel_data = $db2->getAll($client_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+        }
+
         //データベースの検索
         try{
             $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
@@ -373,7 +386,7 @@ class Psji01Controller extends Controller
         }
         try{
             $personnel_data = DB::select('select 
-            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,remarks,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
             from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?
             where dcji01.name like ?',[$client_id,'%'.$request->search2.'%']);
         }catch(\Exception $e){
@@ -452,7 +465,7 @@ class Psji01Controller extends Controller
             View::share('data', $data);
         }
 
-        //日付を6桁にする
+        //日付フォーマットの変更
         $date = new Date();
         if(isset($top_department)){
             $operation_date = $date->formatOperationDate($top_department);
@@ -535,7 +548,7 @@ class Psji01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','count_personnel','department_max',
-        'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date'));
+        'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date','all_personnel_data'));
     }
 
     /**
@@ -565,12 +578,9 @@ class Psji01Controller extends Controller
 
         //複写番号が空白の場合エラーメッセージを表示
         if($request->copy_id == null){
-            //今後エラーIDの番号をまとめたconfigを作成した方が良い 11.24
-            //04は番号が空白の状態
-            $num = "04";
-            $e = "番号が空白です";
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
-            DatabaseException::commonError($e,$num);
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
+            $message = Message::get_message('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0]]);
             return redirect()->route('index');
         }
 
@@ -588,10 +598,8 @@ class Psji01Controller extends Controller
             //人員の配下に部署を複製しないように分岐
             if(substr($projection_source_id,0,2) == "bs"){
                 //05は人員の配下に部署を複製しない
-                $num = "05";
-                $e = "人員の配下に部署は作成できません";
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
-                DatabaseException::commonError($e,$num);
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0010');
+                DatabaseException::commonError($e);
                 return redirect()->route('index');
             }
 
@@ -680,8 +688,9 @@ class Psji01Controller extends Controller
                 login_authority,
                 system_management,
                 operation_start_date,
-                operation_end_date)
-                VALUE (?,?,?,?,?,?,?,?,?,?,?,?)',
+                operation_end_date,
+                remarks)
+                VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?)',
                 [
                 $client_id,
                 $personnel_id,
@@ -694,7 +703,8 @@ class Psji01Controller extends Controller
                 $copy_personnel[0]->login_authority,
                 $copy_personnel[0]->system_management,
                 $copy_personnel[0]->operation_start_date,
-                $copy_personnel[0]->operation_end_date]);
+                $copy_personnel[0]->operation_end_date,
+                $copy_personnel[0]->remarks]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);

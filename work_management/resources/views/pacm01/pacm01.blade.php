@@ -43,9 +43,9 @@
                         <input type="text" id="search-list" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
-@for($j = 0; $j < count($personnel_data);$j++)
-@if($personnel_data[$j]->system_management == 1)
-                            <option value="{{$personnel_data[$j]->name}}" label="{{$personnel_data[$j]->personnel_id}}"></option>
+@for($j = 0; $j < count($all_personnel_data);$j++)
+@if($all_personnel_data[$j]->system_management == 1)
+                            <option value="{{$all_personnel_data[$j]->name}}" label="{{$all_personnel_data[$j]->personnel_id}}"></option>
 @endif
 @endfor
                         </datalist>
@@ -97,6 +97,8 @@
                     </div>
                 </div>
 
+                <input type="hidden" id="remarks" name="remarks" value="">
+
                 <div class="row">
                     <div class="col">
                     <p>
@@ -147,7 +149,7 @@
                         備考
                     </div>
                     <div>
-                        <textarea maxlength="512" style="width:800px; height: 100px;"></textarea>
+                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;">{{$top_department[0]->remarks}}</textarea>
                     </div>
                 </div>
             </div>
@@ -193,9 +195,9 @@
                         <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
-@for($j = 0; $j < count($personnel_data);$j++)
-@if($personnel_data[$j]->system_management == 1)
-                            <option value="{{$personnel_data[$j]->name}}" label="{{$personnel_data[$j]->personnel_id}}"></option>
+@for($j = 0; $j < count($all_personnel_data);$j++)
+@if($all_personnel_data[$j]->system_management == 1)
+                            <option value="{{$all_personnel_data[$j]->name}}" label="{{$all_personnel_data[$j]->personnel_id}}"></option>
 @endif
 @endfor
                         </datalist>
@@ -244,6 +246,8 @@
                         運用終了日<input name="finish_day" type="date" @if(!empty(old('finish_day'))) value="{{ old('finish_day')}}" @else value="{{$operation_date['operation_end_date']}}" @endif>
                     </div>
                 </div>
+
+                <input type="hidden" id="remarks" name="remarks" value="">
 
                 <div class="row">
                     <div class="col">
@@ -303,7 +307,7 @@
                         備考
                     </div>
                     <div>
-                        <textarea maxlength="512" style="width:800px; height: 100px;"></textarea>
+                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;">{{$click_department_data[0]->remarks}}</textarea>
                     </div>
                 </div>
             </div>
@@ -361,9 +365,10 @@
                         
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
-@for($j = 0; $j < count($personnel_data);$j++)
-@if($personnel_data[$j]->system_management == 1)
-                            <option value="{{$personnel_data[$j]->name}}" label="{{$personnel_data[$j]->personnel_id}}"></option>
+                        
+@for($j = 0; $j < count($all_personnel_data);$j++)
+@if($all_personnel_data[$j]->system_management == 1)
+                            <option value="{{$all_personnel_data[$j]->name}}" label="{{$all_personnel_data[$j]->personnel_id}}"></option>
 @endif
 @endfor
                         </datalist>
@@ -399,10 +404,10 @@
                         <option value="18" @if($click_personnel_data[0]->status == "18") selected @endif>退職</option>
                         </select>
                         システム管理者:
-                        <input type="checkbox" value="1" data-toggle="tooltip" title="人員がシステム管理者かどうかを設定します"
+                        <input type="checkbox" name="system_management" value="1" data-toggle="tooltip" title="人員がシステム管理者かどうかを設定します"
                         @if($click_personnel_data[0]->system_management == "1") checked @endif>
                         ログイン：
-                        <input type="checkbox" name="login" value="1" onclick="loginDisabled()" @if($click_personnel_data[0]->login_authority == "1") checked @endif>
+                        <input name="login_authority" type="checkbox" value="1" onclick="loginDisabled()" @if($click_personnel_data[0]->login_authority == "1") checked @endif>
                         </p>
                     </div>
                 </div>
@@ -415,6 +420,8 @@
                         運用終了日<input name="finish_day" type="date" value="{{$operation_date['operation_end_date']}}">
                     </div>
                 </div>
+
+                <input type="hidden" id="remarks" name="remarks" value="">
 
                 <div class="row">
                     <div class="col">
@@ -476,7 +483,7 @@
                         備考
                     </div>
                     <div>
-                        <textarea maxlength="512" style="width:800px; height: 100px;"></textarea>
+                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;">{{$click_personnel_data[0]->remarks}}</textarea>
                     </div>
                 </div>
             </div>
@@ -540,7 +547,75 @@
                         {{-- ツリー操作機能ここまで　--}}
 
                         {{-- ページネーション--}}
-@if(isset($select_id))
+@if(!empty($_POST['search']))
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-sm">
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count4',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+    @if($count_department == 1)
+                                <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
+    @else
+                                <a class="page-link" href="{{ route('count4',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
+    @endif
+                                    <span aria-hidden="true">&lt;</span>
+                                </a>
+                                </li>
+                                {{$count_department}}/{{$department_max}}
+                                <li class="page-item">
+    @if($count_department<$department_max)
+                                    <a class="page-link" href="{{ route('count4',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+    @else
+                                    <a class="page-link" href="{{ route('count4',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+    @endif
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count4',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+@elseif(!empty($_POST['search2']))
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-sm">
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count5',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+    @if($count_department == 1)
+                                <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
+    @else
+                                <a class="page-link" href="{{ route('count5',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
+    @endif
+                                    <span aria-hidden="true">&lt;</span>
+                                </a>
+                                </li>
+                                {{$count_department}}/{{$department_max}}
+                                <li class="page-item">
+    @if($count_department<$department_max)
+                                    <a class="page-link" href="{{ route('count5',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+    @else
+                                    <a class="page-link" href="{{ route('count5',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+    @endif
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count5',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+@elseif(isset($select_id))
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
@@ -752,7 +827,83 @@
                         {{-- ツリー操作機能ここまで　--}}
 
                         {{-- ページネーション--}}
-@if(isset($select_id))
+@if(!empty($_POST['search']))
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-sm">
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+    @if($count_personnel == 1)
+                                <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
+    @else
+                                <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
+    @endif
+                                    <span aria-hidden="true">&lt;</span>
+                                </a>
+                                </li>
+                                @if($personnel_max == 0)
+                                0/0
+                                @else
+                                {{$count_personnel}}/{{$personnel_max}}
+                                @endif
+                                <li class="page-item">
+    @if($count_personnel<$personnel_max)
+                                    <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+    @else
+                                    <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+    @endif
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+@elseif(!empty($_POST['search2']))
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-sm">
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+    @if($count_personnel == 1)
+                                <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
+    @else
+                                <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
+    @endif
+                                    <span aria-hidden="true">&lt;</span>
+                                </a>
+                                </li>
+                                @if($personnel_max == 0)
+                                0/0
+                                @else
+                                {{$count_personnel}}/{{$personnel_max}}
+                                @endif
+                                <li class="page-item">
+    @if($count_personnel<$personnel_max)
+                                    <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+    @else
+                                    <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+    @endif
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+@elseif(isset($select_id))
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">

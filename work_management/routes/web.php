@@ -41,6 +41,10 @@ Route::get('/count2',[Pa0001Controller::class,'count2'])->name('count2');
 
 Route::get('/count3',[Pa0001Controller::class,'count3'])->name('count3');
 
+Route::get('/count/search/department',[Pa0001Controller::class,'count4'])->name('count4');
+
+Route::get('/count/search/personnel',[Pa0001Controller::class,'count5'])->name('count5');
+
 Route::get('/clipboard/{id}',[Pa0001Controller::class,'clipboard'])->name('clipboard');
 
 Route::get('/deleteclipboard',[Pa0001Controller::class,'deleteclipboard'])->name('deleteclipboard');

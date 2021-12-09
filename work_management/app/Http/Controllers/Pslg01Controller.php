@@ -66,7 +66,7 @@ class Pslg01Controller extends Controller
 
             $items = DB::table('dclg01')
                 ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
-                ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id')
+                ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id','dcji01.system_management')
                 ->whereIn('dclg01.type', $request->check)
                 ->where('dclg01.created_at', '>=', $startdate)
                 ->where('dclg01.updated_at', '<=', $finishdate)
@@ -77,7 +77,7 @@ class Pslg01Controller extends Controller
 
             $items = DB::table('dclg01')
                 ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
-                ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id')
+                ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id','dcji01.system_management')
                 ->whereIn('dclg01.type', $request->check)
                 ->where('dcji01.name', '=', $request->management_name)
                 ->where('dcji01.personnel_id', '=', $request->management_number)
@@ -87,7 +87,7 @@ class Pslg01Controller extends Controller
                 ->get();
         }
 
-
+// dd($items);
         // ログの結果の件数を抽出する
         $count = count($items);
 

@@ -30,10 +30,9 @@ class PersonnelRequest extends FormRequest
     {
         return [
             'name' =>'required',
-            'email' =>'required',
-            'password' => ['required',new AlphaNumHalf],
             'management_number'=>'required',
             'status'=>'required',
+            //'password' => new AlphaNumHalf,
         ];
     }
 
@@ -43,8 +42,6 @@ class PersonnelRequest extends FormRequest
 
         return [
             'name.required'=>'名前を入力してください',
-            'email.required'=>'メールアドレスを入力してください',
-            'password.required'=>'パスワードを入力してください',
             'management_number.required'=>'管理者番号を入力してください',
             'status.required'=>'状態を入力してください',
         ];

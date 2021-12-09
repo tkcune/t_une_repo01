@@ -218,6 +218,9 @@ ul.lasttree li:last-child:before {
   height: 0;
   border-top: 1px dotted;
 }
+.segment {
+  cursor: pointer;
+}
 /* 非表示にするcss */
 .unexpand {
   display: none;

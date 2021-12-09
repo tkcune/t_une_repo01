@@ -217,8 +217,9 @@
                 status,
                 management_personnel_id,
                 operation_start_date,
-                operation_end_date)
-                VALUE (?,?,?,?,?,?,?,?)',
+                operation_end_date,
+                remarks)
+                VALUE (?,?,?,?,?,?,?,?,?)',
                 [$client_id,
                 $department_id,
                 $copy_department[0]->responsible_person_id,
@@ -226,7 +227,8 @@
                 $copy_department[0]->status,
                 $copy_department[0]->management_personnel_id,
                 $copy_department[0]->operation_start_date,
-                $copy_department[0]->operation_end_date]);
+                $copy_department[0]->operation_end_date,
+                $copy_department[0]->remarks]);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);

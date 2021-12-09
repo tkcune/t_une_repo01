@@ -174,6 +174,19 @@ function clickDelete() {
 }
 
 /**
+ * 備考欄挿入
+ * @var value 備考欄の中身
+ * 
+ */
+
+ function remarks()
+ {
+   var value = document.getElementById("remarks_set").value;
+   document.getElementById("remarks").defaultValue = value;
+ }
+ document.getElementById("remarks_set").onchange = remarks;
+
+/**
  * 管理者検索メソッド
  * @var string name  入力した人員名
  * @var int    count optionの個数

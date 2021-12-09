@@ -242,6 +242,16 @@ class Psbs01Controller extends Controller
                 $click_management_lists = $responsible->getManagementLists($client,$click_department_data);
             }
 
+            //全体の人員データの取得
+            try{
+                $all_personnel_data = DB::select('select 
+                dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+                from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+            }
+
             //日付を変換
             $date = new Date();
             $operation_date = $date->formatOperationDate($click_department_data);
@@ -282,7 +292,7 @@ class Psbs01Controller extends Controller
 
             return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel',
             'department_max','departments','personnel_max','names','responsible_lists','department_high','personnel_high',
-            'click_department_high','click_management_lists','client','select_id','personnel_data','operation_date'));
+            'click_department_high','click_management_lists','client','select_id','personnel_data','operation_date','all_personnel_data'));
             
         }else{
             //選択した人員のデータを取得
@@ -334,13 +344,15 @@ class Psbs01Controller extends Controller
 
                 //全体の人員データの取得
                 try{
-                    $personnel_data = DB::select('select 
+                    $all_personnel_data = DB::select('select 
                     dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
                     from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client]);
                 }catch(\Exception $e){
                     OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                     DatabaseException::common($e);
                 }
+
+                $personnel_data = $all_personnel_data;
 
                 //責任者を名前で取得
                 $responsible = new ResponsiblePerson();
@@ -392,12 +404,22 @@ class Psbs01Controller extends Controller
 
                 return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments','personnel_max','names',
                 'top_department','top_responsible','count_department','count_personnel','client','responsible_lists','department_high','personnel_high',
-                'select_id','personnel_data','click_personnel_data','operation_date'));
+                'select_id','personnel_data','click_personnel_data','operation_date','all_personnel_data'));
             }
 
             array_push($department_data,$data[0]);
 
             array_push($lists,$affiliation_data[0]->high_id);
+
+            //全体の人員データの取得
+            try{
+                $all_personnel_data = DB::select('select 
+                dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
+                from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+            }
 
             //取得した部署IDを元に配下を取得
             $hierarchical = new Hierarchical();
@@ -408,7 +430,7 @@ class Psbs01Controller extends Controller
             $department_data = $lists[0];
             $personnel_data = $lists[1];
 
-            //日付を6桁表記にする
+            //日付フォーマットの変更
             $date = new Date();
             $operation_date = $date->formatOperationDate($click_personnel_data);
             
@@ -455,7 +477,8 @@ class Psbs01Controller extends Controller
             $operation_check->check($click_personnel_data);
 
             return view('pacm01.pacm01',compact('data','count_department','count_personnel','department_max','departments','personnel_max','names',
-            'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists','personnel_data','operation_date'));
+            'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists',
+            'personnel_data','operation_date','all_personnel_data'));
         }
     }
 
@@ -500,6 +523,7 @@ class Psbs01Controller extends Controller
         $status = $request->status;
         $start_day = $request->start_day;
         $finish_day = $request->finish_day;
+        $remarks = $request->remarks;
         
         //入力された番号の人員が存在するかの確認
         try{
@@ -517,8 +541,8 @@ class Psbs01Controller extends Controller
 
         //部署情報の更新
         try{
-            DB::update('update dcbs01 set responsible_person_id = ?,name = ?,status = ?,management_personnel_id = ?,operation_start_date = ?,operation_end_date = ? where client_id = ? and department_id = ?',
-            [$responsible_person_id,$name,$status,$management_number,$start_day,$finish_day,$client_id,$department_id]);
+            DB::update('update dcbs01 set responsible_person_id = ?,name = ?,status = ?,management_personnel_id = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and department_id = ?',
+            [$responsible_person_id,$name,$status,$management_number,$start_day,$finish_day,$remarks,$client_id,$department_id]);
         }catch(\Exception $e){
             //エラー処理
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -554,12 +578,9 @@ class Psbs01Controller extends Controller
 
         //複写番号が空白の場合エラーメッセージを表示
         if($request->lower_id == null){
-            //今後エラーIDの番号をまとめたconfigを作成した方が良い 11.24
-            //04は番号が空白の状態
-            $num = "04";
-            $e = "番号が空白です";
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
-            DatabaseException::commonError($e,$num);
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
+            $message = Message::get_message('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0]]);
             return redirect()->route('index');
         }
 
@@ -604,7 +625,7 @@ class Psbs01Controller extends Controller
         //選択した部署の部署情報を取得
         try{
             $delete_data = DB::select('select 
-            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id,high_id, dcbs01.created_at, dcbs01.updated_at
             from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
             and dcbs01.department_id = ?',[$client,$delete]);
         }catch(\Exception $e){
@@ -747,10 +768,19 @@ class Psbs01Controller extends Controller
         $click_id = $select_id;
         View::share('click_id', $click_id);
 
+        //全体の人員データの取得
+        try{
+            $db2 = new PersonnelDataBase();
+            $all_personnel_data = $db2->getAll($client_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+        }
+
         //データベースの検索
         try{
             $department_data = DB::select('select 
-            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
             from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?
             where dcbs01.name like ?',[$client_id,'%'.$request->search.'%']);
         }catch(\Exception $e){
@@ -759,9 +789,8 @@ class Psbs01Controller extends Controller
             return redirect()->route('index');
         }
         try{
-            $personnel_data = DB::select('select 
-            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client_id]);
+            $db2 = new PersonnelDataBase();
+            $personnel_data = $db2->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -826,7 +855,7 @@ class Psbs01Controller extends Controller
             //取得した部署IDを元に部署データを取得
             try{
                 $data = DB::select('select 
-                dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+                dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
                 from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
                 and dcbs01.department_id = ?',[$client_id,$affiliation_data[0]->high_id]);
             }catch(\Exception $e){
@@ -911,7 +940,7 @@ class Psbs01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','department_max','departments','personnel_max',
-        'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date'));
+        'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data'));
     }
 
     /**
@@ -939,12 +968,9 @@ class Psbs01Controller extends Controller
         $high = $request->high_id;
 
         if($request->copy_id == null){
-            //今後エラーIDの番号をまとめたconfigを作成した方が良い 11.24
-            //04は番号が空白の状態
-            $num = "04";
-            $e = "番号が空白です";
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
-            DatabaseException::commonError($e,$num);
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
+            $message = Message::get_message('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0]]);
             return redirect()->route('index');
         }
         //投影を複製する場合

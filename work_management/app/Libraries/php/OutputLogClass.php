@@ -18,7 +18,7 @@ class OutputLogClass{
     //@param string $client_id クライアントid
     //@param string $user ユーザーメールアドレス
     //@pram string $debug_mode デバックモード
-    public function __construct($client_id, $user, $debug_mode){
+    public function __construct(string $client_id,string $user,string $debug_mode){
         //初期値を代入する
         $this->client_id = $client_id;
         $this->user = $user;
@@ -30,7 +30,7 @@ class OutputLogClass{
     //@param string $type 種別
     //@param string $function 機能
     //@param string $log ログ
-    public function log($program_pass, $type, $function, $log){
+    public function log(string $program_pass,string $type,string $function,string $log){
         
         //@var string 機能コード
         $function = FunctionCode::get_functioncode($function);
@@ -44,7 +44,7 @@ class OutputLogClass{
     //@param string $program_pass プログラムのパス
     //@param string $message_code メッセージ番号
     //@param array $message_string メッセージに挿入する文字列の配列
-    public function message_log($program_pass, $message_code, ...$message_string){
+    public function message_log(string $program_pass,string $message_code, ...$message_string){
         //種別でなければ、メッセージ番号とみなす
         //@var array ログメッセージと種別と機能
         $message_array = Message::get_message($message_code, $message_string);
@@ -107,10 +107,10 @@ class OutputLogClass{
     //ログファイルを出力する
     private function write_log_csv($log_csv){
         //@var boolean ログファイルが存在するか判断
-        $isfile = is_file('./facmlg.csv');
+        $isfile = is_file('./fclg'.substr($this->client_id, -8).'.csv');
         if($isfile){
             //@var File ログファイルのファイルポインタ
-            $facmlg_csv = fopen('./facmlg.csv', 'a');
+            $facmlg_csv = fopen('./fclg'.substr($this->client_id, -8).'.csv', 'a');
             //ログを追加出力する
             fputcsv($facmlg_csv, $log_csv);
         }else{
@@ -118,7 +118,7 @@ class OutputLogClass{
             //@var array ログファイルのヘッダー
             $head = ['時間', '類別', 'アクセスユーザー', '機能', 'ログ'];
             //@var File ログファイルを作成し、ポインタを取得する
-            $facmlg_csv = fopen('./facmlg.csv', 'w');
+            $facmlg_csv = fopen('./fclg'.substr($this->client_id, -8).'.csv', 'w');
             
             //ヘッダーを出力する
             fputcsv($facmlg_csv, $head);
@@ -131,10 +131,10 @@ class OutputLogClass{
     //システムログファイルを出力する
     private function write_system_log_csv($system_log_csv){
         //@var boolean システムログファイルが存在するか判断
-        $isfile = is_file('./facmsl.csv');
+        $isfile = is_file('./falg01.csv');
         if($isfile){
             //@var File システムログファイルのファイルポインタ
-            $facmsl_csv = fopen('./facmsl.csv', 'a');
+            $facmsl_csv = fopen('./falg01.csv', 'a');
             //システムログを追加出力する
             fputcsv($facmsl_csv, $system_log_csv);
         }else{
@@ -142,7 +142,7 @@ class OutputLogClass{
             //@var array システムログファイルのヘッダー
             $head = ['時間', '類別', '顧客名', 'アクセスユーザー', '機能', 'プログラムパス', 'ログ'];
             //@var File システムログファイルを作成し、ポインタを取得する
-            $facmsl_csv = fopen('./facmsl.csv', 'w');
+            $facmsl_csv = fopen('./falg01.csv', 'w');
             
             //ヘッダーを出力する
             fputcsv($facmsl_csv, $head);
@@ -212,19 +212,14 @@ class OutputLogClass{
     //次のテーブルに入れるidを今までのidから増加して取得する。
     private function increment_log_id(){
         //@var array ログテーブルのidの配列
-        $result = DB::select('select log_id from dclg01');
+        $result = DB::select('select log_id from dclg01 order by log_id desc limit 1');
+
         //データがなければ、1を返す
         if($result == []){
             return 1;
         }else{
-            //@var int 最も高いidを保存する
-            $max = -1;
-            foreach($result as $row){
-                if($max < $row->log_id){
-                    //今までの最高値より高ければ、代入する
-                    $max = $row->log_id;
-                }
-            }
+            //@var int 現在のログidの最高値
+            $max = $result[0]->log_id;
             //最高値を増加する
             $max++;
             return $max;
@@ -271,6 +266,7 @@ class OutputLogClass{
         //クラス名とメソッド名を結合して返す
         return $program_pass;
     }
+
 }
 
 ?>

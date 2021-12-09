@@ -578,12 +578,9 @@ class Psbs01Controller extends Controller
 
         //複写番号が空白の場合エラーメッセージを表示
         if($request->lower_id == null){
-            //今後エラーIDの番号をまとめたconfigを作成した方が良い 11.24
-            //04は番号が空白の状態
-            $num = "04";
-            $e = "番号が空白です";
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
-            DatabaseException::commonError($e,$num);
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
+            $message = Message::get_message('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0]]);
             return redirect()->route('index');
         }
 
@@ -971,12 +968,9 @@ class Psbs01Controller extends Controller
         $high = $request->high_id;
 
         if($request->copy_id == null){
-            //今後エラーIDの番号をまとめたconfigを作成した方が良い 11.24
-            //04は番号が空白の状態
-            $num = "04";
-            $e = "番号が空白です";
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
-            DatabaseException::commonError($e,$num);
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
+            $message = Message::get_message('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0]]);
             return redirect()->route('index');
         }
         //投影を複製する場合

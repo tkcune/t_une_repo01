@@ -586,12 +586,9 @@ class Psji01Controller extends Controller
 
         //複写番号が空白の場合エラーメッセージを表示
         if($request->copy_id == null){
-            //今後エラーIDの番号をまとめたconfigを作成した方が良い 11.24
-            //04は番号が空白の状態
-            $num = "04";
-            $e = "番号が空白です";
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
-            DatabaseException::commonError($e,$num);
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
+            $message = Message::get_message('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0]]);
             return redirect()->route('index');
         }
 
@@ -609,10 +606,8 @@ class Psji01Controller extends Controller
             //人員の配下に部署を複製しないように分岐
             if(substr($projection_source_id,0,2) == "bs"){
                 //05は人員の配下に部署を複製しない
-                $num = "05";
-                $e = "人員の配下に部署は作成できません";
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001',$num);
-                DatabaseException::commonError($e,$num);
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0010');
+                DatabaseException::commonError($e);
                 return redirect()->route('index');
             }
 

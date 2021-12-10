@@ -231,14 +231,6 @@ class Psji01Controller extends Controller
         $finish_day = $request->finish_day;
         $remarks = $request->remarks;
 
-        //リクエストに空白が無いかどうかの確認
-        if(empty($name) || empty($mail) || empty($status) || empty($request->password) || empty($management_number)){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
-            $message = Message::get_message('mhcmer0003',[0=>'']);
-            session(['message'=>$message[0]]);
-            return back();
-        }
-
         //入力された番号の人員が存在するかの確認
         try{
             $management_personnel_id = DB::select('select * from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$management_number]);

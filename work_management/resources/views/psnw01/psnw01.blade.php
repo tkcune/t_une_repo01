@@ -8,9 +8,7 @@
     @if(isset($top_department))
     <form action="{{route('psnw01.create')}}" method="post">
         @csrf
-        @method('patch')
-
-
+        
         <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
             <div class="row">
                 <div class="col-4">
@@ -35,15 +33,15 @@
                 <p>受信サーバ通信方式</p>
                 </div>
                 <div class="col" style="padding:0px">
-                <select>
-                    <option name = "recieving_server_way" value="1">選択肢A</option>
-                    <option name = "recieving_server_way" value="2">選択肢B</option>
-                    <option name = "recieving_server_way" value="3">選択肢C</option>
+                <select name = "recieving_server_way">
+                    <option value="1">選択肢A</option>
+                    <option value="2">選択肢B</option>
+                    <option value="3">選択肢C</option>
                 </select>
                 </div>
                 <div class="col" style="padding:0px">
                     <p>受信サーバポート番号：
-                        <input type="text" id="recieving_port_number" style="width:150px;" autocomplete="on" data-toggle="tooltip" title="受信サーバポート番号を入力してください。">
+                        <input type="text" name="recieving_port_number" id="recieving_port_number" style="width:150px;" autocomplete="on" data-toggle="tooltip" title="受信サーバポート番号を入力してください。">
                     </p>
                 </div>
             </div>
@@ -56,7 +54,7 @@
                 </div>
                 <div class="col" style="padding:0px">
                     <p>送信サーバポート番号：
-                        <input type="text" id="sending_port_number" style="width:100px;" autocomplete="on" data-toggle="tooltip" title="送信サーバポート番号を入力してください。">
+                        <input type="text" name = "sending_port_number" id ="sending_port_number" style="width:100px;" autocomplete="on" data-toggle="tooltip" title="送信サーバポート番号を入力してください。">
                     </p>
                 </div>
 

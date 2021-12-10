@@ -100,6 +100,7 @@ class PsnwController extends Controller
 
     public function create(Request $request)
     {
+       
         // ネットワーク設定のフォームから値を取得
         $client_id = "aa00000001";
         $name = $request->name;
@@ -128,9 +129,10 @@ class PsnwController extends Controller
             'created_at' => $created_at,
         ];
 
+        
         $psnw = new Psnw();
         $psnw->get_data($network_datas);
         
-        return redirect('psnw01.index');
+        return redirect('psnw01');
     }
 }

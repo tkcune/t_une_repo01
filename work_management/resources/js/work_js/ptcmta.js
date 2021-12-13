@@ -291,7 +291,9 @@ TreeAction.node = class Node {
 
     if(this.node.id === 'sslg'){
       //ログ確認の場合
-      window.location = 'http://localhost:8000/log';
+      window.location = 'http://localhost:8000/pslg';
+    }else if(this.node.id === 'ssnw'){
+      window.location = 'http://localhost:8000/psnw01';
     }else{
       //@var string Laravelのセッションid
       let clientId = document.getElementById('hidden_client_id').value;

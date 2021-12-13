@@ -114,7 +114,7 @@ class TreeData{
                 $chain[] = array($database_index_chain[$index] => 'ssfi.ファイル取込');
                 $chain[] = array($database_index_chain[$index] => 'ssfo.ファイル出力');
                 $chain[] = array($database_index_chain[$index] => 'sslg.ログ表示');
-                $chain[] = array($database_index_chain[$index] => 'ssns.ネットワーク設定');
+                $chain[] = array($database_index_chain[$index] => 'ssnw.ネットワーク設定');
                 $chain[] = array($database_index_chain[$index] => 'sscs.カスタマイズ');
             }else {
                 //マイツリーでもnotitleでもない場合
@@ -138,8 +138,10 @@ class TreeData{
                     }
                 }
                 //第一階層と第一階層の下以外の上下関係のオブジェクトのデータを作成する
-                foreach($tree_id_chain[$index] as $row){
-                    $chain[] = array($row['high_id'].'.'.$database_id_name[$row['high_id']] => $row['lower_id'].'.'.$database_id_name[$row['lower_id']]);
+                if($tree_id_chain != []){
+                    foreach($tree_id_chain[$index] as $row){
+                        $chain[] = array($row['high_id'].'.'.$database_id_name[$row['high_id']] => $row['lower_id'].'.'.$database_id_name[$row['lower_id']]);
+                    }
                 }
             }
             //返り値の変数にひとつのテーブルの上下関係のオブジェクトのデータを代入する

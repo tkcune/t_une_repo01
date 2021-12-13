@@ -29,6 +29,7 @@ class CreateDcji01Table extends Migration
             $table->boolean('system_management');
             $table->datetime('operation_start_date')->nullable();
             $table->datetime('operation_end_date')->nullable();
+            $table->string('remarks', '512')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
         });

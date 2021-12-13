@@ -23,7 +23,7 @@ class CreateDclg01Table extends Migration
             $table->string('user','255');
             $table->string('function');
             $table->string('program_pass');
-            $table->string('log');
+            $table->text('log');
         });
     }
 

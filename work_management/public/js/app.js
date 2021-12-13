@@ -2254,7 +2254,9 @@ TreeAction.node = /*#__PURE__*/function () {
 
       if (this.node.id === 'sslg') {
         //ログ確認の場合
-        window.location = 'http://localhost:8000/log';
+        window.location = 'http://localhost:8000/pslg';
+      } else if (this.node.id === 'ssnw') {
+        window.location = 'http://localhost:8000/psnw01';
       } else {
         //@var string Laravelのセッションid
         var clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid

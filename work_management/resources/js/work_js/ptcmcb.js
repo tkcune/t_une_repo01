@@ -2,10 +2,6 @@
 
 let clipboard = (() => {
   
-  //@var string nodeId コピーしているノードのid
-  let nodeId = null;
-  //@var string nodeDir コピーしているノードディレクトリ
-  let nodeDir = null;
   //@var string selectNodeId 選択しているノードのid
   let selectNodeId = null;
   //@var string selectNodeDir 選択しているノードディレクトリ
@@ -19,28 +15,23 @@ let clipboard = (() => {
   //@param string dir ノードのディレクトリ
   //@param string id ノードのid
   let select = (dir, id) => {
-    //クリップボードのプロパティに代入する
-    selectNodeDir = dir;
-    selectNodeId = id;
+    if(typeof(dir) === 'string' && typeof(id) === 'string'){
+      //クリップボードのプロパティに代入する
+      selectNodeDir = dir;
+      selectNodeId = id;
+    }
   };
 
   //カレント
   //@param string dir カレントのディレクトリ
   //@param string id カレントのid
   let current = (dir, id) => {
-    //カレントのデータを代入する
-    currentDir = dir;
-    currentId = id;
+    if(typeof(dir) === 'string' && typeof(id) === 'string'){
+      //カレントのデータを代入する
+      currentDir = dir;
+      currentId = id;
+    }
   }
-
-  //選択しているノードクラスのコピー
-  //@param string dir コピーノードのディレクトリ
-  //@param string id コピーノードのid
-  let copyNode = (dir, id) => {
-    //コピーデータを代入する
-    nodeDir = dir;
-    nodeId = id;
-  };
 
   //選択したノードのディレクトリを返す
   let getSelectDir = () => {
@@ -50,16 +41,6 @@ let clipboard = (() => {
   //選択したノードのidを返す
   let getSelectId = () => {
     return selectNodeId;
-  };
-
-  //コピーノードのディレクトリを返す
-  let getCopyDir = () => {
-    return nodeDir;
-  };
-
-  //コピーノードのidを返す
-  let getCopyId = () => {
-    return nodeId;
   };
 
   //カレントのディレクトリを返す
@@ -75,9 +56,6 @@ let clipboard = (() => {
   return {
     select: select,
     current: current,
-    copyNode: copyNode,
-    getCopyDir: getCopyDir,
-    getCopyId: getCopyId,
     getSelectDir: getSelectDir,
     getSelectId: getSelectId,
     getCurrentId: getCurrentId,

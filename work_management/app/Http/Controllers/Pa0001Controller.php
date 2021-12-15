@@ -241,6 +241,7 @@ class Pa0001Controller extends Controller
         $count_personnel = $_GET['personnel_page'];
 
         $db = new DepartmentDataBase();
+        $db2 = new PersonnelDataBase();
 
         //一番上の部署を取得
         try{

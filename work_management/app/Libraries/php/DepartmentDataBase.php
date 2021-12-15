@@ -68,4 +68,96 @@
 
             return $data;
         }
+
+        /**
+         * s選択した部署データの取得
+         * @param $client 顧客ID
+         * @param $high_id 上位ID
+         * 
+         * @var   $data 取得データ
+         * 
+         * @return  array $data
+         */
+        public static function getClickDepartment($client,$high_id){
+
+            $data = DB::select('select * from dcbs01 inner join dccmks on 
+            dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+            and dcbs01.department_id = ?',[$client,$high_id]);
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
+
+            return $data;
+        }
+
+        /**
+         * 選択した人員が所属する部署データの取得
+         * @param $client 顧客ID
+         * @param $high_id 上位ID
+         * 
+         * @var   $data 取得データ
+         * 
+         * @return  array $data
+         */
+        public static function getClickDepartmentData($client,$high_id){
+
+            $data = DB::select('select dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,
+            operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+            from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+            and dcbs01.department_id = ?',[$client,$high_id]);
+
+            return $data;
+        }
+
+        /**
+         * 選択部署が最上位部署かどうかの判別
+         * @param $client 顧客ID
+         * @param $high_id 上位ID
+         * 
+         * @var   $data 取得データ
+         * 
+         * @return  array $data
+         */
+        public static function getClickTop($client,$high_id){
+
+            $data = DB::select('select * from dcbs01 where client_id = ? and department_id = ?',[$client,$high_id]);
+
+            return $data;
+        }
+
+        /**
+         * 部署データの取得
+         * @param $client 顧客ID
+         * 
+         * @var   $data 取得データ
+         * 
+         * @return  array $data
+         */
+        public static function getData($client){
+
+            $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client]);
+
+            return $data;
+        }
+
+        /**
+         * 部署データの検索
+         * @param $client 顧客ID
+         * @param $search 検索文字
+         * 
+         * @var   $data 取得データ
+         * 
+         * @return  array $data
+         */
+        public static function search($client,$search){
+
+            $data = DB::select('select 
+            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+            from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?
+            where dcbs01.name like ?',[$client,'%'.$search.'%']);
+
+            return $data;
+        }
+
+        
     }

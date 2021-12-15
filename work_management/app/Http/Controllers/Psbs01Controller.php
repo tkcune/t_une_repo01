@@ -207,8 +207,8 @@ class Psbs01Controller extends Controller
         if($select_code == "bs"){
             //選択した部署のデータを取得
             try{
-                $db = new DepartmentDataBase();
-                $click_department_data = $db->get($client,$select_id);
+                $department_db = new DepartmentDataBase();
+                $click_department_data = $department_db->get($client,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -297,8 +297,8 @@ class Psbs01Controller extends Controller
         }else{
             //選択した人員のデータを取得
             try{
-                $db = new PersonnelDataBase();
-                $click_personnel_data = $db->get($client,$select_id);
+                $personnel_db = new PersonnelDataBase();
+                $click_personnel_data = $personnel_db->get($client,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -307,8 +307,8 @@ class Psbs01Controller extends Controller
 
             //選択した人員の所属部署を取得
             try{
-                $db2 = new PersonnelDataBase();
-                $affiliation_data = $db2->getClickDepartment($client,$select_id);
+                $personnel_db = new PersonnelDataBase();
+                $affiliation_data = $personnel_db->getClickDepartment($client,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -330,7 +330,8 @@ class Psbs01Controller extends Controller
 
             //部署データが存在しない場合、選択部署が最上位部署か判別
             if(empty($data)){
-                $top_department = DB::select('select * from dcbs01 where client_id = ? and department_id = ?',[$client,$affiliation_data[0]->high_id]);
+                $department_db = new DepartmentDataBase();
+                $top_department = $department_db->getClickTop($client,$affiliation_data[0]->high_id);
 
                 //全体の部署データの取得
                 try{
@@ -637,7 +638,8 @@ class Psbs01Controller extends Controller
 
         ////選択した部署が最上位部署かの確認
         if(empty($delete_data)){
-            $delete_data = DB::select('select * from dcbs01 where client_id = ? and department_id = ?',[$client,$delete]);
+            $department_db = new DepartmentDataBase();
+            $delete_data = $department_db->getClickTop($client,$delete);
             $delete_data[0]->high_id = "bs";
         }
 
@@ -770,8 +772,8 @@ class Psbs01Controller extends Controller
 
         //全体の人員データの取得
         try{
-            $db2 = new PersonnelDataBase();
-            $all_personnel_data = $db2->getAll($client_id);
+            $personnel_db = new PersonnelDataBase();
+            $all_personnel_data = $personnel_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -779,18 +781,16 @@ class Psbs01Controller extends Controller
 
         //データベースの検索
         try{
-            $department_data = DB::select('select 
-            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-            from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?
-            where dcbs01.name like ?',[$client_id,'%'.$request->search.'%']);
+            $department_db = new DepartmentDataBase();
+            $department_data = $department_db->search($client_id,$request->search);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
         try{
-            $db2 = new PersonnelDataBase();
-            $personnel_data = $db2->getAll($client_id);
+            $personnel_db = new PersonnelDataBase();
+            $personnel_data = $personnel_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -814,8 +814,8 @@ class Psbs01Controller extends Controller
         if($select_code == "bs"){
             //選択した部署のデータを取得
             try{
-                $db = new DepartmentDataBase();
-                $click_department_data = $db->get($client_id,$select_id);
+                $department_db = new DepartmentDataBase();
+                $click_department_data = $department_db->get($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -823,19 +823,18 @@ class Psbs01Controller extends Controller
             View::share('click_department_data', $click_department_data);
             //部署データが存在しない場合、選択部署が最上位部署か判別
             if(empty($click_department_data)){
-                $top_department = DB::select('select * from dcbs01 where client_id = ? and department_id = ?',[$client_id,$select_id]);
-
+                $department_db = new DepartmentDataBase();
+                $top_department = $department_db->getClickTop($client_id,$select_id);
                 View::share('top_department', $top_department);
             }
         
         }else{
             //選択した人員のデータを取得
             try{
-                $db = new PersonnelDataBase();
-                $click_personnel_data = $db->get($client_id,$select_id);
+                $personnel_db = new PersonnelDataBase();
+                $click_personnel_data = $personnel_db->get($client_id,$select_id);
                 
             }catch(\Exception $e){
-
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
                 return redirect()->route('index');
@@ -844,8 +843,8 @@ class Psbs01Controller extends Controller
 
             //選択した人員の所属部署を取得
             try{
-                $db2 = new PersonnelDataBase();
-                $affiliation_data = $db2->getClickDepartment($client_id,$select_id);
+                $personnel_db = new PersonnelDataBase();
+                $affiliation_data = $personnel_db->getClickDepartment($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -854,10 +853,8 @@ class Psbs01Controller extends Controller
             
             //取得した部署IDを元に部署データを取得
             try{
-                $data = DB::select('select 
-                dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
-                and dcbs01.department_id = ?',[$client_id,$affiliation_data[0]->high_id]);
+                $department_db = new DepartmentDataBase();
+                $data = $department_db->getClickDepartmentData($client_id,$affiliation_data[0]->high_id);
             }catch(\Exception $e){
 
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');

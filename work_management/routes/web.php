@@ -52,7 +52,7 @@ Route::prefix('psbs01')->group(function () {
   Route::post('/bscopy',[Psbs01Controller::class,'copy'])->name('psbs01.copy');
   Route::post('/bssearch/{id}/{id2}',[Psbs01Controller::class,'search'])->name('psbs01.search');
   Route::patch('/update',[Psbs01Controller::class,'update'])->name('psbs01.update');
-  Route::patch('/{id}',[Psbs01Controller::class,'hierarchyUpdate'])->name('psbs01.hierarchyUpdate');
+  Route::patch('/high/{id}',[Psbs01Controller::class,'hierarchyUpdate'])->name('psbs01.hierarchyUpdate');
   Route::post('/delete/{id}/{id2}',[Psbs01Controller::class,'delete'])->name('psbs01.delete');
 });
 

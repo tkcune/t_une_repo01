@@ -33,7 +33,7 @@ class Pa0001Controller extends Controller
      * @var  string  $client_id 顧客ID　9/27現在　ダミーデータ
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
-     * @var  App\Libraries\php\DepartmentDataBase $db
+     * @var  App\Libraries\php\DepartmentDataBase $department_db
      * @var  array $top_department 最上位の部署データ
      * @var  App\Models\Date $date
      * @var  array $operation_date 運用日を格納した配列
@@ -65,12 +65,12 @@ class Pa0001Controller extends Controller
         $count_department = Config::get('startcount.count');
         $count_personnel = Config::get('startcount.count');
 
-        $db = new DepartmentDataBase();
-        $db2 = new PersonnelDataBase();
+        $department_db = new DepartmentDataBase();
+        $personnel_db = new PersonnelDataBase();
 
         //一番上の部署を取得
         try{
-            $top_department = $db->getTop($client_id);
+            $top_department = $department_db->getTop($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -79,7 +79,7 @@ class Pa0001Controller extends Controller
 
         //全体の部署データの取得
         try{
-            $department_data = $db->getAll($client_id);
+            $department_data = $department_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -88,7 +88,7 @@ class Pa0001Controller extends Controller
 
         //全体の人員データの取得
         try{
-            $all_personnel_data = $db2->getAll($client_id);
+            $all_personnel_data = $personnel_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -220,7 +220,7 @@ class Pa0001Controller extends Controller
      * @var  int  $client_id 顧客ID　9/27現在　ダミーデータ(route indexでセッション保存)
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
-     * @var  App\Libraries\php\DepartmentDataBase $db
+     * @var  App\Libraries\php\DepartmentDataBase $department_db
      * @var  array $top_department 最上位の部署データ
      * @var  App\Models\Date $date
      * @var  array $department_data 部署データ
@@ -240,12 +240,12 @@ class Pa0001Controller extends Controller
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
 
-        $db = new DepartmentDataBase();
-        $db2 = new PersonnelDataBase();
+        $department_db = new DepartmentDataBase();
+        $personnel_db = new PersonnelDataBase();
 
         //一番上の部署を取得
         try{
-            $top_department = $db->getTop($client_id);
+            $top_department = $department_db->getTop($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -253,14 +253,14 @@ class Pa0001Controller extends Controller
         
         //部署データの取得
         try{
-            $department_data = $db->getAll($client_id);
+            $department_data = $department_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
         }
         //人員データの取得
         try{
-            $all_personnel_data = $db2->getAll($client_id);
+            $all_personnel_data = $personnel_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
@@ -369,8 +369,8 @@ class Pa0001Controller extends Controller
 
         //人員データの取得
         try{
-            $db2 = new PersonnelDataBase();
-            $all_personnel_data = $db2->getAll($client);
+            $personnel_db = new PersonnelDataBase();
+            $all_personnel_data = $personnel_db->getAll($client);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
@@ -380,8 +380,8 @@ class Pa0001Controller extends Controller
         if(substr($select_id,0,2) == "bs"){
             //選択した部署のデータを取得
             try{
-                $db = new DepartmentDataBase();
-                $click_department_data = $db->get($client,$select_id);
+                $department_db = new DepartmentDataBase();
+                $click_department_data = $department_db->get($client,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -464,8 +464,8 @@ class Pa0001Controller extends Controller
         }else{
             //選択した人員のデータを取得
             try{
-                $db2 = new PersonnelDataBase();
-                $click_personnel_data = $db2->getClick($client,$select_id);
+                $personnel_db = new PersonnelDataBase();
+                $click_personnel_data = $personnel_db->getClick($client,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -474,8 +474,8 @@ class Pa0001Controller extends Controller
 
             //選択した人員の所属部署を取得
             try{
-                $db2 = new PersonnelDataBase();
-                $affiliation_data = $db2->getClickDepartment($client,$select_id);
+                $personnel_db = new PersonnelDataBase();
+                $affiliation_data = $personnel_db->getClickDepartment($client,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -483,10 +483,9 @@ class Pa0001Controller extends Controller
             }
             //取得した部署IDを元に部署データを取得
             try{
-                $data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
-                and dcbs01.department_id = ?',[$client,$affiliation_data[0]->high_id]);
+                $department_db = new DepartmentDataBase();
+                $data = $department_db->getClickDepartment($client,$affiliation_data[0]->high_id);
             }catch(\Exception $e){
-
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
                 return redirect()->route('index');
@@ -494,13 +493,12 @@ class Pa0001Controller extends Controller
 
             //部署データが存在しない場合、選択部署が最上位部署か判別
             if(empty($data)){
-                $top_department = DB::select('select * from dcbs01 where client_id = ? and department_id = ?',[$client,$affiliation_data[0]->high_id]);
+                $department_db = new DepartmentDataBase();
+                $top_department = $department_db->getClickTop($client,$affiliation_data[0]->high_id);
 
                 //全体の部署データの取得
                 try{
-                    $department_data = DB::select('select 
-                    dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                    from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client]);
+                    $department_data = $department_db->getAll($client);
                 }catch(\Exception $e){
                     OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                     DatabaseException::common($e);
@@ -508,9 +506,8 @@ class Pa0001Controller extends Controller
 
                 //全体の人員データの取得
                 try{
-                    $personnel_data = DB::select('select 
-                    dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,remarks,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-                    from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?',[$client]);
+                    $personnel_db = new PersonnelDataBase();
+                    $personnel_data = $personnel_db->getAll($client);
                 }catch(\Exception $e){
                     OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                     DatabaseException::common($e);
@@ -620,8 +617,8 @@ class Pa0001Controller extends Controller
      * @var  int  $client_id 顧客ID　9/27現在　ダミーデータ(route indexでセッション保存)
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
-     * @var  App\Libraries\php\DepartmentDataBase $db
-     * @var  App\Libraries\php\PersonnelDataBase $db2
+     * @var  App\Libraries\php\DepartmentDataBase $department_db
+     * @var  App\Libraries\php\PersonnelDataBase $personnel_db
      * @var  array $top_department 最上位の部署データ
      * @var  App\Models\Date $date
      * @var  array $department_data 部署データ
@@ -640,12 +637,12 @@ class Pa0001Controller extends Controller
         $client_id = session('client_id');
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
-        $db = new DepartmentDataBase();
-        $db2 = new PersonnelDataBase();
+        $department_db = new DepartmentDataBase();
+        $personnel_db = new PersonnelDataBase();
 
         //一番上の部署を取得
         try{
-            $top_department = $db->getTop($client_id);
+            $top_department = $department_db->getTop($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -654,14 +651,14 @@ class Pa0001Controller extends Controller
         
         //部署データの取得
         try{
-            $department_data = $db->getAll($client_id);
+            $department_data = $department_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
         }
         //人員データの取得
         try{
-            $personnel_data = $db2->getAll($client_id);
+            $personnel_data = $personnel_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
@@ -752,8 +749,8 @@ class Pa0001Controller extends Controller
 
         //全体の人員データの取得
         try{
-            $db2 = new PersonnelDataBase();
-            $all_personnel_data = $db2->getAll($client_id);
+            $personnel_db = new PersonnelDataBase();
+            $all_personnel_data = $personnel_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -761,18 +758,16 @@ class Pa0001Controller extends Controller
 
         //データベースの検索
         try{
-            $department_data = DB::select('select 
-            dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-            from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?
-            where dcbs01.name like ?',[$client_id,'%'.$_GET['search'].'%']);
+            $department_db = new DepartmentDataBase();
+            $department_data = $department_db->search($client_id,$_GET['search']);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
         try{
-            $db2 = new PersonnelDataBase();
-            $personnel_data = $db2->getAll($client_id);
+            $personnel_db = new PersonnelDataBase();
+            $personnel_data = $personnel_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -796,8 +791,8 @@ class Pa0001Controller extends Controller
         if($select_code == "bs"){
             //選択した部署のデータを取得
             try{
-                $db = new DepartmentDataBase();
-                $click_department_data = $db->get($client_id,$select_id);
+                $department_db = new DepartmentDataBase();
+                $click_department_data = $department_db->get($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -805,7 +800,8 @@ class Pa0001Controller extends Controller
             View::share('click_department_data', $click_department_data);
             //部署データが存在しない場合、選択部署が最上位部署か判別
             if(empty($click_department_data)){
-                $top_department = DB::select('select * from dcbs01 where client_id = ? and department_id = ?',[$client_id,$select_id]);
+                $department_db = new DepartmentDataBase();
+                $top_department = $department_db->getClickTop($client_id,$select_id);
 
                 View::share('top_department', $top_department);
             }
@@ -813,11 +809,9 @@ class Pa0001Controller extends Controller
         }else{
             //選択した人員のデータを取得
             try{
-                $db = new PersonnelDataBase();
-                $click_personnel_data = $db->get($client_id,$select_id);
-                
+                $personnel_db = new PersonnelDataBase();
+                $click_personnel_data = $personnel_db->get($client_id,$select_id);
             }catch(\Exception $e){
-
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
                 return redirect()->route('index');
@@ -826,8 +820,8 @@ class Pa0001Controller extends Controller
 
             //選択した人員の所属部署を取得
             try{
-                $db2 = new PersonnelDataBase();
-                $affiliation_data = $db2->getClickDepartment($client_id,$select_id);
+                $personnel_db = new PersonnelDataBase();
+                $affiliation_data = $personnel_db->getClickDepartment($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -836,12 +830,9 @@ class Pa0001Controller extends Controller
             
             //取得した部署IDを元に部署データを取得
             try{
-                $data = DB::select('select 
-                dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
-                and dcbs01.department_id = ?',[$client_id,$affiliation_data[0]->high_id]);
+                $department_db = new DepartmentDataBase();
+                $data = $department_db->getClickDepartmentData($client_id,$affiliation_data[0]->high_id);
             }catch(\Exception $e){
-
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
                 return redirect()->route('index');
@@ -968,8 +959,8 @@ class Pa0001Controller extends Controller
 
         //全体の人員データの取得
         try{
-            $db = new PersonnelDataBase();
-            $all_personnel_data = $db->getAll($client_id);
+            $personnel_db = new PersonnelDataBase();
+            $all_personnel_data = $personnel_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -977,17 +968,16 @@ class Pa0001Controller extends Controller
 
         //データベースの検索
         try{
-            $department_data = DB::select('select * from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ?',[$client_id]);
+            $department_db = new DepartmentDataBase();
+            $department_data = $department_db->getData($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
         try{
-            $personnel_data = DB::select('select 
-            dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,remarks,dcji01.created_at, dcji01.updated_at ,high_id ,lower_id
-            from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id and dcji01.client_id = ?
-            where dcji01.name like ?',[$client_id,'%'.$_GET['search'].'%']);
+            $personnel_db = new PersonnelDataBase();
+            $personnel_data = $personnel_db->search($client_id,$_GET['search']);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -1012,8 +1002,8 @@ class Pa0001Controller extends Controller
         if($select_code == "bs"){
             //選択した部署のデータを取得
             try{
-                $db = new DepartmentDataBase();
-                $click_department_data = $db->get($client_id,$select_id);
+                $department_db = new DepartmentDataBase();
+                $click_department_data = $department_db->get($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
@@ -1021,16 +1011,16 @@ class Pa0001Controller extends Controller
             View::share('click_department_data', $click_department_data);
             //部署データが存在しない場合、選択部署が最上位部署か判別
             if(empty($click_department_data)){
-                $top_department = DB::select('select * from dcbs01 where client_id = ? and department_id = ?',[$client_id,$select_id]);
-
+                $department_db = new DepartmentDataBase();
+                $top_department = $department_db->getClickTop($client_id,$select_id);
                 View::share('top_department', $top_department);
             }
         
         }else{
             //選択した人員のデータを取得
             try{
-                $db = new PersonnelDataBase();
-                $click_personnel_data = $db->get($client,$select_id);
+                $personnel_db = new PersonnelDataBase();
+                $click_personnel_data = $personnel_db->get($client,$select_id);
             }catch(\Exception $e){
 
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -1041,8 +1031,8 @@ class Pa0001Controller extends Controller
 
             //選択した人員の所属部署を取得
             try{
-                $db2 = new PersonnelDataBase();
-                $affiliation_data = $db2->getClickDepartment($client_id,$select_id);
+                $personnel_db = new PersonnelDataBase();
+                $affiliation_data = $personnel_db->getClickDepartment($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -1051,10 +1041,8 @@ class Pa0001Controller extends Controller
             
             //取得した部署IDを元に部署データを取得
             try{
-                $data = DB::select('select 
-                dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
-                and dcbs01.department_id = ?',[$client_id,$affiliation_data[0]->high_id]);
+                $department_db = new DepartmentDataBase();
+                $data = $department_db->getClickDepartmentData($client_id,$affiliation_data[0]->high_id);
             }catch(\Exception $e){
 
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -1244,11 +1232,11 @@ class Pa0001Controller extends Controller
         $count_department = Config::get('startcount.count');
         $count_personnel = Config::get('startcount.count');
 
-        $db = new DepartmentDataBase();
+        $department_db = new DepartmentDataBase();
 
         //一番上の部署を取得
         try{
-            $top_department = $db->getTop($client_id);
+            $top_department = $department_db->getTop($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -1257,7 +1245,7 @@ class Pa0001Controller extends Controller
 
         //全体の部署データの取得
         try{
-            $department_data = $db->getAll($client_id);
+            $department_data = $department_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -1266,8 +1254,8 @@ class Pa0001Controller extends Controller
 
         //全体の人員データの取得
         try{
-            $db2 = new PersonnelDataBase();
-            $personnel_data = $db2->getAll($client_id);
+            $personnel_db = new PersonnelDataBase();
+            $personnel_data = $personnel_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);

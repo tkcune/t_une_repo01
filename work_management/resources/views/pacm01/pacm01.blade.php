@@ -118,12 +118,12 @@
                     <input type="button" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
-                    <form action="{{ route('clipboard',$top_department[0]->department_id)}}" method="get">
+                    <form action="{{ route('pa0001.clipboard',$top_department[0]->department_id)}}" method="get">
                     @csrf
                     <input type="button" onclick="submit();" value="複写" id="copyTarget"　data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
-                    <form action="{{ route('deleteclipboard')}}" method="get">
+                    <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
                     @csrf
                     <input type="button" onclick="submit();" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
                     </form>
@@ -132,7 +132,7 @@
                     <input type="button" value="隠蔽/表示" id="tree_change_display"
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <form action="{{ route('redirect')}}" method="get">
+                    <form action="{{ route('pa0001.redirect')}}" method="get">
                         <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
 
@@ -273,15 +273,15 @@
                     </form>
 
                     @if(substr($click_id,0,2) == "ta")
-                    <form action="{{ route('clipboard',$click_id)}}" method="get">
+                    <form action="{{ route('pa0001.clipboard',$click_id)}}" method="get">
                     @else
-                    <form action="{{ route('clipboard',$click_department_data[0]->department_id)}}" method="get">
+                    <form action="{{ route('pa0001.clipboard',$click_department_data[0]->department_id)}}" method="get">
                     @endif
                     @csrf
                     <input type="button" onclick="submit();" value="複写" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
-                    <form action="{{ route('deleteclipboard')}}" method="get">
+                    <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
                     @csrf
                     <input type="button" onclick="submit();" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
                     </form>
@@ -290,7 +290,7 @@
                     <input type="button" value="隠蔽/表示" id="tree_change_display"
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <form action="{{ route('redirect')}}" method="get">
+                    <form action="{{ route('pa0001.redirect')}}" method="get">
                         <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
                     
@@ -450,16 +450,16 @@
                     </form>
 
                     @if(substr($click_id,0,2) == "ta")
-                    <form action="{{ route('clipboard',$click_id)}}" method="get">
+                    <form action="{{ route('pa0001.clipboard',$click_id)}}" method="get">
                     @else
-                    <form action="{{ route('clipboard',$click_personnel_data[0]->personnel_id)}}" method="get">
+                    <form action="{{ route('pa0001.clipboard',$click_personnel_data[0]->personnel_id)}}" method="get">
                     @endif
                     @csrf
                     <input type="button" onclick="submit();" value="複写" id="copyTarget"
                     data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
-                    <form action="{{ route('deleteclipboard')}}" method="get">
+                    <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
                     @csrf
                     <input type="button" onclick="submit();" value="取消"
                     data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
@@ -469,7 +469,7 @@
                     <input type="button" value="隠蔽/表示" id="tree_change_display"
                     data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
 
-                    <form action="{{ route('redirect')}}" method="get">
+                    <form action="{{ route('pa0001.redirect')}}" method="get">
                         <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
 
@@ -551,15 +551,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count4',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_department == 1)
-                                <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('count4',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -567,15 +567,15 @@
                                 {{$count_department}}/{{$department_max}}
                                 <li class="page-item">
     @if($count_department<$department_max)
-                                    <a class="page-link" href="{{ route('count4',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('count4',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count4',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -585,15 +585,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count5',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_department == 1)
-                                <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('count5',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -601,15 +601,15 @@
                                 {{$count_department}}/{{$department_max}}
                                 <li class="page-item">
     @if($count_department<$department_max)
-                                    <a class="page-link" href="{{ route('count5',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('count5',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count5',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -619,15 +619,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count2',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_department == 1)
-                                <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('count2',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -635,15 +635,15 @@
                                 {{$count_department}}/{{$department_max}}
                                 <li class="page-item">
     @if($count_department<$department_max)
-                                    <a class="page-link" href="{{ route('count2',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('count2',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count2',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -653,15 +653,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count',['department_page'=>1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pa0001.count',['department_page'=>1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_department == 1)
-                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -669,15 +669,15 @@
                                 {{$count_department}}/{{$department_max}}
                                 <li class="page-item">
     @if($count_department<$department_max)
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -760,7 +760,7 @@
                             </td>
                             <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}">{{ $responsible_lists[$loop->index] }}</a></td>
                             <td>
-                            【<a href="{{ route('clipboard',$department->department_id)}}">複写</a>】
+                            【<a href="{{ route('pa0001.clipboard',$department->department_id)}}">複写</a>】
                             【<p id="bs_list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('bs_delete{{$loop->index}}').submit();">削除</p>】
                             <form id="bs_delete{{$loop->index}}" action="{{ route('psbs01.delete',[session('client_id'),$department->department_id])}}" method="post" style="display: none;">
                             @csrf
@@ -831,15 +831,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_personnel == 1)
-                                <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -851,15 +851,15 @@
                                 @endif
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
-                                    <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count4',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -869,15 +869,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_personnel == 1)
-                                <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -889,15 +889,15 @@
                                 @endif
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
-                                    <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count5',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -907,15 +907,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_personnel == 1)
-                                <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -927,15 +927,15 @@
                                 @endif
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
-                                    <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count2',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -945,15 +945,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>1]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department,'personnel_page'=>1]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_personnel == 1)
-                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -961,15 +961,15 @@
                                 {{$count_personnel}}/{{$personnel_max}}
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -1052,7 +1052,7 @@
                             <td>aaa02</td>
                             <td>{{$name->password_update_day}}</td>
                             <td>---------</td>
-                            <td>【<a href="{{ route('clipboard',$name->personnel_id)}}">複写</a>】
+                            <td>【<a href="{{ route('pa0001.clipboard',$name->personnel_id)}}">複写</a>】
                             【<p id="list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
                             <form id="delete{{$loop->index}}" action="{{ route('psji01.destroy',[session('client_id'),$name->personnel_id])}}" method="post" style="display: none;">
                             @csrf

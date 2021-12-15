@@ -307,8 +307,8 @@ class Psbs01Controller extends Controller
 
             //選択した人員の所属部署を取得
             try{
-                $affiliation_data = DB::select('select high_id from dccmks where client_id = ?
-                and lower_id = ?',[$client,$select_id]);
+                $db2 = new PersonnelDataBase();
+                $affiliation_data = $db2->getClickDepartment($client,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -844,8 +844,8 @@ class Psbs01Controller extends Controller
 
             //選択した人員の所属部署を取得
             try{
-                $affiliation_data = DB::select('select high_id from dccmks where client_id = ?
-                and lower_id = ?',[$client_id,$select_id]);
+                $db2 = new PersonnelDataBase();
+                $affiliation_data = $db2->getClickDepartment($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);

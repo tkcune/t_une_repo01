@@ -26,7 +26,7 @@
                     <div class="col">
                         <div style="display:inline-flex">
 
-                        <form action="{{ route('clipboard',"bs00000000")}}" method="get">
+                        <form action="{{ route('pa0001.clipboard',"bs00000000")}}" method="get">
                         @csrf
                         <input type="submit" value="複写" id="copyTarget"　data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                         </form>
@@ -107,15 +107,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_department == 1)
-                                <a class="page-link" href="{{ route('count3',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('count3',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -123,15 +123,15 @@
                                 {{$count_department}}/{{$department_max}}
                                 <li class="page-item">
     @if($count_department<$department_max)
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id')]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id')]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id')]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id')]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -141,15 +141,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_department == 1)
-                                <a class="page-link" href="{{ route('count3',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('count3',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -157,15 +157,15 @@
                                 {{$count_department}}/{{$department_max}}
                                 <li class="page-item">
     @if($count_department<$department_max)
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$department_max,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -248,7 +248,7 @@
                             </td>
                             <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}">{{ $responsible_lists[$loop->index] }}</a></td>
                             <td>
-                            【<a href="{{ route('clipboard',$department->department_id)}}">複写</a>】
+                            【<a href="{{ route('pa0001.clipboard',$department->department_id)}}">複写</a>】
                             【<p id="bs_list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('bs_delete{{$loop->index}}').submit();">削除</p>】
                             <form id="bs_delete{{$loop->index}}" action="{{ route('psbs01.delete',[session('client_id'),$department->department_id])}}" method="post" style="display: none;">
                             @csrf
@@ -318,15 +318,15 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_personnel == 1)
-                                <a class="page-link" href="{{ route('count3',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('count3',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
@@ -334,15 +334,15 @@
                                 {{$count_personnel}}/{{$personnel_max}}
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('count3',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -424,7 +424,7 @@
                             <td>aaa02</td>
                             <td>{{$name->password_update_day}}</td>
                             <td>---------</td>
-                            <td>【<a href="{{ route('clipboard',$name->personnel_id)}}">複写</a>】
+                            <td>【<a href="{{ route('pa0001.clipboard',$name->personnel_id)}}">複写</a>】
                             【<p id="list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
                             <form id="delete{{$loop->index}}" action="{{ route('psji01.destroy',[session('client_id'),$name->personnel_id])}}" method="post" style="display: none;">
                             @csrf

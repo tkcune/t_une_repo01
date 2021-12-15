@@ -352,7 +352,7 @@ class Pa0001Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function count2(Request $request)
+    public function countNarrowDown(Request $request)
     {
         $lists = [];
         $department_data = [];
@@ -464,10 +464,8 @@ class Pa0001Controller extends Controller
         }else{
             //選択した人員のデータを取得
             try{
-                $click_personnel_data = DB::select('select 
-                dcji01.client_id ,personnel_id,name,email,password,password_update_day,status,management_personnel_id,login_authority,system_management,operation_start_date,operation_end_date,remarks,dcji01.created_at, dcji01.updated_at,high_id
-                from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
-                and dcji01.personnel_id = ?',[$client,$select_id]);
+                $db2 = new PersonnelDataBase();
+                $click_personnel_data = $db2->getClick($client,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -476,8 +474,8 @@ class Pa0001Controller extends Controller
 
             //選択した人員の所属部署を取得
             try{
-                $affiliation_data = DB::select('select high_id from dccmks where client_id = ?
-                and lower_id = ?',[$client,$select_id]);
+                $db2 = new PersonnelDataBase();
+                $affiliation_data = $db2->getClickDepartment($client,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -637,7 +635,7 @@ class Pa0001Controller extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function count3(Request $request)
+    public function countTop(Request $request)
     {
         $client_id = session('client_id');
         $count_department = $_GET['department_page'];
@@ -739,7 +737,7 @@ class Pa0001Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function count4(Request $request)
+    public function countSearchDepartment(Request $request)
     {
         $client_id = $_GET['id'];
         $select_id = $_GET['id2'];
@@ -828,8 +826,8 @@ class Pa0001Controller extends Controller
 
             //選択した人員の所属部署を取得
             try{
-                $affiliation_data = DB::select('select high_id from dccmks where client_id = ?
-                and lower_id = ?',[$client_id,$select_id]);
+                $db2 = new PersonnelDataBase();
+                $affiliation_data = $db2->getClickDepartment($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -955,7 +953,7 @@ class Pa0001Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function count5(Request $request)
+    public function countSearchPersonnel(Request $request)
     {
         $client_id = $_GET['id'];
         $select_id = $_GET['id2'];
@@ -1043,8 +1041,8 @@ class Pa0001Controller extends Controller
 
             //選択した人員の所属部署を取得
             try{
-                $affiliation_data = DB::select('select high_id from dccmks where client_id = ?
-                and lower_id = ?',[$client_id,$select_id]);
+                $db2 = new PersonnelDataBase();
+                $affiliation_data = $db2->getClickDepartment($client_id,$select_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);

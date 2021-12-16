@@ -1177,7 +1177,7 @@ class Pa0001Controller extends Controller
     public function log_redirct(){
 
         
-        return redirect()->route('test');
+        return redirect()->route('pslg.index');
     }
 
     /**

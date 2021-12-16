@@ -46,8 +46,7 @@
                                     @for($j = 0; $j < count($personnel_data);$j++) <option value="{{$personnel_data[$j]->name}}" label="{{$personnel_data[$j]->personnel_id}}" managment="{{$personnel_data[$j]->system_management}}">
                                         <input type="hidden" name="system_management" value="{{$personnel_data[$j]->system_management}}" form="create">
                                         </option>
-
-                                        @endfor
+                                    @endfor
                                 </datalist>
                             </p>
                         </div>

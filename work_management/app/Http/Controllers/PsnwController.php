@@ -73,7 +73,7 @@ class PsnwController extends Controller
         } catch (\Exception $e) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::dataCatchMiss($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         // ツリーデータの取得

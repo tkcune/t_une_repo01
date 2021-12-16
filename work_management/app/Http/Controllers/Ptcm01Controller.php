@@ -58,7 +58,8 @@ class Ptcm01Controller extends Controller
         //送信元が投影だった場合は投影元のIDに変換
         if(substr($projection_source_id,0,2) == "ta"){
             try{
-                $code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$projection_source_id]);
+                $projection_db = new ProjectionDataBase();
+                $code = $projection_db->getId($projection_source_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);

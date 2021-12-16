@@ -18,6 +18,7 @@ use App\Libraries\php\OperationCheck;
 use Illuminate\Support\Facades\View;
 use App\Libraries\php\DepartmentDataBase;
 use App\Libraries\php\PersonnelDataBase;
+use App\Libraries\php\ProjectionDataBase;
 
 
 
@@ -74,7 +75,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         //全体の部署データの取得
@@ -83,7 +84,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         //全体の人員データの取得
@@ -92,7 +93,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
         $personnel_data = $all_personnel_data;
 
@@ -127,7 +128,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
             DatabaseException::dataCatchMiss($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         //ツリーデータの取得
@@ -300,7 +301,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
             DatabaseException::dataCatchMiss($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         //ツリーデータ取得
@@ -400,7 +401,7 @@ class Pa0001Controller extends Controller
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
                 DatabaseException::dataCatchMiss($e);
-                return redirect()->route('errormsg');
+                return redirect()->route('pa0001.errormsg');
             }
             $department_data = $lists[0];
             $personnel_data = $lists[1];
@@ -428,7 +429,7 @@ class Pa0001Controller extends Controller
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
                 DatabaseException::dataCatchMiss($e);
-                return redirect()->route('errormsg');
+                return redirect()->route('pa0001.errormsg');
             }
            
             //日付フォーマットを変更する
@@ -453,7 +454,7 @@ class Pa0001Controller extends Controller
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
                 DatabaseException::dataCatchMiss($e);
-                return redirect()->route('errormsg');
+                return redirect()->route('pa0001.errormsg');
             }
 
             $tree = new PtcmtrController();
@@ -538,7 +539,7 @@ class Pa0001Controller extends Controller
                 }catch(\Exception $e){
                     OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
                     DatabaseException::dataCatchMiss($e);
-                    return redirect()->route('errormsg');
+                    return redirect()->route('pa0001.errormsg');
                 }
 
                 //管理者を名前で取得
@@ -597,7 +598,7 @@ class Pa0001Controller extends Controller
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
                 DatabaseException::dataCatchMiss($e);
-                return redirect()->route('errormsg');
+                return redirect()->route('pa0001.errormsg');
             }
         
             //ツリーデータ取得
@@ -646,7 +647,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
         
         //部署データの取得
@@ -695,7 +696,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
             DatabaseException::dataCatchMiss($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         //ツリーデータ取得
@@ -783,7 +784,8 @@ class Pa0001Controller extends Controller
 
         if($select_code == "ta"){
             //選択部署がtaだった場合は対応するIDを取得
-            $projection_code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$select_id]);
+            $projection_db = new ProjectionDataBase();
+            $projection_code = $projection_db->getId($select_id);
             $select_id = $projection_code[0]->projection_source_id;
             $select_code = substr($projection_code[0]->projection_source_id,0,2);
         }
@@ -906,7 +908,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
             DatabaseException::dataCatchMiss($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         $tree = new PtcmtrController();
@@ -994,7 +996,8 @@ class Pa0001Controller extends Controller
 
         if($select_code == "ta"){
             //選択部署がtaだった場合は対応するIDを取得
-            $projection_code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$select_id]);
+            $projection_db = new ProjectionDataBase();
+            $projection_code = $projection_db->getId($select_id);
             $select_id = $projection_code[0]->projection_source_id;
             $select_code = substr($projection_code[0]->projection_source_id,0,2);
         }
@@ -1127,7 +1130,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
             DatabaseException::dataCatchMiss($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         //ツリーデータの取得
@@ -1240,7 +1243,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         //全体の部署データの取得
@@ -1249,7 +1252,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         //全体の人員データの取得
@@ -1259,7 +1262,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }      
 
         //責任者を名前で取得
@@ -1290,7 +1293,7 @@ class Pa0001Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
             DatabaseException::dataCatchMiss($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         //ツリーデータの取得

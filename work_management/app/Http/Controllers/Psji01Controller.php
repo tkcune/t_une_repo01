@@ -98,8 +98,8 @@ class Psji01Controller extends Controller
 
         //顧客IDに対応した最新の人員IDを取得
         try{
-            $id = DB::select('select personnel_id from dcji01 where client_id = ? 
-            order by personnel_id desc limit 1',[$client_id]);
+            $personnel_db = new PersonnelDataBase();
+            $id = $personnel_db->getId($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -116,33 +116,8 @@ class Psji01Controller extends Controller
 
         //データベースに登録
         try{
-            DB::insert('insert into dcji01
-            (client_id,
-            personnel_id,
-            name,
-            email,
-            password,
-            password_update_day,
-            status,
-            management_personnel_id,
-            login_authority,
-            system_management,
-            operation_start_date
-            )
-            VALUE (?,?,?,?,?,?,?,?,?,?,?)',
-            [
-            $client_id,
-            $personnel_id,
-            $name,
-            $email,
-            $password,
-            $date->today(),
-            $status,
-            $personnel_id,
-            $login_authority,
-            $system_management,
-            $date->today()
-            ]);
+            $personnel_db = new PersonnelDataBase();
+            $personnel_db->insert($client_id,$personnel_id,$name,$email,$password,$status,$login_authority,$system_management);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -150,10 +125,8 @@ class Psji01Controller extends Controller
         }
         //データベースに階層情報を登録
         try{
-            DB::insert('insert into dccmks
-            (client_id,lower_id,high_id)
-            VALUE (?,?,?)',
-            [$client_id,$personnel_id,$high]);
+            $hierarchical = new Hierarchical();
+            $hierarchical->insert($client_id,$personnel_id,$high);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -404,7 +377,8 @@ class Psji01Controller extends Controller
 
         if($select_code == "ta"){
             //選択部署がtaだった場合は対応するIDを取得
-            $projection_code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$select_id]);
+            $projection_db = new ProjectionDataBase();
+            $projection_code = $projection_db->getId($select_id);
             $select_id = $projection_code[0]->projection_source_id;
             $select_code = substr($projection_code[0]->projection_source_id,0,2);
         }
@@ -451,10 +425,8 @@ class Psji01Controller extends Controller
             
             //取得した部署IDを元に部署データを取得
             try{
-                $data = DB::select('select 
-                dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
-                and dcbs01.department_id = ?',[$client_id,$affiliation_data[0]->high_id]);
+                $department_db = new DepartmentDataBase();
+                $data = $department_db->getClickDepartmentData($client,$affiliation_data[0]->high_id);
             }catch(\Exception $e){
 
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -539,7 +511,7 @@ class Psji01Controller extends Controller
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
             DatabaseException::dataCatchMiss($e);
-            return redirect()->route('errormsg');
+            return redirect()->route('pa0001.errormsg');
         }
 
         //ツリーデータの取得
@@ -586,7 +558,8 @@ class Psji01Controller extends Controller
         //投影を複製する場合
         if(substr($copy_id,0,2) == "ta"){
             try{
-                $code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$copy_id]);
+                $projection_db = new ProjectionDataBase();
+                $code = $projection_db->getId($copy_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);

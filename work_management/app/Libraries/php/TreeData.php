@@ -3,6 +3,7 @@
 namespace App\Libraries\php;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Libraries\php\OutputLog;
 
 //ツリーのデータの作成
 class TreeData{
@@ -11,12 +12,19 @@ class TreeData{
     //@return array 上下関係のオブジェクトのデータと投影データ
     public static function generate_tree_data(){
 
-        //@var array 投影データを代入する
-        $projection_chain = self::create_projection();
-        //@var array データのidと名称の配列
-        $database_id_name = self::change_id_name(self::create_db_table());
-        //@var array 階層テーブルの配列
-        $database_chain = self::create_chain();
+        try {
+            //@var array 投影データを代入する
+            $projection_chain = self::create_projection();
+            //@var array データのidと名称の配列
+            $database_id_name = self::change_id_name(self::create_db_table());
+            //@var array 階層テーブルの配列
+            $database_chain = self::create_chain();
+        } catch (\Throwable $th) {
+            $projection_chain = [];
+            $database_id_name = [];
+            $database_chain = [];
+            OutputLog::log(__FUNCTION__, 'er', '00', 'maybe_database_error');
+        }
         //@var array 投影データのidと名称
         $projection_id_name = self::change_projection_name($projection_chain, $database_id_name);
         //@var array 階層テーブルを分ける
@@ -77,7 +85,9 @@ class TreeData{
                     }
                 }
             }
-            $tree_chain[] = $chain_block;
+            if($chain_block != []){
+                $tree_chain[] = $chain_block;
+            }
         }
         return $tree_chain;
     }
@@ -119,26 +129,26 @@ class TreeData{
             }else {
                 //マイツリーでもnotitleでもない場合
                 //第一階層の下のデータを探して代入していく
-                foreach($database_id_name as $key =>$value){
-                    //@var string データベースのid
-                    $search = $key;
-                    //@var boolean下位の方にデータがないか判断するフラグ
-                    $top_flag = true;
-                    //上下関係のオブジェクトのデータ(idだけ)をループする
-                    foreach($tree_id_chain[$index] as $search_row){
-                        //下位に、データが存在すれば、フラグをfalseにする
-                        if($search == $search_row['lower_id']){
-                            $top_flag = false;
+                if($database_id_name !== [] && $tree_id_chain !== []){
+                    foreach($database_id_name as $key =>$value){
+                        //@var string データベースのid
+                        $search = $key;
+                        //@var boolean下位の方にデータがないか判断するフラグ
+                        $top_flag = true;
+                        //上下関係のオブジェクトのデータ(idだけ)をループする
+                        foreach($tree_id_chain[$index] as $search_row){
+                            //下位に、データが存在すれば、フラグをfalseにする
+                            if($search == $search_row['lower_id']){
+                                $top_flag = false;
+                            }
+                        }
+                        //下位に、データが存在しない上位にしかデータが存在しない場合、
+                        if($top_flag){
+                            //配列にidと名称を結合して代入する
+                            $chain[] = array($database_index_chain[$index] => $search.'.'.$database_id_name[$search]);
                         }
                     }
-                    //下位に、データが存在しない上位にしかデータが存在しない場合、
-                    if($top_flag){
-                        //配列にidと名称を結合して代入する
-                        $chain[] = array($database_index_chain[$index] => $search.'.'.$database_id_name[$search]);
-                    }
-                }
-                //第一階層と第一階層の下以外の上下関係のオブジェクトのデータを作成する
-                if($tree_id_chain != []){
+                    //第一階層と第一階層の下以外の上下関係のオブジェクトのデータを作成する
                     foreach($tree_id_chain[$index] as $row){
                         $chain[] = array($row['high_id'].'.'.$database_id_name[$row['high_id']] => $row['lower_id'].'.'.$database_id_name[$row['lower_id']]);
                     }
@@ -158,7 +168,7 @@ class TreeData{
         //@var array 返り値の投影データの配列
         $projection_chain = [];
         //@var array テーブルの投影データ
-        $query_result = DB::select('select * from dccmta');
+        $query_result = DB::select('select projection_id, projection_source_id from dccmta');
         //@var array stdClassキーとバリューに変換する
         $stmt = TreeData::change_key_value($query_result);
         foreach($stmt as $row){
@@ -199,7 +209,7 @@ class TreeData{
     private static function create_chain(){
         
         //@var array 上下関係のオブジェクトのデータのid
-        $query_result = DB::select('select * from dccmks');
+        $query_result = DB::select('select high_id, lower_id from dccmks');
         $query_key_value = TreeData::change_key_value($query_result);;
         //@var array 返り値の配列,high_idとlower_idがキーの連想配列
         $database_chain = TreeData::change_high_low($query_key_value);
@@ -226,8 +236,11 @@ class TreeData{
                 }
             }
             if($key_name != ''){
-                //カラム名が存在すれば、idと名称の形式にする
-                $database_id_name[$key_name] = $row['name']; 
+                //nameのキー(カラム)を確認する
+                if(array_key_exists('name', $row)){
+                    //カラム名が存在すれば、idと名称の形式にする
+                    $database_id_name[$key_name] = $row['name'];
+                }
             }
         }
         return $database_id_name;
@@ -264,8 +277,10 @@ class TreeData{
         $projection_id_name = [];
         foreach($projection_chain as $row){
             foreach($row as $key => $value){
-                //idがキーで名称がバリューの連想配列
-                $projection_id_name[$key] = $database_id_name[$value];
+                if(array_key_exists($value, $database_id_name)){
+                    //idがキーで名称がバリューの連想配列
+                    $projection_id_name[$key] = $database_id_name[$value];
+                }
             }
         }
         return $projection_id_name;

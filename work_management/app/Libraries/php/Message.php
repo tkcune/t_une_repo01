@@ -4,6 +4,7 @@ namespace App\Libraries\php;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
+use phpDocumentor\Reflection\Types\Array_;
 
 //メッセージクラス
 Class Message{
@@ -12,14 +13,14 @@ Class Message{
     //@param string $message_code メッセージ番号
     //@param array $message_string メッセージに挿入する文字,可変長引数
     //@return array メッセージ、種別、機能
-    public static function get_message(string $message_code, $message_string){
+    public static function get_message(string $message_code, ...$message_string){
 
         //@var array 文字を挿入しないメッセージ
         $message_list = Config::get('message');
 
         //config/message.phpがない場合は、エラーメッセージを返す
         if($message_list == null){
-            return ['config_message_is_not', 'er', '00'];
+            return ['message file is not in config dirctory', 'er', '00'];
         }
         
         //@var int 引数の挿入するメッセージの数
@@ -31,7 +32,7 @@ Class Message{
         //メッセージ番号が一致しない場合
         if($message == ''){
             
-            return ['message_code_error', 'er', '00'];
+            return ['message_code is uncorrect in messagelist', 'er', '00'];
         
         }else{
            
@@ -44,7 +45,7 @@ Class Message{
                     $message = sprintf($message, $message_string[0]);
                 }else{
                     //引数の挿入する文字が合わない場合
-                    return ['message_log_argument_error', 'er', '00'];
+                    return ['argument error, message_string is not string', 'er', '00'];
                 }
             }else if($count_percent_s == 2){
                 //メッセージに挿入する文字がふたつでかつ挿入するふたつの文字が文字の場合
@@ -53,7 +54,7 @@ Class Message{
                     $message = sprintf($message, $message_string[0], $message_string[1]);
                 }else{
                     //引数の挿入する文字が合わない場合
-                    return ['message_log_argument_error', 'er', '00'];
+                    return ['argument error, message_string is not string', 'er', '00'];
                 }
             }
 

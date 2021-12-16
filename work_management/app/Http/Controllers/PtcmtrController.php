@@ -41,7 +41,7 @@ class PtcmtrController extends Controller
 
     //ツリーの削除情報をblade側にセットする
     //@param string $id 削除したid
-    public static function delete_node($id){
+    public static function delete_node(string $id){
         //親のidとアクション情報をセッション情報にセットする
         session(['action_node_id'=>$id]);
         session(['recent_treeaction' => 'delete']);
@@ -49,7 +49,7 @@ class PtcmtrController extends Controller
 
     //ツリーの展開情報をblade側にセットする
     //@param string $id 追加、表示するid
-    public static function open_node($id){
+    public static function open_node(string $id){
         //登録先などのidとアクション情報をセッション情報にセットする
         session(['action_node_id' => $id]);
         session(['recent_treeaction' => 'open']);

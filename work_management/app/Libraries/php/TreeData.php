@@ -4,6 +4,7 @@ namespace App\Libraries\php;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Libraries\php\OutputLog;
+use Exception;
 
 //ツリーのデータの作成
 class TreeData{
@@ -19,16 +20,20 @@ class TreeData{
             $database_id_name = self::change_id_name(self::create_db_table());
             //@var array 階層テーブルの配列
             $database_chain = self::create_chain();
-        } catch (\Throwable $th) {
-            $projection_chain = [];
-            $database_id_name = [];
-            $database_chain = [];
+        } catch (Exception $e) {
             OutputLog::log(__FUNCTION__, 'er', '00', 'maybe_database_error');
+            throw $e;
         }
         //@var array 投影データのidと名称
         $projection_id_name = self::change_projection_name($projection_chain, $database_id_name);
         //@var array 階層テーブルを分ける
         $tree_id_chain = self::divide_hierarchy($database_chain);
+        foreach([$projection_id_name, $projection_chain, $tree_id_chain] as $row){
+            if($row == []){
+                OutputLog::log(__FUNCTION__, 'er', '00', 'maybe_database_error');
+                throw new Exception('maybe_database_error');
+            }
+        }
         //@var array ツリー生成用の上下関係のオブジェクトのデータ
         $tree_chain = self::create_hierarchy($tree_id_chain, array_merge($database_id_name, $projection_id_name));
         //返す

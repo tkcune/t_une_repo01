@@ -13,7 +13,7 @@ Class Message{
     //@param string $message_code メッセージ番号
     //@param array $message_string メッセージに挿入する文字,可変長引数
     //@return array メッセージ、種別、機能
-    public static function get_message(string $message_code, ...$message_string){
+    public static function get_message(string $message_code, $message_string){
 
         //@var array 文字を挿入しないメッセージ
         $message_list = Config::get('message');

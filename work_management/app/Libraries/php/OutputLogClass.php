@@ -65,11 +65,8 @@ class OutputLogClass{
     //@param string $log 任意の文字列
     //ログ出力メソッド
     private function output_log($type, $function, $log, $program_pass){
-        
-        //@var int 次のログid
-        $log_id = $this->increment_log_id(); 
 
-        //@var date 現在時刻
+        //@var date 現在時刻,データベースのデータとログファイルの作成時刻を合わせる
         $created_at = date("Y/m/d h/i/s");
 
         if(!in_array($type, ['nm', 'wn', 'er', 'ok', 'si', 'sy'])){
@@ -77,28 +74,43 @@ class OutputLogClass{
         }
 
         //ログテーブルに出力する
-        $result = DB::insert('insert into dclg01 (client_id, log_id, created_at, type, user, function, program_pass, log) values (?, ?, ?, ?, ?, ?, ?, ?)', [$this->client_id, $log_id, $created_at, $type, $this->user, $function, $program_pass, $log]);
+        //@var boolean データベースの結果
+        $result = false;
+        try {
+            //@var int 次のログid
+            $log_id = $this->increment_log_id();
+            $result = DB::insert('insert into dclg01 (client_id, log_id, created_at, type, user, function, program_pass, log) values (?, ?, ?, ?, ?, ?, ?, ?)', [$this->client_id, $log_id, $created_at, $type, $this->user, $function, $program_pass, $log]);
+        } catch (Exception $e) {
+            //エラーが発生した場合
+            $type = 'er';
+            $log = 'dclg01に不具合があります';
+            $result = true;
+        }
         if($result){
-            //種別により、ログファイルを出力するか、判断する
-            if($this->is_output_log_csv($type)){
-                //@var array ログファイルに出力するcsv
-                $log_csv = $this->create_log_csv($created_at, $type, $function, $log);
-                //ログファイルを出力
-                $this->write_log_csv($log_csv);
-            }
-            //種別により、システムログファイルを出力するか、判断する
-            if($this->is_output_systemlog_csv($type)){
-                //@var array システムログファイルに出力するcsv
-                $system_log_csv = $this->create_system_log_csv($created_at, $type, $program_pass, $function, $log);
-                //システムログファイルに出力する
-                $this->write_system_log_csv($system_log_csv);
-            }else if($log == '処理開始'){
-                //webサーバーの処理開始メッセージは、デバックモードでなくてもシステムログに残す。
+            try {
+                //種別により、ログファイルを出力するか、判断する
+                if($this->is_output_log_csv($type)){
+                    //@var array ログファイルに出力するcsv
+                    $log_csv = $this->create_log_csv($created_at, $type, $function, $log);
+                    //ログファイルを出力
+                    $this->write_log_csv($log_csv);
+                }
+                //種別により、システムログファイルを出力するか、判断する
+                if($this->is_output_systemlog_csv($type)){
+                    //@var array システムログファイルに出力するcsv
+                    $system_log_csv = $this->create_system_log_csv($created_at, $type, $program_pass, $function, $log);
+                    //システムログファイルに出力する
+                    $this->write_system_log_csv($system_log_csv);
+                }else if($log == '処理開始'){
+                    //webサーバーの処理開始メッセージは、デバックモードでなくてもシステムログに残す。
                 
-                //@var array システムログファイルに出力するcsv
-                $system_log_csv = $this->create_system_log_csv($created_at, $type, $program_pass, $function, $log);
-                //システムログファイルに出力する
-                $this->write_system_log_csv($system_log_csv);
+                    //@var array システムログファイルに出力するcsv
+                    $system_log_csv = $this->create_system_log_csv($created_at, $type, $program_pass, $function, $log);
+                    //システムログファイルに出力する
+                    $this->write_system_log_csv($system_log_csv);
+                }
+            } catch (Exception $e) {
+                //
             }
         }
     }

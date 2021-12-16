@@ -56,16 +56,16 @@ class Psbs01Controller extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * 
-     * @var  string $client_id  顧客ID
-     * @var  string $responsible_person_id  責任者ID
-     * @var  string $name  部署名
-     * @var  string $status  状態
-     * @var  string $management_personnel_id　管理者ID
-     * @var  string $high　上位部署のID番号
-     * @var  string $id　顧客IDに対応した最新の部署IDを格納する因数
+     * @var  string $client_id 顧客ID
+     * @var  string $responsible_person_id 責任者ID
+     * @var  string $name 部署名
+     * @var  string $status 状態
+     * @var  string $management_personnel_id 管理者ID
+     * @var  string $high 上位部署のID番号
+     * @var  string $id 顧客IDに対応した最新の部署IDを格納する因数
      * @var  App\Libraries\php\ZeroPadding $padding
      * @var  App\Libraries\php\StatusCheck $check
-     * @var  string $operation_start_date　稼働開始日
+     * @var  string $operation_start_date 稼働開始日
      * @var  int $department_id 部署ID
      * 
      * @return \Illuminate\Http\Response
@@ -84,8 +84,8 @@ class Psbs01Controller extends Controller
 
         //顧客IDに対応した最新の部署IDを取得
         try{
-            $id = DB::select('select department_id from dcbs01 where client_id = ? 
-            order by department_id desc limit 1',[$client_id]);
+            $department_db = new DepartmentDataBase();
+            $id = $department_db->getId($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -102,24 +102,9 @@ class Psbs01Controller extends Controller
 
         //データベースに部署情報を登録
         try{
-            DB::insert('insert into dcbs01
-            (client_id,
-            department_id,
-            responsible_person_id,
-            name,
-            status,
-            management_personnel_id,
-            operation_start_date
-            )
-            VALUE (?,?,?,?,?,?,?)',
-            [$client_id,
-            $department_id,
-            $responsible_person_id,
-            $name,
-            $status,
-            $management_personnel_id,
-            $operation_start_date
-            ]);
+            $department_db = new DepartmentDataBase();
+            $department_db->insert($client_id,$department_id,$responsible_person_id,
+            $name,$status,$management_personnel_id,$operation_start_date);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);

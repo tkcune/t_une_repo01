@@ -159,5 +159,42 @@
             return $data;
         }
 
-        
+        /**
+         * 最新の部署ID取得
+         * @param $client_id 顧客ID
+         * 
+         * @var   $id 取得id
+         * 
+         * @return  array $id
+         */
+        public static function getId($client_id){
+
+            $id = DB::select('select department_id from dcbs01 where client_id = ? 
+            order by department_id desc limit 1',[$client_id]);
+
+            return $id;
+        }
+
+        /**
+         * 最新の部署ID取得
+         * @param $client_id 顧客ID
+         * @param $department_id 部署ID
+         * @param $responsible_person_id 責任者ID
+         * @param $name 名前
+         * @param $status 状態
+         * @param $management_personnel_id 管理者ID 
+         * @param $operation_start_date 稼働開始日
+         * 
+         */
+        public static function insert($client_id,$department_id,$responsible_person_id,
+        $name,$status,$management_personnel_id,$operation_start_date){
+
+            DB::insert('insert into dcbs01 (client_id,department_id,
+            responsible_person_id,name,status,management_personnel_id,
+            operation_start_date) VALUE (?,?,?,?,?,?,?)',
+            [$client_id,$department_id,$responsible_person_id,
+            $name,$status,$management_personnel_id,
+            $operation_start_date]);
+
+        }   
     }

@@ -55,6 +55,14 @@ class Ptcm01Controller extends Controller
         $high_id = $request->high_id;
         $projection_source_id = $request->projection_source_id;
 
+        //複写番号が空白の場合はエラーメッセージを表示
+        if($request->projection_source_id == null){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
+            $message = Message::get_message('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0]]);
+            return redirect()->route('index');
+        }
+
         //送信元が投影だった場合は投影元のIDに変換
         if(substr($projection_source_id,0,2) == "ta"){
             try{

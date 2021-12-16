@@ -181,7 +181,7 @@ class Psbs01Controller extends Controller
     public function show($client,$select_id)
     {
         if($select_id == "bs"){
-            return redirect()->route('top');
+            return redirect()->route('pa0001.top');
         }
         if($select_id == "bs00000001"){
             return redirect()->route('index');

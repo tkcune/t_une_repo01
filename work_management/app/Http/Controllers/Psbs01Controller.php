@@ -327,7 +327,7 @@ class Psbs01Controller extends Controller
                 //全体の人員データの取得
                 try{
                     $personnel_db = new PersonnelDataBase();
-                    $all_personnel_data = getAll($client);
+                    $all_personnel_data = $personnel_db->getAll($client);
                 }catch(\Exception $e){
                     OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                     DatabaseException::common($e);
@@ -962,18 +962,11 @@ class Psbs01Controller extends Controller
             //最新の投影番号を生成
             try{
                 $projection_db = new ProjectionDataBase();
-                $id = $projection_db->getNewId($client_id);
+                $projection_id = $projection_db->getNewId($client_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
                 return redirect()->route('index');
-            }
-            if(empty($id)){
-                $projection_id = "ta00000001";
-            }else{
-                //登録する番号を作成
-                $padding = new ZeroPadding();
-                $projection_id = $padding->padding($id[0]->projection_id);
             }
 
             //データベースに投影情報を登録

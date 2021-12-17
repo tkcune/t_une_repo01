@@ -4,6 +4,7 @@
 
     use App\Models\Date;
     use Illuminate\Support\Facades\DB;
+    use App\Libraries\php\ZeroPadding;
 
     /**
      * 作業管理システム人員データベース動作クラス
@@ -80,6 +81,31 @@
             order by personnel_id desc limit 1',[$client_id]);
 
             return $id;
+        }
+
+        /**
+         * 最新の人員IDを生成
+         * @param $client 顧客ID
+         * 
+         * @var   $id Id
+         * 
+         * @return  array $personnel_id
+         */
+
+        public static function getNewId($client_id){
+
+            $id = DB::select('select personnel_id from dcji01 where client_id = ? 
+            order by personnel_id desc limit 1',[$client_id]);
+
+            if(empty($id)){
+                $personnel_id = "ji00000001";
+            }else{
+                //登録する番号を作成
+                $padding = new ZeroPadding();
+                $personnel_id = $padding->padding($id[0]->personnel_id);
+            }
+
+            return $personnel_id;
         }
 
         /**
@@ -181,5 +207,84 @@
             $date->today()
             ]);
 
+        }
+
+        /**
+         * 複製
+         * @param $client_id 顧客ID
+         * @param $personnel_id 人員ID
+         * @param $name 名前
+         * @param $email メールアドレス
+         * @param $password パスワード
+         * @param $password_update_dayパスワード更新日
+         * @param $status 状態
+         * @param $management_personnel_id 管理者ID
+         * @param $login_authority ログイン権限
+         * @param $system_management 管理者権限
+         * @param $operation_start_date 稼働開始日
+         * @param $operation_end_date 稼働終了日
+         * @param $remarks 備考
+         */
+        public static function copy($client_id,$personnel_id,$name,$email,$password,$password_update_day,
+            $status,$management_personnel_id,$login_authority,$system_management,$operation_start_date,
+            $operation_end_date,$remarks){
+            DB::insert('insert into dcji01
+                (client_id,
+                personnel_id,
+                name,
+                email,
+                password,
+                password_update_day,
+                status,
+                management_personnel_id,
+                login_authority,
+                system_management,
+                operation_start_date,
+                operation_end_date,
+                remarks)
+                VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                [
+                $client_id,
+                $personnel_id,
+                $name,
+                $email,
+                $password,
+                $password_update_day,
+                $status,
+                $management_personnel_id,
+                $login_authority,
+                $system_management,
+                $operation_start_date,
+                $operation_end_date,
+                $remarks]);
+
+        }
+
+        /**
+         * 更新
+         * @param $postPassword 送信されたパスワード
+         * @param $name 名前
+         * @param $status 状態
+         * @param $mail メールアドレス
+         * @param $password パスワード
+         * @param $login_authority ログイン権限
+         * @param $system_management 管理者権限
+         * @param $start_day 稼働開始日
+         * @param $finish_day 稼働終了日
+         * @param $remarks 備考
+         * @param $client_id 顧客ID
+         * @param $personnel_id 人員ID
+         * 
+         */
+
+        public static function update($postPassword,$name,$status,$mail,$password,$management_number,$login_authority,$system_management,$start_day,$finish_day,$remarks,$client_id,$personnel_id){
+
+            if($postPassword == "ValidationOK"){
+                DB::update('update dcji01 set name = ?,status = ?,email = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$management_number,$login_authority,$system_management,$start_day,$finish_day,$remarks,$client_id,$personnel_id]);
+            }else{
+                DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and personnel_id = ?',
+                [$name,$status,$mail,$password,$management_number,$login_authority,$system_management,$start_day,$finish_day,$remarks,$client_id,$personnel_id]);
+            }
         }
     }

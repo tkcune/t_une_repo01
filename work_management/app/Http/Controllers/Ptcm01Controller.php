@@ -8,6 +8,7 @@ use App\Libraries\php\OutputLog;
 use App\Libraries\php\Message;
 use App\Libraries\php\ZeroPadding;
 use App\Libraries\php\DatabaseException;
+use App\Libraries\php\ProjectionDataBase;
 use App\Http\Controllers\PtcmtrController;
 
 /**
@@ -77,21 +78,12 @@ class Ptcm01Controller extends Controller
         }
         //最新の投影番号を生成
         try{
-            $id = DB::select('select projection_id from dccmta where client_id = ? 
-            order by projection_id desc limit 1',[$client_id]);
+            $projection_db = new ProjectionDataBase();
+            $projection_id = $projection_db->getNewId($client_id);
         }catch(\Exception $e){
-
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
             return redirect()->route('index');
-        }
-        if(empty($id)){
-            $projection_id = "ta00000001";
-        }else{
-
-        //登録する番号を作成
-        $padding = new ZeroPadding();
-        $projection_id = $padding->padding($id[0]->projection_id);
         }
 
         //データベースに投影情報を登録

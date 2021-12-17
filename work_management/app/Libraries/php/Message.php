@@ -41,7 +41,7 @@ Class Message{
             //メッセージに挿入する文字がひとつの場合
             if($count_percent_s == 1){
                 //引数の挿入する文字の数がひとつで挿入する文字が文字の場合
-                if($message_string_count == 1 && is_string($message_string[0])){
+                if($message_string_count == 1 && isset($message_string[0]) && is_string($message_string[0])){
                     $message = sprintf($message, $message_string[0]);
                 }else{
                     //引数の挿入する文字が合わない場合
@@ -49,7 +49,7 @@ Class Message{
                 }
             }else if($count_percent_s == 2){
                 //メッセージに挿入する文字がふたつでかつ挿入するふたつの文字が文字の場合
-                if($message_string_count == 2 && is_string($message_string[0] && is_string($message_string[1]))){
+                if($message_string_count == 2 && isset($message_string[0]) && isset($message_string[1]) && is_string($message_string[0]) && is_string($message_string[1])){
                     //引数の挿入する文字の数がひとつの場合
                     $message = sprintf($message, $message_string[0], $message_string[1]);
                 }else{

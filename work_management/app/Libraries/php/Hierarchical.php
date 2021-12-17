@@ -8,7 +8,7 @@
     use App\Libraries\php\OutputLog;
 
     /**
-     * 階層構造機能クラス
+     * 階層構造に関係する機能クラス
      */ 
     class Hierarchical{
 
@@ -26,6 +26,49 @@
          */
         public function __construct(){
             $this->subordinates_list = [];
+        }
+
+        /**
+         * 上位階層を新規登録するメソッド
+         * @param string $client_id 顧客ID
+         * @param string $lower_id 下位ID
+         * @param string $high 上位ID
+         * 
+         */
+        public function insert($client_id,$lower_id,$high){
+
+            DB::insert('insert into dccmks
+            (client_id,lower_id,high_id)
+            VALUE (?,?,?)',
+            [$client_id,$lower_id,$high]);
+
+        }
+
+        /**
+         * 階層情報を更新するメソッド
+         * @param string $client_id 顧客ID
+         * @param string $department_id 部署ID
+         * @param string $high 上位ID
+         * 
+         */
+        public function update($high_id,$client_id,$lower_id){
+
+            DB::update('update dccmks set high_id = ? where client_id = ? and lower_id = ?',
+            [$high_id,$client_id,$lower_id]);
+
+        }
+
+        /**
+         * 階層情報を削除するメソッド
+         * @param string $client_id 顧客ID
+         * @param string $lower_id 下位ID
+         * 
+         */
+        public function delete($client_id,$lower_id){
+
+            DB::delete('delete from dccmks where client_id = ? 
+            and lower_id = ?',[$client_id,$lower_id]);
+
         }
 
         /**

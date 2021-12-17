@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Libraries\php\Hierarchical;
 use App\Libraries\php\OutputLog;
 use App\Libraries\php\Message;
-use App\Libraries\php\ZeroPadding;
 use App\Libraries\php\DatabaseException;
+use App\Libraries\php\ProjectionDataBase;
 use App\Http\Controllers\PtcmtrController;
 
 /**
@@ -42,10 +43,10 @@ class Ptcm01Controller extends Controller
      * @var  string $client_id　顧客ID
      * @var  string $high_id 上位ID
      * @var  string $projection_source_id　投影元ID
-     * @var  string $id 現時点で最新の投影ID
      * @var string $projection_id　作成する投影ID 
+     * @var App\Libraries\php\ProjectionDataBase $projection_db
+     * @var App\Libraries\php\Hierarchical $hierarchical
      * @var string $message ログメッセージ
-     * @var App\Libraries\php\ZeroPadding $padding
      * 
      * @return \Illuminate\Http\Response
      */
@@ -55,10 +56,19 @@ class Ptcm01Controller extends Controller
         $high_id = $request->high_id;
         $projection_source_id = $request->projection_source_id;
 
+        //複写番号が空白の場合はエラーメッセージを表示
+        if($request->projection_source_id == null){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
+            $message = Message::get_message('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0]]);
+            return redirect()->route('index');
+        }
+
         //送信元が投影だった場合は投影元のIDに変換
         if(substr($projection_source_id,0,2) == "ta"){
             try{
-                $code = DB::select('select projection_source_id from dccmta where projection_id = ?', [$projection_source_id]);
+                $projection_db = new ProjectionDataBase();
+                $code = $projection_db->getId($projection_source_id);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
@@ -68,41 +78,31 @@ class Ptcm01Controller extends Controller
         }
         //最新の投影番号を生成
         try{
-            $id = DB::select('select projection_id from dccmta where client_id = ? 
-            order by projection_id desc limit 1',[$client_id]);
+            $projection_db = new ProjectionDataBase();
+            $projection_id = $projection_db->getNewId($client_id);
         }catch(\Exception $e){
-
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-        if(empty($id)){
-            $projection_id = "ta00000001";
-        }else{
 
-        //登録する番号を作成
-        $padding = new ZeroPadding();
-        $projection_id = $padding->padding($id[0]->projection_id);
-        }
-
-        //データベースに投影情報を登録
         try{
-            DB::insert('insert into dccmta
-            (client_id,projection_id,projection_source_id)
-            VALUE (?,?,?)',
-            [$client_id,$projection_id,$projection_source_id]);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-        }
+            //トランザクション
+            DB::beginTransaction();
 
-        //データベースに階層情報を登録
-        try{
-            DB::insert('insert into dccmks
-            (client_id,lower_id,high_id)
-            VALUE (?,?,?)',
-            [$client_id,$projection_id,$high_id]);
+            //データベースに投影情報を登録
+            $projection_db = new ProjectionDataBase();
+            $projection_db->insert($client_id,$projection_id,$projection_source_id);
+
+            //データベースに階層情報を登録
+            $hierarchical = new Hierarchical();
+            $hierarchical->insert($client_id,$projection_id,$high_id);
+
+            DB::commit();
         }catch(\Exception $e){
+
+            //ロールバック
+            DB::rollBack();
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
@@ -158,16 +158,19 @@ class Ptcm01Controller extends Controller
      * @param  string  $id 顧客ID
      * @param  string  $id2　投影ID
      * 
-     * @var  string  $message ログメッセージ
+     * @var App\Libraries\php\ProjectionDataBase $projection_db
+     * @var string $high_id 上位ID
+     * @var App\Libraries\php\Hierarchical $hierarchical
+     * @var string  $message ログメッセージ
      * 
      * @return \Illuminate\Http\Response
      */
     public function delete($id,$id2)
     {
         try{
-            $high_id = DB::select('select 
-            high_id from dccmks where client_id = ?
-            and lower_id = ?',[$id,$id2]);
+            //選択した投影の上位IDを取得
+            $projection_db = new ProjectionDataBase();
+            $high_id = $projection_db->getHighID($id,$id2);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -175,23 +178,28 @@ class Ptcm01Controller extends Controller
         }
 
         try{
-            DB::delete('delete from dccmta where client_id = ? and projection_id = ?',
-            [$id,$id2]);
-        }catch(\Exception $e){
+            //トランザクション
+            DB::beginTransaction();
 
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-        }
+            //投影の削除
+            $projection_db = new ProjectionDataBase();
+            $projection_db->delete($id,$id2);
 
-        try{
-            DB::delete('delete from dccmks where client_id = ? 
-            and lower_id = ?',[$id,$id2]);
+            //階層の削除
+            $hierarchical = new Hierarchical();
+            $hierarchical->delete($id,$id2);
+
+            DB::commit();
         }catch(\Exception $e){
+            //ロールバック
+            DB::rollBack();
+
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
 
+        //ログ処理
         OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
         $message = Message::get_message('mhcmok0003',[0=>'']);
         session(['message'=>$message[0]]);

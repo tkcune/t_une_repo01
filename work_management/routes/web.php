@@ -51,6 +51,7 @@ Route::prefix('pa0001')->group(function () {
 //Psbs01Controllerに関するルーティング
 Route::prefix('psbs01')->group(function () {
   Route::post('/bscopy', [Psbs01Controller::class, 'copy'])->name('psbs01.copy');
+  Route::get('/bssearch/{id}/{id2}', [Psji01Controller::class, 'search']);
   Route::post('/bssearch/{id}/{id2}', [Psbs01Controller::class, 'search'])->name('psbs01.search');
   Route::patch('/update', [Psbs01Controller::class, 'update'])->name('psbs01.update');
   Route::patch('/high/{id}', [Psbs01Controller::class, 'hierarchyUpdate'])->name('psbs01.hierarchyUpdate');
@@ -60,6 +61,7 @@ Route::prefix('psbs01')->group(function () {
 //Psji01Controllerに関するルーティング
 Route::prefix('psji01')->group(function () {
   Route::post('/jicopy', [Psji01Controller::class, 'copy'])->name('psji01.copy');
+  Route::get('/jisearch/{id}/{id2}', [Psji01Controller::class, 'search']);
   Route::post('/jisearch/{id}/{id2}', [Psji01Controller::class, 'search'])->name('psji01.search');
   Route::post('/jidestroy/{id}/{id2}', [Psji01Controller::class, 'destroy'])->name('psji01.destroy');
 });

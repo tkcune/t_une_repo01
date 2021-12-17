@@ -628,71 +628,54 @@ class Psbs01Controller extends Controller
          
         //選択したデータ及び配下データを削除
         if(!empty($delete_lists)){
-            foreach($delete_lists as $delete_list){
-                //機能コードの判定
-                $code = substr($delete_list,0,2);
+            try{
+                //トランザクション
+                DB::beginTransaction();
 
-                //対応したデータの削除
-                if ($code == "bs"){
-                    $department_db = new DepartmentDataBase();
-                    $department_db->delete($client,$delete_list);
+                foreach($delete_lists as $delete_list){
+                    //機能コードの判定
+                    $code = substr($delete_list,0,2);
 
-                    //削除予定の配下部署が元になった投影を削除
-                    $projection_db = new ProjectionDataBase();
-                    $delete_projections = $projection_db->getProjectionId($client,$delete_list);
-                    foreach($delete_projections as $delete_projection){
-                        try{
-                            DB::delete('delete from dccmks where client_id = ? and lower_id = ?',
-                            [$client,$delete_projection->projection_id]);
-                        }catch(\Exception $e){
-                            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                            DatabaseException::common($e);
-                            return redirect()->route('index');
+                    //対応したデータの削除
+                    if ($code == "bs"){
+                        $department_db = new DepartmentDataBase();
+                        $department_db->delete($client,$delete_list);
+
+                        //削除予定の配下部署が元になった投影を削除
+                        $projection_db = new ProjectionDataBase();
+                        $delete_projections = $projection_db->getProjectionId($client,$delete_list);
+                        foreach($delete_projections as $delete_projection){
+                            $hierarchical = new Hierarchical();
+                            $hierarchical->delete($client,$delete_projection->projection_id);
                         }
-                    }
-                    try{
-                        DB::delete('delete from dccmta where client_id = ? and projection_source_id = ?',
-                        [$client,$delete_list]);
-                    }catch(\Exception $e){
-                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                        DatabaseException::common($e);
-                        return redirect()->route('index');
-                    }
+                        $projection_db = new ProjectionDataBase();
+                        $projection_db->delete($client,$delete_list);
 
-                }elseif($code == "ji"){
-                    try{
-                        DB::delete('delete from dcji01 where client_id = ? and personnel_id = ?',
-                        [$client,$delete_list]);
-                    }catch(\Exception $e){
-                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                        DatabaseException::common($e);
-                        return redirect()->route('index');
-                    }
+                    }elseif($code == "ji"){
+                        //人員データの削除
+                        $personnel_db = new PersonnelDataBase();
+                        $personnel_db->delete($client,$delete_list);
+                    }elseif($code == "ta"){
+                        //投影の削除
+                        $projection_db = new ProjectionDataBase();
+                        $projection_db->delete($client,$delete_list);
+                    }else{
 
-                }elseif($code == "ta"){
-                    try{
-                        DB::delete('delete from dccmta where client_id = ? and projection_id = ?',
-                        [$client,$delete_list]);
-                    }catch(\Exception $e){
-                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                        DatabaseException::common($e);
-                        return redirect()->route('index');
                     }
-                }else{
-
+                    //データの階層構造を削除
+                    $hierarchical = new Hierarchical();
+                    $hierarchical->delete($client,$delete_list);
                 }
-                //データの階層構造を削除
-                try{
-                    DB::delete('delete from dccmks where client_id = ? 
-                    and lower_id = ?',[$client,$delete_list]);
-                }catch(\Exception $e){
-                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                    DatabaseException::common($e);
-                    return redirect()->route('index');
-                }
+                DB::commit();
 
+            }catch(\Exception $e){
+                //ロールバック
+                DB::rollBack();
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
             }
-            
         }
         //ログ処理
         OutputLog::message_log(__FUNCTION__, 'mhcmok0003');

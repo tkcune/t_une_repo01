@@ -23,6 +23,7 @@ use App\Http\Controllers\PsnwController;
 //Route::get('/', function () {
 //  return view('welcome');
 //});
+
 //リソースコマンドによって生成されたルーティング
 Route::resource('psbs01', Psbs01Controller::class);
 Route::resource('psji01', Psji01Controller::class);
@@ -70,6 +71,8 @@ Route::post('ptcm01/ptcmdelete/{id}/{id2}', [Ptcm01Controller::class, 'delete'])
 //PslgControllerに関するルーティング
 Route::prefix('pslg')->group(function () {
   Route::get('/', [Pslg01Controller::class, 'index'])->name('pslg.index');
+  Route::post('/', [Pslg01Controller::class, 'clear'])->name('pslg.clear');
+  Route::get('/create', function(){ return view('pslg01.pslg01');});
   Route::post('/create', [Pslg01Controller::class, 'create'])->name('pslg01.create');
   Route::post('/download', [Pslg01Controller::class, 'download'])->name('pslg01.download');
 });

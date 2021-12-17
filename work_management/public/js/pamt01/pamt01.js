@@ -229,6 +229,8 @@ function search() {
 
 document.getElementById("search-list").onchange = search;
 
+
+
 /**
  * 備考欄挿入
  * @var value 備考欄の中身

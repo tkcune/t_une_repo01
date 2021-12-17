@@ -7,8 +7,14 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-3"></div>
-                        <div class="col-6"></div>
+                        @if (Session::has('time_error'))
+
+                        <div class="col-9">
+                            <div class="mb-2 bg-danger text-white">&nbsp;&nbsp;エラー:{{ session('time_error') }}</div>
+                        </div>
+                        @else <div class="col-9"></div>
+                        @endif
+
                         <div class="col-3" style="text-align: right">―　ログページ　―</div>
                     </div>
 
@@ -46,7 +52,7 @@
                                     @for($j = 0; $j < count($personnel_data);$j++) <option value="{{$personnel_data[$j]->name}}" label="{{$personnel_data[$j]->personnel_id}}" managment="{{$personnel_data[$j]->system_management}}">
                                         <input type="hidden" name="system_management" value="{{$personnel_data[$j]->system_management}}" form="create">
                                         </option>
-                                    @endfor
+                                        @endfor
                                 </datalist>
                             </p>
                         </div>
@@ -85,7 +91,13 @@
                         <div class="col-10">文字検索&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="search" style="width:32rem;" placeholder="入力可能な文字数は３２  全角、半角英数字、一覧操作領域" form="create">
                         </div>
                         <div class="col-2">
-                            <input type="submit" value="表示する" form="create">
+                            <p><input type="submit" value="表示する" form="create"></p>
+                            @isset($count)
+                            <form action="{{route('pslg.clear')}}" method="post">
+                                @csrf
+                                <p><input type="submit" value="クリア－する"></p>
+                            </form>
+                            @endif
                         </div>
                     </div>
 

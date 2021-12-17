@@ -544,7 +544,7 @@ TreeAction.node = class Node {
   //@return string アイコンの名前
   getImgName(){
     //@var stirng 返すアイコンの名前
-    let imgName;
+    let imgName = 'ur';
     
     if(this.id.substr(0, 2) === 'ji'){
       //人事の場合
@@ -554,7 +554,9 @@ TreeAction.node = class Node {
       imgName = 'bs';
     }else if(this.id.substr(0, 2) === 'ta'){
       //投影の場合
-      imgName = this.fromLink[0].substr(0, 2);
+      if(this.fromLink.length !== 0){
+        imgName = this.fromLink[0].substr(0, 2);
+      }
     }else if(this.id.substr(0, 2) === 'ur'){
       //ユーザー情報の場合
       imgName = 'ur';
@@ -573,22 +575,6 @@ TreeAction.node = class Node {
 //Chainparserクラス
 //@return ChainParserクラス チェインパーサーのクラス
 TreeAction.chainparser = (() => {
-  //データから第一階層のノード情報を除く
-      //@param array sepalete 親子関係を連想配列にしたchainの配列
-      //@return array list 第一階層のchainを除いたchainの配列
-      let exceptSepalete = function exceptSepalete(sepalete) {
-
-        //@var array list 
-        let list = [];
-        sepalete.forEach(chain => {
-
-          //chianのキーがchaintreeの値が第一階層
-          if(Object.keys(chain)[0] !== '1.chaintree') {
-            list.push(chain);
-          }
-        });
-        return list;
-      }
 
       //一番上だけのclassNameを決定する。
       //linetreeか、expandtreeか決定する
@@ -1071,7 +1057,6 @@ TreeAction.chainparser = (() => {
         decisionChildClass: decisionChildClass,
         isEqual: isEqual,
         decisionTreeClass: decisionTreeClass,
-        exceptSepalete: exceptSepalete,
         syncLink: syncLink,
         displayOpen: displayOpen,
         displayNone: displayNone
@@ -1085,6 +1070,7 @@ TreeAction.chainparser = (() => {
 //@param ChainParser chainparser チェインパーサーのクラス
 //@return Nodeクラス ツリーインスタンス
 TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparser) {
+
   //ツリーの子要素のクラスを決定する。
   //@param Nodeクラス treeTop 第一階層のツリーノードクラス
   let decisionClass = function decisionClass(treeTop){
@@ -1108,31 +1094,34 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
   //@return Nodeクラス topNode 親ノードクラス
   let createTopNode = function createTopNode(sepalete ,treeTop) {
     
-    //@var Nodeクラス this.topNode ひとかたまりのツリーの一番上のNodeクラス
-    let topNode;
+    try {
+      //@var Nodeクラス this.topNode ひとかたまりのツリーの一番上のNodeクラス
+      let topNode;
     
-    //親要素のchain(例{'1.chaintree', '4.作業'})を取り除いた配列
-    let exceptSepalete = chainparser.exceptSepalete(sepalete);
-    
-    //topNodeを作成する
-    //{'1.chaintree': '5.aa'}sepaleteのデータの中で、keyがchaintreeの値が一番上の親
-    sepalete.forEach(chain => {
-      if(Object.keys(chain)[0] === '1.chaintree'){
-        topNode = new Node(treeTop.dir + '/' + Object.values(chain)[0].split('.')[1], Object.values(chain)[0].split('.')[0]);
-        topNode.prototype = {
-          chainparser: chainparser,
-          tree: treeTop
-        };
+      //topNodeを作成する
+      //{'1.chaintree': '5.aa'}sepaleteのデータの中で、keyがchaintreeの値が一番上の親
+      for(let i = 0; i < sepalete.length; i++){
+        if(String(Object.keys(sepalete[i])[0]) === '1.chaintree'){
+          topNode = new Node(treeTop.dir + '/' + String(Object.values(sepalete[i])[0].split('.')[1]), String(Object.values(sepalete[i])[0].split('.')[0]));
+          topNode.prototype = {
+            chainparser: chainparser,
+            tree: treeTop
+          };
+          delete sepalete[i];
+        }
       }
-    });
-    
-    //データからクラスの階層構造を作成する。
-    parse(topNode, exceptSepalete);
 
-    //Nodeクラスの第一階層のcss名を決定する。
-    chainparser.decisionTreeClass(topNode);
+      //データからクラスの階層構造を作成する。
+      parse(topNode, sepalete);
 
-    return topNode;
+      //Nodeクラスの第一階層のcss名を決定する。
+      chainparser.decisionTreeClass(topNode);
+
+      treeTop.child.push(topNode);
+    } catch (error) {
+      console.log('tree_generate_data_is_bug');
+    }
+
   }
 
   //nodeを再帰的に追加していく。
@@ -1165,15 +1154,23 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
   //@param array projectionChain 投影データの配列
   //ノードを投影
   let syncProjection = function syncProjection(projectionChain){
-    projectionChain.forEach(chain => {
-      //@var Nodeクラス fromNode 投影元のノードクラス
-      let fromNode = chainparser.searchNodeId(Object.keys(chain)[0].split('.')[0], treeTop);
-      //@var Nodeクラス toNode 投影先のノードクラス
-      let toNode = chainparser.searchNodeId(Object.values(chain)[0].split('.')[0], treeTop);
-      
-      //投影先と投影元をリンクさせる
-      chainparser.syncLink(toNode, fromNode);
-    });
+    //配列であるかをチェックする
+    if(Array.isArray(projectionChain)){
+      projectionChain.forEach(chain => {
+        //列挙可能か、判断する(このロジックで正しいか、わからない)
+        if(chain !== undefined && chain !== null){
+          //@var Nodeクラス fromNode 投影元のノードクラス
+          let fromNode = chainparser.searchNodeId(String(Object.keys(chain)[0]), treeTop);
+          //@var Nodeクラス toNode 投影先のノードクラス
+          let toNode = chainparser.searchNodeId(String(Object.values(chain)[0]), treeTop);
+            
+          if(fromNode !== undefined && toNode !== undefined){
+            //投影先と投影元をリンクさせる
+            chainparser.syncLink(toNode, fromNode);
+          }
+        }
+      });
+    } 
   }
 
   //投影のノードを斜体にする
@@ -1203,33 +1200,39 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
   }
 
   //@var nodeクラス this.treeTop ツリーの一番上のノード
-  let treeTop = new Node('', 1);
-  // treeTop.prototype.chainparser = chainparser;
+  let treeTop = new Node('', '1');
 
-  //@var dom this.element dom要素を格納 ツリーのdom要素を加えていく一番上のツリー<div id="chaintree"></div>
-  treeTop.element = document.getElementById('chaintree');
+  if(document.getElementById('chaintree')){
+    // treeTop.prototype.chainparser = chainparser;
+
+    //@var dom this.element dom要素を格納 ツリーのdom要素を加えていく一番上のツリー<div id="chaintree"></div>
+    treeTop.element = document.getElementById('chaintree');
   
-  //@var string this.className ツリーのcssのクラス名
-  treeTop.className = 'chaintree';
+    //@var string this.className ツリーのcssのクラス名
+    treeTop.className = 'chaintree';
   
-  //トップツリーの子要素のクラスを作成して、追加。
-  treesepalete.forEach(sepalete => {
+    if(Array.isArray(treesepalete)){
+      treesepalete.forEach(sepalete => {
 
-    //treeTopのchildに、かたまりごとのノードを追加していく。
-    treeTop.child.push(createTopNode(sepalete, treeTop));
-  });
+        //treeTopのchildに、かたまりごとのノードを追加していく。
+        createTopNode(sepalete, treeTop);
+      });
+    }
 
-  //ツリーの全体のcssのクラス名を決める
-  decisionClass(treeTop);
-  //投影
-  syncProjection(projectionChain);
-  //domを生成して、ツリーを描画する
-  createElement(treeTop);
-  //投影を斜体にする
-  onSyncTree(treeTop);
+    //ツリーの全体のcssのクラス名を決める
+    decisionClass(treeTop);
+    //投影
+    syncProjection(projectionChain);
+    //domを生成して、ツリーを描画する
+    createElement(treeTop);
+    //投影を斜体にする
+    onSyncTree(treeTop);
 
-  //ツリーのdom要素を生成した時は、ツリーは表示しているので、非表示にする。
-  closeTree(treeTop);
+    //ツリーのdom要素を生成した時は、ツリーは表示しているので、非表示にする。
+    closeTree(treeTop);
+  }else{
+    console.log('chaintree div tag is no');
+  }
 
   //ツリーインスタンスを返す
   return treeTop;
@@ -1240,6 +1243,7 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
 //@param array projectionChain 投影データ
 //@return TreeActionクラス ツリー機能クラス
 TreeAction = ((treesepalete, projectionChain) => {
+  
   //@var Nodeクラス ノードクラス
   let Node = TreeAction.node;
   //@var ChainParser チェインパーサーのクラス
@@ -1250,17 +1254,23 @@ TreeAction = ((treesepalete, projectionChain) => {
   //隠蔽/表示のメソッド
   //@param string nodeId 隠蔽するノードのid
   let changeDisplay = function changeDisplay(nodeId){
-    //@var Nodeクラス 隠蔽/表示するノード
-    let node = chainparser.searchNodeId(nodeId, tree);
+
+    //nodeIdが文字列か判断する
+    if(typeof(nodeId) === 'string'){
+      //@var Nodeクラス 隠蔽/表示するノード
+      let node = chainparser.searchNodeId(nodeId, tree);
     
-    if(node.hide === false){
-      //displayがtrueの場合は、表示されているので、隠蔽する
-      displayNoneNode(node);
-      
-    }else if(node.hide === true){
-      //displayがfalseならば、隠蔽しているので、表示する
-      displayOpenNode(node);
-      
+      //nodeが見つかれば
+      if(node !== undefined){
+        if(node.hide === false){
+          //displayがtrueの場合は、表示されているので、隠蔽する
+          displayNoneNode(node);
+        
+        }else if(node.hide === true){
+          //displayがfalseならば、隠蔽しているので、表示する
+          displayOpenNode(node);
+        }
+      }
     }
   }
 
@@ -1337,15 +1347,23 @@ TreeAction = ((treesepalete, projectionChain) => {
   //@var string nodeId 再表示するノードのid
   //閉じているノードを表示する
   let reOpenNode = function reOpenNode(nodeId){
-    //@var Nodeクラス 再表示するノード
-    let node = chainparser.searchNodeId(nodeId, tree);
-    //ツリーを下から上に開く
-    node.openBottomUpTree();
-    //ノードをカレントにする
-    node.focus();
-    //クリップボードのデータをカレントにする
-    clipboard.select(node.dir, node.id);
-    clipboard.current(node.dir, node.id);
+
+    //nodeIdを文字列か、調べる
+    if(typeof(nodeId) === 'string'){
+      //@var Nodeクラス 再表示するノード
+      let node = chainparser.searchNodeId(nodeId, tree);
+      
+      //nodeが見つかれば
+      if(node !== undefined){
+        //ツリーを下から上に開く
+        node.openBottomUpTree();
+        //ノードをカレントにする
+        node.focus();
+        //クリップボードのデータをカレントにする
+        clipboard.select(node.dir, node.id);
+        clipboard.current(node.dir, node.id);
+      }
+    }
   }
 
   //現在のスパイラルでは使わない
@@ -1460,47 +1478,43 @@ TreeAction = ((treesepalete, projectionChain) => {
         node = chainparser.searchNodeId(nodeId, tree);
       }
 
-      //ノードを開く
-      node.openBottomUpTree();
-      //ノードをカレントにする
-      node.focus();
-      //クリップボードのデータをカレントにする
-      currentClipboard(node);
+      if(node !== undefined){
+        //ノードを開く
+        node.openBottomUpTree();
+        //ノードをカレントにする
+        node.focus();
+        //クリップボードのデータをカレントにする
+        currentClipboard(node);
+      }
     }else if(document.location.pathname.split('/')[1] === ''){
       //indexルートの場合
       //@var Nodeクラス カレントにするノード 
       let node = chainparser.searchNodeId('bs00000001', tree);
       
-      if(node !== null && node !== undefined){
+      if(node !== undefined){
         node.openBottomUpTree();
         node.focus();
         currentClipboard(node);
       }
     }else{
       //複写、移動、削除の場合
-      if(document.getElementById('back_treeaction').value === 'delete'){
+      if(document.getElementById('back_treeaction').value === 'delete' || document.getElementById('back_treeaction').value === 'open'){
         //@var Nodeクラス ツリーの開くノード
         let node = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree);
-        //ノードを開く
-        node.openBottomUpTree();
-        //ノードをカレントにする
-        node.focus();
-        //クリップボードのデータをカレントにする
-        currentClipboard(node);
-      }else if(document.getElementById('back_treeaction').value === 'open'){
-        //@var Nodeクラス ツリーの開くノード
-        let node = chainparser.searchPalentNode(document.getElementById('action_node_id').value, tree);
-        //ノードを開く
-        node.openBottomUpTree();
-        //ノードをカレントにする
-        node.focus();
-        //クリップボードのデータをカレントにする
-        currentClipboard(node);
+
+        if(node !== undefined){
+          //ノードを開く
+          node.openBottomUpTree();
+          //ノードをカレントにする
+          node.focus();
+          //クリップボードのデータをカレントにする
+          currentClipboard(node);
+        }
       }else{
         //showルーティングでも、ツリー機能ルーティングでもない場合
         //@var Nodeクラス カレントにするノード 
         let node = chainparser.searchNodeId(clipboard.getCurrentId(), tree);
-        if(node !== null && node !== undefined){
+        if(node !== undefined){
           node.openBottomUpTree();
           node.focus();
           currentClipboard(node);
@@ -1515,14 +1529,11 @@ TreeAction = ((treesepalete, projectionChain) => {
     localStorage.setItem('currentDir', clipboard.getCurrentDir());
     localStorage.setItem('selectId', clipboard.getSelectId());
     localStorage.setItem('selectDir', clipboard.getSelectDir());
-    localStorage.setItem('copyId', clipboard.getCopyId());
-    localStorage.setItem('copyDir', clipboard.getCopyDir());
   }
   //ページ移動後のクリップボードのデータの復元
   let restoreClipboard = function restoreClipboard(){
     clipboard.current(localStorage.getItem('currentDir'), localStorage.getItem('currentId'));
     clipboard.select(localStorage.getItem('selectDir'), localStorage.getItem('selectId'));
-    clipboard.copyNode(localStorage.getItem('copyDir'), localStorage.getItem('copyId'));
   }
   //カレントのデータをクリップボードのデータに代入する
   let currentClipboard = function currentClipboard(node){
@@ -1534,13 +1545,15 @@ TreeAction = ((treesepalete, projectionChain) => {
     //@var array ツリーを開いていたノードのidの配列
     let storage = JSON.parse(localStorage.getItem('id'));
     //ページ移動前に開いていたノードを開く
-    Object.keys(storage).forEach(id => {
-      //@var Nodeクラス 開くノード
-      let node = chainparser.searchNodeId(storage[id], tree);
-      if(node !== null && node !== undefined){
-        node.openBottomUpTreePageMove();
-      }
-    });
+    if(storage !== null && storage !== undefined){
+      Object.keys(storage).forEach(id => {
+        //@var Nodeクラス 開くノード
+        let node = chainparser.searchNodeId(String(storage[id]), tree);
+        if(node !== undefined){
+          node.openBottomUpTreePageMove();
+        }
+      });
+    }
   }
 
   //ページ移動前に、隠蔽していたノードを、ページ移動後にも隠蔽する
@@ -1548,13 +1561,15 @@ TreeAction = ((treesepalete, projectionChain) => {
     //@var array 隠蔽していたノードのid
     let hiddenStorage = JSON.parse(localStorage.getItem('hiddenId'));
 
-    Object.keys(hiddenStorage).forEach(id => {
-      //@var Nodeクラス 隠蔽するノード
-      let node = chainparser.searchNodeId(hiddenStorage[id], tree);
-      if(node !== null && node !== undefined){
-        displayNoneNode(node);
-      }
-    });
+    if(hiddenStorage !== null && hiddenStorage !== undefined){
+      Object.keys(hiddenStorage).forEach(id => {
+        //@var Nodeクラス 隠蔽するノード
+        let node = chainparser.searchNodeId(Storage(hiddenStorage[id]), tree);
+        if(node !== undefined){
+          displayNoneNode(node);
+        }
+      });
+    }
   }
   
   return {

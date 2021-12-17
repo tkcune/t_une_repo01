@@ -86,4 +86,33 @@
                 
         }
 
+        /**
+         * 選択したIDの上位IDを取得
+         * @param string $client 顧客ID
+         * @param string $high_id 下位ID
+         * 
+         * @var string $high_id データ
+         * 
+         * @return $high_id
+         */
+        public function getHighId($client,$lower_id){
+
+            //選択した投影の上位IDを取得
+            $high_id = DB::select('select high_id from dccmks where client_id = ?
+            and lower_id = ?',[$client,$lower_id]);
+
+            return $high_id;
+        }
+
+        /**
+         * 削除
+         * @param string $client 顧客ID
+         * @param string $high_id 投影ID
+         */
+        public function delete($client,$projection_id){
+
+            DB::delete('delete from dccmta where client_id = ? and projection_id = ?',
+            [$client,$projection_id]);
+        }
+
     }

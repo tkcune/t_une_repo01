@@ -59,6 +59,19 @@
         }
 
         /**
+         * 階層情報を削除するメソッド
+         * @param string $client_id 顧客ID
+         * @param string $lower_id 下位ID
+         * 
+         */
+        public function delete($client_id,$lower_id){
+
+            DB::delete('delete from dccmks where client_id = ? 
+            and lower_id = ?',[$client_id,$lower_id]);
+
+        }
+
+        /**
          * 上位階層を取得するメソッド
          * @param array $array 下位階層データ
          * @param string $code 機能コード

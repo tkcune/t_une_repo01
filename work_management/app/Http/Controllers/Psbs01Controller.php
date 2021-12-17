@@ -969,20 +969,22 @@ class Psbs01Controller extends Controller
                 return redirect()->route('index');
             }
 
-            //データベースに投影情報を登録
             try{
+                //トランザクション
+                DB::beginTransaction();
+
+                //データベースに投影情報を登録
                 $projection_db = new ProjectionDataBase();
                 $projection_db->insert($client_id,$projection_id,$projection_source_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-            }
 
-            //データベースに階層情報を登録
-            try{
+                //データベースに階層情報を登録
                 $hierarchical = new Hierarchical();
                 $hierarchical->insert($client_id,$projection_id,$high);
+
+                DB::commit();
             }catch(\Exception $e){
+                //ロールバック
+                DB::rollBack();
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
                 return redirect()->route('index');

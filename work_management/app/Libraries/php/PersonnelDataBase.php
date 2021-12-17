@@ -146,6 +146,23 @@
         }
 
         /**
+         * 選択した人員の上位IDを取得
+         * @param $client 顧客ID
+         * @param $personnel_id 選択したID 
+         * 
+         * @var   $high_id 取得データ
+         * 
+         * @return  array $high_id
+         */
+        public static function getHighId($client,$personnel_id){
+
+            $high_id = DB::select('select high_id from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+            and dcji01.personnel_id = ?',[$client,$personnel_id]);
+            
+            return $high_id;
+        }
+
+        /**
          * 検索
          * @param $client 顧客ID
          * @param $search 検索文字
@@ -286,5 +303,17 @@
                 DB::update('update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and personnel_id = ?',
                 [$name,$status,$mail,$password,$management_number,$login_authority,$system_management,$start_day,$finish_day,$remarks,$client_id,$personnel_id]);
             }
+        }
+
+        /**
+         * 削除
+         * @param $client 顧客ID
+         * @param $personnel_id 人員ID 
+         * 
+         */
+        public static function delete($client_id,$personnel_id){
+
+            DB::delete('delete from dcji01 where client_id = ? and personnel_id = ?',[$client_id,$personnel_id]);
+            
         }
     }

@@ -101,20 +101,22 @@ class Psji01Controller extends Controller
             return redirect()->route('index');
         }
 
-        //データベースに登録
         try{
+            //トランザクション
+            DB::beginTransaction();
+
+            //データベースに人員情報を登録
             $personnel_db = new PersonnelDataBase();
             $personnel_db->insert($client_id,$personnel_id,$name,$email,$password,$status,$login_authority,$system_management);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('index');
-        }
-        //データベースに階層情報を登録
-        try{
+            //データベースに階層情報を登録
             $hierarchical = new Hierarchical();
             $hierarchical->insert($client_id,$personnel_id,$high);
+
+            DB::commit();
         }catch(\Exception $e){
+            //ロールバック
+            DB::rollBack();
+
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
@@ -166,6 +168,7 @@ class Psji01Controller extends Controller
      * @var  string  $finish_day 稼働終了日
      * @var  string  $remarks 備考
      * @var  App\Libraries\php\PersonnelDataBase $personnel_db
+     * @var  array $check_id 人員が存在するか確認する変数
      * 
      * @return \Illuminate\Http\Response
      */
@@ -195,14 +198,14 @@ class Psji01Controller extends Controller
         //入力された番号の人員が存在するかの確認
         try{
             $personnel_db = new PersonnelDataBase();
-            $management_personnel_id = $personnel_db->getData($client_id,$management_number);
+            $check_id = $personnel_db->getData($client_id,$management_number);
         }catch(\Exception $e){
             //エラー処理
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-        if($management_personnel_id == null){
+        if($check_id == null){
             return redirect()->route('index');
         }
 
@@ -245,27 +248,30 @@ class Psji01Controller extends Controller
 
         //}
         try{
-            $high_id = DB::select('select 
-            high_id from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
-            and dcji01.personnel_id = ?',[$id,$id2]);
+            $personnel_db = new PersonnelDataBase();
+            $high_id = $personnel_db->getHighId($id,$id2);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
         }
         try{
-            DB::delete('delete from dcji01 where client_id = ? and personnel_id = ?',[$id,$id2]);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('index');
-        }
+            //トランザクション
+            DB::beginTransaction();
 
-        //データの階層構造を削除
-        try{
-            DB::delete('delete from dccmks where client_id = ? 
-            and lower_id = ?',[$id,$id2]);
+            //人員データの削除
+            $personnel_db = new PersonnelDataBase();
+            $personnel_db->delete($id,$id2);
+
+            //データの階層構造を削除
+            $hierarchical = new Hierarchical();
+            $hierarchical->delete($id,$id2);
+
+            DB::commit();
         }catch(\Exception $e){
+            //ロールバック
+            DB::rollBack();
+
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
@@ -509,12 +515,14 @@ class Psji01Controller extends Controller
      * @var string $client_id 顧客ID
      * @var string $copy_id 複製するID
      * @var string $high 複製IDが所属する上位階層ID
+     * @var App\Models\Date; $date
      * @var array  $copy_personnel 複製するデータ
      * @var array  $id 存在している最新のID
      * @var string $department_id 登録する部署ID
      * @var string $personnel_id 登録する人員ID
-     * @var App\Libraries\php\ZeroPadding $padding
-     * @var  App\Models\Date; $date
+     * @var App\Libraries\php\PersonnelDataBase $personnel_db
+     * @var App\Libraries\php\Hierarchical $hierarchical
+     * @var string $message メッセージ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -577,7 +585,7 @@ class Psji01Controller extends Controller
                 $hierarchical->insert($client_id,$projection_id,$high);
 
                 DB::commit();
-                
+
             }catch(\Exception $e){
                 //ロールバック
                 DB::rollBack();

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use App\Libraries\php\Hierarchical;
 use App\Libraries\php\OutputLog;
 use App\Libraries\php\Message;
-use App\Libraries\php\ZeroPadding;
 use App\Libraries\php\DatabaseException;
 use App\Libraries\php\ProjectionDataBase;
 use App\Http\Controllers\PtcmtrController;
@@ -160,8 +159,9 @@ class Ptcm01Controller extends Controller
      * @param  string  $id2　投影ID
      * 
      * @var App\Libraries\php\ProjectionDataBase $projection_db
+     * @var string $high_id 上位ID
      * @var App\Libraries\php\Hierarchical $hierarchical
-     * @var  string  $message ログメッセージ
+     * @var string  $message ログメッセージ
      * 
      * @return \Illuminate\Http\Response
      */

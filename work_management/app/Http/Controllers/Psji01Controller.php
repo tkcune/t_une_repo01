@@ -236,7 +236,9 @@ class Psji01Controller extends Controller
      * @param  string  $id　顧客ID　
      * @param  string  $id2 人員ID
      * 
+     * @var  App\Libraries\php\PersonnelDataBase $personnel_db
      * @var array $high_id　上位ID
+     * @var App\Libraries\php\Hierarchical $hierarchical
      * @var string  $message ログメッセージ
      * 
      * @return \Illuminate\Http\Response

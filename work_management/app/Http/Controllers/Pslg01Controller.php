@@ -7,16 +7,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PtcmtrController;
 use App\Libraries\php\ResponsiblePerson;
+use Mockery\Undefined;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Pslg01Controller extends Controller
 {
     /**
-     * ログページ表示
+     * ログページ表示(ツリーからまたは、直接入力の場合)
      * 
      *  @var  array $tree_data ツリーデータ
      *  @var array $name_data 部署人員のデータ
-     *  @var array $session_names セッション保存した部署人員データ
+     *  @var array  $personnel_data セッション保存した部署人員データ
      *  
      *  @return \Illuminate\Http\Response
      */
@@ -30,6 +31,26 @@ class Pslg01Controller extends Controller
         $name_data = DB::table('dcji01')->get();
 
         session()->put('name_data', $name_data);
+        $personnel_data = session()->get('name_data');
+
+        return view('pslg01.pslg01', ['personnel_data' => $personnel_data]);
+    }
+
+     /**
+     * ログページ表示(データ表示後「クリアーする」を押した時の表示)
+     * 
+     *  @var  array $tree_data ツリーデータ
+     *  @var array $session_names セッション保存した部署人員データ
+     *  
+     *  @return \Illuminate\Http\Response
+     */
+
+    public function clear()
+    {
+        // ツリーのデーターを宣言する
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
+
         $personnel_data = session()->get('name_data');
 
         return view('pslg01.pslg01', ['personnel_data' => $personnel_data]);
@@ -60,9 +81,18 @@ class Pslg01Controller extends Controller
         $startdate = str_replace('T', ' ', $request->startdate);
         $finishdate = str_replace('T', ' ', $request->finishdate);
 
+        $now_time = date("Y-m-d H:i");
+        if($now_time < $startdate || $now_time < $finishdate){
+            $time_error = "日時が今日以降の入力がされました。再度入力してください。";
+            return back()->with('time_error',$time_error)->withInput();
+        }elseif($startdate > $finishdate){
+            $time_error = "終了日時が開始日時より過去の日時を入力されました。再度入力してください。";
+            return back()->with('time_error',$time_error)->withInput();
+        }
+       
 
         if ($request->management_number == null) {
-            // パターン⓵　部署人員番号が未記入の設定　＝　部員全員分の当日一覧表示
+            // パターン⓵　部署人員番号が未記入の設定　＝　部員全員分の一覧表示
 
             $items = DB::table('dclg01')
                 ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
@@ -73,21 +103,20 @@ class Pslg01Controller extends Controller
                 ->where('dclg01.log', 'like', "%$request->search%")
                 ->get();
         } else {
-            // パターン⓶　部署人員番号が記入あり設定　＝　選択された部署人員の当日分を一覧表示
+            // パターン⓶　部署人員番号が記入あり設定　＝　選択された部署人員の一覧表示
 
             $items = DB::table('dclg01')
                 ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
                 ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id','dcji01.system_management')
                 ->whereIn('dclg01.type', $request->check)
                 ->where('dcji01.name', '=', $request->management_name)
-                ->where('dcji01.personnel_id', '=', $request->management_number)
+                ->orwhere('dcji01.personnel_id', '=', $request->management_number)
                 ->where('dclg01.created_at', '>=', $startdate)
                 ->where('dclg01.updated_at', '<=', $finishdate)
                 ->where('dclg01.log', 'like', "%$request->search%")
                 ->get();
         }
 
-// dd($items);
         // ログの結果の件数を抽出する
         $count = count($items);
 
@@ -125,12 +154,21 @@ class Pslg01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-
         $session_items = session()->get('items');
-        foreach ($session_items as $items) {
-            $csvList[] = [$items->created_at, $items->type, $items->user, $items->function, $items->program_pass, $items->log];
-        }
 
+        
+
+// エラーチェック
+if(empty($session_items->items)){
+    $time_error = "データーが０個のため、ダウンロード出来ませんでした。";
+    $personnel_data = session()->get('name_data');
+        return back()->with('time_error',$time_error)->withInput();
+    }
+
+
+        foreach ($session_items as $items) {
+                $csvList[] = [$items->created_at, $items->type, $items->user, $items->function, $items->program_pass, $items->log];
+        }
         $title[] = ["出力日時", "類別", "アクセスユーザ", "機能", "プログラムパス", "ログ"];
         $download_data = (array_merge($title, $csvList));
 

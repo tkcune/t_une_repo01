@@ -18,6 +18,7 @@ use App\Http\Controllers\PtcmtrController;
 use App\Libraries\php\DepartmentDataBase;
 use App\Libraries\php\PersonnelDataBase;
 use App\Libraries\php\ProjectionDataBase;
+use App\Libraries\php\JudgmentHierarchy;
 use App\Models\Date;
 use Illuminate\Support\Facades\View;
 use App\Http\Requests\DepartmentRequest;
@@ -548,6 +549,7 @@ class Psbs01Controller extends Controller
      * @var string $high_id 上位ID
      * @var string $lower_id 下位ID
      * @var string $message メッセージ
+     * @var \App\Libraries\php\JudgmentHierarchy $judgment_hierarchy
      * 
      * @return \Illuminate\Http\Response
      */
@@ -566,6 +568,24 @@ class Psbs01Controller extends Controller
             return redirect()->route('index');
         }
 
+        //無限ループの回避の判断
+        try{
+            $judgment_hierarchy = new JudgmentHierarchy();
+            $move_flag = $judgment_hierarchy->judgmentHierarchy($client_id,$high_id,$lower_id);
+        }catch(\Exception $e){
+            //エラー及びログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+        if($move_flag == false){
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0011','01');
+            $message = Message::get_message('mhcmer0011',[0=>'']);
+            session(['message'=>$message[0]]);
+            return back();
+        }
+        
         //データベース更新
         try{
             $hierarchical = new Hierarchical();
@@ -931,6 +951,9 @@ class Psbs01Controller extends Controller
             session(['message'=>$message[0]]);
             return redirect()->route('index');
         }
+
+        //保存先の部署及び人員の上位階層IDを取得し、そのIDが複製する部署IDと一致した場合は処理を中止
+
         //投影を複製する場合
         if(substr($copy_id,0,2) == "ta"){
             try{

@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
-            <div class="container-fluid">
+                <div class="container-fluid">
                     <div class="row">
                         @if (Session::has('time_error'))
                         <div class="col-9">
@@ -146,16 +146,16 @@
                             </table>
                         </div>
 
-                        <br>
-                        <div id="ngDownload">
-                            <!--データーが0件の時ここにエラーメッセージが表示されます  -->
-                        </div>
-                        <form name="dl_form" action="{{route('pslg01.download')}}" method=post>
-                            @csrf
-                            <!-- <input type="submit" value="ダウンロードする" style="margin-top:30px"> -->
-                            <input type="button" value="ダウンロードする" id="log_download">
-                        </form>
 
+                        <div class="row mt-3">
+                            <div id="ngDownload">
+                                <!--データーが0件の時ここにエラーメッセージが表示されます  -->
+                            </div>
+                            <form name="dl_form" action="{{route('pslg01.download')}}" method=post>
+                                @csrf
+                                <input type="button" value="ダウンロードする" id="log_download">
+                            </form>
+                        </div>
 
                         @endif
                     </div>

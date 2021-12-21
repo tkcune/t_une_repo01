@@ -92,8 +92,8 @@ class Pslg01Controller extends Controller
         }
        
 
-        if ($request->management_number == null) {
-            // パターン⓵　部署人員番号が未記入の設定　＝　部員全員分の一覧表示
+        if ($request->management_number == null && $request->management_name == null) {
+            // パターン⓵　部署人員番号および部署人員名が未記入の設定　＝　部員全員分の一覧表示
 
             $items = DB::table('dclg01')
                 ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
@@ -110,11 +110,12 @@ class Pslg01Controller extends Controller
                 ->join('dcji01', 'dclg01.user', '=', 'dcji01.email')
                 ->select('dclg01.*', 'dcji01.name', 'dcji01.personnel_id','dcji01.system_management')
                 ->whereIn('dclg01.type', $request->check)
-                ->where('dcji01.name', '=', $request->management_name)
+                ->where('dcji01.name', '=', $request->management_name )
                 ->orwhere('dcji01.personnel_id', '=', $request->management_number)
                 ->where('dclg01.created_at', '>=', $startdate)
                 ->where('dclg01.updated_at', '<=', $finishdate)
                 ->where('dclg01.log', 'like', "%$request->search%")
+               
                 ->get();
         }
 

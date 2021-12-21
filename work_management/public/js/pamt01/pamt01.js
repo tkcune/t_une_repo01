@@ -213,21 +213,47 @@ function search() {
   const okSystem = document.getElementById("okSystem");
   const errSystem = document.getElementById("errSystem");
 
-  if (typeof okSystem != 'undefined'  &&  mangement == "1") {
+  if (typeof okSystem != 'undefined' && mangement == "1") {
     okSystem.innerHTML = ` <input type="checkbox" name="check[]" value="si" title="システム情報メッセージログを表示するかどうかを指定します" form="create"> システム情報メッセージ `;
-  }else{
+  } else {
     okSystem.innerHTML = "";
   }
 
-  if (typeof errSystem != 'undefined' && mangement  == "1") {
+  if (typeof errSystem != 'undefined' && mangement == "1") {
     errSystem.innerHTML = ` <input type="checkbox" name="check[]" value="sy" title="システム異常メッセージログを表示するかどうかを指定します" form="create"> システム異常メッセージ`;
-  }else{
-    errSystem.innerHTML ="";
+  } else {
+    errSystem.innerHTML = "";
   }
 
 }
 
 document.getElementById("search-list").onchange = search;
+
+
+
+
+/**
+ * ログダウンロードのエラーチェック
+ * @var int    logCount 表示されたログの数
+ * @var string ngDownload エラー時、エラー文を表示させるID
+ * 
+ */
+
+function downloadCheck() {
+  var logCount = document.getElementById("log_count").getAttribute('value');
+  var ngDownload = document.getElementById("ngDownload");
+
+  // ⓵if:ログが０件の時はエラー文をリターンする
+  // ⓶else:ログが１件でもあればダウンロード（pslgController download）にpost送信
+  if (logCount == "0") {
+    ngDownload.innerHTML = `<div  style="color:red; font-weight:bold;">データーが０個のため、ダウンロードは出来ません</p>`;
+  } else {
+    document.dl_form.submit();
+  }
+}
+
+document.getElementById("log_download").onclick = downloadCheck;
+
 
 
 
@@ -237,9 +263,8 @@ document.getElementById("search-list").onchange = search;
  * 
  */
 
- function remarks()
- {
-   var value = document.getElementById("remarks_set").value;
-   document.getElementById("remarks").defaultValue = value;
- }
- document.getElementById("remarks_set").onchange = remarks;
+function remarks() {
+  var value = document.getElementById("remarks_set").value;
+  document.getElementById("remarks").defaultValue = value;
+}
+document.getElementById("remarks_set").onchange = remarks;

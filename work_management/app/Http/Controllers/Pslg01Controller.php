@@ -81,6 +81,7 @@ class Pslg01Controller extends Controller
         $startdate = str_replace('T', ' ', $request->startdate);
         $finishdate = str_replace('T', ' ', $request->finishdate);
 
+
         $now_time = date("Y-m-d H:i");
         if($now_time < $startdate || $now_time < $finishdate){
             $time_error = "日時が今日以降の入力がされました。再度入力してください。";
@@ -155,15 +156,6 @@ class Pslg01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         $session_items = session()->get('items');
-
-        
-
-// エラーチェック
-if(empty($session_items->items)){
-    $time_error = "データーが０個のため、ダウンロード出来ませんでした。";
-    $personnel_data = session()->get('name_data');
-        return back()->with('time_error',$time_error)->withInput();
-    }
 
 
         foreach ($session_items as $items) {

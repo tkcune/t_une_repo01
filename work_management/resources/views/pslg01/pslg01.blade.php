@@ -5,12 +5,11 @@
     <div class="container-fluid">
         <div class="row">
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
-                <div class="container-fluid">
+            <div class="container-fluid">
                     <div class="row">
                         @if (Session::has('time_error'))
-
                         <div class="col-9">
-                            <div class="mb-2 bg-danger text-white">&nbsp;&nbsp;エラー:{{ session('time_error') }}</div>
+                            <div class="mb-2 bg-danger text-white">&nbsp;&nbsp;【エラー】:{{ session('time_error') }}</div>
                         </div>
                         @else <div class="col-9"></div>
                         @endif
@@ -22,7 +21,7 @@
                         <p style="text-align: center">検索したい条件などを入力して「表示する」ボタンを押してください<br>
                             【* 部署人員番号が空白の場合、全ての人員名が表示されます。】</p>
                         <div class="col-4">
-                            <form action="{{route('pslg01.create')}}" method="post" id="create">
+                            <form action="{{route('pslg01.create')}}" method="post" name="create_form" id="create">
                                 @csrf
                                 <!-- form id = "create"  下記のname属性を入れ子で対応　-->
                                 <!--   name = [ management_number, management_name, 
@@ -58,8 +57,8 @@
                         </div>
 
                         <div class="col-4">
-                            <p>開始日時: <input type="datetime-local" name="startdate" value="{{date('Y-m-d', strtotime('today'))}}T00:00" form="create"></p>
-                            <p>終了日時: <input type="datetime-local" name="finishdate" value="{{date('Y-m-d\TH:i',strtotime('now'))}}" form="create"></p>
+                            <p>開始日時: <input type="datetime-local" name="startdate" id="startdate" class="date-times" value="{{date('Y-m-d', strtotime('today'))}}T00:00" form="create"></p>
+                            <p>終了日時: <input type="datetime-local" name="finishdate" id="finishdate" class="date-times" value="{{date('Y-m-d\TH:i',strtotime('now'))}}" form="create"></p>
                         </div>
                     </div>
                     <div class="container">
@@ -91,7 +90,7 @@
                         <div class="col-10">文字検索&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="search" style="width:32rem;" placeholder="入力可能な文字数は３２  全角、半角英数字、一覧操作領域" form="create">
                         </div>
                         <div class="col-2">
-                            <p><input type="submit" value="表示する" form="create"></p>
+                            <p><input type="submit" id="logentry_check" value="表示する" form="create"></p>
                             @isset($count)
                             <form action="{{route('pslg.clear')}}" method="post">
                                 @csrf
@@ -105,7 +104,7 @@
                         <div class="col-10"></div>
                         <div class="col-2">
                             @isset($count)
-                            件数:&nbsp;&nbsp;{{$count}} 件
+                            <p id="log_count" value="{{$count}}">件数:&nbsp;&nbsp;{{$count}} 件</p>
                             @endif
                         </div>
                     </div>
@@ -147,10 +146,17 @@
                             </table>
                         </div>
 
-                        <form action="{{route('pslg01.download')}}" method=post>
+                        <br>
+                        <div id="ngDownload">
+                            <!--データーが0件の時ここにエラーメッセージが表示されます  -->
+                        </div>
+                        <form name="dl_form" action="{{route('pslg01.download')}}" method=post>
                             @csrf
-                            <input type="submit" value="ダウンロードする" style="margin-top:30px">
+                            <!-- <input type="submit" value="ダウンロードする" style="margin-top:30px"> -->
+                            <input type="button" value="ダウンロードする" id="log_download">
                         </form>
+
+
                         @endif
                     </div>
                 </div>

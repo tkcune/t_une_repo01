@@ -7,6 +7,7 @@ use App\Libraries\php\OutputLog;
 use App\Libraries\php\Message;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Rules\JapaneseAndAlphaNumRule;
 
 class DepartmentRequest extends FormRequest
 {
@@ -28,7 +29,7 @@ class DepartmentRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' =>'required',
+            'name' =>['required',new JapaneseAndAlphaNumRule],
             'status'=>'required',
             'management_number'=>'required',
         ];
@@ -45,14 +46,25 @@ class DepartmentRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
-        $message = Message::get_message('mhcmer0003',[0=>'']);
-        session(['message'=>$message[0]]);
-        $this->merge(['validated' => 'true']);
-        // リダイレクト先
-        throw new HttpResponseException(
-        back()->withInput($this->input)->withErrors($validator)
-        );
+        if($validator->errors()->first('name')=="英数字、ひらがな、カタカナ、漢字で入力してください"){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0012','01');
+            $message = Message::get_message('mhcmer0012',[0=>'']);
+            session(['message'=>$message[0]]);
+            // リダイレクト先
+            throw new HttpResponseException(
+            back()->withInput($this->input)->withErrors($validator)
+            );
+        }else{
+            dd($validator);
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
+            $message = Message::get_message('mhcmer0003',[0=>'']);
+            session(['message'=>$message[0]]);
+            $this->merge(['validated' => 'true']);
+            // リダイレクト先
+            throw new HttpResponseException(
+            back()->withInput($this->input)->withErrors($validator)
+            );
+        }
     }
 
 }

@@ -8,6 +8,7 @@ use App\Libraries\php\OutputLog;
 use App\Libraries\php\Message;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Rules\JapaneseAndAlphaNumRule;
 
 class PersonnelRequest extends FormRequest
 {
@@ -29,7 +30,7 @@ class PersonnelRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' =>'required',
+            'name' =>['required',new JapaneseAndAlphaNumRule],
             'management_number'=>'required',
             'status'=>'required',
             //'password' => new AlphaNumHalf,
@@ -52,6 +53,14 @@ class PersonnelRequest extends FormRequest
         if($validator->errors()->first('password')=="パスワードは半角英数字で入力してください"){
             $message = $validator->errors()->first('password');
             session(['message'=>$message]);
+            // リダイレクト先
+            throw new HttpResponseException(
+            back()->withInput($this->input)->withErrors($validator)
+            );
+        }elseif($validator->errors()->first('name')=="英数字、ひらがな、カタカナ、漢字で入力してください"){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0012','01');
+            $message = Message::get_message('mhcmer0012',[0=>'']);
+            session(['message'=>$message[0]]);
             // リダイレクト先
             throw new HttpResponseException(
             back()->withInput($this->input)->withErrors($validator)

@@ -7,6 +7,7 @@ use App\Libraries\php\OutputLog;
 use Exception;
 
 //ツリーのデータの作成
+//エラーID=7001
 class TreeData{
     
     //公開するメソッド
@@ -21,8 +22,8 @@ class TreeData{
             //@var array 階層テーブルの配列
             $database_chain = self::create_chain();
         } catch (Exception $e) {
-            OutputLog::log(__FUNCTION__, 'er', '00', 'maybe_database_error');
-            throw $e;
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '7001');
+            return [[], []];
         }
         //@var array 投影データのidと名称
         $projection_id_name = self::change_projection_name($projection_chain, $database_id_name);
@@ -30,8 +31,8 @@ class TreeData{
         $tree_id_chain = self::divide_hierarchy($database_chain);
         foreach([$projection_id_name, $projection_chain, $tree_id_chain] as $row){
             if($row == []){
-                OutputLog::log(__FUNCTION__, 'er', '00', 'maybe_database_error');
-                throw new Exception('maybe_database_error');
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '7001');
+                return [[], []];
             }
         }
         //@var array ツリー生成用の上下関係のオブジェクトのデータ
@@ -155,7 +156,9 @@ class TreeData{
                     }
                     //第一階層と第一階層の下以外の上下関係のオブジェクトのデータを作成する
                     foreach($tree_id_chain[$index] as $row){
-                        $chain[] = array($row['high_id'].'.'.$database_id_name[$row['high_id']] => $row['lower_id'].'.'.$database_id_name[$row['lower_id']]);
+                        if(array_key_exists($row['high_id'], $database_id_name) && array_key_exists($row['lower_id'], $database_id_name)){
+                            $chain[] = array($row['high_id'].'.'.$database_id_name[$row['high_id']] => $row['lower_id'].'.'.$database_id_name[$row['lower_id']]);
+                        }
                     }
                 }
             }

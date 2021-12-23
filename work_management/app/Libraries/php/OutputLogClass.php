@@ -5,8 +5,10 @@ namespace App\Libraries\php;
 use Illuminate\Support\Facades\DB;
 use App\Libraries\php\Message;
 use App\Libraries\php\FunctionCode;
+use Exception;
 
 //ログ出力クラス
+//エラーID=8001
 class OutputLogClass{
     //@var stirng デバックモード
     private $debug_mode;
@@ -82,8 +84,7 @@ class OutputLogClass{
             $result = DB::insert('insert into dclg01 (client_id, log_id, created_at, type, user, function, program_pass, log) values (?, ?, ?, ?, ?, ?, ?, ?)', [$this->client_id, $log_id, $created_at, $type, $this->user, $function, $program_pass, $log]);
         } catch (Exception $e) {
             //エラーが発生した場合
-            $type = 'er';
-            $log = 'dclg01に不具合があります';
+            [$log, $type, $function] = Message::get_message('mhcmer0001', ['8001']);
             $result = true;
         }
         if($result){

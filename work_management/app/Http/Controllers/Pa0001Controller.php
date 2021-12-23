@@ -61,6 +61,8 @@ class Pa0001Controller extends Controller
     {
         //$client_idの数値はダミー(ログイン時にセッション保存する予定)
         $client_id = "aa00000001";
+        $select_id = "bs00000001";
+        $lists = [];
         session(['client_id'=>$client_id]);
 
         $count_department = Config::get('startcount.count');
@@ -80,7 +82,7 @@ class Pa0001Controller extends Controller
 
         //全体の部署データの取得
         try{
-            $department_data = $department_db->getAll($client_id);
+            $all_department_data = $department_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -95,7 +97,23 @@ class Pa0001Controller extends Controller
             DatabaseException::common($e);
             return redirect()->route('pa0001.errormsg');
         }
-        $personnel_data = $all_personnel_data;
+
+        array_push($lists,$select_id);
+
+        //選択した部署の配下を取得
+        $hierarchical = new Hierarchical();
+        $select_lists = $hierarchical->subordinateSearch($lists,$client_id);
+
+        //選択したデータ及び配下データを取得
+        try{
+            $lists = $hierarchical->subordinateGet($select_lists,$client_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
+            DatabaseException::dataCatchMiss($e);
+            return redirect()->route('pa0001.errormsg');
+        }
+        $department_data = $lists[0];
+        $personnel_data = $lists[1];
 
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
@@ -251,22 +269,31 @@ class Pa0001Controller extends Controller
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
         }
-        
-        //部署データの取得
-        try{
-            $department_data = $department_db->getAll($client_id);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-        }
-        //人員データの取得
+
+        //全ての人員データの取得
         try{
             $all_personnel_data = $personnel_db->getAll($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
         }
-        $personnel_data = $all_personnel_data;
+        array_push($lists,$select_id);
+
+        //選択した部署の配下を取得
+        $hierarchical = new Hierarchical();
+        $select_lists = $hierarchical->subordinateSearch($lists,$client_id);
+
+        //選択したデータ及び配下データを取得
+        try{
+            $lists = $hierarchical->subordinateGet($select_lists,$client_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
+            DatabaseException::dataCatchMiss($e);
+            return redirect()->route('pa0001.errormsg');
+        }
+        $department_data = $lists[0];
+        $personnel_data = $lists[1];
+
         //登録日付フォーマットを変更
         $date = new Date();
         $operation_date = $date->formatOperationDate($top_department);

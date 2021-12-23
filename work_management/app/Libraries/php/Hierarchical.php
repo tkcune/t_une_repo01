@@ -117,7 +117,6 @@
          * @return array $this->subordinates_list 配下データをまとめた配列
          */
         public function subordinateSearch($lists,$client){
-            //直下の配下IDのリセット
             $subordinates_id_lists = [];
 
             //直下の配下データを取得
@@ -131,20 +130,10 @@
                     return redirect()->route('index');
                 }
                 //配下データを格納
-                array_push($this->subordinates_list,$list);
-                
-                //直下の配下データが存在する場合、配下IDを格納
-                if(!empty($subordinates)){
-                    for($i=0;$i<count($subordinates);$i++){
-                        array_push($subordinates_id_lists,$subordinates[$i]->lower_id);
-                    }
+                foreach($subordinates as $subordinate){
+                    array_push($this->subordinates_list,$subordinate->lower_id);
                 }
             }
-            //直下の配下データが存在する場合、再帰する
-            if(!empty($subordinates_id_lists)){
-                $this->subordinateSearch($subordinates_id_lists,$client);
-            }
-
             return $this->subordinates_list;
         }
 

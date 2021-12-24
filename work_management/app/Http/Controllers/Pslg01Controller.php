@@ -82,6 +82,7 @@ class Pslg01Controller extends Controller
         $finishdate = str_replace('T', ' ', $request->finishdate);
 
 
+        //  時間入力のエラーチェック
         $now_time = date("Y-m-d H:i");
         if($now_time < $startdate || $now_time < $finishdate){
             $time_error = "日時が今日以降の入力がされました。再度入力してください。";
@@ -101,7 +102,7 @@ class Pslg01Controller extends Controller
                 ->whereIn('dclg01.type', $request->check)
                 ->where('dclg01.created_at', '>=', $startdate)
                 ->where('dclg01.updated_at', '<=', $finishdate)
-                ->where('dclg01.log', 'like', "%$request->search%")
+                // ->where('dclg01.program_pass','like',"%$request->search%")
                 ->get();
         } else {
             // パターン⓶　部署人員番号が記入あり設定　＝　選択された部署人員の一覧表示
@@ -114,10 +115,10 @@ class Pslg01Controller extends Controller
                 ->orwhere('dcji01.personnel_id', '=', $request->management_number)
                 ->where('dclg01.created_at', '>=', $startdate)
                 ->where('dclg01.updated_at', '<=', $finishdate)
-                ->where('dclg01.log', 'like', "%$request->search%")
-               
+                // ->where('dclg01.program_pass','like',"%$request->search%")
                 ->get();
         }
+
 
         // ログの結果の件数を抽出する
         $count = count($items);
@@ -135,6 +136,28 @@ class Pslg01Controller extends Controller
 
         ]);
     }
+
+
+    /**
+     * 検索された内容をサーチする
+     */
+
+     public function search(Request $request){
+// sessionの$itemsを呼び出す
+$session_items= session()->get('items');
+
+$result = preg_grep('/($request->search)/', $session_items);
+
+
+dd($result);
+
+        return view('pslg01.pslg01', [
+            // 'items' => $items,
+            // 'count' => $count,
+            // 'personnel_data' => $personnel_data,
+
+        ]);
+     }
 
     /**
      * 一覧表示された内容をダウンロードする

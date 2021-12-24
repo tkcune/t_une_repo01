@@ -28,7 +28,7 @@
                                                  startdate, finishdate, 
                                                  check[], search, "表示する"  ]  -->
                             </form>
-                            <p>顧客番号&nbsp;&nbsp;: <input type="text" name="name" style="width:100px;" placeholder="半角英数字で入力"></p>
+                            <p>顧客番号&nbsp;&nbsp;: <input type="text" name="name" style="width:100px;"></p>
                             <p>顧客名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">(例)前川一号生</a></p>
 
                             <p class="box" title="入力に該当した顧客の候補を一覧に表示します。表示された人員を選択した場合、その番号が顧客番号に表示されます">顧客検索&nbsp;&nbsp;:
@@ -87,8 +87,7 @@
                         </div>
                     </div>
                     <div class="row mt-3">
-                        <div class="col-10">文字検索&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="search" style="width:32rem;" placeholder="入力可能な文字数は３２  全角、半角英数字、一覧操作領域" form="create">
-                        </div>
+                        <div class="col-10"></div>
                         <div class="col-2">
                             <p><input type="submit" id="logentry_check" value="表示する" form="create"></p>
                             @isset($count)
@@ -111,8 +110,12 @@
 
                     <div class="row">
                         @isset($items)
-
-
+                        <form name="dl_form" action="{{route('pslg01.search')}}" method=post>
+                            @csrf
+                            <div class="col-10">文字検索&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="search" style="width:32rem;" placeholder="検索したいログ内容を32文字以内で入力してください" form="create">
+                            </div>
+                            <input type="submit" value="search">
+                        </form>
                         <div class="wrapper" style="overflow-y: scroll; background-color:white; height:20rem">
                             <table class="table" style="font-size:12px; word-break : break-all;">
                                 <thead>
@@ -128,18 +131,18 @@
                                 </thead>
                                 <tbody>
                                     @foreach($items as $item)
-                                    <tr>
-                                        <td> {{$item->created_at}}</td>
-                                        <td> {{$item->updated_at}}</td>
-                                        <td> {{$item->type}}</td>
-                                        <td> {{$item->name}}</td>
-                                        <td> {{$item->function}}</td>
-                                        @if($item->system_management)
-                                        <td>{{$item->program_pass}}</td>
-                                        @else
-                                        <td> </td>
-                                        @endif
-                                        <td> {{$item->log}}</td>
+
+                                    <td> {{$item->created_at}}</td>
+                                    <td> {{$item->updated_at}}</td>
+                                    <td> {{$item->type}}</td>
+                                    <td> {{$item->name}}</a></td>
+                                    <td> {{$item->function}}</td>
+                                    @if($item->system_management)
+                                    <td>{{$item->program_pass}}</td>
+                                    @else
+                                    <td> </td>
+                                    @endif
+                                    <td> {{$item->log}}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>

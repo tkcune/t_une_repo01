@@ -171,6 +171,7 @@ class Psbs01Controller extends Controller
         if($select_id == "bs00000001"){
             return redirect()->route('index');
         }
+        
         $count_department = Config::get('startcount.count');
         $count_personnel = Config::get('startcount.count');
 
@@ -204,8 +205,8 @@ class Psbs01Controller extends Controller
 
             //選択した部署の配下を取得
             $hierarchical = new Hierarchical();
-            
             $select_lists = $hierarchical->subordinateSearch($lists,$client);
+
             //選択したデータ及び配下データを取得
             try{
                 $lists = $hierarchical->subordinateGet($select_lists,$client);
@@ -275,7 +276,7 @@ class Psbs01Controller extends Controller
             $operation_check = new OperationCheck();
             $operation_check->check($click_department_data);
 
-            return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel',
+            return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel','click_department_data',
             'department_max','departments','personnel_max','names','responsible_lists','department_high','personnel_high',
             'click_department_high','click_management_lists','client','select_id','personnel_data','operation_date','all_personnel_data'));
             
@@ -304,6 +305,7 @@ class Psbs01Controller extends Controller
             try{
                 $department_db = new DepartmentDataBase();
                 $data = $department_db->getClickDepartmentData($client,$affiliation_data[0]->high_id);
+                $click_department_data = $data;
             }catch(\Exception $e){
 
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -386,7 +388,7 @@ class Psbs01Controller extends Controller
 
                 return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments','personnel_max','names',
                 'top_department','top_responsible','count_department','count_personnel','client','responsible_lists','department_high','personnel_high',
-                'select_id','personnel_data','click_personnel_data','operation_date','all_personnel_data'));
+                'select_id','personnel_data','click_personnel_data','operation_date','all_personnel_data','click_department_data'));
             }
 
             array_push($department_data,$data[0]);
@@ -459,7 +461,7 @@ class Psbs01Controller extends Controller
 
             return view('pacm01.pacm01',compact('data','count_department','count_personnel','department_max','departments','personnel_max','names',
             'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists',
-            'personnel_data','operation_date','all_personnel_data'));
+            'personnel_data','operation_date','all_personnel_data','click_department_data'));
         }
     }
 
@@ -540,7 +542,7 @@ class Psbs01Controller extends Controller
         return back();
     }
 
-    /** 階層構造を更新
+    /** 部署・人員の移動
      * 
      * @param  \Illuminate\Http\Request  $request
      * @param string $id 送信されたID
@@ -596,6 +598,8 @@ class Psbs01Controller extends Controller
             DatabaseException::common($e);
             return redirect()->route('index');
         }
+        //移動処理終了後に、クリップボードの削除
+        session()->forget('clipboard_id');
         //ログ処理
         OutputLog::message_log(__FUNCTION__, 'mhcmok0008');
         $message = Message::get_message('mhcmok0008',[0=>'']);

@@ -502,7 +502,7 @@
                         @if(isset($top_department))
                             <input type="hidden" id="high" name="high" value="{{$top_department[0]->department_id}}">
                         @else
-                            <input type="hidden" id="high" name="high" value="{{$departments[0]->department_id}}">
+                            <input type="hidden" id="high" name="high" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <p>配下部署<button data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">新規</button>
                         </form>
@@ -511,7 +511,7 @@
                         @if(isset($top_department))
                             <input type="hidden" id="high_move" name="high_id" value="{{$top_department[0]->department_id}}">
                         @else
-                            <input type="hidden" id="high_move" name="high_id" value="{{$departments[0]->department_id}}">
+                            <input type="hidden" id="high_move" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}">
                         @csrf
@@ -527,7 +527,7 @@
                         @if(isset($top_department))
                         <input type="hidden" id="high_insert" name="high_id" value="{{$top_department[0]->department_id}}">
                         @else
-                        <input type="hidden" id="high_insert" name="high_id" value="{{$departments[0]->department_id}}">
+                        <input type="hidden" id="high_insert" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します　移動元は消えません">挿入</button>
                         </form>
@@ -540,7 +540,7 @@
                         @if(isset($top_department))
                         <input type="hidden" id="high_projection" name="high_id" value="{{$top_department[0]->department_id}}">
                         @else
-                        <input type="hidden" id="high_projection" name="high_id" value="{{$departments[0]->department_id}}">
+                        <input type="hidden" id="high_projection" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します　移動元は消えません">投影</button>
                         </form>
@@ -774,6 +774,7 @@
                     </div>
                 </div>
             </div>
+@if( empty(session('click_code')) or session('click_code') == "bs")
                 <div class="row">
                     <div class="col">
                         <div style="display:inline-flex">
@@ -782,7 +783,7 @@
                         @if(isset($top_department))
                         <input type="hidden" id="ji_high_new" name="high" value="{{$top_department[0]->department_id}}">
                         @else
-                        <input type="hidden" id="ji_high_new" name="high" value="{{$departments[0]->department_id}}">
+                        <input type="hidden" id="ji_high_new" name="high" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <p>所属人員 <button data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">新規</button>
                         </form>
@@ -793,7 +794,7 @@
                         @if(isset($top_department))
                         <input type="hidden" id="ji_high_move" name="high_id" value="{{$top_department[0]->department_id}}">
                         @else
-                        <input type="hidden" id="ji_high_move" name="high_id" value="{{$departments[0]->department_id}}">
+                        <input type="hidden" id="ji_high_move" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <input type="hidden" id="ji_lower_move" name="lower_id" value="{{session('clipboard_id')}}"> 
                         <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します　移動元からは抹消されます">移動</button>
@@ -806,7 +807,7 @@
                         @if(isset($top_department))
                         <input type="hidden" name="high_id" value="{{$top_department[0]->department_id}}">
                         @else
-                        <input type="hidden" name="high_id" value="{{$departments[0]->department_id}}">
+                        <input type="hidden" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <input type="hidden" id="ji_copy_id" name="copy_id" value="{{session('clipboard_id')}}">
                         <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します　移動元は消えません">挿入</button>
@@ -820,7 +821,7 @@
                         @if(isset($top_department))
                         <input type="hidden" id="ji_high_projection" name="high_id" value="{{$top_department[0]->department_id}}">
                         @else
-                        <input type="hidden" id="ji_high_projection" name="high_id" value="{{$departments[0]->department_id}}">
+                        <input type="hidden" id="ji_high_projection" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します　移動元は消えません">投影</button>
                         </form>
@@ -1068,6 +1069,7 @@
             </div>
         </div>
     </div>
+@endif
     {{-- コメント　詳細画面ここまで --}}
 
 @endsection

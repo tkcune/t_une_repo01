@@ -1,4 +1,19 @@
 /**
+ * ブラウザバックした場合に削除ボタンをリセットさせるメソッド
+ * 
+ * @var string flg フラグ
+ */
+window.addEventListener('pageshow',()=>{
+  var flg=window.performance.navigation.type;
+
+  if(flg ==2){
+    window.location.reload();
+  }
+});
+
+
+
+/**
  * 画面の隠蔽表示メソッド
  * @param string div 対象のdiv
  * @param string state 対象のdivの状態

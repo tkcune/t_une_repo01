@@ -3108,7 +3108,7 @@ TreeAction.createTree = function (treesepalete, projectionChain, Node, chainpars
 
   var treeTop = new Node('', '1');
 
-  if (document.getElementById('chaintree')) {
+  if (document.getElementById('chaintree') && document.getElementById('chaintree').tagName === 'DIV') {
     // treeTop.prototype.chainparser = chainparser;
     //@var dom this.element dom要素を格納 ツリーのdom要素を加えていく一番上のツリー<div id="chaintree"></div>
     treeTop.element = document.getElementById('chaintree'); //@var string this.className ツリーのcssのクラス名

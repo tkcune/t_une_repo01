@@ -3,7 +3,8 @@
 @section('content')
 <div class="col border border-primary" style="padding:10px;">
     <div class="container-fluid">
-        <div class="row">
+        <!--詳細領域  -->
+    <div class="row">
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="container-fluid">
                     <div class="row">
@@ -24,9 +25,14 @@
                             <form action="{{route('pslg01.create')}}" method="post" name="create_form" id="create">
                                 @csrf
                                 <!-- form id = "create"  下記のname属性を入れ子で対応　-->
-                                <!--   name = [ management_number, management_name, 
-                                                 startdate, finishdate, 
-                                                 check[], search, "表示する"  ]  -->
+                                <!--   name = [ 
+                                                management_number, 
+                                                management_name, 
+                                                startdate, 
+                                                finishdate, 
+                                                check[], 
+                                                "表示する"  
+                                                                    ]  -->
                             </form>
                             <p>顧客番号&nbsp;&nbsp;: <input type="text" name="name" style="width:100px;"></p>
                             <p>顧客名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">(例)前川一号生</a></p>
@@ -86,23 +92,38 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-3">
+                    <div class="row mt-2">
                         <div class="col-10"></div>
                         <div class="col-2">
-                            <p><input type="submit" id="logentry_check" value="表示する" form="create"></p>
+                            <p><input type="submit" id="logentry_check" value="表示する" style="width:5rem;" form="create"></p>
                             @isset($count)
                             <form action="{{route('pslg.clear')}}" method="post">
                                 @csrf
-                                <p><input type="submit" value="クリア－する"></p>
+                                <p><input type="submit" value="クリア－" style="width:5rem;"></p>
                             </form>
                             @endif
                         </div>
                     </div>
+                    <!-- 詳細領域ここまで -->
 
+                    <!-- 一覧操作領域 -->
+                    @isset($count)
                     <div class="row mt-3">
-                        <div class="col-10"></div>
+                        <div class="col-10">
+                            <div class="wrapper">
+                                <div class="search-area">
+                                    <form>
+                                        文字検索&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp; <input type="text" id="search-text" placeholder="検索ワードを３２文字以内で入力してください">
+                                    </form>
+                                    <div class="search-result">
+                                        <div class="search-result__hit-num"></div>
+                                        <div id="search-result__list"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-2">
-                            @isset($count)
+                        
                             <p id="log_count" value="{{$count}}">件数:&nbsp;&nbsp;{{$count}} 件</p>
                             @endif
                         </div>
@@ -110,12 +131,6 @@
 
                     <div class="row">
                         @isset($items)
-                        <form name="dl_form" action="{{route('pslg01.search')}}" method=post>
-                            @csrf
-                            <div class="col-10">文字検索&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="search" style="width:32rem;" placeholder="検索したいログ内容を32文字以内で入力してください" form="create">
-                            </div>
-                            <input type="submit" value="search">
-                        </form>
                         <div class="wrapper" style="overflow-y: scroll; background-color:white; height:20rem">
                             <table class="table" style="font-size:12px; word-break : break-all;">
                                 <thead>
@@ -129,25 +144,28 @@
                                         <th scope="col">ログ</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="target-area">
                                     @foreach($items as $item)
-
-                                    <td> {{$item->created_at}}</td>
-                                    <td> {{$item->updated_at}}</td>
-                                    <td> {{$item->type}}</td>
-                                    <td> {{$item->name}}</a></td>
-                                    <td> {{$item->function}}</td>
-                                    @if($item->system_management)
-                                    <td>{{$item->program_pass}}</td>
-                                    @else
-                                    <td> </td>
-                                    @endif
-                                    <td> {{$item->log}}</td>
+                                    <tr class="li_name">
+                                        <td> {{$item->created_at}}</td>
+                                        <td> {{$item->updated_at}}</td>
+                                        <td> {{$item->type}}</td>
+                                        <td> {{$item->name}}</a></td>
+                                        <td> {{$item->function}}</td>
+                                        @if($item->system_management)
+                                        <td>{{$item->program_pass}}</td>
+                                        @else
+                                        <td> </td>
+                                        @endif
+                                        <td> {{$item->log}}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
+
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
 
 
                         <div class="row mt-3">
@@ -159,9 +177,9 @@
                                 <input type="button" value="ダウンロードする" id="log_download">
                             </form>
                         </div>
-
                         @endif
                     </div>
+    <!-- 一覧操作領域ここまで -->
                 </div>
             </div>
         </div>

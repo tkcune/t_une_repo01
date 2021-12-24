@@ -76,9 +76,9 @@ Route::prefix('pslg')->group(function () {
   Route::post('/', [Pslg01Controller::class, 'clear'])->name('pslg.clear');
   Route::get('/create', function(){ return view('pslg01.pslg01');});
   Route::post('/create', [Pslg01Controller::class, 'create'])->name('pslg01.create');
-  Route::post('/search', [Pslg01Controller::class, 'search'])->name('pslg01.search');
   Route::post('/download', [Pslg01Controller::class, 'download'])->name('pslg01.download');
 });
+
 
 Route::get('/psnw01', [PsnwController::class, 'index'])->name('psnw01.index');
 Route::post('/psnw01', [PsnwController::class, 'create'])->name('psnw01.create');

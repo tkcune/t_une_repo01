@@ -270,27 +270,38 @@ function downloadCheck() {
 document.getElementById("log_download").onclick = downloadCheck;
 
 
-// ログ検索
-function myFunction() {
-  // Declare variables
-  var input, filter, ul, li, a, i, txtValue;
-  input = document.getElementById('myInput');
-  filter = input.value;
-  ul = document.getElementById("myUL");
-  li = ul.getElementsByTagName('td');
+/**
+ *  ログ結果内検索・・表示リストから該当するワードを検索する
+ * 
+ * @var string searchText 検索ボックスに入力された値
+ * @var string searchClass 表示された値一覧のクラス
+ * @var string targetText   ターゲットのテキスト
+ * 
+ */
 
-  // Loop through all list items, and hide those who don't match the search query
-  for (i = 0; i < li.length; i++) {
-    a = li[i].getElementsByTagName("a")[0];
-    txtValue = a.textContent || a.innerText;
-    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      li[i].style.display = "";
-    } else {
-      li[i].style.display = "none";
-    }
-  }
-}
+$(function () {
+  searchWord = function(){
+    var searchText = $(this).val(), // 検索ボックスに入力された値
+        targetText;
+        
+        searchClass = document.getElementsByClassName('li_name');
 
+        console.log(searchClass);
+    $(searchClass).each(function() {
+      targetText = $(this).text();
+
+      // 検索対象となるリストに入力された文字列が存在するかどうかを判断
+      if (targetText.indexOf(searchText) != -1) {
+        $(this).removeClass('hidden');
+      } else {
+        $(this).addClass('hidden');
+      }
+    });
+  };
+
+  // searchWordの実行
+  $('#search-text').on('input', searchWord);
+});
 
 /**
  * 備考欄挿入

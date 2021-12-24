@@ -137,27 +137,7 @@ class Pslg01Controller extends Controller
         ]);
     }
 
-
-    /**
-     * 検索された内容をサーチする
-     */
-
-     public function search(Request $request){
-// sessionの$itemsを呼び出す
-$session_items= session()->get('items');
-
-$result = preg_grep('/($request->search)/', $session_items);
-
-
-dd($result);
-
-        return view('pslg01.pslg01', [
-            // 'items' => $items,
-            // 'count' => $count,
-            // 'personnel_data' => $personnel_data,
-
-        ]);
-     }
+ 
 
     /**
      * 一覧表示された内容をダウンロードする

@@ -137,6 +137,7 @@
                     </form>
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                    <font size="-2" color="red">削除有効化</font>
                     </div>
                     <p>
                     登録日:{{$top_department[0]->created_at}} 修正日:{{$top_department[0]->updated_at}}
@@ -295,6 +296,7 @@
                     </form>
                     
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                    <font size="-2" color="red">削除有効化</font>
                     </div>
                     <p>
                     登録日:{{$click_department_data[0]->created_at}} 修正日:{{$click_department_data[0]->updated_at}}
@@ -474,6 +476,7 @@
                     </form>
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                    <font size="-2" color="red">削除有効化</font>
                     </div>
                         <p>登録日:{{$click_personnel_data[0]->created_at}} 修正日:{{$click_personnel_data[0]->updated_at}}</p>
                     </div>

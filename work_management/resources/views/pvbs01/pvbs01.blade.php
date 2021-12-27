@@ -40,6 +40,7 @@
                         {{--ここまで--}}
 
                         <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                        <font size="-2" color="red">削除有効化</font>
                         </div>
                     </div>
             </div>

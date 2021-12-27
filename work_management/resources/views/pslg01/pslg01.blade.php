@@ -4,7 +4,7 @@
 <div class="col border border-primary" style="padding:10px;">
     <div class="container-fluid">
         <!--詳細領域  -->
-    <div class="row">
+        <div class="row">
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="container-fluid">
                     <div class="row">
@@ -85,10 +85,10 @@
 
                         <div class="row justify-content-start">
                             <div class="col-6" id="okSystem">
-
+                                <!-- 管理者を選択した場合ここにシステム情報メッセージのチェックボックスがが表示される -->
                             </div>
                             <div class="col-6" id="errSystem">
-
+                                <!-- 管理者を選択した場合ここにシステム異常メッセージのチェックボックスがが表示される -->
                             </div>
                         </div>
                     </div>
@@ -123,7 +123,7 @@
                             </div>
                         </div>
                         <div class="col-2">
-                        
+
                             <p id="log_count" value="{{$count}}">件数:&nbsp;&nbsp;{{$count}} 件</p>
                             @endif
                         </div>
@@ -179,7 +179,7 @@
                         </div>
                         @endif
                     </div>
-    <!-- 一覧操作領域ここまで -->
+                    <!-- 一覧操作領域ここまで -->
                 </div>
             </div>
         </div>

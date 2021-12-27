@@ -6,6 +6,7 @@
     use App\Models\Date;
     use App\Libraries\php\DatabaseException;
     use App\Libraries\php\OutputLog;
+    use App\Libraries\php\ProjectionDataBase;
 
     /**
      * 階層構造に関係する機能クラス
@@ -177,6 +178,23 @@
                         throw new \Exception("データの取得に失敗しました");
                     }
                     array_push($personnel_data,$data[0]);
+                }elseif($code == "ta"){
+                    $projection_db = new ProjectionDataBase();
+                    $projection_data = $projection_db->getId($select_list);
+                    if(substr($projection_data[0]->projection_source_id,0,2) == "bs"){
+
+                        $data = DB::select('select 
+                        dcbs01.client_id, department_id,responsible_person_id,name,status,management_personnel_id,operation_start_date,operation_end_date,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
+                        from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id where dcbs01.client_id = ?
+                        and dcbs01.department_id = ?',[$client,$projection_data[0]->projection_source_id]);
+
+                        array_push($department_data,$data[0]);
+                    }elseif(substr($projection_data[0]->projection_source_id,0,2 == "ji")){
+                        $data = DB::select('select * from dcji01 inner join dccmks on dcji01.personnel_id = dccmks.lower_id where dcji01.client_id = ?
+                        and dcji01.personnel_id = ?',[$client,$projection_data[0]->projection_source_id]);
+
+                        array_push($personnel_data,$data[0]);
+                    }
                 }else{
 
                 }

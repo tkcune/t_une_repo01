@@ -217,7 +217,7 @@ class Psbs01Controller extends Controller
             }
             $department_data = $lists[0];
             $personnel_data = $lists[1];
-
+            
             //責任者を名前で取得
             $responsible = new ResponsiblePerson();
             if($click_department_data){
@@ -278,7 +278,7 @@ class Psbs01Controller extends Controller
 
             return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel','click_department_data',
             'department_max','departments','personnel_max','names','responsible_lists','department_high','personnel_high',
-            'click_department_high','click_management_lists','client','select_id','personnel_data','operation_date','all_personnel_data'));
+            'department_data','click_department_high','click_management_lists','client','select_id','personnel_data','operation_date','all_personnel_data'));
             
         }else{
             //選択した人員のデータを取得
@@ -388,7 +388,7 @@ class Psbs01Controller extends Controller
 
                 return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments','personnel_max','names',
                 'top_department','top_responsible','count_department','count_personnel','client','responsible_lists','department_high','personnel_high',
-                'select_id','personnel_data','click_personnel_data','operation_date','all_personnel_data','click_department_data'));
+                'department_data','select_id','department_data','personnel_data','click_personnel_data','operation_date','all_personnel_data','click_department_data'));
             }
 
             array_push($department_data,$data[0]);
@@ -461,7 +461,7 @@ class Psbs01Controller extends Controller
 
             return view('pacm01.pacm01',compact('data','count_department','count_personnel','department_max','departments','personnel_max','names',
             'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists',
-            'personnel_data','operation_date','all_personnel_data','click_department_data'));
+            'department_data','personnel_data','operation_date','all_personnel_data','click_department_data'));
         }
     }
 

@@ -162,7 +162,7 @@ class Pa0001Controller extends Controller
 
         return view('pacm01.pacm01',compact('top_management','department_max','departments','personnel_max','names',
         'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
-        'count_personnel','personnel_data','operation_date','all_personnel_data'));
+        'department_data','count_personnel','personnel_data','operation_date','all_personnel_data'));
     }
 
     /**
@@ -340,7 +340,7 @@ class Pa0001Controller extends Controller
         $operation_check->check($top_department);
 
         return view('pacm01.pacm01',compact('top_department','top_responsible','department_max','departments','personnel_max','names',
-        'responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data','operation_date','all_personnel_data'));
+        'department_data','responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data','operation_date','all_personnel_data'));
     }
 
     /**
@@ -488,7 +488,7 @@ class Pa0001Controller extends Controller
             $tree_data = $tree->set_view_treedata();
 
             return view('pacm01.pacm01',compact('click_department_data','click_management_lists','department_max','departments','personnel_max','names','responsible_lists',
-            'department_high','personnel_high','count_department','count_personnel','click_department_high','client','select_id','personnel_data','operation_date','all_personnel_data'));
+            'department_data','department_high','personnel_high','count_department','count_personnel','click_department_high','client','select_id','personnel_data','operation_date','all_personnel_data'));
         }else{
             //選択した人員のデータを取得
             try{
@@ -579,7 +579,7 @@ class Pa0001Controller extends Controller
                 
                 return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments',
                 'personnel_max','names','department_high','personnel_high','responsible_lists','top_department','top_responsible','count_department','count_personnel','client',
-                'select_id','personnel_data','click_personnel_data','operation_date','all_personnel_data'));
+                'department_data','select_id','personnel_data','click_personnel_data','operation_date','all_personnel_data'));
             }
             array_push($department_data,$data[0]);
 
@@ -633,7 +633,7 @@ class Pa0001Controller extends Controller
             $tree_data = $tree->set_view_treedata();
 
             return view('pacm01.pacm01',compact('count_department','count_personnel','click_management_lists','data','department_max','departments',
-            'personnel_max','names','responsible_lists','department_high','personnel_high','client','select_id','click_personnel_data','personnel_data','operation_date','all_personnel_data'));
+            'department_data','personnel_max','names','responsible_lists','department_high','personnel_high','client','select_id','click_personnel_data','personnel_data','operation_date','all_personnel_data'));
         }
     }
 
@@ -731,7 +731,7 @@ class Pa0001Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pvbs01.pvbs01',compact('top_department','top_responsible','department_max','departments','personnel_max','names',
-        'responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data'));
+        'department_data','responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data'));
     }
 
     /**
@@ -942,7 +942,7 @@ class Pa0001Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','department_max','departments','personnel_max',
-        'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data'));
+        'department_data','names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data'));
     }
 
     /**
@@ -1165,7 +1165,7 @@ class Pa0001Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','count_personnel','department_max',
-        'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date','all_personnel_data'));
+        'department_data','departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date','all_personnel_data'));
     }
 
     /**
@@ -1330,7 +1330,7 @@ class Pa0001Controller extends Controller
 
         return view('pvbs01.pvbs01',compact('department_max','departments','personnel_max','names',
         'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
-        'count_personnel','personnel_data','operation_date'));
+        'department_data','count_personnel','personnel_data','operation_date'));
     }
 
 }

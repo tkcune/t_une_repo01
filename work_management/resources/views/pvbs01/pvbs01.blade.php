@@ -154,7 +154,7 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                {{$count_department}}/{{$department_max}}
+                                {{$count_department}}/{{$department_max}}&nbsp;&nbsp;{{count($department_data)}}件
                                 <li class="page-item">
     @if($count_department<$department_max)
                                     <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
@@ -331,7 +331,7 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                {{$count_personnel}}/{{$personnel_max}}
+                                {{$count_personnel}}/{{$personnel_max}}&nbsp;&nbsp;{{count($personnel_data)}}件
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
                                     <a class="page-link" href="{{ route('pa0001.count_top',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1]) }}" aria-label="Next">

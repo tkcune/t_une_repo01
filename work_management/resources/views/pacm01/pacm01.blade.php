@@ -504,7 +504,7 @@
                         @else
                             <input type="hidden" id="high" name="high" value="{{$click_department_data[0]->department_id}}">
                         @endif
-                        <p>配下部署<button data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">新規</button>
+                        <p>@if(session('click_code') == "bs")配下@else所属@endif部署<button data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">新規</button>
                         </form>
 
                         <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
@@ -564,7 +564,7 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                {{$count_department}}/{{$department_max}}
+                                {{$count_department}}/{{$department_max}}&nbsp;&nbsp;{{count($department_data)}}件
                                 <li class="page-item">
     @if($count_department<$department_max)
                                     <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
@@ -598,7 +598,7 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                {{$count_department}}/{{$department_max}}
+                                {{$count_department}}/{{$department_max}}&nbsp;&nbsp;{{count($department_data)}}件
                                 <li class="page-item">
     @if($count_department<$department_max)
                                     <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
@@ -632,7 +632,8 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                {{$count_department}}/{{$department_max}}
+                                
+                                {{$count_department}}/{{$department_max}}&nbsp;&nbsp;{{count($department_data)}}件
                                 <li class="page-item">
     @if($count_department<$department_max)
                                     <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
@@ -666,7 +667,7 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                {{$count_department}}/{{$department_max}}
+                                {{$count_department}}/{{$department_max}}&nbsp;&nbsp;{{count($department_data)}}件
                                 <li class="page-item">
     @if($count_department<$department_max)
                                     <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel]) }}" aria-label="Next">
@@ -848,7 +849,7 @@
                                 @if($personnel_max == 0)
                                 0/0
                                 @else
-                                {{$count_personnel}}/{{$personnel_max}}
+                                {{$count_personnel}}/{{$personnel_max}}&nbsp;&nbsp;{{count($personnel_data)}}件
                                 @endif
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
@@ -886,7 +887,7 @@
                                 @if($personnel_max == 0)
                                 0/0
                                 @else
-                                {{$count_personnel}}/{{$personnel_max}}
+                                {{$count_personnel}}/{{$personnel_max}}&nbsp;&nbsp;{{count($personnel_data)}}件
                                 @endif
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
@@ -924,7 +925,7 @@
                                 @if($personnel_max == 0)
                                 0/0
                                 @else
-                                {{$count_personnel}}/{{$personnel_max}}
+                                {{$count_personnel}}/{{$personnel_max}}&nbsp;&nbsp;{{count($personnel_data)}}件
                                 @endif
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
@@ -959,7 +960,7 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                {{$count_personnel}}/{{$personnel_max}}
+                                {{$count_personnel}}/{{$personnel_max}}&nbsp;&nbsp;{{count($personnel_data)}}件
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
                                     <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1]) }}" aria-label="Next">

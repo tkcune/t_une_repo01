@@ -79,6 +79,7 @@ Route::prefix('pslg')->group(function () {
   Route::post('/download', [Pslg01Controller::class, 'download'])->name('pslg01.download');
 });
 
-
+//ネットワーク設定の画面のルート
 Route::get('/psnw01', [PsnwController::class, 'index'])->name('psnw01.index');
-Route::post('/psnw01', [PsnwController::class, 'create'])->name('psnw01.create');
+//ネットワーククライアントのデータベース保存
+Route::post('/psnw01/create', [PsnwController::class, 'create'])->name('psnw01.create');

@@ -14,7 +14,7 @@ class CreateDcnwTable extends Migration
      */
     public function up()
     {
-        Schema::create('dcnw', function (Blueprint $table) {
+        Schema::create('dcnw01', function (Blueprint $table) {
             $table->primary('client_id');
             $table->string('client_id', '10');
             $table->string('name', '256');
@@ -27,7 +27,7 @@ class CreateDcnwTable extends Migration
             $table->string('sending_server_way', '1');
             $table->integer('sending_port_number');
             $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('update_at')->useCurrent();
+            $table->timestamp('update_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
         });
     }
 
@@ -38,6 +38,6 @@ class CreateDcnwTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dcnw');
+        Schema::dropIfExists('dcnw01');
     }
 }

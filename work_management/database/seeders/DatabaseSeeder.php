@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
             DccmksSeeder::class,
             DccmtaSeeder::class,
             DcjiSeeder::class,
-            DclgSeeder::class
+            DclgSeeder::class,
+            DcnwSeeder::class
         ]);
     }
 }

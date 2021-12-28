@@ -1848,6 +1848,14 @@ var _require2 = __webpack_require__(/*! ./work_js/ptcmta */ "./resources/js/work
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
+document.getElementById('receive_combobox').addEventListener('change', function () {
+  if (document.getElementById('receive_combobox').value === '1') {
+    document.getElementById('recieving_port_number').value = '995';
+  } else if (document.getElementById('receive_combobox').value === '2') {
+    document.getElementById('recieving_port_number').value = '993';
+  }
+});
+
 /***/ }),
 
 /***/ "./resources/js/bootstrap.js":

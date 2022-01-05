@@ -10,7 +10,7 @@ use App\Libraries\php\Pagination;
 use App\Libraries\php\ResponsiblePerson;
 use App\Libraries\php\Hierarchical;
 use App\Http\Controllers\PtcmtrController;
-use App\Libraries\php\OutputLog;
+use App\Facades\OutputLog;
 use App\Models\Date;
 use App\Libraries\php\Message;
 use App\Libraries\php\ListDisplay;

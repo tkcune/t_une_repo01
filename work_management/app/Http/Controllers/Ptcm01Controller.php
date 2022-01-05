@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Libraries\php\Hierarchical;
-use App\Libraries\php\OutputLog;
+use App\Facades\OutputLog;
 use App\Libraries\php\Message;
 use App\Libraries\php\DatabaseException;
 use App\Libraries\php\ProjectionDataBase;

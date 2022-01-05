@@ -8,7 +8,7 @@ use App\Libraries\php\DatabaseException;
 use App\Libraries\php\Pagination;
 use App\Libraries\php\Hierarchical;
 use App\Libraries\php\StatusCheck;
-use App\Libraries\php\OutputLog;
+use App\Facades\OutputLog;
 use App\Libraries\php\ZeroPadding;
 use Illuminate\Support\Facades\Config;
 use App\Libraries\php\Message;

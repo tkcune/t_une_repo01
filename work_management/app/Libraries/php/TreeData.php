@@ -3,7 +3,7 @@
 namespace App\Libraries\php;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use App\Libraries\php\OutputLog;
+use App\Facades\OutputLog;
 use Exception;
 
 //ツリーのデータの作成

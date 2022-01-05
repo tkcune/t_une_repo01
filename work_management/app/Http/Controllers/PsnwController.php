@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PtcmtrController;
-use App\Libraries\php\OutputLog;
+use App\Facades\OutputLog;
 use App\Libraries\php\Network;
 use App\Http\Requests\CreateNetworkRequest;
 

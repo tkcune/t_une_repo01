@@ -11,7 +11,7 @@ use App\Libraries\php\Pagination;
 use App\Libraries\php\Hierarchical;
 use App\Libraries\php\ResponsiblePerson;
 use Illuminate\Support\Facades\Config;
-use App\Libraries\php\OutputLog;
+use App\Facades\OutputLog;
 use App\Libraries\php\Message;
 use App\Http\Controllers\PtcmtrController;
 use Illuminate\Support\Facades\View;

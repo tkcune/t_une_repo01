@@ -5,7 +5,7 @@
     use Illuminate\Support\Facades\DB;
     use App\Models\Date;
     use App\Libraries\php\DatabaseException;
-    use App\Libraries\php\OutputLog;
+    use App\Facades\OutputLog;
     use App\Libraries\php\ProjectionDataBase;
 
     /**

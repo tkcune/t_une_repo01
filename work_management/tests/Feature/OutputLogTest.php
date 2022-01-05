@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Libraries\php\OutputLog;
+use App\Facades\OutputLog;
 use Illuminate\Support\Str;
 
 class OutputLogTest extends TestCase

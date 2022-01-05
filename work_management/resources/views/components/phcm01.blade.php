@@ -8,6 +8,9 @@
         @if(session('message'))
         <div class="col-5">
             <p>{{ session('message') }}</p>
+            @php
+                session()->forget('message');
+            @endphp
         </div>
         @else
         <div class="col-5">

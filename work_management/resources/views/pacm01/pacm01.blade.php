@@ -735,11 +735,11 @@
                             <tr>
                             <td>{{$department->department_id}}</td>
                             @if($department->operation_start_date > \Carbon\Carbon::today()->format('Y-m-d') || (!(null == $department->operation_end_date) && \Carbon\Carbon::today()->format('Y-m-d') > $department->operation_end_date))
-                                <td><s><a href="{{ route('plbs01.show',[session('client_id'),$department->department_id])}}">{{$department->name}}</a></s></td>
+                                <td><s><a href="{{ route('plbs01.show',[session('client_id'),$department->department_id])}}" data-toggle="tooltip" title="運用中ではありません">{{$department->name}}</a></s></td>
                             @else
-                                <td><a href="{{ route('plbs01.show',[session('client_id'),$department->department_id])}}">{{$department->name}}</a></td>
+                                <td><a href="{{ route('plbs01.show',[session('client_id'),$department->department_id])}}" data-toggle="tooltip" title="クリックにより、当該部署に遷移します">{{$department->name}}</a></td>
                             @endif
-                            <td><a href="{{ route('plbs01.show',[session('client_id'),$department_high[$loop->index]->department_id])}}">{{$department_high[$loop->index]->name}}</a></td>
+                            <td><a href="{{ route('plbs01.show',[session('client_id'),$department_high[$loop->index]->department_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$department_high[$loop->index]->name}}</a></td>
                             <td>
                             @switch($department->status)
                                 @case(10)
@@ -762,7 +762,7 @@
                                 @break
                             @endswitch
                             </td>
-                            <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}">{{ $responsible_lists[$loop->index] }}</a></td>
+                            <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}" data-toggle="tooltip" title="クリックにより、責任者の人員詳細に遷移します">{{ $responsible_lists[$loop->index] }}</a></td>
                             <td>
                             【<a href="{{ route('pa0001.clipboard',$department->department_id)}}">複写</a>】
                             【<p id="bs_list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('bs_delete{{$loop->index}}').submit();">削除</p>】
@@ -1027,11 +1027,11 @@
                             <tr>
                             <td>{{ $name->personnel_id}}</td>
                             @if($name->operation_start_date > \Carbon\Carbon::today()->format('Y-m-d') || (!(null == $name->operation_end_date) && \Carbon\Carbon::today()->format('Y-m-d') > $name->operation_end_date))
-                            <td><s><a href="{{ route('plbs01.show',[session('client_id'),$name->personnel_id])}}">{{$name->name}}</a> </s> </td>
+                            <td><s><a href="{{ route('plbs01.show',[session('client_id'),$name->personnel_id])}}" data-toggle="tooltip" title="クリックにより、当該人員に遷移します">{{$name->name}}</a> </s> </td>
                             @else
-                            <td><a href="{{ route('plbs01.show',[session('client_id'),$name->personnel_id])}}">{{$name->name}}</a></td>
+                            <td><a href="{{ route('plbs01.show',[session('client_id'),$name->personnel_id])}}" data-toggle="tooltip" title="クリックにより、当該人員に遷移します">{{$name->name}}</a></td>
                             @endif 
-                            <td><a href="{{ route('plbs01.show',[session('client_id'),$personnel_high[$loop->index]->department_id])}}">{{$personnel_high[$loop->index]->name}}</a>
+                            <td><a href="{{ route('plbs01.show',[session('client_id'),$personnel_high[$loop->index]->department_id])}}" data-toggle="tooltip" title="クリックにより、所属部署に遷移します">{{$personnel_high[$loop->index]->name}}</a>
                             <td>
                             @switch($name->status)
                                 @case(10)

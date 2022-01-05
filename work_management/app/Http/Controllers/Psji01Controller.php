@@ -505,7 +505,7 @@ class Psji01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','count_personnel','department_max',
+        return view('pacm01.pacm01',compact('count_department','department_data','personnel_data','select_id','count_personnel','department_max',
         'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date','all_personnel_data'));
     }
 

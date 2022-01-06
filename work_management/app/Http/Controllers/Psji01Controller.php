@@ -86,8 +86,8 @@ class Psji01Controller extends Controller
         //リクエストに空白が無いかどうかの確認
         if(empty($name) || empty($email) || empty($status)){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
-            $message = Message::get_message('mhcmer0003',[0=>'']);
-            session(['message'=>$message[0]]);
+            $message = Message::get_message_handle('mhcmer0003',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             return back();
         }
 
@@ -539,8 +539,8 @@ class Psji01Controller extends Controller
         //複写番号が空白の場合エラーメッセージを表示
         if($request->copy_id == null){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
-            $message = Message::get_message('mhcmer0009',[0=>'']);
-            session(['message'=>$message[0]]);
+            $message = Message::get_message_handle('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             return redirect()->route('index');
         }
 
@@ -560,7 +560,8 @@ class Psji01Controller extends Controller
             if(substr($projection_source_id,0,2) == "bs"){
                 //エラーメッセージ表示
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0010');
-                DatabaseException::commonError($e);
+                $message = Message::get_message_handle('mhcmer0010',[0=>'']);
+                session(['message'=>$message[0],'handle_message'=>$message[3]]);
                 return redirect()->route('index');
             }
 

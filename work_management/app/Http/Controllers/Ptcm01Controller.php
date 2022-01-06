@@ -59,8 +59,8 @@ class Ptcm01Controller extends Controller
         //複写番号が空白の場合はエラーメッセージを表示
         if($request->projection_source_id == null){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
-            $message = Message::get_message('mhcmer0009',[0=>'']);
-            session(['message'=>$message[0]]);
+            $message = Message::get_message_handle('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             return redirect()->route('index');
         }
 

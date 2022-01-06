@@ -2,6 +2,7 @@
 
 namespace App\Libraries\php;
 
+use App\Facades\OutputLog;
 use Carbon\Carbon;
 use App\Models\Date;
 
@@ -27,14 +28,14 @@ use App\Models\Date;
         foreach($datas as $data){
             if($data->status == "13" && (Carbon::parse($data->operation_start_date)->format('Y-m-d') > $today || Carbon::parse($data->operation_end_date)->format('Y-m-d') < $today) ){
                 OutputLog::message_log(__FUNCTION__,'mhbswn0001');
-                $message = Message::get_message('mhbswn0001',[0=>'01']);
-                session(['message'=>$message[0]]);
+                $message = Message::get_message_handle('mhbswn0001',[0=>'01']);
+                session(['message'=>$message[0],'handle_message'=>$message[3]]);
             }
             
             if($data->status == "18" && (Carbon::parse($data->operation_start_date)->format('Y-m-d') < $today && $today < Carbon::parse($data->operation_end_date)->format('Y-m-d')) ){
                 OutputLog::message_log(__FUNCTION__, 'mhbswn0002');
-                $message = Message::get_message('mhbswn0002',[0=>'02']);
-                session(['message'=>$message[0]]);
+                $message = Message::get_message_handle('mhbswn0002',[0=>'02']);
+                session(['message'=>$message[0],'handle_message'=>$message[3]]);
             }
 
         }

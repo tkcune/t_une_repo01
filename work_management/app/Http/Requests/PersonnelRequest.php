@@ -9,6 +9,7 @@ use App\Libraries\php\Message;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Rules\JapaneseAndAlphaNumRule;
+use App\Rules\StatusRule;
 
 class PersonnelRequest extends FormRequest
 {
@@ -60,25 +61,24 @@ class PersonnelRequest extends FormRequest
             );
         }elseif($validator->errors()->first('name')=="英数字、ひらがな、カタカナ、漢字で入力してください"){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0012','01');
-            $message = Message::get_message('mhcmer0012',[0=>'']);
-            session(['message'=>$message[0]]);
+            $message = Message::get_message_handle('mhcmer0012',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             // リダイレクト先
             throw new HttpResponseException(
             back()->withInput($this->input)->withErrors($validator)
             );
         }elseif($validator->errors()->first('status')=="不正な入力が行われました"){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0013','01');
-            $message = Message::get_message('mhcmer0013',[0=>'']);
-            session(['message'=>$message[0]]);
-            dd($message);
+            $message = Message::get_message_handle('mhcmer0013',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             // リダイレクト先
             throw new HttpResponseException(
             back()->withInput($this->input)->withErrors($validator)
             );
         }else{
             OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
-            $message = Message::get_message('mhcmer0003',[0=>'']);
-            session(['message'=>$message[0]]);
+            $message = Message::get_message_handle('mhcmer0003',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             $this->merge(['validated' => 'true']);
             // リダイレクト先
             throw new HttpResponseException(

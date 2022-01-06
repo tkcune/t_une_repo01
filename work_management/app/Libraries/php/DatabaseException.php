@@ -21,8 +21,8 @@
         public static function common($e){
 
             OutputLog::log(__CLASS__, 'sy', '00', $e->getMessage());
-            $message = Message::get_message('mhcmer0001',[0=>'01']);
-            session(['message'=>$message[0]]);
+            $message = Message::get_message_handle('mhcmer0001',[0=>'01']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             
         }
 
@@ -35,8 +35,8 @@
         public static function dataCatchMiss($e){
 
             OutputLog::log(__CLASS__, 'sy', '00', $e->getMessage());
-            $message = Message::get_message('mhcmer0001',[0=>'02']);
-            session(['message'=>$message[0]]);
+            $message = Message::get_message_handle('mhcmer0001',[0=>'02']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
 
         }
 
@@ -50,8 +50,8 @@
         public static function commonError($e,$num){
 
             OutputLog::log(__CLASS__, 'sy', '00', $e);
-            $message = Message::get_message('mhcmer0001',[0=>$num]);
-            session(['message'=>$message[0]]);
+            $message = Message::get_message_handle('mhcmer0001',[0=>$num]);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             
         }
     }

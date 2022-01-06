@@ -565,8 +565,8 @@ class Psbs01Controller extends Controller
         //複写番号が空白の場合エラーメッセージを表示
         if($request->lower_id == null){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
-            $message = Message::get_message('mhcmer0009',[0=>'']);
-            session(['message'=>$message[0]]);
+            $message = Message::get_message_handle('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             return redirect()->route('index');
         }
 
@@ -583,8 +583,8 @@ class Psbs01Controller extends Controller
         if($move_flag == false){
             //ログ処理
             OutputLog::message_log(__FUNCTION__, 'mhcmer0011','01');
-            $message = Message::get_message('mhcmer0011',[0=>'']);
-            session(['message'=>$message[0]]);
+            $message = Message::get_message_handle('mhcmer0011',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             return back();
         }
         
@@ -951,8 +951,8 @@ class Psbs01Controller extends Controller
 
         if($request->copy_id == null){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
-            $message = Message::get_message('mhcmer0009',[0=>'']);
-            session(['message'=>$message[0]]);
+            $message = Message::get_message_handle('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             return redirect()->route('index');
         }
 

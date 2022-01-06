@@ -7,9 +7,10 @@
 
         @if(session('message'))
         <div class="col-5">
-            <p>{{ session('message') }}</p>
+            <p @if(!empty(session('handle_message'))) data-toggle="tooltip" title="{{session('handle_message')}}" @endif>{{ session('message') }}</p>
             @php
                 session()->forget('message');
+                session()->forget('handle_message');
             @endphp
         </div>
         @else

@@ -8,6 +8,8 @@ use App\Libraries\php\Message;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Rules\JapaneseAndAlphaNumRule;
+use App\Rules\StatusRule;
+use App\Rules\PersonnelRule;
 
 class DepartmentRequest extends FormRequest
 {
@@ -30,7 +32,8 @@ class DepartmentRequest extends FormRequest
     {
         return [
             'name' =>['required',new JapaneseAndAlphaNumRule],
-            'status'=>'required',
+            'status'=>['required',new StatusRule],
+            'responsible_person_id'=>['required',new PersonnelRule],
             'management_number'=>'required',
         ];
     }
@@ -54,8 +57,15 @@ class DepartmentRequest extends FormRequest
             throw new HttpResponseException(
             back()->withInput($this->input)->withErrors($validator)
             );
+        }elseif($validator->errors()->first('status')=="不正な入力が行われました" or $validator->errors()->first('responsible_person_id')=="不正な入力が行われました"){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0013','01');
+            $message = Message::get_message('mhcmer0013',[0=>'']);
+            session(['message'=>$message[0]]);
+            // リダイレクト先
+            throw new HttpResponseException(
+            back()->withInput($this->input)->withErrors($validator)
+            );
         }else{
-            dd($validator);
             OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
             $message = Message::get_message('mhcmer0003',[0=>'']);
             session(['message'=>$message[0]]);

@@ -72,6 +72,30 @@ Class Message{
 
         return [$message, $type, $function];
     }
+
+    //メッセージ番号からメッセージと対処メッセージを取得する
+    //@param string $message_code メッセージ番号
+    //@param array $message_string メッセージに挿入する文字,可変長引数
+    //@return array メッセージ、種別、機能, 対処メッセージ
+    public static function get_message_handle(string $message_code, $message_string){
+        //@var array メッセージ、種別、機能
+        [$message, $type, $function] = Message::get_message($message_string, $message_string);
+        
+        //@var array 対処メッセージリスト
+        $handle_message_list = Config::get('handlemessage');
+
+        //config/handlemessage.phpがない場合は、エラーメッセージを返す
+        if($handle_message_list == null){
+            //ない場合のID=9001
+            $message = sprintf('エラーです。エラーID【%s】', '9001');
+            return [$message, 'er', 'cm', ''];
+        }
+
+        //@var string メッセージリストからメッセージを取得する
+        $handle_message = Arr::get($handle_message_list, $message_code, '');
+
+        return [$message, $type, $function, $handle_message];
+    }
 }
 
 ?>

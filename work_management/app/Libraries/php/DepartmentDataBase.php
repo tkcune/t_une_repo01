@@ -195,17 +195,18 @@
          * @param $status 状態
          * @param $management_personnel_id 管理者ID 
          * @param $operation_start_date 稼働開始日
+         * @param $remarks 備考
          * 
          */
         public static function insert($client_id,$department_id,$responsible_person_id,
-        $name,$status,$management_personnel_id,$operation_start_date){
+        $name,$status,$management_personnel_id,$operation_start_date,$remarks){
 
             DB::insert('insert into dcbs01 (client_id,department_id,
             responsible_person_id,name,status,management_personnel_id,
-            operation_start_date) VALUE (?,?,?,?,?,?,?)',
+            operation_start_date,remarks) VALUE (?,?,?,?,?,?,?,?)',
             [$client_id,$department_id,$responsible_person_id,
             $name,$status,$management_personnel_id,
-            $operation_start_date]);
+            $operation_start_date,$remarks]);
 
         }   
 

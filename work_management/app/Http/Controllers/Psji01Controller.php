@@ -81,6 +81,7 @@ class Psji01Controller extends Controller
         $login_authority = $request->login_authority;
         $system_management = $request->system_management;
         $high = $request->high;
+        $remarks = $request->remarks;
         $date = new Date();
 
         //リクエストに空白が無いかどうかの確認
@@ -107,7 +108,7 @@ class Psji01Controller extends Controller
 
             //データベースに人員情報を登録
             $personnel_db = new PersonnelDataBase();
-            $personnel_db->insert($client_id,$personnel_id,$name,$email,$password,$status,$login_authority,$system_management);
+            $personnel_db->insert($client_id,$personnel_id,$name,$email,$password,$status,$login_authority,$system_management,$remarks);
             //データベースに階層情報を登録
             $hierarchical = new Hierarchical();
             $hierarchical->insert($client_id,$personnel_id,$high);

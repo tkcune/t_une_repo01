@@ -11,8 +11,6 @@
             {{-- hiddenのvalueはダミーデータ　--}}
 
             <input type="hidden" name="client_id" value="{{ session('client_id') }}">
-            <input type="hidden" name="responsible_person_id" value="ji00000001">
-            <input type="hidden" name="management_number" value="ji00000001">
 
             {{-- ダミーデータここまで　--}}
             <input type="hidden" name="high" value="{{ $_GET["high"] }}">
@@ -23,11 +21,30 @@
                         <p id="palent">部署名<input type="text" name="name" value="{{ old('name') }}" data-toggle="tooltip" title="部署の名称を入力します"></p>
                     </div>
                     <div class="col">
-
+                        <p>番号:</p>
                     </div>
                     <div class="col">
 
                     </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" data-toggle="tooltip" 
+                        title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"
+                        value="ji00000001" style="width:100px;" readonly></p>
+                    </div>
+                    <div class="col-3" style="padding:0px">
+                        <p>管理者名：</p>
+                    </div>
+                    <div class="col" style="padding:0px">
+ 
+                    <p>管理者検索：
+                        <input type="text" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
+                        data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
+                    </p>
+                    </div>
+                    <div id="output_message"></div>
                 </div>
 
                 <div class="row">
@@ -41,9 +58,24 @@
                         <option value="14" @if(old("status") == 14) selected @endif>休止</option>
                         <option value="18" @if(old("status") == 18) selected @endif>廃止</option>
                         </select>
+                        責任者:
+                        <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します" readonly>
+                            <option value="ji00000001">山田一郎</option>
+                        </select>
                         </p>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col">
+                        運用開始日<input name="start_day" type="date" value="{{date('Y-m-d')}}" readonly>
+                    </div>
+                    <div class="col">
+                        運用終了日<input name="finish_day" type="date" value="" readonly>
+                    </div>
+                </div>
+
+                <input type="hidden" id="remarks" name="remarks" value="">
 
                 <div class="row">
                     <div class="col">
@@ -52,6 +84,16 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div>
+                        備考
+                    </div>
+                    <div>
+                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;"></textarea>
+                    </div>
+                </div>
+
             </form>
             </div>
     </div>     

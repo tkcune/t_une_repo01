@@ -10,14 +10,42 @@
             {{-- hiddenのvalueはダミーデータ　--}}
             <input type="hidden" name="client_id" value="aa00000001">
             <input type="hidden" name="high" value="{{ $_GET["high"] }}">
-            <input type="hidden" name="management_number" value="dummy">
 
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
-                    <div class="row">
-                        <div class="col-4">
-                            <p id="palent">名前<input type="text" name="name" value="" data-toggle="tooltip" title="人員の名称を入力します"></p>
-                        </div>
+                <div class="row">
+                    <div class="col-4">
+                        <p id="palent">名前<input type="text" name="name" value="" data-toggle="tooltip" title="人員の名称を入力します"></p>
                     </div>
+                    <div class="col-3">
+                        <p>番号:</p>
+                    </div>
+                    <div class="col-3">
+                        上位:
+                    </div>
+                    <div class="col-2">
+                    <input type="button" value="ツリー表示" onclick="displayOn()"
+                    data-toggle="tooltip" title="ツリーを表示します">
+                    </div>
+                <div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="ji00000001" style="width:100px;"
+                        data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます" readonly></p>
+                    </div>
+                    <div class="col-3" style="padding:0px">
+                        <p>管理者名：</p>
+                    </div>
+                    <div class="col" style="padding:0px">
+                    <p>管理者検索：
+                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32"
+                        
+                        data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
+                        <datalist id="keywords">
+                        </datalist>
+                    </p>
+                    </div>
+                </div>
 
                     <div class="row">
                         <div class="col-5">
@@ -54,10 +82,30 @@
 
                     <div class="row">
                         <div class="col">
+                            運用開始日<input name="start_day" type="date" value="{{date('Y-m-d')}}" readonly>
+                        </div>
+                        <div class="col">
+                            運用終了日<input name="finish_day" type="date" value="" readonly>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="remarks" name="remarks" value="">
+
+                    <div class="row">
+                        <div class="col">
                             <div style="display:inline-flex">
                             <input type="submit" value="確定"
                             data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div>
+                            備考
+                        </div>
+                        <div>
+                            <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;"></textarea>
                         </div>
                     </div>
             </div>

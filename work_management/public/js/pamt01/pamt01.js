@@ -303,14 +303,4 @@ $(function () {
   $('#search-text').on('input', searchWord);
 });
 
-/**
- * 備考欄挿入
- * @var value 備考欄の中身
- * 
- */
 
-function remarks() {
-  var value = document.getElementById("remarks_set").value;
-  document.getElementById("remarks").defaultValue = value;
-}
-document.getElementById("remarks_set").onchange = remarks;

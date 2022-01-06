@@ -191,8 +191,9 @@
          * @param $status 状態
          * @param $login_authority ログイン権限
          * @param $system_management 管理者権限
+         * @param $remarks 備考
          */
-        public static function insert($client_id,$personnel_id,$name,$email,$password,$status,$login_authority,$system_management){
+        public static function insert($client_id,$personnel_id,$name,$email,$password,$status,$login_authority,$system_management,$remarks){
 
             $date = new Date();
 
@@ -207,9 +208,10 @@
             management_personnel_id,
             login_authority,
             system_management,
-            operation_start_date
+            operation_start_date,
+            remarks
             )
-            VALUE (?,?,?,?,?,?,?,?,?,?,?)',
+            VALUE (?,?,?,?,?,?,?,?,?,?,?,?)',
             [
             $client_id,
             $personnel_id,
@@ -221,7 +223,8 @@
             $personnel_id,
             $login_authority,
             $system_management,
-            $date->today()
+            $date->today(),
+            $remarks
             ]);
 
         }

@@ -83,6 +83,7 @@ class Psbs01Controller extends Controller
         $high = $request->high;
         $date = new Date();
         $operation_start_date = $date->today();
+        $remarks = $request->remarks;
 
         //顧客IDに対応した最新の部署IDを取得
         try{
@@ -106,7 +107,7 @@ class Psbs01Controller extends Controller
         try{
             $department_db = new DepartmentDataBase();
             $department_db->insert($client_id,$department_id,$responsible_person_id,
-            $name,$status,$management_personnel_id,$operation_start_date);
+            $name,$status,$management_personnel_id,$operation_start_date,$remarks);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);

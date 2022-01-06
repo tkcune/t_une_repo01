@@ -79,7 +79,7 @@ Class Message{
     //@return array メッセージ、種別、機能, 対処メッセージ
     public static function get_message_handle(string $message_code, $message_string){
         //@var array メッセージ、種別、機能
-        [$message, $type, $function] = Message::get_message($message_string, $message_string);
+        [$message, $type, $function] = Message::get_message($message_code, $message_string);
         
         //@var array 対処メッセージリスト
         $handle_message_list = Config::get('handlemessage');

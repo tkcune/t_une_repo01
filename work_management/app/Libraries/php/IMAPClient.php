@@ -35,6 +35,8 @@ class IMAPclient {
             $all_messages = $this->client->getFolder("INBOX")->messages()->all();
             $latest_number = $all_messages->count();
             $mail = $all_messages->get()[$latest_number - 1]->getTextBody();
+            $mail = preg_split("/\r\n/", $mail);
+            $mail = preg_replace('/ /', '&nbsp;', $mail);
             HeaderMessage::set_header_message('mmnwok0003');
         }catch(Exception $e){
             $mail = '';

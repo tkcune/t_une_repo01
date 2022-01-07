@@ -75,16 +75,19 @@ class POPClient {
     }
 
     private function trim_latest($mail_array){
-        $latest_mail = '';
+        $latest_mail = [];
         $is_mail_body = false;
         foreach($mail_array as $line){
             if($line == "\r\n"){
                 $is_mail_body = true;
             }
             if($is_mail_body == true){
-                $latest_mail .=$line;
+                $line = preg_replace("/ /", '&nbsp;',$line);
+                $latest_mail[] = $line;
             }
         }
+        array_shift($latest_mail);
+        array_pop($latest_mail);
         return $latest_mail;
     }
 

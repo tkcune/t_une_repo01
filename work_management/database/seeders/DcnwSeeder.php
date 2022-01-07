@@ -16,6 +16,10 @@ class DcnwSeeder extends Seeder
     {
         DB::insert('insert into dcnw01 (client_id, name, email, password, recieving_server, recieving_server_way, recieving_port_number, sending_server, sending_server_way, sending_port_number)
             VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            ['aa00000001', 'sagyotest@b-forme.net', 'sagyotest@b-forme.net', 'sagyopass', 'imap4.muumuu-mail.com', '1', '993', 'smtp.muumuu-mail.com', '1', '587']);
+            ['aa00000001', 'sagyotest@b-forme.net', 'sagyotest@b-forme.net', 'sagyopass', 'imap4.muumuu-mail.com', '2', '993', 'smtp.muumuu-mail.com', '1', '587']);
+        
+        DB::insert('insert into dcnw01 (client_id, name, email, password, recieving_server, recieving_server_way, recieving_port_number, sending_server, sending_server_way, sending_port_number)
+            VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            ['aa00000002', 'sagyotest@b-forme.net', 'sagyotest@b-forme.net', 'sagyopass', 'pop3.muumuu-mail.com', '1', '995', 'smtp.muumuu-mail.com', '1', '587']);
     }
 }

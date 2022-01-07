@@ -7,7 +7,7 @@ use App\Http\Controllers\Psji01Controller;
 use App\Http\Controllers\Ptcm01Controller;
 use App\Http\Controllers\Pslg01Controller;
 use App\Http\Controllers\LogController;
-use App\Http\Controllers\PsnwController;
+use App\Http\Controllers\Psnw01Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +80,13 @@ Route::prefix('pslg')->group(function () {
 });
 
 //ネットワーク設定の画面のルート
-Route::get('/psnw01', [PsnwController::class, 'index'])->name('psnw01.index');
-//ネットワーククライアントのデータベース保存
-Route::post('/psnw01/create', [PsnwController::class, 'create'])->name('psnw01.create');
+//Psnw01Controllerに関するルーティング
+Route::prefix('psnw01')->group(function () {
+  Route::get('/', [Psnw01Controller::class, 'index'])->name('psnw01.index');
+  //ネットワーククライアントのデータベース保存
+  Route::post('/create', [Psnw01Controller::class, 'create'])->name('psnw01.create');
+  //メール送信試験
+  Route::post('/send', [Psnw01Controller::class, 'send'])->name('psnw01.send');
+  //メール受信試験
+  Route::post('/receive', [Psnw01Controller::class, 'receive'])->name('psnw01.receive');
+});

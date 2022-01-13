@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Facades\OutputLog;
 use App\Http\Controllers\PtcmtrController;
-use App\Libraries\php\Message;
 use App\Libraries\php\Service\DatabaseException;
+use App\Libraries\php\Service\Message;
 use App\Libraries\php\Domain\Hierarchical;
 use App\Libraries\php\Domain\ProjectionDataBase;
 

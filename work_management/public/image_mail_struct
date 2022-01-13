@@ -1,0 +1,185 @@
+a:184:{i:0;s:34:"Return-Path: <hioki@b-forme.net>
+";i:1;s:38:"X-Original-To: sagyotest@b-forme.net
+";i:2;s:37:"Delivered-To: sagyotest@b-forme.net
+";i:3;s:66:"Received: from mail005.muumuu-domain.com (localhost [127.0.0.1])
+";i:4;s:68:"	by mail005.muumuu-domain.com (Postfix) with ESMTP id A51B51540628
+";i:5;s:69:"	for <sagyotest@b-forme.net>; Wed, 12 Jan 2022 14:30:51 +0900 (JST)
+";i:6;s:44:"Received: from 172.19.44.41 (172.19.44.41)
+";i:7;s:50:" by mail005.muumuu-domain.com (LOLIPOP-Fsecure);
+";i:8;s:40:" Wed, 12 Jan 2022 14:30:51 +0900 (JST)
+";i:9;s:40:"X-Virus-Status: clean(LOLIPOP-Fsecure)
+";i:10;s:88:"Received: from mx-proxy005.phy.lolipop.jp (mx-proxy005.phy.lolipop.lan [172.19.44.41])
+";i:11;s:68:"	by mx-proxy005.phy.lolipop.jp (Postfix) with ESMTP id A3EE3700553
+";i:12;s:69:"	for <sagyotest@b-forme.net>; Wed, 12 Jan 2022 14:30:51 +0900 (JST)
+";i:13;s:44:"Received: from 157.7.104.45 (157.7.104.45)
+";i:14;s:51:" by mx-proxy005.phy.lolipop.jp (LOLIPOP-Fsecure);
+";i:15;s:40:" Wed, 12 Jan 2022 14:30:51 +0900 (JST)
+";i:16;s:97:"Received: from smtp-proxy004.phy.lolipop.lan (HELO smtp-proxy004.phy.lolipop.jp) (172.19.44.45)
+";i:17;s:59:"  (smtp-auth username hioki@b-forme.net, mechanism plain)
+";i:18;s:95:"  by smtp-proxy004.phy.lolipop.jp (qpsmtpd/0.82) with ESMTPA; Wed, 12 Jan 2022 14:30:51 +0900
+";i:19;s:46:"Received: from 157.7.105.218 (157.7.105.218)
+";i:20;s:53:" by smtp-proxy004.phy.lolipop.jp (LOLIPOP-Fsecure);
+";i:21;s:40:" Wed, 12 Jan 2022 14:30:51 +0900 (JST)
+";i:22;s:40:"X-Virus-Status: clean(LOLIPOP-Fsecure)
+";i:23;s:39:"Date: Wed, 12 Jan 2022 14:30:51 +0900
+";i:24;s:25:"From: hioki@b-forme.net
+";i:25;s:27:"To: sagyotest@b-forme.net
+";i:26;s:90:"Message-ID: <61de678b8bec7_1e853fe1a50166a4312a5@web-157-7-105-218.muumuu-mail.com.mail>
+";i:27;s:49:"Subject: =?ISO-2022-JP?B?GyRCQUJETDNORycbKEI=?=
+";i:28;s:19:"Mime-Version: 1.0
+";i:29;s:34:"Content-Type: multipart/related;
+";i:30;s:64:" boundary="--==_mimepart_61de678b8afdb_1e853fe1a50166a43113e";
+";i:31;s:22:" charset=ISO-2022-JP
+";i:32;s:33:"Content-Transfer-Encoding: 7bit
+";i:33;s:2:"
+";i:34;s:2:"
+";i:35;s:53:"----==_mimepart_61de678b8afdb_1e853fe1a50166a43113e
+";i:36;s:38:"Content-Type: multipart/alternative;
+";i:37;s:64:" boundary="--==_mimepart_61de678b8a86f_1e853fe1a50166a431049";
+";i:38;s:22:" charset=ISO-2022-JP
+";i:39;s:33:"Content-Transfer-Encoding: 7bit
+";i:40;s:2:"
+";i:41;s:2:"
+";i:42;s:53:"----==_mimepart_61de678b8a86f_1e853fe1a50166a431049
+";i:43;s:27:"Content-Type: text/plain;
+";i:44;s:22:" charset=ISO-2022-JP
+";i:45;s:35:"Content-Transfer-Encoding: base64
+";i:46;s:2:"
+";i:47;s:62:"IBskQkFCREwzTkcnGyhCIAogIAogGyRCQUJETDNORycbKEIgCiAgCiAbJEJB
+";i:48;s:30:"QkRMM05HJxsoQiAKICZuYnNwOyA=
+";i:49;s:2:"
+";i:50;s:53:"----==_mimepart_61de678b8a86f_1e853fe1a50166a431049
+";i:51;s:26:"Content-Type: text/html;
+";i:52;s:22:" charset=ISO-2022-JP
+";i:53;s:35:"Content-Transfer-Encoding: base64
+";i:54;s:2:"
+";i:55;s:62:"PHA+GyRCQUJETDNORycbKEI8L3A+CjxwPjxpbWcgc3JjPSJjaWQ6NjFkZTY3
+";i:56;s:62:"NmM5ODIwMV82ZjY2M2ZlMWE1MDE2NmE0NDAwM2VAd2ViLTE1Ny03LTEwNS0y
+";i:57;s:62:"MTgubXV1bXV1LW1haWwuY29tLm1haWwiIGFsdD0iSW5saW5lSW1hZ2U6IGJh
+";i:58;s:62:"Y2sucG5nIj48L3A+CjxwPhskQkFCREwzTkcnGyhCPC9wPgo8cD48aW1nIHNy
+";i:59;s:62:"Yz0iY2lkOjYxZGU2NzdhNzdlODRfNGY3YzNmZTFhNTAxNjZhNDMzNDc2QHdl
+";i:60;s:62:"Yi0xNTctNy0xMDUtMjE4Lm11dW11dS1tYWlsLmNvbS5tYWlsIiBhbHQ9Iklu
+";i:61;s:62:"bGluZUltYWdlOiBicy5wbmciPjwvcD4KPHA+GyRCQUJETDNORycbKEI8L3A+
+";i:62;s:14:"CjxwPjwvcD4=
+";i:63;s:2:"
+";i:64;s:55:"----==_mimepart_61de678b8a86f_1e853fe1a50166a431049--
+";i:65;s:2:"
+";i:66;s:53:"----==_mimepart_61de678b8afdb_1e853fe1a50166a43113e
+";i:67;s:27:"Content-Type: text/plain;
+";i:68;s:17:" charset=UTF-8;
+";i:69;s:44:" name="=?ISO-2022-JP?B?cm9ib3RzLnR4dA==?="
+";i:70;s:45:"Content-Transfer-Encoding: quoted-printable
+";i:71;s:34:"Content-Disposition: attachment;
+";i:72;s:48:" filename="=?ISO-2022-JP?B?cm9ib3RzLnR4dA==?="
+";i:73;s:89:"Content-ID: <61de67884a19_20913fe1a50166a434988@web-157-7-105-218.muumuu-mail.com.mail>
+";i:74;s:2:"
+";i:75;s:15:"User-agent: *
+";i:76;s:11:"Disallow:
+";i:77;s:2:"
+";i:78;s:53:"----==_mimepart_61de678b8afdb_1e853fe1a50166a43113e
+";i:79;s:26:"Content-Type: image/png;
+";i:80;s:40:" name="=?ISO-2022-JP?B?YmFjay5wbmc=?="
+";i:81;s:35:"Content-Transfer-Encoding: base64
+";i:82;s:30:"Content-Disposition: inline;
+";i:83;s:44:" filename="=?ISO-2022-JP?B?YmFjay5wbmc=?="
+";i:84;s:90:"Content-ID: <61de676c98201_6f663fe1a50166a44003e@web-157-7-105-218.muumuu-mail.com.mail>
+";i:85;s:2:"
+";i:86;s:62:"iVBORw0KGgoAAAANSUhEUgAAAOAAAADSCAIAAADc/VsQAAAAAXNSR0IArs4c
+";i:87;s:62:"6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAkNSURB
+";i:88;s:62:"VHhe7d3dj5xlHcbxuXdnZ2Y7Q9m1S4tS0ba0FC3FhJ4RA6Wgoii10qASBCJg
+";i:89;s:62:"fInGA+MfoEY9MCGmxChKfMEIBUmJivJXKL6dqbHabZFqQrvdeXZnnhnW5Hdy
+";i:90;s:62:"7/387mQn4+5V9/s56ZWQ6czsXp2Di2fuJwz6SzVH79U/Wlql+LeFRAjBEjal
+";i:91;s:62:"YZiwlAjtayzF6m/aYykRJuvuXwcooKCQRkEhjYJCGgWFNAoKaRQU0sLS+b9Z
+";i:92;s:62:"TCz9+lFLsU79kqWUP4NhMygH7hC+0KreO9uHv2opMTWzkz5BGgWFNAoKaRQU
+";i:93;s:62:"0igopFFQSKOgkBa6Z/9sMVG+/GlLsfbUsqUKXA+6qQ0GA0uJhebbLcVah79m
+";i:94;s:62:"KdGY280nKKRRUEijoJBGQSGNgkIaBYU0CgppofB30P5vPmUp1q4Xliqwg25q
+";i:95;s:62:"g6GFlLuD3v51Swl2UKijoJBGQSGNgkIaBYU0CgppFBTSQnH2TxYT/Zeqvxff
+";i:96;s:62:"rrtHirKDbnK5HbS1y1KsdeQblhLsoFBHQSGNgkIaBYU0CgppFBTSKCikhWLe
+";i:97;s:62:"30F/9bClWLue+V6813h/H3On0xEesvIg51G5Gzg5D8k9/9rnXu+FZZ5n7a85
+";i:98;s:62:"jPCTWeE9Ue4h9ucq/tfiawut3ZZirfd801KiMbeHT1BIo6CQRkEhjYJCGgWF
+";i:99;s:62:"NAoKaRQU0kIx79wUvlbrv/iQpdhI14OuedIb6SErD1r7pOc9Ue75q/+2zHNk
+";i:100;s:62:"Rs2h80zdS4uWEs1W01KsPuG/6MyqmvvheKr/tsHQPx902rke9H3fspRozF3H
+";i:101;s:62:"JyikUVBIo6CQRkEhjYJCGgWFNAoKaRQU0rJD/akHLcXak5v+4AbnXZb+uQXL
+";i:102;s:62:"PQuphc51lmLD7QcsJab++pKl2EzDfZr1+cUM/P9ZsTDtXLB8F0M9LlsUFNIo
+";i:103;s:62:"KKRRUEijoJBGQSGNgkJadgd94QFLsfbkpriRl3cd8YqitLBKUd9uKTHcdYel
+";i:104;s:62:"ROvGo5Ziw+KipcTSy1+yFJsd/sdSIoQRrkpes4F/7fPCFmcHff/jlhKNq9hB
+";i:105;s:62:"oY2CQhoFhTQKCmkUFNIoKKRRUEgLXX8HLX9+v6VYO3QtVdjoHdR5/qG/z5XD
+";i:106;s:62:"6sf0wrSlxIXpPZZirUPVV9CumN57m6VUvWUh1j/r/mqKX37BUmx2eN5SIgT/
+";i:107;s:62:"bNnxLaSZK2IXO9U/tObd37aUYAeFOgoKaRQU0igopFFQSKOgkEZBIS10z/zB
+";i:108;s:62:"YqJ83ttB3YNVN3wHHTjHtC47V3CuKKavsRTrvfkWS4npQ9U/mca26jNa/ytz
+";i:109;s:62:"SKzzmvvn3HusFb/wdtDXLCVCZu0c5QDbaqV/J69F5+v/zQ+dsJRgB4U6Cgpp
+";i:110;s:62:"FBTSKCikUVBIo6CQRkEhLRRnfm8xUZ78mKXYljDO78V7E1zI3PnKv1vUxV71
+";i:111;s:62:"P7nlne+2lGgePG4pNrXzZkuJidZWS6u5rzn7dqp/Bv2z7kRdvPg5S7HsDrrm
+";i:112;s:62:"X80IytLfQbc6O+g9T1hKsINCHQWFNAoKaRQU0igopFFQSKOgkJbdQZ+5z1Js
+";i:113;s:62:"S83fQTN3zXd4O2jP3+0uTLjHcE7eeK+lWPOdH7SUmNz6FkuxiXrDUsIfYtdp
+";i:114;s:62:"B1069VlLsZnyVUuJENbjwyi3g16511KseTSzg+7lExTSKCikUVBIo6CQRkEh
+";i:115;s:62:"jYJCGgWFtFD8091B+08fsxRrTy5bqjDCRYfVK+Dry95CWqsd+YqFRGv/ey3F
+";i:116;s:62:"wvSspQprfs0jvMnMQuzuoOf8HfSFz1iKzfT9HdT+/N/KfS/+Cud80GPftZRo
+";i:117;s:62:"7NjHJyikUVBIo6CQRkEhjYJCGgWFNAoKaaH7j1csJvo/+bClWGdddtALSxZS
+";i:118;s:62:"xZ47LSW2HvmypdjkzFstJYbOfZJqE5MWEro76PI5S4nc+aDjU/pHFixe6Xwv
+";i:119;s:62:"/tj3LCUa29lBoY2CQhoFhTQKCmkUFNIoKKRRUEjL7qA/Pmop1pnY4PNBL3Z7
+";i:120;s:62:"lhKFc9Hh1K2ft5Ro7b3VUmyi5V9C6ry23BmcI+yg8/75oCcfsRSbLf9lKeE/
+";i:121;s:62:"/zjlrgf1vhd/75OWEo0d1/MJCmkUFNIoKKRRUEijoJBGQSGNgkJadgf94T2W
+";i:122;s:62:"Yp2JrqUKY1vbMlcvZv5T6fyTW6x1LCX6u2+3FGvc9BFLicbbDlmKhfoWS4lR
+";i:123;s:62:"zgedd48sKJ57zFJstqd8Peg+S7Hm8e9bSrCDQh0FhTQKCmkUFNIoKKRRUEij
+";i:124;s:62:"oJCW3UGfuttSrBMWLVUQbXw5KC0lumX1a+7O7LKUqN90v6VY66B7N6b6bOaL
+";i:125;s:62:"+RZW6Z9xfzXFyUctxWaX5i0lNn4HndlvKda87weWEuygUEdBIY2CQhoFhTQK
+";i:126;s:62:"CmkUFNIoKKSNtIMOFiyl1uWm5OM1dK7U7JfucLg4bFmKDW74gKVE/V3HLSWa
+";i:127;s:62:"195sKdZ/7S+WEsWzn7QUmy38HTRzpa63xK5dbgedvcFSrPnRpywl2EGhjoJC
+";i:128;s:62:"GgWFNAoKaRQU0igopFFQSAvd07+zmOg/eZelWCf454OuzymU4+VOd+57GTjX
+";i:129;s:62:"VvZC01JisXW1pUR5oPq+/FPXHrSU6J36oqXYtv7rlhK538z4fmuZ624XZ663
+";i:130;s:62:"FGt+/EeWEo2r9/MJCmkUFNIoKKRRUEijoJBGQSGNgkIaBYW00D39W4uJ/nfu
+";i:131;s:62:"tBTrTCxZqnAZDvWuzGW81W8z84Dh5KSlRBHalmLdYcNSotM7bynW3OgPnNxQ
+";i:132;s:62:"P+sc3PDA05YSDPVQR0EhjYJCGgWFNAoKaRQU0igopIXu3zM76B2WYp2afyOv
+";i:133;s:62:"y/GC5VF4b3OUExCGzmkXmeMUvNNo1+eU2oxRDm74xE8tJdhBoY6CQhoFhTQK
+";i:134;s:62:"CmkUFNIoKKRRUEjL7qBPHLEU6wz9G3ltlh10vMY4Xm7wzz+3g25zdtAHf2Yp
+";i:135;s:62:"wQ4KdRQU0igopFFQSKOgkEZBIY2CQlp2Bz1x2FKsU7tkqYLT+A2+TBHj5uyt
+";i:136;s:62:"5cDfQefeYSnWfOgZSwl2UKijoJBGQSGNgkIaBYU0CgppFBTScjtoeeI2S7H2
+";i:137;s:62:"YIQdlCH0/4tz4W9mB+1eVb2DNh5+1lKCHRTqKCikUVBIo6CQRkEhjYJCGgWF
+";i:138;s:62:"tNA9/YrFRO/xWyzFrigXLKX4Xvzmlpm7L84dsBRrPfK8pURjxz4+QSGNgkIa
+";i:139;s:54:"BYU0CgppFBTSKCikUVAIq9XeAMPcFVuCORH6AAAAAElFTkSuQmCC
+";i:140;s:2:"
+";i:141;s:53:"----==_mimepart_61de678b8afdb_1e853fe1a50166a43113e
+";i:142;s:26:"Content-Type: image/png;
+";i:143;s:36:" name="=?ISO-2022-JP?B?YnMucG5n?="
+";i:144;s:35:"Content-Transfer-Encoding: base64
+";i:145;s:30:"Content-Disposition: inline;
+";i:146;s:40:" filename="=?ISO-2022-JP?B?YnMucG5n?="
+";i:147;s:90:"Content-ID: <61de677a77e84_4f7c3fe1a50166a433476@web-157-7-105-218.muumuu-mail.com.mail>
+";i:148;s:2:"
+";i:149;s:62:"iVBORw0KGgoAAAANSUhEUgAAAOAAAADSCAIAAADc/VsQAAAABGdBTUEAALGP
+";i:150;s:62:"C/xhBQAAAAlwSFlzAAAOwwAADsMBx2+oZAAABURJREFUeF7t3b2KXVUYx+EZ
+";i:151;s:62:"GcHGOxARJZ1Y2KXzA7yBkEJNFSwFK5s0IY2NlWApqaIWITcg+NGlsxC7oIh4
+";i:152;s:62:"BzaCA5MBl7CdvGTWcc3e+3/2PE/jKmYmZ7Y/Drwv6ySHJycnB5DqmfZfiCRQ
+";i:153;s:62:"ogmUaAIlmkCJJlCiWTNtzeHhYTvNbJlyvIMSTaBEEyjRBEo0gRItcYofnEP3
+";i:154;s:62:"fS8x+OsfXb/RTjM7vn+vnc4z8n/EOyjRBEo0gRJNoEQTKNEESrTl1kz925PB
+";i:155;s:62:"RUm5/ih/zf6XNNNTKl/AYnuiORz/8Us7TT182A4TnY/UOyjRBEo0gRJNoEQT
+";i:156;s:62:"KNFGp/jFZvNB5WhfvqQLn0OfYq+n+PpBlUzxbJVAiSZQogmUaAIlmkCJtsOa
+";i:157;s:62:"aXs3G0qrr5kOrl5th82wZmKrBEo0gRJNoEQTKNFWnuJ3uHDQr5oZy9H46IVX
+";i:158;s:62:"2mliySm+1H//JlG5gjDFs1UCJZpAiSZQogmUaAIl2ixrpv5NzRz+evRFO008
+";i:159;s:62:"d+WDdprqv5YxvGbqXx6Vr39f1M+5Ys3EFgiUaAIlmkCJJlCijU7x/QKH0x1G
+";i:160;s:62:"+3mm+MFnUr7+dX9m+e1/fvtmO008//b37TTx5CP1Dko0gRJNoEQTKNEESjSB
+";i:161;s:62:"Eq1eM82xE9kXF37d4R/lIy33L8+++H47bcXfv3/ZThPWTGyBQIkmUKIJlGgC
+";i:162;s:62:"JZpAibbDmmmOnUjgfZzSyKLkKba3zrvwB+UdlGgCJZpAiSZQogmUaKOfSdre
+";i:163;s:62:"dYdyDi2tPsWvuwOZabNxhndQogmUaAIlmkCJJlCiCZRoO6yZSnt93aF/UVIa
+";i:164;s:62:"fHSn5lgzzcGaCWoCJZpAiSZQogmUaBuc4tOuO+yq/1LOupZ5UN5BiSZQogmU
+";i:165;s:62:"aAIlmkCJJlCiJa6ZBu9A9G+USquvmUrlc+7X/y8V9VvmmXgHJZpAiSZQogmU
+";i:166;s:62:"aAIl2ugUX+ofORe7A9E/sc6x1ljSdz981k4Tb73xUTtN9H/lYp58+N5BiSZQ
+";i:167;s:62:"ogmUaAIlmkCJJlCizbJm6je4kFpseVQqX3y5uxk3uCd679Y37TTx1SfvtNNE
+";i:168;s:62:"/8+8e/fDdpp46eUr7XSe33591E4TN29+3k7/8g5KNIESTaBEEyjRBEo0gRKt
+";i:169;s:62:"XjOteyXn6wcP2mni3WvX2mmi/ysXM75m6t8olQavIw3+Qf3fbs3EFgiUaAIl
+";i:170;s:62:"mkCJJlCi1dN6OR0PGhzDj67faKeJ4/v32mmi/2d+fPtOO028/tqr7XSeH3/6
+";i:171;s:62:"uZ0mPr1zu53+a3C67x+Zy690WQRmIVCiCZRoAiWaQIkmUKLNsmbq3yiVBm97
+";i:172;s:62:"DP5B/d++5Jqp1H8vpH/NVBrcKJWsmdgCgRJNoEQTKNEESjSXRc5yWaSdJvr/
+";i:173;s:62:"9FLnwH7KX2DLnhEo0QRKNIESTaBEEyjRllszlfrvhfSvmUqDG6WSyyLtdB5r
+";i:174;s:62:"JjZLoEQTKNEESjSBEu1SXxYZ/DUzp/jB2x6D90JKpng2S6BEEyjRBEo0gRJN
+";i:175;s:62:"oERzWeT/W33NVBrcKK34l4icsmZizwiUaAIlmkCJJlCi7fCPyQbeIFnsXkgp
+";i:176;s:62:"c4ovLTawl0zxbJZAiSZQogmUaAIlmkCJtvKaqTS4UVr3Xkj5PE+Vj3Td3dMc
+";i:177;s:62:"RjZKJe+gRBMo0QRKNIESTaBEEyjREtdMpcXuKJWsmTpZM3G5CJRoAiWaQIkm
+";i:178;s:62:"UKLtzRS/LlN8J1M8l4tAiSZQogmUaAIlmkCJJlCiCZRoAiWaQIkmUKIJlGgC
+";i:179;s:62:"JZpAiSZQogmUaAIlmkCJJlCi1Z9JKl2SDyqNf/yo5DNJZ/hMElsgUKIJlGgC
+";i:180;s:62:"JZpAiSZQogmUaAIlmkCJJlCiCZRoAiXYwcFjJESfW9VsV0IAAAAASUVORK5C
+";i:181;s:6:"YII=
+";i:182;s:2:"
+";i:183;s:55:"----==_mimepart_61de678b8afdb_1e853fe1a50166a43113e--
+";}

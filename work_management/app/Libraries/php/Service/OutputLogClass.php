@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Libraries\php;
+namespace App\Libraries\php\Service;
 
 use Illuminate\Support\Facades\DB;
-use App\Libraries\php\Message;
-use App\Libraries\php\FunctionCode;
+use App\Libraries\php\Service\Message;
+use App\Libraries\php\Service\FunctionCode;
 use Exception;
 
 //ログ出力クラス

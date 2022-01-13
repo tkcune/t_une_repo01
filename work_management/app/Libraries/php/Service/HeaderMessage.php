@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Libraries\php;
+    namespace App\Libraries\php\Service;
 
     class HeaderMessage {
 

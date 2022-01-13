@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Libraries\php;
+namespace App\Libraries\php\Service;
 
 use Exception;
 use PHPMailer\PHPMailer\PHPMailer;
-use App\Libraries\php\HeaderMessage;
 
 //SMTPクライアントクラス
 class SMTPclient {

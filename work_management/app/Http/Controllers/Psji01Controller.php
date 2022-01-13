@@ -19,6 +19,7 @@ use App\Libraries\php\DepartmentDataBase;
 use App\Libraries\php\PersonnelDataBase;
 use App\Libraries\php\ProjectionDataBase;
 use App\Http\Requests\PersonnelRequest;
+use App\Libraries\php\NetworkClient;
 
 /**
  * 人員データを操作するコントローラー
@@ -660,5 +661,25 @@ class Psji01Controller extends Controller
             session(['message'=>$message[0]]);
             return back();
         }
+    }
+
+    /**
+     * 
+     * メールの送信試験メソッド
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * 
+     *
+     */
+    public function mailSend(Request $request){
+
+        $client_id = $request->client_id;
+        $name = $request->name;
+        $email = $request->email;
+
+        $network = new NetworkClient();
+        $network->send_ji_test_mail($client_id, $name, $email);
+
+        return back();
     }
 }

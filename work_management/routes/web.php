@@ -61,6 +61,7 @@ Route::prefix('psbs01')->group(function () {
 //Psji01Controllerに関するルーティング
 Route::prefix('psji01')->group(function () {
   Route::post('/jicopy', [Psji01Controller::class, 'copy'])->name('psji01.copy');
+  Route::patch('/mail/send', [Psji01Controller::class, 'mailSend'])->name('psji01.send');
   Route::get('/{id}/{id2}', [Psji01Controller::class, 'search']);
   Route::post('/{id}/{id2}', [Psji01Controller::class, 'search'])->name('psji01.search');
   Route::post('/jidestroy/{id}/{id2}', [Psji01Controller::class, 'destroy'])->name('psji01.destroy');

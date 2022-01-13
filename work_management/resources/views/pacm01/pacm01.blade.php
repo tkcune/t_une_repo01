@@ -392,7 +392,7 @@
                         </p>
                     </div>
                     <div class="col">
-                        <button type="button">メール送信</button>
+                        <button type="submit" formaction="{{route('psji01.send')}}" formmethod="post">メール送信</button>
                     </div>
                 </div>
 

@@ -103,37 +103,38 @@
                     <div class="col">
                     <p>
                     <div style="display:inline-flex">
-                    <input type="button" onclick="submit();" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                    <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                     <form action="{{ route('psbs01.index') }}" method="get">
-                    @csrf
-                    <input type="button" onclick="submit();" value="新規" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
-                    <input type="hidden" id="high_new" name="high" value="{{$top_department[0]->department_id}}">
+                        @csrf
+                        <input class="main_button_img" type="image" src="../../image/new.png" alt="新規" onclick="submit();" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
+                        <input type="hidden" id="high_new" name="high" value="{{$top_department[0]->department_id}}">
                     </form>
 
                     <form action="{{ route('psbs01.delete',[session('client_id'),$top_department[0]->department_id])}}" method="post">
-                    @csrf
-                    @method('post')
-                    <input type="button" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
+                        @csrf
+                        @method('post')
+                        <input class="main_button_img" type="image" src="../../image/delete.png" alt="削除" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
                     <form action="{{ route('pa0001.clipboard',$top_department[0]->department_id)}}" method="get">
-                    @csrf
-                    <input type="button" onclick="submit();" value="複写" id="copyTarget"　data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
+                        @csrf
+                        <input class="main_button_img" type="image" src="../../image/copy.png" alt="複写"  onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
                     <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
-                    @csrf
-                    <input type="button" onclick="submit();" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
+                        @csrf
+                        <input class="main_button_img" type="image" src="../../image/remove.png" alt="取消" onclick="submit();" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3" @endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
-                    <input type="button" value="隠蔽/表示" id="tree_change_display"
-                    data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
+                    <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
+                        <img class="main_button_img" src="../../image/ng.png" alt="隠蔽/表示" >
+                    </button>
 
                     <form action="{{ route('pa0001.redirect')}}" method="get">
-                        <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                        <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
@@ -254,12 +255,12 @@
                     <div class="col">
                     <p>
                     <div style="display:inline-flex">
-                    <input type="button" onclick="submit();" value="確定" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                    <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                     <form action="{{ route('psbs01.index') }}" method="get">
                     @csrf
-                    <input type="button" onclick="submit();" value="新規" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
+                    <input class="main_button_img" type="image" src="../../image/new.png" alt="新規" onclick="submit();" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
                     <input type="hidden" id="high_new" name="high" value="{{$click_department_data[0]->department_id}}">
                     </form>
 
@@ -270,7 +271,7 @@
                     @endif
                     @csrf
                     @method('post')
-                    <input type="button" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
+                    <input class="main_button_img" type="image" src="../../image/delete.png" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
                     @if(substr($click_id,0,2) == "ta")
@@ -278,21 +279,22 @@
                     @else
                     <form action="{{ route('pa0001.clipboard',$click_department_data[0]->department_id)}}" method="get">
                     @endif
-                    @csrf
-                    <input type="button" onclick="submit();" value="複写" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
+                        @csrf
+                        <input class="main_button_img" type="image" src="../../image/copy.png" alt="複写" onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
                     <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
-                    @csrf
-                    <input type="button" onclick="submit();" value="取消" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
+                        @csrf
+                        <input class="main_button_img" type="image" src="../../image/remove.png" alt="取消" onclick="submit();" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3;"@endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
-                    <input type="button" value="隠蔽/表示" id="tree_change_display"
-                    data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
+                    <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
+                        <img class="main_button_img" src="../../image/ng.png" alt="隠蔽/表示" >
+                    </button>
 
                     <form action="{{ route('pa0001.redirect')}}" method="get">
-                        <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                        <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
                     
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
@@ -428,13 +430,13 @@
                 <div class="row">
                     <div class="col">
                     <div style="display:inline-flex">
-                    <input type="button" onclick="submit();" value="確定"
+                    <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();"
                     data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                     <form action="{{ route('psji01.index') }}" method="get">
                     @csrf
-                    <input type="button" onclick="submit();" value="新規"
+                    <input class="main_button_img" type="image" src="../../image/new.png" alt="新規" onclick="submit();"
                     data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
                     <input type="hidden" id="high_new" name="high" value="{{$click_personnel_data[0]->high_id}}">
                     </form>
@@ -446,7 +448,7 @@
                     @endif
                     @csrf
                     @method('post')
-                    <input type="button" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" 
+                    <input class="main_button_img" type="image" src="../../image/delete.png" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip" 
                     title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" 
                     disabled>
                     </form>
@@ -457,25 +459,26 @@
                     <form action="{{ route('pa0001.clipboard',$click_personnel_data[0]->personnel_id)}}" method="get">
                     @endif
                     @csrf
-                    <input type="button" onclick="submit();" value="複写" id="copyTarget"
+                    <input class="main_button_img" type="image" src="../../image/copy.png" alt="複写" onclick="submit();" id="copyTarget"
                     data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
                     <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
                     @csrf
-                    <input type="button" onclick="submit();" value="取消"
-                    data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled @endif>
+                    <input class="main_button_img" type="image" src="../../image/remove.png" alt="取消" onclick="submit();"
+                    data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3;" @endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
-                    <input type="button" value="隠蔽/表示" id="tree_change_display"
-                    data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
+                    <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
+                        <img class="main_button_img" src="../../image/ng.png" alt="隠蔽/表示" >
+                    </button>
 
                     <form action="{{ route('pa0001.redirect')}}" method="get">
-                        <input type="button" onclick="submit();" value="再表示" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                        <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
 
-                    <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                    <input type="checkbox" onclick="deleteOn2()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     <font size="-2" color="red">削除有効化</font>
                     </div>
                         <p>登録日:{{$click_personnel_data[0]->created_at}} 修正日:{{$click_personnel_data[0]->updated_at}}</p>
@@ -507,7 +510,11 @@
                         @else
                             <input type="hidden" id="high" name="high" value="{{$click_department_data[0]->department_id}}">
                         @endif
-                        <p>@if(session('click_code') == "bs")配下@else所属@endif部署<button data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">新規</button>
+                        <p>@if(session('click_code') == "bs")配下@else所属@endif部署
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
+                            <input class="main_button_img" type="image" src="../../image/new.png" alt="新規">
+                        </button>
+                        </p>
                         </form>
 
                         <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
@@ -519,7 +526,9 @@
                         <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}">
                         @csrf
                         @method('patch')
-                        <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します　移動元からは抹消されます">移動</button>
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
+                            <input class="main_button_img" type="image" src="../../image/move.png" alt="移動">
+                        </button>
                         </form>
 
                         <form action="{{ route('psbs01.copy') }}" method="post">
@@ -532,7 +541,9 @@
                         @else
                         <input type="hidden" id="high_insert" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
-                        <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します　移動元は消えません">挿入</button>
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
+                            <input class="main_button_img" type="image" src="../../image/insert.png" alt="挿入">
+                        </button>
                         </form>
 
                         <form action="{{ route('ptcm01.store') }}" method="post">
@@ -545,7 +556,9 @@
                         @else
                         <input type="hidden" id="high_projection" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
-                        <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します　移動元は消えません">投影</button>
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
+                            <input class="main_button_img" type="image" src="../../image/ji.png" alt="投影">
+                        </button>
                         </form>
                         {{-- ツリー操作機能ここまで　--}}
 
@@ -689,26 +702,27 @@
                         </nav>
 @endif
                         {{-- ページネーションここまで--}}
-
+                       
                         {{-- 検索機能　--}}
-                        @if(isset($top_department))
-                        <form action="{{ route('psbs01.search',[session('client_id'),$top_department[0]->department_id])}}" method="post">
-                        @elseif(isset($click_department_data))
-                        <form action="{{ route('psbs01.search',[session('client_id'),$click_department_data[0]->department_id])}}" method="post">
+                        @if(session('click_code') == "bs")
+                            @if(isset($top_department))
+                            <form action="{{ route('psbs01.search',[session('client_id'),$top_department[0]->department_id])}}" method="post">
+                            @else
+                            <form action="{{ route('psbs01.search',[session('client_id'),$click_department_data[0]->department_id])}}" method="post">
+                            @endif
                         @else
                         <form action="{{ route('psbs01.search',[session('client_id'),$click_personnel_data[0]->personnel_id])}}" method="post">
                         @endif
                         @csrf
                         @method('post')
-                        <button data-toggle="tooltip" 
-                        title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" 
-                        type="submit">検索</button>
                         @if(!empty($_POST['search']))
                         部署<input type="text" name="search" maxlength="32" value="{{ $_POST['search'] }}">
                         @else
                         部署<input type="text" name="search" maxlength="32">
                         @endif
-
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
+                            <input class="main_button_img" type="image" src="../../image/search.png" alt="投影">
+                        </button>
                         </form>
                         <div style="padding-left:100px;"onclick="listOn()">
                             <p style="cursor: hand; cursor:pointer;">✕</p>
@@ -789,7 +803,11 @@
                         @else
                         <input type="hidden" id="ji_high_new" name="high" value="{{$click_department_data[0]->department_id}}">
                         @endif
-                        <p>所属人員 <button data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">新規</button>
+                        <p>所属人員
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
+                            <input class="main_button_img" type="image" src="../../image/new.png" alt="新規">
+                        </button>
+                        </p>
                         </form>
 
                         <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
@@ -801,7 +819,9 @@
                         <input type="hidden" id="ji_high_move" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <input type="hidden" id="ji_lower_move" name="lower_id" value="{{session('clipboard_id')}}"> 
-                        <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します　移動元からは抹消されます">移動</button>
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
+                            <input class="main_button_img" type="image" src="../../image/move.png" alt="移動">
+                        </button>
                         </form>
 
                         <form action="{{ route('psji01.copy') }}" method="post">
@@ -814,7 +834,9 @@
                         <input type="hidden" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <input type="hidden" id="ji_copy_id" name="copy_id" value="{{session('clipboard_id')}}">
-                        <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します　移動元は消えません">挿入</button>
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
+                            <input class="main_button_img" type="image" src="../../image/insert.png" alt="挿入">
+                        </button>
                         </form>
 
                         <form action="{{ route('ptcm01.store') }}" method="post">
@@ -827,7 +849,9 @@
                         @else
                         <input type="hidden" id="ji_high_projection" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
-                        <button data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します　移動元は消えません">投影</button>
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
+                            <input class="main_button_img" type="image" src="../../image/ji.png" alt="投影">
+                        </button>
                         </form>
                         {{-- ツリー操作機能ここまで　--}}
 
@@ -984,23 +1008,25 @@
                         {{-- ページネーションここまで --}}
 
                         {{-- 検索機能　--}}
-                        @if(isset($top_department))
-                        <form action="{{ route('psji01.search',[session('client_id'),$top_department[0]->department_id])}}" method="post">
-                        @elseif(isset($click_department_data))
-                        <form action="{{ route('psji01.search',[session('client_id'),$click_department_data[0]->department_id])}}" method="post">
+                        @if(session('click_code') == "bs")
+                            @if(isset($top_department))
+                            <form action="{{ route('psji01.search',[session('client_id'),$top_department[0]->department_id])}}" method="post">
+                            @else
+                            <form action="{{ route('psji01.search',[session('client_id'),$click_department_data[0]->department_id])}}" method="post">
+                            @endif
                         @else
                         <form action="{{ route('psji01.search',[session('client_id'),$click_personnel_data[0]->personnel_id])}}" method="post">
                         @endif
                         @csrf
                         @method('post')
-                        <button type="submit"　data-toggle="tooltip"
-                        title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します"
-                        >検索</button>
                         @if(!empty($_POST['search2']))
                         氏名<input type="text" name="search2" maxlength="32" value="{{ $_POST['search2'] }}">
                         @else
                         氏名<input type="text" name="search2" maxlength="32">
                         @endif
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
+                            <input class="main_button_img" type="image" src="../../image/search.png" alt="検索">
+                        </button>
                         </form>
                         {{-- 検索機能ここまで　--}}
                         </div>

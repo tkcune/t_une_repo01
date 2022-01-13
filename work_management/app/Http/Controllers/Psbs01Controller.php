@@ -798,7 +798,6 @@ class Psbs01Controller extends Controller
             $select_id = $projection_code[0]->projection_source_id;
             $select_code = substr($projection_code[0]->projection_source_id,0,2);
         }
-        
         if($select_code == "bs"){
             //選択した部署のデータを取得
             try{
@@ -842,6 +841,7 @@ class Psbs01Controller extends Controller
             try{
                 $department_db = new DepartmentDataBase();
                 $data = $department_db->getClickDepartmentData($client_id,$affiliation_data[0]->high_id);
+                $click_department_data = $data;
             }catch(\Exception $e){
 
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -923,7 +923,7 @@ class Psbs01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         return view('pacm01.pacm01',compact('count_department','department_data','personnel_data','select_id','department_max','departments','personnel_max',
-        'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data'));
+        'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data','click_department_data'));
     }
 
     /**

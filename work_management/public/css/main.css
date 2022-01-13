@@ -1,0 +1,22 @@
+
+
+/*周辺の隙間をリセットするスタイル*/
+.main_button_style{
+
+  padding: 0;
+  border: none;
+  background: transparent;
+
+}
+
+/*メイン画面ボタンの基本スタイル*/
+.main_button_img {
+    display: block;
+    height:30px;
+    border-style:inset;
+}
+
+/*削除ボタンの非活性状態のスタイル*/
+#delete {
+    opacity: 0.3;
+}

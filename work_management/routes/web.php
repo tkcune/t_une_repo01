@@ -40,8 +40,8 @@ Route::prefix('pa0001')->group(function () {
   Route::get('/count', [Pa0001Controller::class, 'count'])->name('pa0001.count');
   Route::get('/count/narrowdown', [Pa0001Controller::class, 'countNarrowDown'])->name('pa0001.count_narrowdown');
   Route::get('/count/top', [Pa0001Controller::class, 'countTop'])->name('pa0001.count_top');
-  Route::get('/count/search/department', [Pa0001Controller::class, 'countSearchDepartment'])->name('pa0001.count_search_department');
-  Route::get('/count/search/personnel', [Pa0001Controller::class, 'countSearchPersonnel'])->name('pa0001.count_search_personnel');
+  Route::get('/count/department', [Pa0001Controller::class, 'countSearchDepartment'])->name('pa0001.count_search_department');
+  Route::get('/count/personnel', [Pa0001Controller::class, 'countSearchPersonnel'])->name('pa0001.count_search_personnel');
   Route::get('/clipboard/{id}', [Pa0001Controller::class, 'clipboard'])->name('pa0001.clipboard');
   Route::get('/deleteclipboard', [Pa0001Controller::class, 'deleteclipboard'])->name('pa0001.deleteclipboard');
   Route::get('/redirect', [Pa0001Controller::class, 'redirect'])->name('pa0001.redirect');
@@ -51,8 +51,8 @@ Route::prefix('pa0001')->group(function () {
 //Psbs01Controllerに関するルーティング
 Route::prefix('psbs01')->group(function () {
   Route::post('/bscopy', [Psbs01Controller::class, 'copy'])->name('psbs01.copy');
-  Route::get('/bssearch/{id}/{id2}', [Psji01Controller::class, 'search']);
-  Route::post('/bssearch/{id}/{id2}', [Psbs01Controller::class, 'search'])->name('psbs01.search');
+  Route::get('/{id}/{id2}', [Psji01Controller::class, 'search']);
+  Route::post('/{id}/{id2}', [Psbs01Controller::class, 'search'])->name('psbs01.search');
   Route::patch('/update', [Psbs01Controller::class, 'update'])->name('psbs01.update');
   Route::patch('/high/{id}', [Psbs01Controller::class, 'hierarchyUpdate'])->name('psbs01.hierarchyUpdate');
   Route::post('/delete/{id}/{id2}', [Psbs01Controller::class, 'delete'])->name('psbs01.delete');
@@ -61,8 +61,8 @@ Route::prefix('psbs01')->group(function () {
 //Psji01Controllerに関するルーティング
 Route::prefix('psji01')->group(function () {
   Route::post('/jicopy', [Psji01Controller::class, 'copy'])->name('psji01.copy');
-  Route::get('/jisearch/{id}/{id2}', [Psji01Controller::class, 'search']);
-  Route::post('/jisearch/{id}/{id2}', [Psji01Controller::class, 'search'])->name('psji01.search');
+  Route::get('/{id}/{id2}', [Psji01Controller::class, 'search']);
+  Route::post('/{id}/{id2}', [Psji01Controller::class, 'search'])->name('psji01.search');
   Route::post('/jidestroy/{id}/{id2}', [Psji01Controller::class, 'destroy'])->name('psji01.destroy');
 });
 

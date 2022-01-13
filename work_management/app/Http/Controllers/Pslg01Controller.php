@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PtcmtrController;
-use App\Libraries\php\ResponsiblePerson;
+use App\Libraries\php\Logic\ResponsiblePerson;
 use Mockery\Undefined;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 

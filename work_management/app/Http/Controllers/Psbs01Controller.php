@@ -6,19 +6,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Libraries\php\DatabaseException;
 use App\Libraries\php\Pagination;
-use App\Libraries\php\Hierarchical;
-use App\Libraries\php\StatusCheck;
+use App\Libraries\php\Domain\Hierarchical;
 use App\Facades\OutputLog;
 use App\Libraries\php\ZeroPadding;
 use Illuminate\Support\Facades\Config;
 use App\Libraries\php\Message;
-use App\Libraries\php\ResponsiblePerson;
+use App\Libraries\php\Logic\ResponsiblePerson;
 use App\Libraries\php\OperationCheck;
 use App\Http\Controllers\PtcmtrController;
 use App\Libraries\php\Domain\DepartmentDataBase;
 use App\Libraries\php\Domain\PersonnelDataBase;
 use App\Libraries\php\Domain\ProjectionDataBase;
-use App\Libraries\php\JudgmentHierarchy;
+use App\Libraries\php\Logic\JudgmentHierarchy;
 use App\Models\Date;
 use Illuminate\Support\Facades\View;
 use App\Http\Requests\DepartmentRequest;
@@ -66,7 +65,6 @@ class Psbs01Controller extends Controller
      * @var  string $high 上位部署のID番号
      * @var  string $id 顧客IDに対応した最新の部署IDを格納する因数
      * @var  App\Libraries\php\ZeroPadding $padding
-     * @var  App\Libraries\php\StatusCheck $check
      * @var  string $operation_start_date 稼働開始日
      * @var  int $department_id 部署ID
      * 
@@ -489,7 +487,6 @@ class Psbs01Controller extends Controller
      * @var  string  $responsible_person_id 責任者番号
      * @var  array   $management_personnel_id　管理者ID
      * @var  string  $status　状態
-     * @var  \App\Libraries\php\StatusCheck $check
      * @var  string  $start_day 稼働開始日
      * @var  string  $finish_day 稼働終了日
      * @var  string  $message メッセージ

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Libraries\php;
+namespace App\Libraries\php\Service;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Facades\OutputLog;
 use Exception;
-use App\Libraries\php\POPClient;
-use App\Libraries\php\IMAPClient;
-use App\Libraries\php\SMTPClient;
+use App\Libraries\php\Service\POPClient;
+use App\Libraries\php\Service\IMAPClient;
+use App\Libraries\php\Service\SMTPClient;
 
 //error_code 7007
 //ネットワーク設定クラス

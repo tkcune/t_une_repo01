@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Libraries\php\OutputLogClass;
+use App\Libraries\php\Service\OutputLogClass;
 use Illuminate\Support\Facades\Config;
 
 class AppServiceProvider extends ServiceProvider

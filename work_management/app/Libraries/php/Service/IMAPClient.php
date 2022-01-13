@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Libraries\php;
+namespace App\Libraries\php\Service;
 
 use Exception;
 use Webklex\IMAP\Facades\Client;
-use App\Libraries\php\HeaderMessage;
 
 //IMAPメールクライアント
 class IMAPClient {
@@ -60,6 +59,7 @@ class IMAPClient {
             
             //@var string メール本文
             $mail = $all_messages->get()[$latest_number - 1]->getTextBody();
+            
             //@var array メールを改行で分割し、配列にする
             $mail = preg_split("/\r\n/", $mail);
             //メールの半角空白をhtmlの空白に変換する

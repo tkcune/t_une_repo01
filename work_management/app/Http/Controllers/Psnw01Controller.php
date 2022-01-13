@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Controllers\PtcmtrController;
-use App\Libraries\php\NetworkClient;
+use App\Libraries\php\Service\NetworkClient;
 use App\Http\Requests\CreateNetworkRequest;
 
 //ネットワーク設定のコントローラークラス
@@ -15,7 +14,6 @@ class Psnw01Controller extends Controller
     //@return View
     public function index()
     {
-        
         //ツリーデータの設定
         PtcmtrController::set_view_treedata();
 

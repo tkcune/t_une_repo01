@@ -6,7 +6,7 @@
     use App\Models\Date;
     use App\Libraries\php\DatabaseException;
     use App\Facades\OutputLog;
-    use App\Libraries\php\ProjectionDataBase;
+    use App\Libraries\php\Domain\ProjectionDataBase;
 
     /**
      * 階層構造に関係する機能クラス

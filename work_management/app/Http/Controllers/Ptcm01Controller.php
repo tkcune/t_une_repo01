@@ -8,7 +8,7 @@ use App\Libraries\php\Hierarchical;
 use App\Facades\OutputLog;
 use App\Libraries\php\Message;
 use App\Libraries\php\DatabaseException;
-use App\Libraries\php\ProjectionDataBase;
+use App\Libraries\php\Domain\ProjectionDataBase;
 use App\Http\Controllers\PtcmtrController;
 
 /**

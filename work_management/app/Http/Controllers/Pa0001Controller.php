@@ -16,9 +16,9 @@ use App\Libraries\php\Message;
 use App\Libraries\php\ListDisplay;
 use App\Libraries\php\OperationCheck;
 use Illuminate\Support\Facades\View;
-use App\Libraries\php\DepartmentDataBase;
-use App\Libraries\php\PersonnelDataBase;
-use App\Libraries\php\ProjectionDataBase;
+use App\Libraries\php\Domain\DepartmentDataBase;
+use App\Libraries\php\Domain\PersonnelDataBase;
+use App\Libraries\php\Domain\ProjectionDataBase;
 
 
 

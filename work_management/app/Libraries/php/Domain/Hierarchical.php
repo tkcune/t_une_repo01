@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Libraries\php;
+    namespace App\Libraries\php\Domain;
 
     use Illuminate\Support\Facades\DB;
     use App\Models\Date;

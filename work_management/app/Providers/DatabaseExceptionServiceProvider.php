@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Libraries\php\DatabaseException;
+use App\Libraries\php\Service\DatabaseException;
 use Illuminate\Support\ServiceProvider;
 
 class DatabaseExceptionServiceProvider extends ServiceProvider

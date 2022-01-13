@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Libraries\php;
+    namespace App\Libraries\php\Service;
 
     use App\Facades\OutputLog;
     use App\Libraries\php\Message;

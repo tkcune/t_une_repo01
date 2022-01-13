@@ -3,7 +3,7 @@
 
     use App\Models\Date;
     use Illuminate\Support\Facades\DB;
-    use App\Libraries\php\ZeroPadding;
+    use App\Libraries\php\Service\ZeroPadding;
 
     /**
     * 作業管理システム投影データベース動作クラス

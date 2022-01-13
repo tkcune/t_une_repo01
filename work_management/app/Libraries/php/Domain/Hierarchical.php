@@ -3,9 +3,9 @@
     namespace App\Libraries\php\Domain;
 
     use Illuminate\Support\Facades\DB;
-    use App\Models\Date;
-    use App\Libraries\php\DatabaseException;
     use App\Facades\OutputLog;
+    use App\Models\Date;
+    use App\Libraries\php\Service\DatabaseException;
     use App\Libraries\php\Domain\ProjectionDataBase;
 
     /**

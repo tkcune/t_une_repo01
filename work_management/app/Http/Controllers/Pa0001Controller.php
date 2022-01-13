@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
-use App\Libraries\php\DatabaseException;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Http\Request;
-use App\Libraries\php\Pagination;
-use App\Libraries\php\Logic\ResponsiblePerson;
-use App\Libraries\php\Domain\Hierarchical;
-use App\Http\Controllers\PtcmtrController;
 use App\Facades\OutputLog;
 use App\Models\Date;
+use App\Http\Controllers\PtcmtrController;
 use App\Libraries\php\Message;
-use App\Libraries\php\ListDisplay;
-use App\Libraries\php\OperationCheck;
-use Illuminate\Support\Facades\View;
 use App\Libraries\php\Domain\DepartmentDataBase;
 use App\Libraries\php\Domain\PersonnelDataBase;
 use App\Libraries\php\Domain\ProjectionDataBase;
+use App\Libraries\php\Domain\Hierarchical;
+use App\Libraries\php\Logic\ResponsiblePerson;
+use App\Libraries\php\Service\DatabaseException;
+use App\Libraries\php\Service\OperationCheck;
+use App\Libraries\php\Service\Pagination;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Http\Request;
 
 
 
@@ -247,7 +246,6 @@ class Pa0001Controller extends Controller
      * @var  App\Libraries\php\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
      * @var  array $top_management 最上位の管理者データ
-     * @var  App\Libraries\php\ListDisplay $list_display
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
      *
@@ -654,7 +652,6 @@ class Pa0001Controller extends Controller
      * @var  App\Libraries\php\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
      * @var  array $top_management 最上位の管理者データ
-     * @var  App\Libraries\php\ListDisplay $list_display
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
      *

@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use App\Libraries\php\StatusCheck;
+use App\Libraries\php\Service\StatusCheck;
 
 class StatusCheckTest extends TestCase
 {

@@ -6,7 +6,10 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 use App\Libraries\php\HeaderMessage;
+use App\Rules\DomainRule;
+use App\Facades\OutputLog;
 
+//ネットワーク設定画面からdcnw01のデータベースに保存するデータをバリデーションチェック
 class CreateNetworkRequest extends FormRequest
 {
     /**
@@ -27,14 +30,14 @@ class CreateNetworkRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|max:256',
-            'email' => 'required|max:256',
-            'password' => 'required|max:256',
-            'recieving_server' => 'required|max:256',
-            'recieving_server_way' => 'required|max:1',
-            'recieving_port_number' => 'required|max:6',
-            'sending_server' => 'required|max:256',
-            'sending_port_number' => 'required|max:6'
+            'name' => ['required', 'max:256'],
+            'email' => ['required', 'max:256', 'email'],
+            'password' => ['required', 'max:256'],
+            'recieving_server' => ['required', 'max:256', new DomainRule],
+            'recieving_server_way' => ['required', 'integer', 'between:0, 1'],
+            'recieving_port_number' => ['required', 'integer', 'between:0, 65535'],
+            'sending_server' => ['required', 'max:256', new DomainRule],
+            'sending_port_number' => ['required', 'integer', 'between:0, 65535']
         ];
     }
 
@@ -42,14 +45,16 @@ class CreateNetworkRequest extends FormRequest
         //入力項目が入っていない場合
         foreach($validator->failed() as $failed_row){
             if(array_key_exists('Required', $failed_row)){
-                HeaderMessage::set_header_message('mnwer0004');
+                OutputLog::message_log(__FUNCTION__, 'mmnwer0004');
+                HeaderMessage::set_header_message('mmnwer0004');
                 throw new HttpResponseException(
                     back()->withInput($this->input)->withErrors($validator)
                 );
             }
         }
         //入力項目は入っているが、何らかの入力エラーがある場合
-        HeaderMessage::set_header_message('mnwer0003');
+        OutputLog::message_log(__FUNCTION__, 'mmnwer0003');
+        HeaderMessage::set_header_message('mmnwer0003');
         throw new HttpResponseException(
             back()->withInput($this->input)->withErrors($validator)
         );

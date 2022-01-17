@@ -80,7 +80,7 @@
         <div class="border border-dark bg-white" style="padding: 10px 0;">
             <div style="padding: 10px;">
                 @foreach($mail as $line)
-                    {!! $line !!}<br />
+                    {!! $line !!}
                 @endforeach    
             </div>
         </div>

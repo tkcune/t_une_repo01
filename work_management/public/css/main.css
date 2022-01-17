@@ -9,6 +9,15 @@
 
 }
 
+/*ボタン周辺の隙間をリセットするスタイル*/
+.main_button_display{
+
+  margin-top: -30px;
+  border: none;
+  background: transparent;
+
+}
+
 /*メイン画面ボタンの基本スタイル*/
 .main_button_img {
     display: block;
@@ -16,7 +25,24 @@
     border-style:inset;
 }
 
+/*備考を開くボタン*/
+.remarks_button {
+  height:30px;
+  border-style:inset;
+}
+
 /*削除ボタンの非活性状態のスタイル*/
 #delete {
     opacity: 0.3;
+}
+
+/*ボタンの上揃え*/
+
+.top {
+  vertical-align: top;
+}
+
+/*ブートストラップのmarginの隙間を消す*/
+.margin-reset{
+  margin-top: -10px;
 }

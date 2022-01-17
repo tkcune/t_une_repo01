@@ -27,7 +27,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row margin-reset">
                     <div class="col-4">
                         <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" data-toggle="tooltip" 
                         title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"
@@ -54,7 +54,7 @@
                     <div id="output_message"></div>
                 </div>
 
-                <div class="row">
+                <div class="row margin-reset">
                     <div class="col">
                         <p>状態:
                         <select name="status" data-toggle="tooltip" title="部署の状態を選択します">
@@ -84,22 +84,43 @@
                             @endif
                         @endfor
                         </select>
+
+                        運用開始日<input name="start_day" type="date" style="width:140px; margin:0px;" @if(!empty(old('start_day'))) value="{{ old('start_day')}}" @else value="{{$operation_date['operation_start_date']}}" @endif>
+                        運用終了日<input name="finish_day" type="date" style="width:140px; margin:0px;" @if(!empty(old('finish_day'))) value="{{ old('finish_day')}}" @else value="{{$operation_date['operation_end_date']}}" @endif>
+
+                        &emsp;&emsp;
+                        
+                        <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
+                            <img class="remarks_button" src="../../image/under.png" alt="確定" >
+                        </button>
+
                         </p>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col">
-                        運用開始日<input name="start_day" type="date" @if(!empty(old('start_day'))) value="{{ old('start_day')}}" @else value="{{$operation_date['operation_start_date']}}" @endif>
-                    </div>
-                    <div class="col">
-                        運用終了日<input name="finish_day" type="date" @if(!empty(old('finish_day'))) value="{{ old('finish_day')}}" @else value="{{$operation_date['operation_end_date']}}" @endif>
-                    </div>
+                    
                 </div>
 
                 <input type="hidden" id="remarks" name="remarks" value="">
+                
+                <div class="row margin-reset" id="remarks-field" style="display:none">
+                    <div>
+                        備考
+                    </div>
+                    <div>
+                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;">{{$top_department[0]->remarks}}</textarea>
+                    </div>
+                </div>
 
-                <div class="row">
+                <div class="row" id="little-information-field" style="display:none">
+                    <p>
+                    登録日:{{$top_department[0]->created_at}} 修正日:{{$top_department[0]->updated_at}}
+                    登録者:<a href="{{ route('plbs01.show',[session('client_id'),$top_department[0]->responsible_person_id])}}">{{$top_responsible[0]}}</a>
+                    </p>
+                </div>
+
+                <div class="row main_button_display">
                     <div class="col">
                     <p>
                     <div style="display:inline-flex">
@@ -140,21 +161,11 @@
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     <font size="-2" color="red">削除有効化</font>
                     </div>
-                    <p>
-                    登録日:{{$top_department[0]->created_at}} 修正日:{{$top_department[0]->updated_at}}
-                    登録者:<a href="{{ route('plbs01.show',[session('client_id'),$top_department[0]->responsible_person_id])}}">{{$top_responsible[0]}}</a>
-                    </p>
-                    </div>
+                    
                 </div>
-                <div class="row">
-                    <div>
-                        備考
-                    </div>
-                    <div>
-                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;">{{$top_department[0]->remarks}}</textarea>
-                    </div>
-                </div>
+
             </div>
+    </div>
     @else
     <form action="{{ route('psbs01.update') }}" method="post">
             @csrf
@@ -304,7 +315,6 @@
                     登録日:{{$click_department_data[0]->created_at}} 修正日:{{$click_department_data[0]->updated_at}}
                     登録者:<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->responsible_person_id])}}">{{$click_responsible_lists[0]}}</a>
                     </p>
-                    </div>
                 </div>
                 <div class="row">
                     <div>
@@ -315,6 +325,7 @@
                     </div>
                 </div>
             </div>
+    </div>
     @endif
     {{-- 部署の詳細表示　ここまで--}}
     {{-- 人員の詳細表示　--}}
@@ -499,22 +510,21 @@
             <p style="text-align:center; cursor: hand; cursor:pointer; background:#99CCFF; border:solid 1px;">↓</p>
         </div>
         <div class="list-area" id="list">
-            <div class="department-area">
+            <div class="department-area margin-reset">
                 <div class="row">
-                    <div class="col" style="padding-top:15px">
-                        <div style="display:inline-flex">
-                        {{-- ツリー操作機能　--}}
+                    {{-- ツリー操作機能　--}}
+                    <div class="col-4" style="display:inline-flex; padding-top:15px;">
+                        <p>@if(session('click_code') == "bs")配下@else所属@endif部署</p>
                         <form action="{{ route('psbs01.index') }}" method="get">
                         @if(isset($top_department))
                             <input type="hidden" id="high" name="high" value="{{$top_department[0]->department_id}}">
                         @else
                             <input type="hidden" id="high" name="high" value="{{$click_department_data[0]->department_id}}">
                         @endif
-                        <p>@if(session('click_code') == "bs")配下@else所属@endif部署
+                        
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                             <input class="main_button_img" type="image" src="../../image/new.png" alt="新規">
                         </button>
-                        </p>
                         </form>
 
                         <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
@@ -560,9 +570,11 @@
                             <input class="main_button_img" type="image" src="../../image/ji.png" alt="投影">
                         </button>
                         </form>
-                        {{-- ツリー操作機能ここまで　--}}
+                    </div>
+                    {{-- ツリー操作機能ここまで　--}}
 
-                        {{-- ページネーション--}}
+                    {{-- ページネーション--}}
+                    <div class="col-3" style="padding-top:15px;">
 @if(!empty($_POST['search']))
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
@@ -701,9 +713,12 @@
                             </ul>
                         </nav>
 @endif
-                        {{-- ページネーションここまで--}}
+                    </div>
+                    {{-- ページネーションここまで--}}
                        
-                        {{-- 検索機能　--}}
+                    {{-- 検索機能　--}}
+                    <div class="col-4" style="display:inline-flex; padding-top:15px">
+                        <p>部署</p>
                         @if(session('click_code') == "bs")
                             @if(isset($top_department))
                             <form action="{{ route('psbs01.search',[session('client_id'),$top_department[0]->department_id])}}" method="post">
@@ -716,22 +731,22 @@
                         @csrf
                         @method('post')
                         @if(!empty($_POST['search']))
-                        部署<input type="text" name="search" maxlength="32" value="{{ $_POST['search'] }}">
+                            <input type="text" name="search" class="top" maxlength="32" value="{{ $_POST['search'] }}">
                         @else
-                        部署<input type="text" name="search" maxlength="32">
+                            <input type="text" name="search" class="top" maxlength="32">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
                             <input class="main_button_img" type="image" src="../../image/search.png" alt="投影">
                         </button>
                         </form>
-                        <div style="padding-left:100px;"onclick="listOn()">
-                            <p style="cursor: hand; cursor:pointer;">✕</p>
-                        </div>
-                        </div>  
+                    </div> 
+
+                    <div class="col" style="padding-top:15px" onclick="listOn()">
+                        <p style="cursor: hand; cursor:pointer;">✕</p>
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row margin-reset">
                     <div class="col">
                     <table id="bs-table" class="table table-bordered border-dark">
                         <thead>
@@ -793,21 +808,20 @@
                 </div>
             </div>
 @if( empty(session('click_code')) or session('click_code') == "bs")
+            <div class="personnel-area margin-reset">
                 <div class="row">
-                    <div class="col">
-                        <div style="display:inline-flex">
-                        {{-- ツリー操作機能　--}}
+                    {{-- ツリー操作機能　--}}
+                    <div class="col-4" style="display:inline-flex">
+                        <p>所属人員</p>
                         <form action="{{ route('psji01.index') }}" method="get">
                         @if(isset($top_department))
                         <input type="hidden" id="ji_high_new" name="high" value="{{$top_department[0]->department_id}}">
                         @else
                         <input type="hidden" id="ji_high_new" name="high" value="{{$click_department_data[0]->department_id}}">
                         @endif
-                        <p>所属人員
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                             <input class="main_button_img" type="image" src="../../image/new.png" alt="新規">
                         </button>
-                        </p>
                         </form>
 
                         <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
@@ -853,9 +867,11 @@
                             <input class="main_button_img" type="image" src="../../image/ji.png" alt="投影">
                         </button>
                         </form>
-                        {{-- ツリー操作機能ここまで　--}}
+                    </div>
+                    {{-- ツリー操作機能ここまで　--}}
 
-                        {{-- ページネーション--}}
+                    {{-- ページネーション--}}
+                    <div class="col-3">
 @if(!empty($_POST['search']))
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
@@ -956,12 +972,12 @@
                                 @endif
                                 <li class="page-item">
     @if($count_personnel<$personnel_max)
-                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
     @endif
-                                        <span aria-hidden="true">&gt;</span>
-                                    </a>
+                                    <span aria-hidden="true">&gt;</span>
+                                </a>
                                 </li>
                                 <li class="page-item">
                                     <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
@@ -1005,9 +1021,12 @@
                             </ul>
                         </nav>
 @endif
-                        {{-- ページネーションここまで --}}
+                    </div>
+                    {{-- ページネーションここまで --}}
 
-                        {{-- 検索機能　--}}
+                    {{-- 検索機能　--}}
+                    <div class="col-4" style="display:inline-flex">
+                        <p>氏名</p>
                         @if(session('click_code') == "bs")
                             @if(isset($top_department))
                             <form action="{{ route('psji01.search',[session('client_id'),$top_department[0]->department_id])}}" method="post">
@@ -1020,20 +1039,19 @@
                         @csrf
                         @method('post')
                         @if(!empty($_POST['search2']))
-                        氏名<input type="text" name="search2" maxlength="32" value="{{ $_POST['search2'] }}">
+                            <input type="text" name="search2" class="top" maxlength="32" value="{{ $_POST['search2'] }}">
                         @else
-                        氏名<input type="text" name="search2" maxlength="32">
+                            <input type="text" name="search2" class="top" maxlength="32">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
                             <input class="main_button_img" type="image" src="../../image/search.png" alt="検索">
                         </button>
                         </form>
-                        {{-- 検索機能ここまで　--}}
-                        </div>
                     </div>
+                    {{-- 検索機能ここまで　--}}
                 </div>
                 
-                <div class="row">
+                <div class="row margin-reset">
                     <div class="col">
                     <table id ="ji-table" class="table table-bordered border-dark">
                         <thead>
@@ -1093,7 +1111,6 @@
                         @endforeach
                         </tbody>
                     </table>
-                 
                     </div>
                 </div>
             </div>

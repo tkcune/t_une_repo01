@@ -16,6 +16,7 @@
     <!-- JS -->
     <script src="{{ asset('js/pamt01/pamt01.js') }}" defer></script>
     <script src="{{ asset('js/pamt01/pamt02.js') }}" defer></script>
+    <script src="{{ asset('js/pamt01/pamt03.js') }}" defer></script>
     
     <!-- ツリー表示のjsプログラム -->
     <!-- <script src="{{ asset('js/pamt01/ptcmcb.js') }}" type="module"></script> -->

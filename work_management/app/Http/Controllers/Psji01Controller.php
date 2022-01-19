@@ -6,7 +6,7 @@ use App\Facades\OutputLog;
 use App\Models\Date;
 use App\Http\Controllers\PtcmtrController;
 use App\Http\Requests\PersonnelRequest;
-use App\Libraries\php\NetworkClient;
+use App\Libraries\php\Service\NetworkClient;
 use App\Libraries\php\Domain\Hierarchical;
 use App\Libraries\php\Domain\DepartmentDataBase;
 use App\Libraries\php\Domain\PersonnelDataBase;

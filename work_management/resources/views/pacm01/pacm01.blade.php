@@ -267,7 +267,7 @@
                     </div>
                 </div>
 
-                <input type="hidden" id="remarks" name="remarks" value="">
+                <input type="hidden" id="remarks" name="remarks" value="{{$click_department_data[0]->remarks}}">
 
                 <div class="row margin-reset" id="remarks-field" style="display:none">
                     <div>
@@ -449,7 +449,7 @@
                     </div>
                 </div>
 
-                <input type="hidden" id="remarks" name="remarks" value="">
+                <input type="hidden" id="remarks" name="remarks" value="{{$click_personnel_data[0]->remarks}}">
 
                 <div class="row margin-reset" id="remarks-field" style="display:none"">
                     <div>

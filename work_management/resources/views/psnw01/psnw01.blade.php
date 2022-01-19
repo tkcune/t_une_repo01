@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div>
-                受信サーバポート番号&nbsp;:&nbsp;<input type="text" id="recieving_port_number" name="recieving_port_number" maxlength="6" data-toggle="tooltip" title="受信サーバのポート番号を入力してください。" value="995">
+                受信サーバポート番号&nbsp;:&nbsp;<input type="text" id="recieving_port_number" name="recieving_port_number" maxlength="6" data-toggle="tooltip" title="受信サーバのポート番号を入力してください。" value="{{$client['recieving_port_number']}}">
             </div>
             <div class="row"  style="padding: 15px 0;">
                 <div class="col">

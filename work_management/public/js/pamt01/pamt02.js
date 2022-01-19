@@ -23,8 +23,6 @@
   //切り替える対象の状態を取得
   var div = document.getElementById('remarks-field');
   var div2 = document.getElementById('little-information-field');
-  console.log(div);
-  console.log(div2);
   //取得した情報からスタイルについての状態のみをstateに代入
   state = div.style.display;
   state2 = div2.style.display;

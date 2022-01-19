@@ -5,6 +5,7 @@
     {{-- コメント　詳細画面ここから --}}
     {{-- 部署の詳細表示--}}
     <div class="col border border-primary" style="padding:10px;">
+
     @if( empty(session('click_code')) or session('click_code') == "bs")
     @if(isset($top_department))
     <form action="{{ route('psbs01.update') }}" method="post">
@@ -15,15 +16,16 @@
 
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
-                    <div class="col-4">
-                        <p id="palent">部署名<input type="text" name="name" maxlength="32" data-toggle="tooltip" title="部署の名称を入力します" @if(!empty(old('name'))) value="{{ old('name') }}" @else value= "{{$top_department[0]->name}}"@endif></p>
+                    <div class="col-4" style="margin-top:-5px; margin-right:-12px">
+                        <h2>部署詳細</2>
                     </div>
-                    <div class="col">
-                        <p>番号:{{$top_department[0]->department_id}}</p>
-                    </div>
-                    <div class="col">
-                    <input type="button" value="ツリー表示" onclick="displayOn()"
-                    data-toggle="tooltip" title="ツリーを表示します">
+
+                    <div class="col-4" style="margin-right:-10px">
+                        <p id="palent">
+                            <span data-toggle="tooltip" title="番号:{{$top_department[0]->department_id}}">部署名</span>
+                            <input type="text" name="name" maxlength="32" style="width:140px;"
+                            data-toggle="tooltip" title="部署の名称を入力します" @if(!empty(old('name'))) value="{{ old('name') }}" @else value= "{{$top_department[0]->name}}"@endif>
+                        </p>
                     </div>
                 </div>
 
@@ -37,19 +39,18 @@
                     <div class="col-3" style="padding:0px">
                         <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$top_department[0]->management_personnel_id])}}">{{$top_management[0]}}</a></p>
                     </div>
-                    <div class="col" style="padding:0px">
- 
-                    <p>管理者検索：
-                        <input type="text" id="search-list" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
-                        data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
-                        <datalist id="keywords">
+                    <div class="col-4" style="padding:0px">
+                        <p>管理者検索：
+                            <input type="text" id="search-list" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
+                            data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
+                            <datalist id="keywords">
 @for($j = 0; $j < count($all_personnel_data);$j++)
 @if($all_personnel_data[$j]->system_management == 1)
-                            <option value="{{$all_personnel_data[$j]->name}}" label="{{$all_personnel_data[$j]->personnel_id}}"></option>
+                                <option value="{{$all_personnel_data[$j]->name}}" label="{{$all_personnel_data[$j]->personnel_id}}"></option>
 @endif
 @endfor
-                        </datalist>
-                    </p>
+                            </datalist>
+                        </p>
                     </div>
                     <div id="output_message"></div>
                 </div>
@@ -75,7 +76,7 @@
                         @endif
                         </select>
                         責任者:
-                        <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
+                        <select name="responsible_person_id" style="width:90px; margin:0px;" data-toggle="tooltip" title="部署の責任者を選択します">
                         <option value="{{$top_department[0]->responsible_person_id}}">{{$top_responsible[0]}}</option>
                        
                         @for($i = 0;$i < count($personnel_data);$i++)
@@ -91,7 +92,7 @@
                         &emsp;&emsp;
                         
                         <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
-                            <img class="remarks_button" src="../../image/under.png" alt="確定" >
+                            <img class="remarks_button" src="../../image/updown.png" alt="開閉" >
                         </button>
 
                         </p>
@@ -102,7 +103,7 @@
                     
                 </div>
 
-                <input type="hidden" id="remarks" name="remarks" value="">
+                <input type="hidden" id="remarks" name="remarks" value="{{$top_department[0]->remarks}}">
                 
                 <div class="row margin-reset" id="remarks-field" style="display:none">
                     <div>
@@ -155,8 +156,12 @@
                     </button>
 
                     <form action="{{ route('pa0001.redirect')}}" method="get">
-                        <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                        <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="画面を再表示します">
                     </form>
+
+                    <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+                        <img class="main_button_img" src="../../image/tree.png" alt="開く" >
+                    </button>
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     <font size="-2" color="red">削除有効化</font>
@@ -179,22 +184,24 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
             @endif
                 <div class="row">
-                    <div class="col-4">
-                        <p id="palent">部署名<input type="text" name="name" maxlength="32" @if(!empty(old('name'))) value="{{ old('name') }}" @else value="{{$click_department_data[0]->name}}" @endif data-toggle="tooltip" title="部署の名称を入力します"></p>
+                    <div class="col-4" style="margin-top:-5px; margin-right:-12px">
+                        <h2>部署詳細</2>
                     </div>
-                    <div class="col-3">
-                        <p>番号:{{$click_department_data[0]->department_id}}</p>
+
+                    <div class="col-4" style="margin-right:-10px">
+                        <p>
+                            <span data-toggle="tooltip" title="番号:{{$click_department_data[0]->department_id}}">部署名</span>
+                            <input type="text" name="name" maxlength="32" style="width:140px;"
+                            data-toggle="tooltip" title="部署の名称を入力します" @if(!empty(old('name'))) value="{{ old('name') }}" @else value= "{{$click_department_data[0]->name}}"@endif>
+                        </p>
                     </div>
-                    <div class="col-3">
+  
+                    <div class="col" style="margin-top:5px;">
                         <p>上位:<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$click_department_high[0]->name}}</a></p>
-                    </div>
-                    <div class="col-2">
-                    <input type="button" value="ツリー表示" onclick="displayOn()"
-                    data-toggle="tooltip" title="ツリーを表示します">
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row margin-reset">
                     <div class="col-4">
                         <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" 
                         @if(!empty(old('management_number'))) value="{{ old('management_number') }}" @else value="{{$click_department_data[0]->management_personnel_id}}" @endif 
@@ -218,7 +225,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row margin-reset">
                     <div class="col">
                         <p>状態:
                         <select name="status" data-toggle="tooltip" title="部署の状態を選択します">
@@ -239,7 +246,7 @@
                         @endif
                         </select>
                         責任者:
-                        <select name="responsible_person_id" data-toggle="tooltip" title="部署の責任者を選択します">
+                        <select name="responsible_person_id" style="width:90px; margin:0px;" data-toggle="tooltip" title="部署の責任者を選択します">
                         <option value="{{$click_department_data[0]->responsible_person_id}}">{{$click_responsible_lists[0]}}</option>
                         @for($i = 0;$i < count($personnel_data);$i++)
                             @if($personnel_data[$i]->high_id == $click_department_data[0]->department_id)
@@ -247,22 +254,38 @@
                             @endif
                         @endfor
                         </select>
-                        </p>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col">
-                        運用開始日<input name="start_day" type="date" @if(!empty(old('start_day'))) value="{{ old('start_day')}}" @else value="{{$operation_date['operation_start_date']}}" @endif >
-                    </div>
-                    <div class="col">
-                        運用終了日<input name="finish_day" type="date" @if(!empty(old('finish_day'))) value="{{ old('finish_day')}}" @else value="{{$operation_date['operation_end_date']}}" @endif>
+                        運用開始日<input name="start_day" type="date" style="width:140px; margin:0px;" @if(!empty(old('start_day'))) value="{{ old('start_day')}}" @else value="{{$operation_date['operation_start_date']}}" @endif >
+                        運用終了日<input name="finish_day" type="date" style="width:140px; margin:0px;" @if(!empty(old('finish_day'))) value="{{ old('finish_day')}}" @else value="{{$operation_date['operation_end_date']}}" @endif>
+                    
+                        &emsp;&emsp;
+
+                        <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
+                            <img class="remarks_button" src="../../image/updown.png" alt="開閉" >
+                        </button>
+                        </p>
                     </div>
                 </div>
 
                 <input type="hidden" id="remarks" name="remarks" value="">
 
-                <div class="row">
+                <div class="row margin-reset" id="remarks-field" style="display:none">
+                    <div>
+                        備考
+                    </div>
+                    <div>
+                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;">{{$click_department_data[0]->remarks}}</textarea>
+                    </div>
+                </div>
+
+                <div class="row" id="little-information-field" style="display:none">
+                    <p>
+                    登録日:{{$click_department_data[0]->created_at}} 修正日:{{$click_department_data[0]->updated_at}}
+                    登録者:<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->responsible_person_id])}}">{{$click_responsible_lists[0]}}</a>
+                    </p>
+                </div>
+
+                <div class="row main_button_display">
                     <div class="col">
                     <p>
                     <div style="display:inline-flex">
@@ -307,21 +330,13 @@
                     <form action="{{ route('pa0001.redirect')}}" method="get">
                         <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
+
+                    <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+                        <img class="main_button_img" src="../../image/tree.png" alt="開く" >
+                    </button>
                     
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     <font size="-2" color="red">削除有効化</font>
-                    </div>
-                    <p>
-                    登録日:{{$click_department_data[0]->created_at}} 修正日:{{$click_department_data[0]->updated_at}}
-                    登録者:<a href="{{ route('plbs01.show',[session('client_id'),$click_department_data[0]->responsible_person_id])}}">{{$click_responsible_lists[0]}}</a>
-                    </p>
-                </div>
-                <div class="row">
-                    <div>
-                        備考
-                    </div>
-                    <div>
-                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;">{{$click_department_data[0]->remarks}}</textarea>
                     </div>
                 </div>
             </div>

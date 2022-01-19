@@ -26,5 +26,7 @@
             <input type="hidden" id="action_node_id" value="{{ session('action_node_id') }}">
             <input type="hidden" id="back_treeaction" value="{{ session('back_treeaction') }}">
             <!-- セッション情報 -->
+
         </div>
+
     {{-- コメント　ツリー画面ここまで --}}

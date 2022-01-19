@@ -13,18 +13,15 @@
 
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-4" style="margin-top:-5px; margin-right:-12px">
+                        <h2>人員詳細</2>
+                    </div>
+                    <div class="col-4" style="margin-right:-10px">
                         <p id="palent">名前<input type="text" name="name" value="" data-toggle="tooltip" title="人員の名称を入力します"></p>
                     </div>
-                    <div class="col-3">
-                        <p>番号:</p>
-                    </div>
+                    
                     <div class="col-3">
                         上位:
-                    </div>
-                    <div class="col-2">
-                    <input type="button" value="ツリー表示" onclick="displayOn()"
-                    data-toggle="tooltip" title="ツリーを表示します">
                     </div>
                 <div>
 
@@ -51,7 +48,7 @@
                         <div class="col-5">
                             <p>メールアドレス<input type="email" name="email" value=""></p>
                         </div>
-                        <div class="col-4" style="padding:0px">
+                        <div class="col-4" style="padding:0px;margin-left:-68px">
                             <p id="login">パスワード<input id="password" type="password" name="password">
                             <input type="checkbox" data-toggle="tooltip" title="チェック時にパスワードを見えるようにする" onclick="passwordOn()"></p>
                         </div>
@@ -76,40 +73,45 @@
                             ログイン：
                             <input type="hidden" name="login_authority" value="0">
                             <input type="checkbox" name="login_authority" value="1">
-                            </p>
-                        </div>
-                    </div>
+                            
+                            運用開始日<input name="start_day" type="date" style="width:140px; margin:0px;" value="{{date('Y-m-d')}}" readonly>
+                            運用終了日<input name="finish_day" type="date" style="width:140px; margin:0px;" value="" readonly>
 
-                    <div class="row">
-                        <div class="col">
-                            運用開始日<input name="start_day" type="date" value="{{date('Y-m-d')}}" readonly>
-                        </div>
-                        <div class="col">
-                            運用終了日<input name="finish_day" type="date" value="" readonly>
+                            <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
+                                <img class="remarks_button" src="../../image/updown.png" alt="開閉" >
+                            </button>
+                            </p>
                         </div>
                     </div>
 
                     <input type="hidden" id="remarks" name="remarks" value="">
 
-                    <div class="row">
-                        <div class="col">
-                            <div style="display:inline-flex">
-                            <input type="submit" value="確定"
-                            data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
+                    <div class="row margin-reset" id="remarks-field" style="display:none"">
                         <div>
                             備考
                         </div>
                         <div>
-                            <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;"></textarea>
+                            <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row" id="little-information-field" style="display:none">
+                        
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <p>
+                            <div style="display:inline-flex">
+                                <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                            </div>
+            </form>
+                            <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+                                <img class="main_button_img" src="../../image/tree.png" alt="開く" >
+                            </button>
                         </div>
                     </div>
             </div>
-            </form>
     </div>     
 </div>
 

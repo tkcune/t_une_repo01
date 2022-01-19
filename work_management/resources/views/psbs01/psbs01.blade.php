@@ -35,13 +35,14 @@
                         <p>管理者名：</p>
                     </div>
                     <div class="col" style="padding:0px">
- 
-                    <p>管理者検索：
+                        <p>管理者検索：
                         <input type="text" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
-                    </p>
+                        </p>
                     </div>
-                    <div id="output_message"></div>
+                    <div id="output_message">
+                        
+                    </div>
                 </div>
 
                 <div class="row margin-reset">
@@ -89,15 +90,16 @@
                 </div>
 
                 <div class="row">
-                <div class="col">
-                    <p>
-                    <div style="display:inline-flex">
-                        <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
-                    </div>
+                    <div class="col">
+                        <p>
+                        <div style="display:inline-flex">
+                            <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                        </div>
             </form>
-                    <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
-                        <img class="main_button_img" src="../../image/tree.png" alt="開く" >
-                    </button>
+                        <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+                            <img class="main_button_img" src="../../image/tree.png" alt="開く" >
+                        </button>
+                    </div>
                 </div>
             </div>
     </div>     

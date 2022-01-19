@@ -357,13 +357,17 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
             @endif
                 <div class="row">
-                    <div class="col-4">
-                        <p id="palent">名前<input type="text" name="name" maxlength="32" value="{{$click_personnel_data[0]->name}}" data-toggle="tooltip" title="人員の名称を入力します"></p>
+                    <div class="col-4" style="margin-top:-5px; margin-right:-12px">
+                        <h2>人員詳細</2>
                     </div>
-                    <div class="col-3">
-                        <p>番号:{{$click_personnel_data[0]->personnel_id}}</p>
+                    <div class="col-4" style="margin-right:-10px">
+                        <p id="palent">
+                            <span data-toggle="tooltip" title="番号:{{$click_personnel_data[0]->personnel_id}}">名前</span>
+                            <input type="text" name="name" maxlength="32" style="width:140px;" value="{{$click_personnel_data[0]->name}}" data-toggle="tooltip" title="人員の名称を入力します">
+                        </p>
                     </div>
-                    <div class="col-3">
+
+                    <div class="col">
                         上位:
                         @if(isset($top_department))
                         <a href="{{ route('index')}}">{{$top_department[0]->name}}</a>
@@ -371,17 +375,13 @@
                         <a href="{{ route('plbs01.show',[session('client_id'),$click_personnel_data[0]->high_id])}}">{{$data[0]->name}}</a>
                         @endif
                     </div>
-                    <div class="col-2">
-                    <input type="button" value="ツリー表示" onclick="displayOn()"
-                    data-toggle="tooltip" title="ツリーを表示します">
-                    </div>
 
                     <div class="col" style="padding:0px">
             
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row margin-reset">
                     <div class="col-4">
                         <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$click_personnel_data[0]->management_personnel_id}}" style="width:100px;"
                         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
@@ -406,11 +406,11 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row margin-reset">
                     <div class="col-5">
                         <p>メールアドレス<input type="email" name="email" maxlength="64" value="{{$click_personnel_data[0]->email}}"></p>
                     </div>
-                    <div class="col-4" style="padding:0px">
+                    <div class="col-4" style="padding:0px;margin-left:-68px">
                         <p id="login">パスワード<input id="password" type="password" maxlength="32" name="password">
                     @if($click_personnel_data[0]->login_authority == "1") 
                         <input type="checkbox" onclick="passwordOn()">
@@ -422,7 +422,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row margin-reset">
                     <div class="col">
                         <p>状態:
                         <select name="status" data-toggle="tooltip" title="人員の状態を選択します">
@@ -436,86 +436,92 @@
                         システム管理者:
                         <input type="checkbox" name="system_management" value="1" data-toggle="tooltip" title="人員がシステム管理者かどうかを設定します"
                         @if($click_personnel_data[0]->system_management == "1") checked @endif>
-                        ログイン：
+                        ログイン:
                         <input name="login_authority" type="checkbox" value="1" onclick="loginDisabled()" @if($click_personnel_data[0]->login_authority == "1") checked @endif>
-                        </p>
-                    </div>
-                </div>
+                        
+                        運用開始日<input name="start_day" type="date" style="width:140px; margin:0px;" value="{{$operation_date['operation_start_date']}}">
+                        運用終了日<input name="finish_day" type="date" style="width:140px; margin:0px;" value="{{$operation_date['operation_end_date']}}">
 
-                <div class="row">
-                    <div class="col">
-                        運用開始日<input name="start_day" type="date" value="{{$operation_date['operation_start_date']}}">
-                    </div>
-                    <div class="col">
-                        運用終了日<input name="finish_day" type="date" value="{{$operation_date['operation_end_date']}}">
+                        <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
+                            <img class="remarks_button" src="../../image/updown.png" alt="開閉" >
+                        </button>
+                        </p>
                     </div>
                 </div>
 
                 <input type="hidden" id="remarks" name="remarks" value="">
 
-                <div class="row">
-                    <div class="col">
-                    <div style="display:inline-flex">
-                    <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();"
-                    data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
-    </form>
-    
-                    <form action="{{ route('psji01.index') }}" method="get">
-                    @csrf
-                    <input class="main_button_img" type="image" src="../../image/new.png" alt="新規" onclick="submit();"
-                    data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
-                    <input type="hidden" id="high_new" name="high" value="{{$click_personnel_data[0]->high_id}}">
-                    </form>
-
-                    @if(substr($click_id,0,2) == "ta")
-                    <form action="{{ route('ptcm01.delete',[session('client_id'),$click_id])}}" method="post">
-                    @else
-                    <form action="{{ route('psji01.destroy',[session('client_id'),$click_personnel_data[0]->personnel_id])}}" method="post">
-                    @endif
-                    @csrf
-                    @method('post')
-                    <input class="main_button_img" type="image" src="../../image/delete.png" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip" 
-                    title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" 
-                    disabled>
-                    </form>
-
-                    @if(substr($click_id,0,2) == "ta")
-                    <form action="{{ route('pa0001.clipboard',$click_id)}}" method="get">
-                    @else
-                    <form action="{{ route('pa0001.clipboard',$click_personnel_data[0]->personnel_id)}}" method="get">
-                    @endif
-                    @csrf
-                    <input class="main_button_img" type="image" src="../../image/copy.png" alt="複写" onclick="submit();" id="copyTarget"
-                    data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
-                    </form>
-
-                    <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
-                    @csrf
-                    <input class="main_button_img" type="image" src="../../image/remove.png" alt="取消" onclick="submit();"
-                    data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3;" @endif>
-                    </form>
-
-                    <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
-                    <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
-                        <img class="main_button_img" src="../../image/ng.png" alt="隠蔽/表示" >
-                    </button>
-
-                    <form action="{{ route('pa0001.redirect')}}" method="get">
-                        <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
-                    </form>
-
-                    <input type="checkbox" onclick="deleteOn2()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
-                    <font size="-2" color="red">削除有効化</font>
-                    </div>
-                        <p>登録日:{{$click_personnel_data[0]->created_at}} 修正日:{{$click_personnel_data[0]->updated_at}}</p>
-                    </div>
-                </div>
-                <div class="row">
+                <div class="row margin-reset" id="remarks-field" style="display:none"">
                     <div>
                         備考
                     </div>
                     <div>
-                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 100px;">{{$click_personnel_data[0]->remarks}}</textarea>
+                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;">{{$click_personnel_data[0]->remarks}}</textarea>
+                    </div>
+                </div>
+
+                <div class="row" id="little-information-field" style="display:none">
+                    <p>登録日:{{$click_personnel_data[0]->created_at}} 修正日:{{$click_personnel_data[0]->updated_at}}</p>
+                </div>
+
+                <div class="row margin-reset">
+                    <div class="col">
+                        <div style="display:inline-flex">
+                        <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();"
+                        data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+    </form>
+    
+                        <form action="{{ route('psji01.index') }}" method="get">
+                        @csrf
+                        <input class="main_button_img" type="image" src="../../image/new.png" alt="新規" onclick="submit();"
+                        data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
+                        <input type="hidden" id="high_new" name="high" value="{{$click_personnel_data[0]->high_id}}">
+                        </form>
+
+                        @if(substr($click_id,0,2) == "ta")
+                        <form action="{{ route('ptcm01.delete',[session('client_id'),$click_id])}}" method="post">
+                        @else
+                        <form action="{{ route('psji01.destroy',[session('client_id'),$click_personnel_data[0]->personnel_id])}}" method="post">
+                        @endif
+                        @csrf
+                        @method('post')
+                        <input class="main_button_img" type="image" src="../../image/delete.png" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip" 
+                        title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" 
+                        disabled>
+                        </form>
+
+                        @if(substr($click_id,0,2) == "ta")
+                        <form action="{{ route('pa0001.clipboard',$click_id)}}" method="get">
+                        @else
+                        <form action="{{ route('pa0001.clipboard',$click_personnel_data[0]->personnel_id)}}" method="get">
+                        @endif
+                        @csrf
+                        <input class="main_button_img" type="image" src="../../image/copy.png" alt="複写" onclick="submit();" id="copyTarget"
+                        data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
+                        </form>
+
+                        <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
+                        @csrf
+                        <input class="main_button_img" type="image" src="../../image/remove.png" alt="取消" onclick="submit();"
+                        data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3;" @endif>
+                        </form>
+
+                        <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
+                        <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
+                            <img class="main_button_img" src="../../image/ng.png" alt="隠蔽/表示" >
+                        </button>
+
+                        <form action="{{ route('pa0001.redirect')}}" method="get">
+                            <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                        </form>
+
+                        <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+                            <img class="main_button_img" src="../../image/tree.png" alt="開く" >
+                        </button>
+
+                        <input type="checkbox" onclick="deleteOn2()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                        <font size="-2" color="red">削除有効化</font>
+                        </div>
                     </div>
                 </div>
             </div>

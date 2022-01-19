@@ -8,7 +8,7 @@ use Webklex\IMAP\Facades\Client;
 //IMAPメールクライアント
 class IMAPClient {
 
-    //@var IMAP
+    //@var webklex/php-imap
     private $client;
     
     //コンストラクタ
@@ -16,10 +16,9 @@ class IMAPClient {
     //@param string $password パスワード
     //@param string recieving_server 受信サーバー名
     //@param int $recieving_port_number 受信サーバーのポート番号
-    //@return IMAPClient
     private function __construct($name, $password, $recieving_server, $recieving_port_number){
 
-        //@var array IMAPクラスを作成するアカウント
+        //@var array phpimapクラスを作成するアカウント
         $account = [
             'host' => $recieving_server,
             'port' => $recieving_port_number,
@@ -31,7 +30,7 @@ class IMAPClient {
             'timeout' => 10
         ];
 
-        //IMAPクラスの作成
+        //webklex/php-imapクラスの作成
         $this->client = Client::make($account);
     }
 
@@ -57,17 +56,48 @@ class IMAPClient {
             //@var int 全てのメッセージの数
             $latest_number = $all_messages->count();
             
-            //@var string メール本文
-            $mail = $all_messages->get()[$latest_number - 1]->getTextBody();
+            //@var array メール本文
+            $mail = $this->create_show_mail($all_messages->get()[$latest_number - 1]);
+            throw new Exception();
             
-            //@var array メールを改行で分割し、配列にする
-            $mail = preg_split("/\r\n/", $mail);
-            //メールの半角空白をhtmlの空白に変換する
-            $mail = preg_replace('/ /', '&nbsp;', $mail);
         }catch(Exception $e){
             //なんらかのエラーであれば、メールを空にする
             $mail = [];
         }
+        return $mail;
+    }
+
+    //表示用のメールを作成する
+    //@param webklex/phpimap/Messages $mail_object メールの情報をまとめたメッセージクラス
+    //@return array 表示用のメール
+    private function create_show_mail($mail_object){
+        //@var array 表示用のメール
+        $mail = [];
+
+        //時刻
+        $mail[] = 'date :'.$mail_object->get('date').'<br />';
+        //送信者
+        $mail[] = 'from :'.$mail_object->get('fromaddress').'<br />';
+        //受信者
+        $mail[] = 'to :'.$mail_object->get('toaddress').'<br />';
+        //科目
+        $mail[] = 'subject :'.$mail_object->get('subject').'<br />';
+        //ヘッダーとボディーを分ける改行
+        $mail[] = '<br />';
+
+        //$var string   メールの本文
+        $body = $mail_object->getTextbody();
+        //@var array メールを改行で分割し、配列にする
+        $text_body = preg_split("/\r\n/", $body);
+        for($i = 0; $i < count($text_body); $i++){
+            //メールの半角空白をhtmlの空白に変換する
+            $text_body[$i] = preg_replace('/ /', '&nbsp;', $text_body[$i]);
+            //改行を挿入する
+            $text_body[$i] = $text_body[$i].'<br />';
+        }
+        //ヘッダーとボディーを結合する
+        $mail = array_merge($mail, $text_body);
+
         return $mail;
     }
 

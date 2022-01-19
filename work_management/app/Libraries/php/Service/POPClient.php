@@ -3,6 +3,7 @@
 namespace App\Libraries\php\Service;
 
 use Exception;
+use Illuminate\Support\Arr;
 
 //POP方式のメール受信クラス
 //telnetコマンドを送信して、メールを取得する
@@ -36,6 +37,7 @@ class POPClient {
     }
 
     //POP方式で認証、接続をする
+    //@return boolean 接続の可否
     private function connect(){
         try{
             //@var string 受信サーバーからの返信を取得する
@@ -159,7 +161,7 @@ class POPClient {
     }
 
     //ヘッダーを解析する
-    //@var array $header_array  ヘッダーの配列
+    //@param array $header_array  ヘッダーの配列
     //@return array 項目ごとに分けたヘッダー配列
     private function parse_header(array $header_array){
         
@@ -316,12 +318,14 @@ class POPClient {
                 //@var array パートの解析したボディーの配列
                 $body = $this->parse_part($body, $header);
                 //return用の変数に格納する
-                $mail_body[] = $body;
+                // $mail_body[] = $body;
+                $mail_body = array_merge($mail_body, $body);
             }
         }else{
             //multipartがなければ、そのまま格納する
             $mail_body = $body_array;
         }
+        
         return $mail_body;
     }
 
@@ -347,8 +351,6 @@ class POPClient {
                 }
             }
 
-            //ボディーが配列なら、空白で連結する
-            $body = (is_array($body)) ? implode(' ', $body) : $body;
             if(is_array($body)){
                 //@var array デコードした文字を格納する配列
                 $temp_body = [];
@@ -358,11 +360,13 @@ class POPClient {
                         //@var string base64デコードした文字
                         $base64_decode_body = base64_decode($line, true);
                         //エンコーディングされた文字をUTF-8にデコードする
-                        $temp_body[] = mb_convert_encoding($base64_decode_body, "UTF-8", $header['charset']);
+                        $base64_decode_body = mb_convert_encoding($base64_decode_body, "UTF-8", $header['charset']);
+                        $base64_decode_body = str_replace("\n", "<br />", $base64_decode_body);
+                        $temp_body[] = $base64_decode_body;
                     }
                 }
                 //ボディーに再格納する
-                $body = [$temp_body];
+                $body = $temp_body;
             }else{
                 //$bodyが文字なら
                 //base64デコードとUTF-8にデコード

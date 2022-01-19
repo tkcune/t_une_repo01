@@ -85,6 +85,7 @@ class NetworkClient {
     private static function get_send_server(string $client_id){
             
         try {
+            throw new Exception();
             //@var object ユーザーの送信サーバーのデータ
             $user_info = Db::select('select email, sending_server, sending_port_number from dcnw01 where client_id = ?', [$client_id])[0];
         } catch (Exception $e) {
@@ -115,6 +116,7 @@ class NetworkClient {
         $is_send = false;
         //@var SMTPClient
         $client = NetworkClient::create_send_client($sending_server, $sending_port_number, $email);
+        
         if($client != null){
             //メールを送信する
             $is_send = $client->send('アウグストゥス', 'roma@roma.com');
@@ -136,16 +138,18 @@ class NetworkClient {
     //@param string $client_id クライアントID
     //@param string $name 名前
     //@param string $email メールアドレス
-    public function send_ji_test_mail($client_id, $name, $email){
+    public function send_ji_test_mail(string $client_id,string $name,string $email){
         //@var boolean メール送信成功を判断するフラグ(初期値はfalse)
         $is_send = false;
         //@var array 送信サーバーの情報
         $user_info = NetworkClient::get_send_server($client_id);
-        //@var SMTPClient
-        $client = NetworkClient::create_send_client($user_info->sending_server, $user_info->sending_port_number, $user_info->email);
-        if($client != null){
-            //メールを送信する
-            $is_send = $client->send($name, $email);
+        if($user_info != null){
+            //@var SMTPClient
+            $client = NetworkClient::create_send_client($user_info->sending_server, $user_info->sending_port_number, $user_info->email);
+            if($client != null){
+                //メールを送信する
+                $is_send = $client->send($name, $email);
+            }
         }
 
         //ログ出力とメッセージ領域表示
@@ -218,20 +222,22 @@ class NetworkClient {
         return $mail;
     }
 
+    //現在のスパイラルでは使用しないので、削除
     //imap,popのネットワーククライアントのデータベースを取得する
     //@param string $client_id クライアントのid
     //@return IMAPClient
-    private static function get_receive_data(string $client_id){
-        try {
-            $user_info = Db::select('select name, password, recieving_server, recieving_server_way, recieving_port_number from dcnw01 where client_id = ?', [$client_id])[0];
-        } catch (Exception $e) {
-            //ログ出力とメッセージ領域表示
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '7007');
-            HeaderMessage::set_header_message('mhcmer0001', '7007');
-        } 
+    // private static function get_receive_data(string $client_id){
+    //     try {
+    //         //@var array ユーザーの情報
+    //         $user_info = Db::select('select name, password, recieving_server, recieving_server_way, recieving_port_number from dcnw01 where client_id = ?', [$client_id])[0];
+    //     } catch (Exception $e) {
+    //         //ログ出力とメッセージ領域表示
+    //         OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '7007');
+    //         HeaderMessage::set_header_message('mhcmer0001', '7007');
+    //     } 
 
-        return $user_info;
-    }
+    //     return $user_info;
+    // }
 
     //end受信コード
 }

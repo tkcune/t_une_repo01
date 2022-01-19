@@ -57,6 +57,7 @@ class SMTPclient {
         //テスト用のメールを設定する
         $this->set_test_mail_info($to, $email);
         try {
+            throw new Exception();
             //@var boolean メールを送信し、結果を確認する
             $is_send = $this->client->send();
         } catch (Exception $e) {

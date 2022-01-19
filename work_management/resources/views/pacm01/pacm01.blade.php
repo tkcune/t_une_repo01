@@ -159,7 +159,7 @@
                         <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="画面を再表示します">
                     </form>
 
-                    <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+                    <button class="main_button_style" type="button" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
                         <img class="main_button_img" src="../../image/tree.png" alt="開く" >
                     </button>
 
@@ -331,7 +331,7 @@
                         <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
 
-                    <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+                    <button class="main_button_style" type="button" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
                         <img class="main_button_img" src="../../image/tree.png" alt="開く" >
                     </button>
                     
@@ -515,7 +515,7 @@
                             <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                         </form>
 
-                        <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+                        <button class="main_button_style" type="button" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
                             <img class="main_button_img" src="../../image/tree.png" alt="開く" >
                         </button>
 

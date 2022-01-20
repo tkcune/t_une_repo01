@@ -27,19 +27,9 @@
     
 ４・データの挿入<BR>
     
-　4-1.PHPMyAdminにアクセスし、作成したwork_managementデータベースをクリック<BR>
+  4-1.コンソールがwork_manegement配下の時に、 php artisan migrateでデータベースのテーブルを作成する<BR>
     
-　4-2.インポートをクリック<BR>
-    
-　4-3.アップロードファイル:ファイル選択をクリックし、04.内部設計の04.データベーステストデータにあるzipファイルを選択<BR>
-    
-　4-4.右下にある実行ボタンをクリック
-    
-４－２・データの挿入(別の方法)<BR>
-    
-  4-2-1.コンソールがwork_manegement配下の時に、 php artisan migrateでデータベースのテーブルを作成する<BR>
-    
-　4-2-2.続けて、 php artisan db:seedで、データベースにデータを挿入する<BR>
+　4-2.続けて、 php artisan db:seedで、データベースにデータを挿入する<BR>
     
 ５・APP_KEYの生成
     
@@ -51,3 +41,9 @@
 1. php artisan migrate:freshで、データベースのテーブルのデータを消去する<BR>
     
 2. php artisan db:seedで、データベースのテーブルにデータを挿入する
+
+最新のデータベースに対応したseederの作成方法<BR>
+
+1. コマンドプロンプトのwork_manegement配下でcomposer require --dev "orangehill/iseed"を実行(既に実行済みの場合は省略)
+
+2. コマンドプロンプトのwork_manegement配下でphp artisan iseed {table_name}を実行({table_name}は対応したテーブル名を記載)

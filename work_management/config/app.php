@@ -181,6 +181,11 @@ return [
          */
         App\Providers\DatabaseExceptionServiceProvider::class,
 
+        /**
+         * データベースからseederを逆作成するプロバイダー
+         * 
+         */
+        Orangehill\Iseed\IseedServiceProvider::class,
     ],
 
     /*

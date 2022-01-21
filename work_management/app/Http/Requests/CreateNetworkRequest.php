@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
-use App\Libraries\php\HeaderMessage;
+use App\Libraries\php\Service\HeaderMessage;
 use App\Rules\DomainRule;
 use App\Facades\OutputLog;
 

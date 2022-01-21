@@ -83,7 +83,7 @@ Route::prefix('pslg')->group(function () {
 //ネットワーク設定の画面のルート
 //Psnw01Controllerに関するルーティング
 Route::prefix('psnw01')->group(function () {
-  Route::get('/', [Psnw01Controller::class, 'index'])->name('psnw01.index');
+  Route::get('/index', [Psnw01Controller::class, 'index'])->name('psnw01.index');
   //ネットワーククライアントのデータベース保存
   Route::post('/create', [Psnw01Controller::class, 'create'])->name('psnw01.create');
   //メール送信試験

@@ -42,7 +42,8 @@ class Psnw01Controller extends Controller
     public function send(Request $request){
         
         //メールを送る
-        NetworkClient::send_test_mail($request->sending_server, $request->sending_port_number, $request->test_email);
+        // NetworkClient::send_test_mail($request->sending_server, $request->sending_port_number, $request->test_email);
+        NetworkClient::send_test_mail(session('sending_server', ''), session('sending_port_number', ''), $request->test_email);
         // ツリーデータの取得
         $tree = PtcmtrController::set_view_treedata();
         
@@ -55,7 +56,8 @@ class Psnw01Controller extends Controller
         
         //@var array 受信したメール
         $mail = NetworkClient::get_latest_mail(
-            $request->name, $request->password, $request->recieving_server, $request->recieving_port_number, $request->recieving_server_way
+            // $request->name, $request->password, $request->recieving_server, $request->recieving_port_number, $request->recieving_server_way
+            session('name', ''), session('password', ''), session('recieving_server', ''), session('recieving_port_number', ''), session('recieving_server_way')
         );
 
         //ツリーデータの設定

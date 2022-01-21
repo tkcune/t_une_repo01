@@ -16,7 +16,7 @@
          */
         private array $array;
         private int $arrayNum; 
-        const MAX = 5; 
+        const MAX = 20; 
 
         /**
          * ページネーションの最大ページ数を計算

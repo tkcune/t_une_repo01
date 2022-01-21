@@ -14,7 +14,7 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4" style="margin-top:-5px; margin-right:-12px">
-                        <h2>人員詳細</2>
+                        <h2>人員登録</h2>
                     </div>
                     <div class="col-4" style="margin-right:-10px">
                         <p id="palent">名前<input type="text" name="name" value="" data-toggle="tooltip" title="人員の名称を入力します"></p>

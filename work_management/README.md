@@ -47,3 +47,12 @@
 1. コマンドプロンプトのwork_manegement配下でcomposer require --dev "orangehill/iseed"を実行(既に実行済みの場合は省略)
 
 2. コマンドプロンプトのwork_manegement配下でphp artisan iseed {table_name}を実行({table_name}は対応したテーブル名を記載)
+
+---
+画像をbase64化にする方法(storage/image下の画像をconfig/base64.phpに保存する)
+
+1. base64にしたい画像をstorage/image下に配置する
+2. コンソールから,`php artisan command:transbase64'を実行する
+3. 以下、注意点
+4. storage/image下の画像を全てbase64にして、毎回書き込むので、画像を削除してしまうとconfig/base64.phpに書き込まれない。画像を消してしまうと、元もとあるconfig/base64の行を削除してしまう。
+---

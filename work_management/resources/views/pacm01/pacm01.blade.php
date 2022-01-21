@@ -92,7 +92,7 @@
                         &emsp;&emsp;
                         
                         <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
-                            <img class="remarks_button" src="../../image/updown.png" alt="開閉" >
+                            <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
                         </button>
 
                         </p>
@@ -125,42 +125,42 @@
                     <div class="col">
                     <p>
                     <div style="display:inline-flex">
-                    <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                     <form action="{{ route('psbs01.index') }}" method="get">
                         @csrf
-                        <input class="main_button_img" type="image" src="../../image/new.png" alt="新規" onclick="submit();" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規" onclick="submit();" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
                         <input type="hidden" id="high_new" name="high" value="{{$top_department[0]->department_id}}">
                     </form>
 
                     <form action="{{ route('psbs01.delete',[session('client_id'),$top_department[0]->department_id])}}" method="post">
                         @csrf
                         @method('post')
-                        <input class="main_button_img" type="image" src="../../image/delete.png" alt="削除" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.delete')}}" alt="削除" onclick="submit();" id="delete" value="削除" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
                     <form action="{{ route('pa0001.clipboard',$top_department[0]->department_id)}}" method="get">
                         @csrf
-                        <input class="main_button_img" type="image" src="../../image/copy.png" alt="複写"  onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写"  onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
                     <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
                         @csrf
-                        <input class="main_button_img" type="image" src="../../image/remove.png" alt="取消" onclick="submit();" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3" @endif>
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.remove')}}" alt="取消" onclick="submit();" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3" @endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                     <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
-                        <img class="main_button_img" src="../../image/ng.png" alt="隠蔽/表示" >
+                        <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.ng')}}" alt="隠蔽/表示" >
                     </button>
 
                     <form action="{{ route('pa0001.redirect')}}" method="get">
-                        <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="画面を再表示します">
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.road')}}" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="画面を再表示します">
                     </form>
 
                     <button class="main_button_style" type="button" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
-                        <img class="main_button_img" src="../../image/tree.png" alt="開く" >
+                        <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}} alt="開く" >
                     </button>
 
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
@@ -261,7 +261,7 @@
                         &emsp;&emsp;
 
                         <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
-                            <img class="remarks_button" src="../../image/updown.png" alt="開閉" >
+                            <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
                         </button>
                         </p>
                     </div>
@@ -289,12 +289,12 @@
                     <div class="col">
                     <p>
                     <div style="display:inline-flex">
-                    <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                     <form action="{{ route('psbs01.index') }}" method="get">
                     @csrf
-                    <input class="main_button_img" type="image" src="../../image/new.png" alt="新規" onclick="submit();" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
+                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規" onclick="submit();" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
                     <input type="hidden" id="high_new" name="high" value="{{$click_department_data[0]->department_id}}">
                     </form>
 
@@ -305,7 +305,7 @@
                     @endif
                     @csrf
                     @method('post')
-                    <input class="main_button_img" type="image" src="../../image/delete.png" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
+                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.delete')}}" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip" title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" disabled>
                     </form>
 
                     @if(substr($click_id,0,2) == "ta")
@@ -314,25 +314,25 @@
                     <form action="{{ route('pa0001.clipboard',$click_department_data[0]->department_id)}}" method="get">
                     @endif
                         @csrf
-                        <input class="main_button_img" type="image" src="../../image/copy.png" alt="複写" onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写" onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                     </form>
 
                     <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
                         @csrf
-                        <input class="main_button_img" type="image" src="../../image/remove.png" alt="取消" onclick="submit();" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3;"@endif>
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.remove')}}" alt="取消" onclick="submit();" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3;"@endif>
                     </form>
 
                     <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                     <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
-                        <img class="main_button_img" src="../../image/ng.png" alt="隠蔽/表示" >
+                        <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.ng')}}" alt="隠蔽/表示" >
                     </button>
 
                     <form action="{{ route('pa0001.redirect')}}" method="get">
-                        <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.road')}}" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                     </form>
 
                     <button class="main_button_style" type="button" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
-                        <img class="main_button_img" src="../../image/tree.png" alt="開く" >
+                        <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く" >
                     </button>
                     
                     <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
@@ -443,7 +443,7 @@
                         運用終了日<input name="finish_day" type="date" style="width:140px; margin:0px;" value="{{$operation_date['operation_end_date']}}">
 
                         <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
-                            <img class="remarks_button" src="../../image/updown.png" alt="開閉" >
+                            <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
                         </button>
                         </p>
                     </div>
@@ -467,13 +467,13 @@
                 <div class="row margin-reset">
                     <div class="col">
                         <div style="display:inline-flex">
-                        <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();"
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();"
                         data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
     </form>
     
                         <form action="{{ route('psji01.index') }}" method="get">
                         @csrf
-                        <input class="main_button_img" type="image" src="../../image/new.png" alt="新規" onclick="submit();"
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規" onclick="submit();"
                         data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
                         <input type="hidden" id="high_new" name="high" value="{{$click_personnel_data[0]->high_id}}">
                         </form>
@@ -485,7 +485,7 @@
                         @endif
                         @csrf
                         @method('post')
-                        <input class="main_button_img" type="image" src="../../image/delete.png" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip" 
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.delete')}}" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip" 
                         title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します" 
                         disabled>
                         </form>
@@ -496,27 +496,27 @@
                         <form action="{{ route('pa0001.clipboard',$click_personnel_data[0]->personnel_id)}}" method="get">
                         @endif
                         @csrf
-                        <input class="main_button_img" type="image" src="../../image/copy.png" alt="複写" onclick="submit();" id="copyTarget"
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写" onclick="submit();" id="copyTarget"
                         data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                         </form>
 
                         <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
                         @csrf
-                        <input class="main_button_img" type="image" src="../../image/remove.png" alt="取消" onclick="submit();"
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.remove')}}" alt="取消" onclick="submit();"
                         data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3;" @endif>
                         </form>
 
                         <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
                         <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="本機能を隠蔽、もしくは隠蔽状態を解除します 隠蔽した機能をツリー画面に表示するためには、ツリー画面で露出をクリックします">
-                            <img class="main_button_img" src="../../image/ng.png" alt="隠蔽/表示" >
+                            <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.ng')}}" alt="隠蔽/表示" >
                         </button>
 
                         <form action="{{ route('pa0001.redirect')}}" method="get">
-                            <input class="main_button_img" type="image" src="../../image/road.png" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.road')}}" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                         </form>
 
                         <button class="main_button_style" type="button" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
-                            <img class="main_button_img" src="../../image/tree.png" alt="開く" >
+                            <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く" >
                         </button>
 
                         <input type="checkbox" onclick="deleteOn2()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
@@ -544,7 +544,7 @@
                         @endif
                         
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
-                            <input class="main_button_img" type="image" src="../../image/new.png" alt="新規">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                         </button>
                         </form>
 
@@ -558,7 +558,7 @@
                         @csrf
                         @method('patch')
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
-                            <input class="main_button_img" type="image" src="../../image/move.png" alt="移動">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動">
                         </button>
                         </form>
 
@@ -573,7 +573,7 @@
                         <input type="hidden" id="high_insert" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="../../image/insert.png" alt="挿入">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入">
                         </button>
                         </form>
 
@@ -588,7 +588,7 @@
                         <input type="hidden" id="high_projection" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="../../image/ji.png" alt="投影">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
                         </button>
                         </form>
                     </div>
@@ -757,7 +757,7 @@
                             <input type="text" name="search" class="top" maxlength="32">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
-                            <input class="main_button_img" type="image" src="../../image/search.png" alt="投影">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
                         </button>
                         </form>
                     </div> 
@@ -846,7 +846,7 @@
                         <input type="hidden" id="ji_high_new" name="high" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
-                            <input class="main_button_img" type="image" src="../../image/new.png" alt="新規">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                         </button>
                         </form>
 
@@ -860,7 +860,7 @@
                         @endif
                         <input type="hidden" id="ji_lower_move" name="lower_id" value="{{session('clipboard_id')}}"> 
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
-                            <input class="main_button_img" type="image" src="../../image/move.png" alt="移動">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動">
                         </button>
                         </form>
 
@@ -875,7 +875,7 @@
                         @endif
                         <input type="hidden" id="ji_copy_id" name="copy_id" value="{{session('clipboard_id')}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="../../image/insert.png" alt="挿入">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入">
                         </button>
                         </form>
 
@@ -890,7 +890,7 @@
                         <input type="hidden" id="ji_high_projection" name="high_id" value="{{$click_department_data[0]->department_id}}">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="../../image/ji.png" alt="投影">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
                         </button>
                         </form>
                     </div>
@@ -1070,7 +1070,7 @@
                             <input type="text" name="search2" class="top" maxlength="32">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
-                            <input class="main_button_img" type="image" src="../../image/search.png" alt="検索">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
                         </button>
                         </form>
                     </div>

@@ -62,11 +62,17 @@ class NetworkClient {
         $sending_port_number = $request->sending_port_number;
 
         try {
-            //dcnw01にデータを保存する
-            DB::insert('insert into dcnw01 (client_id, name, email, password, recieving_server, recieving_server_way, recieving_port_number, sending_server, sending_server_way, sending_port_number)
-            VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [$client_id, $name, $email, $password, $recieving_server, $recieving_server_way, $recieving_port_number, $sending_server, '1', $sending_port_number]);
-            
+            session([
+                'client_id' => 'aa00000001',
+                'name' => $name,
+                'email' => $email,
+                'password' => $password,
+                'recieving_server' => $recieving_server,
+                'recieving_server_way' => $recieving_server_way,
+                'recieving_port_number' => $recieving_port_number,
+                'sending_server' => $sending_server,
+                'sending_port_number' => $sending_port_number
+            ]);
             //ログ出力とメッセージ領域表示
             HeaderMessage::set_header_message('mmnwok0001');
             OutputLog::message_log(__FUNCTION__, 'mmnwok0001');
@@ -75,6 +81,22 @@ class NetworkClient {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '7007');
             HeaderMessage::set_header_message('mhcmer0001', '7007');
         }
+        
+
+        // try {
+        //     //dcnw01にデータを保存する
+        //     DB::insert('insert into dcnw01 (client_id, name, email, password, recieving_server, recieving_server_way, recieving_port_number, sending_server, sending_server_way, sending_port_number)
+        //     VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        //     [$client_id, $name, $email, $password, $recieving_server, $recieving_server_way, $recieving_port_number, $sending_server, '1', $sending_port_number]);
+            
+        //     //ログ出力とメッセージ領域表示
+        //     HeaderMessage::set_header_message('mmnwok0001');
+        //     OutputLog::message_log(__FUNCTION__, 'mmnwok0001');
+        // } catch (Exception $e) {
+        //     //ログ出力とメッセージ領域表示
+        //     OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '7007');
+        //     HeaderMessage::set_header_message('mhcmer0001', '7007');
+        // }
     }
 
     //first送信コード
@@ -101,7 +123,7 @@ class NetworkClient {
     //@param int $sending_port_number 送信サーバーのポート番号
     //@param string $email メールアドレス
     //@return SMTPClient
-    private static function create_send_client(string $sending_server,string $sending_port_number,string $email){
+    private static function create_send_client(string $sending_server,string $sending_port_number, $email){
         //@var SMTPClient
         $client = new SMTPclient($sending_server, $sending_port_number, $email);
         return $client;
@@ -111,7 +133,7 @@ class NetworkClient {
     //@param string $sending_server 送信サーバー名
     //@param int $sending_port_number 送信サーバーのポート番号
     //@param string $email メールアドレス
-    public static function send_test_mail(string $sending_server,string $sending_port_number,string $email){
+    public static function send_test_mail(string $sending_server,string $sending_port_number, $email){
         //@var boolean メール送信成功を判断するフラグ(初期値はfalse)
         $is_send = false;
         //@var SMTPClient

@@ -46,3 +46,19 @@
 .margin-reset{
   margin-top: -10px;
 }
+
+/*スクロールのcss*/
+thead{
+  margin-bottom: -16px;
+}
+
+thead,tbody {
+  display: block;
+}
+
+div.table{
+  height: 80px;
+  overflow: auto;
+}
+
+

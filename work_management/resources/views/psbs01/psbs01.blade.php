@@ -67,7 +67,7 @@
                         &emsp;&emsp;
                         
                         <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
-                            <img class="remarks_button" src="../../image/updown.png" alt="開閉" >
+                            <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
                         </button>
 
                         </p>
@@ -93,11 +93,11 @@
                     <div class="col">
                         <p>
                         <div style="display:inline-flex">
-                            <input class="main_button_img" type="image" src="../../image/ok.png" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
                         </div>
             </form>
                         <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
-                            <img class="main_button_img" src="../../image/tree.png" alt="開く" >
+                            <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く" >
                         </button>
                     </div>
                 </div>

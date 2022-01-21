@@ -83,8 +83,8 @@ var listOn = function () {
  * @var int id2 人員対象のID
  */
 function deleteOn() {
-  var count = document.getElementById("bs-table").rows.length - 1;
-  var count2 = document.getElementById("ji-table").rows.length - 1;
+  var count = document.getElementById("bs-table").rows.length;
+  var count2 = document.getElementById("ji-table").rows.length;
 
   if (document.getElementById("delete").disabled === true) {
     // disabled属性を削除

@@ -395,7 +395,7 @@
                             <input type="text" name="search2" class="top" maxlength="32">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.serach')}}" alt="検索" disabled style="opacity:0.3">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索" disabled style="opacity:0.3">
                         </button>
                         </form>
                         {{-- 検索機能ここまで　--}}

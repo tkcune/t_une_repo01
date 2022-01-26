@@ -38,4 +38,7 @@
     div2.setAttribute("style", "display:none");
     //document.getElementById('list-open-button').setAttribute("style", "display:inline");
   }
+
+  
+  
 }

@@ -586,10 +586,9 @@ class Pa0001Controller extends Controller
             $hierarchical = new Hierarchical();
             $select_lists = $hierarchical->subordinateSearch($lists,$client);
 
-            //選択したデータ及び配下データを取得
-            $lists = $hierarchical->subordinateGet($select_lists,$client);
-            $department_data = $lists[0];
-            $personnel_data = $lists[1];
+            //人員の所属部署データ取得
+            $department_data = $data;
+            $click_department_data = $data;
 
             //登録日付を変換
             $date = new Date();
@@ -630,8 +629,8 @@ class Pa0001Controller extends Controller
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
 
-            return view('pacm01.pacm01',compact('count_department','count_personnel','click_management_lists','data','department_max','departments',
-            'department_data','personnel_max','names','responsible_lists','department_high','personnel_high','client','select_id','click_personnel_data','personnel_data','operation_date','all_personnel_data'));
+            return view('pacm01.pacm01',compact('count_department','count_personnel','click_management_lists','data','department_max','departments','click_department_data',
+            'department_data','personnel_max','names','responsible_lists','department_high','personnel_high','client','select_id','click_personnel_data','operation_date','all_personnel_data'));
         }
     }
 

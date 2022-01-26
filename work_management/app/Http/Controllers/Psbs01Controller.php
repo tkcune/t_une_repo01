@@ -311,7 +311,7 @@ class Psbs01Controller extends Controller
                 DatabaseException::common($e);
                 return redirect()->route('index');
             }
-
+            
             //部署データが存在しない場合、選択部署が最上位部署か判別
             if(empty($data)){
                 $department_db = new DepartmentDataBase();
@@ -407,10 +407,8 @@ class Psbs01Controller extends Controller
             $hierarchical = new Hierarchical();
             $select_lists = $hierarchical->subordinateSearch($lists,$client);
 
-            //選択したデータ及び配下データを取得
-            $lists = $hierarchical->subordinateGet($select_lists,$client);
-            $department_data = $lists[0];
-            $personnel_data = $lists[1];
+            //所属部署データを取得
+            $department_data = $click_department_data;
 
             //日付フォーマットの変更
             $date = new Date();
@@ -460,7 +458,7 @@ class Psbs01Controller extends Controller
 
             return view('pacm01.pacm01',compact('data','count_department','count_personnel','department_max','departments','personnel_max','names',
             'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists',
-            'department_data','personnel_data','operation_date','all_personnel_data','click_department_data'));
+            'department_data','operation_date','all_personnel_data','click_department_data'));
         }
     }
 

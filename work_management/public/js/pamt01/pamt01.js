@@ -1,17 +1,20 @@
 /**
  * ブラウザバックした場合に削除ボタンをリセットさせるメソッド
  * 
- * @var string flg フラグ
+ * @var string perfEntries 画面のパフォーマンス情報
+ * @var string type 送信タイプ
  */
 window.addEventListener('pageshow',()=>{
-  var flg=window.performance.navigation.type;
-
-  if(flg ==2){
-    window.location.reload();
-  }
+  var perfEntries=window.performance.getEntriesByType("navigation");
+    perfEntries.forEach(function(pe){
+      // 読み込みタイプを取得
+      type = pe.type;
+    });
+      //戻るボタン・進むボタンの場合に更新処理
+    if( type == "back_forward"){
+        window.location.reload();
+    }
 });
-
-
 
 /**
  * 画面の隠蔽表示メソッド
@@ -76,15 +79,15 @@ var listOn = function () {
 }
 
 /**
- * 削除のON・OFF切替メソッド
+ * 部署詳細の削除のON・OFF切替メソッド
  * @var int count 部署一覧テーブルの行数
  * @var int count2 人員一覧テーブルの行数
  * @var int id 部署一覧対象のID
  * @var int id2 人員対象のID
  */
 function deleteOn() {
-  var count = document.getElementById("bs-table").rows.length;
-  var count2 = document.getElementById("ji-table").rows.length;
+  var count = document.getElementById("bs-table").rows.length - 1;
+  var count2 = document.getElementById("ji-table").rows.length - 1;
 
   if (document.getElementById("delete").disabled === true) {
     // disabled属性を削除
@@ -114,7 +117,7 @@ function deleteOn() {
 }
 
 /**
- * 人員表示の削除のON・OFF切替メソッド
+ * 人員詳細の削除のON・OFF切替メソッド
  * @var int count 部署一覧テーブルの行数
  * @var int count2 人員一覧テーブルの行数
  * @var int id 部署一覧対象のID

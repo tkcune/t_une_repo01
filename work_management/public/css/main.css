@@ -47,18 +47,34 @@
   margin-top: -10px;
 }
 
-/*スクロールのcss*/
+/*テーブルスクロールのcss*/
 thead{
   margin-bottom: -16px;
 }
 
-thead,tbody {
+table th ,td {
+  border:1px solid;
+  }
+
+.table_sticky {
   display: block;
+  overflow-y: scroll;
+  max-height: 120px;
+  border:1px solid;
+  border-collapse: collapse;
+}
+.table_sticky thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: gold;
+  border-top:#FFFFFF;
 }
 
-div.table{
-  height: 80px;
-  overflow: auto;
+/*ソート機能のcss*/
+.sorter-false {
+  background-image: none;
 }
+
 
 

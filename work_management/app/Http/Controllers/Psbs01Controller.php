@@ -312,19 +312,11 @@ class Psbs01Controller extends Controller
                 return redirect()->route('index');
             }
             
-            //部署データが存在しない場合、選択部署が最上位部署か判別
+            //部署データが存在しない場合、選択人員の所属部署が最上位部署か判別
             if(empty($data)){
                 $department_db = new DepartmentDataBase();
                 $top_department = $department_db->getClickTop($client,$affiliation_data[0]->high_id);
-
-                //全体の部署データの取得
-                try{
-                    $department_db = new DepartmentDataBase();
-                    $department_data = $department_db->getAll($client);
-                }catch(\Exception $e){
-                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                    DatabaseException::common($e);
-                }
+                $department_data = $top_department;
 
                 //全体の人員データの取得
                 try{
@@ -349,7 +341,6 @@ class Psbs01Controller extends Controller
                 $date = new Date();
                 $operation_date = $date->formatOperationDate($click_personnel_data);
                 $date->formatDate($top_department);
-                $date->formatDate($department_data);
                 $date->formatDate($personnel_data);
 
                 //基本ページネーション設定
@@ -366,7 +357,6 @@ class Psbs01Controller extends Controller
                 //上位階層取得
                 $hierarchical = new Hierarchical();
                 try{
-                    $department_high = $hierarchical->upperHierarchyName($departments);
                     $personnel_high = $hierarchical->upperHierarchyName($names);
                 }catch(\Exception $e){
                     OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
@@ -386,7 +376,7 @@ class Psbs01Controller extends Controller
                 session(['click_code'=>$select_code]);
 
                 return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments','personnel_max','names',
-                'top_department','top_responsible','count_department','count_personnel','client','responsible_lists','department_high','personnel_high',
+                'top_department','top_responsible','count_department','count_personnel','client','responsible_lists','personnel_high',
                 'department_data','select_id','department_data','personnel_data','click_personnel_data','operation_date','all_personnel_data','click_department_data'));
             }
 

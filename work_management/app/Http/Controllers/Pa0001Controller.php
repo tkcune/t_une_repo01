@@ -256,7 +256,6 @@ class Pa0001Controller extends Controller
         $client_id = session('client_id');
         $count_department = $_GET['department_page'];
         $count_personnel = $_GET['personnel_page'];
-
         $department_db = new DepartmentDataBase();
         $personnel_db = new PersonnelDataBase();
 
@@ -275,9 +274,11 @@ class Pa0001Controller extends Controller
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
         }
-        array_push($lists,$select_id);
 
         //選択した部署の配下を取得
+        $select_id = $top_department[0]->department_id;
+        $lists = [];
+        array_push($lists,$select_id);
         $hierarchical = new Hierarchical();
         $select_lists = $hierarchical->subordinateSearch($lists,$client_id);
 
@@ -521,14 +522,7 @@ class Pa0001Controller extends Controller
             if(empty($data)){
                 $department_db = new DepartmentDataBase();
                 $top_department = $department_db->getClickTop($client,$affiliation_data[0]->high_id);
-
-                //全体の部署データの取得
-                try{
-                    $department_data = $department_db->getAll($client);
-                }catch(\Exception $e){
-                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                    DatabaseException::common($e);
-                }
+                $department_data = $top_department;
 
                 //全体の人員データの取得
                 try{
@@ -559,7 +553,6 @@ class Pa0001Controller extends Controller
                 //上位階層取得
                 $hierarchical = new Hierarchical();
                 try{
-                    $department_high = $hierarchical->upperHierarchyName($departments);
                     $personnel_high = $hierarchical->upperHierarchyName($names);
                 }catch(\Exception $e){
                     OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
@@ -576,7 +569,7 @@ class Pa0001Controller extends Controller
                 $tree_data = $tree->set_view_treedata();
                 
                 return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments',
-                'personnel_max','names','department_high','personnel_high','responsible_lists','top_department','top_responsible','count_department','count_personnel','client',
+                'personnel_max','names','personnel_high','responsible_lists','top_department','top_responsible','count_department','count_personnel','client',
                 'department_data','select_id','personnel_data','click_personnel_data','operation_date','all_personnel_data'));
             }
             array_push($department_data,$data[0]);

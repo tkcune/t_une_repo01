@@ -790,7 +790,7 @@
                                 @else
                                     <td width="160"><a href="{{ route('plbs01.show',[session('client_id'),$department->department_id])}}" data-toggle="tooltip" title="クリックにより、当該部署に遷移します">{{$department->name}}</a></td>
                                 @endif
-                                    <td width="160"><a href="{{ route('plbs01.show',[session('client_id'),$department_high[$loop->index]->department_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$department_high[$loop->index]->name}}</a></td>
+                                    <td width="160">@if(!(empty($department_high)))<a href="{{ route('plbs01.show',[session('client_id'),$department_high[$loop->index]->department_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$department_high[$loop->index]->name}}</a>@endif</td>
                                     <td width="90">
                                 @switch($department->status)
                                     @case(10)

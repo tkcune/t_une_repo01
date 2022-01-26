@@ -30,14 +30,14 @@ class CreateNetworkRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'max:256'],
-            'email' => ['required', 'max:256', 'email'],
-            'password' => ['required', 'max:256'],
-            'recieving_server' => ['required', 'max:256', new DomainRule],
-            'recieving_server_way' => ['required', 'integer', 'between:0, 1'],
-            'recieving_port_number' => ['required', 'integer', 'between:0, 65535'],
-            'sending_server' => ['required', 'max:256', new DomainRule],
-            'sending_port_number' => ['required', 'integer', 'between:0, 65535']
+            'name' => ['required', new DomainRule, 'max: 256'],
+            'email' => ['required', 'max:256', 'email:strict,dns'],
+            'password' => ['required', 'alpha_num', 'max: 256'],
+            'recieving_server' => ['required', 'max: 256', new DomainRule],
+            'recieving_server_way' => ['required', 'integer', 'between: 1, 2'],
+            'recieving_port_number' => ['required', 'integer', 'between: 0, 65535'],
+            'sending_server' => ['required', 'max: 256', new DomainRule],
+            'sending_port_number' => ['required', 'integer', 'between: 0, 65535']
         ];
     }
 
@@ -48,7 +48,7 @@ class CreateNetworkRequest extends FormRequest
                 OutputLog::message_log(__FUNCTION__, 'mmnwer0004');
                 HeaderMessage::set_header_message('mmnwer0004');
                 throw new HttpResponseException(
-                    back()->withInput($this->input)->withErrors($validator)
+                    redirect()->route('psnw01.index')->withInput($this->input)
                 );
             }
         }
@@ -56,7 +56,7 @@ class CreateNetworkRequest extends FormRequest
         OutputLog::message_log(__FUNCTION__, 'mmnwer0003');
         HeaderMessage::set_header_message('mmnwer0003');
         throw new HttpResponseException(
-            back()->withInput($this->input)->withErrors($validator)
+            redirect()->route('psnw01.index')->withInput($this->input)
         );
     }
 }

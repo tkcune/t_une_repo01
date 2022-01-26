@@ -499,6 +499,7 @@ class POPClient {
     public static function createPOPClient(string $name,string $password,string $recieving_server,string $recieving_port_number){
         //@var POPClient POPClientの作成
         $client = new static($name, $password, $recieving_server, $recieving_port_number);
+        
         //認証接続が失敗すれば、nullを返す
         if($client->connect() == false){
             return null;

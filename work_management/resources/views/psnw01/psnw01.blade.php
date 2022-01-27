@@ -76,10 +76,10 @@
             </div>
         </div>
     </form>
-    @if(isset($mail))
+    @if(isset($client['mail']) && $client['mail'] != "")
         <div class="border border-dark bg-white" style="padding: 10px 0;">
             <div style="padding: 10px;">
-                @foreach($mail as $line)
+                @foreach($client['mail'] as $line)
                     {!! $line !!}
                 @endforeach    
             </div>

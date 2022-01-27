@@ -24,17 +24,20 @@ class NetworkClient {
     //テスト用のメソッド。bladeにセットするデフォルトのデータを返す
     //@return array デフォルトのデータ
     public static function get_default_client_data(){
-        return array(
-            'name' => 'sagyotest@b-forme.net',
-            'email' => 'sagyotest@b-forme.net',
-            'password' => 'sagyopass',
-            'recieving_server' => 'pop3.muumuu-mail.com',
-            'recieving_server_way' => '1',
-            'recieving_port_number' => '995',
-            'sending_server' => 'smtp.muumuu-mail.com',
-            'sending_port_number' => '587',
-            'test_email' => 'hioki@b-forme.net'
-        );
+        //@var array デフォルトのネットワーク設定の値
+        $default_client = [];
+        //セッションになければ、デフォルトの値
+        $default_client['name'] = is_null(session('name', null))? 'sagyotest@b-forme.net': session('name');
+        $default_client['email'] = is_null(session('email', null))? 'sagyotest@b-forme.net': session('email');
+        $default_client['password'] = is_null(session('password', null))? 'sagyopass': session('password');
+        $default_client['recieving_server'] = is_null(session('recieving_server', null))? 'pop3.muumuu-mail.com': session('recieving_server');
+        $default_client['recieving_server_way'] = is_null(session('recieving_server_way', null))? '1': session('recieving_server_way');
+        $default_client['recieving_port_number'] = is_null(session('recieving_port_number', null))? '995': session('recieving_port_number');
+        $default_client['sending_server'] = is_null(session('sending_server', null))? 'smtp.muumuu-mail.com': session('sending_server');
+        $default_client['sending_port_number'] = is_null(session('sending_port_number', null))? '587': session('sending_port_number');
+        $default_client['test_email'] = 'sagyotest@b-forme.net';
+        
+        return $default_client;
     }
 
     //ネットワーク設定のデータを保存する

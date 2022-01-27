@@ -83,6 +83,9 @@ class Psbs01Controller extends Controller
         $operation_start_date = $date->today();
         $remarks = $request->remarks;
 
+        // 重複クリック対策
+        $request->session()->regenerateToken();
+
         //顧客IDに対応した最新の部署IDを取得
         try{
             $department_db = new DepartmentDataBase();
@@ -493,6 +496,9 @@ class Psbs01Controller extends Controller
         $start_day = $request->start_day;
         $finish_day = $request->finish_day;
         $remarks = $request->remarks;
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
         
         //入力された番号の人員が存在するかの確認
         try{
@@ -547,6 +553,9 @@ class Psbs01Controller extends Controller
         $client_id = $id;
         $high_id = $request->high_id;
         $lower_id = $request->lower_id;
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
 
         //複写番号が空白の場合エラーメッセージを表示
         if($request->lower_id == null){
@@ -612,6 +621,7 @@ class Psbs01Controller extends Controller
     {
         //選択した部署のIDをarray型に格納
         $lists = [];
+        $delete_id = [];
         array_push($lists,$delete);
 
         //選択した部署の部署情報を取得
@@ -634,8 +644,11 @@ class Psbs01Controller extends Controller
 
         //選択した部署の配下を取得
         $hierarchical = new Hierarchical();
-        $delete_lists = $hierarchical->subordinateSearch($lists,$client);
-         
+        $delete_lists = $hierarchical->subordinateSearchRoop($lists,$client,$delete_id);
+
+        //削除リストの作成
+        array_unshift($delete_lists,$delete);
+
         //選択したデータ及び配下データを削除
         if(!empty($delete_lists)){
             try{
@@ -934,6 +947,9 @@ class Psbs01Controller extends Controller
         $client_id = $request->client_id;
         $copy_id = $request->copy_id;
         $high = $request->high_id;
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
 
         if($request->copy_id == null){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');

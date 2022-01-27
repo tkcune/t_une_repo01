@@ -5,6 +5,7 @@
     use Illuminate\Support\Facades\DB;
     use App\Facades\OutputLog;
     use App\Models\Date;
+    use App\Libraries\php\Service\ZeroPadding;
     use App\Libraries\php\Service\DatabaseException;
     use App\Libraries\php\Domain\ProjectionDataBase;
 
@@ -139,6 +140,48 @@
         }
 
         /**
+         * 配下IDを取得するメソッド
+         * @param array $lists 選択したIDを格納した配列
+         * @param string $client 顧客ID
+         * @param array $subordinates_id_lists 直下の配下IDを格納した配列
+         * @param array $subordinates 直下の配下データを格納した配列
+         * @param array $subordinatesCheck 直下の配下の配下を格納する配列
+         * @param Illuminate\Database\QueryException $e エラー内容
+         * 
+         * @return  $delete_id 配下データをまとめた配列
+         */
+        public function subordinateSearchRoop($lists,$client,$delete_id){
+
+            //直下の配下データを取得
+            foreach($lists as $list){
+            
+                try{
+                    $subordinates = DB::select('select lower_id from dccmks where client_id = ? 
+                    and high_id = ?',[$client,$list]);
+                }catch(\Exception $e){
+                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                    return redirect()->route('index');
+                }
+                
+                $lists = [];
+                //配下データを格納
+                if(isset($subordinates)){
+                    foreach($subordinates as $subordinate){
+                        dump($subordinate->lower_id);
+                        array_push($delete_id,$subordinate->lower_id);
+                        array_push($lists,$subordinate->lower_id);
+                    }
+                }
+            }
+            
+            if(!empty($lists)){
+                $this->subordinateSearchRoop($lists,$client,$delete_id);
+            }
+            
+            return $delete_id;
+        }
+
+        /**
          * 配下を取得するメソッド
          * @param array $select_lists 配下ID
          * @param string $client 顧客ID
@@ -196,7 +239,7 @@
                         array_push($personnel_data,$data[0]);
                     }
                 }else{
-
+                    
                 }
                 
             }

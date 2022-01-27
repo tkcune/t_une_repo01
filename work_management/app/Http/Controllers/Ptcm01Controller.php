@@ -56,6 +56,9 @@ class Ptcm01Controller extends Controller
         $high_id = $request->high_id;
         $projection_source_id = $request->projection_source_id;
 
+        // 重複クリック対策
+        $request->session()->regenerateToken();
+
         //複写番号が空白の場合はエラーメッセージを表示
         if($request->projection_source_id == null){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');

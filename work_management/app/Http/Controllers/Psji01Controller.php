@@ -85,6 +85,9 @@ class Psji01Controller extends Controller
         $remarks = $request->remarks;
         $date = new Date();
 
+        // 重複クリック対策
+        $request->session()->regenerateToken();
+
         //リクエストに空白が無いかどうかの確認
         if(empty($name) || empty($email) || empty($status)){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0003','01');
@@ -197,6 +200,9 @@ class Psji01Controller extends Controller
         $finish_day = $request->finish_day;
         $remarks = $request->remarks;
 
+        // 重複クリック対策
+        $request->session()->regenerateToken();
+
         //入力された番号の人員が存在するかの確認
         try{
             $personnel_db = new PersonnelDataBase();
@@ -249,7 +255,7 @@ class Psji01Controller extends Controller
     {
         //削除する人員が部署の責任者及び管理者となっていないかどうかの確認
         //if(isset()){
-
+           
         //}
         try{
             $personnel_db = new PersonnelDataBase();
@@ -535,6 +541,9 @@ class Psji01Controller extends Controller
         $client_id = $request->client_id;
         $copy_id = $request->copy_id;
         $high = $request->high_id;
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
 
         $date = new Date();
 

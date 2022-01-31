@@ -167,6 +167,8 @@ class Psbs01Controller extends Controller
      */
     public function show($client,$select_id)
     {
+        session(['page_id'=>$select_id]);
+
         if($select_id == "bs"){
             return redirect()->route('pa0001.top');
         }
@@ -177,6 +179,7 @@ class Psbs01Controller extends Controller
         $count_department = Config::get('startcount.count');
         $count_personnel = Config::get('startcount.count');
 
+        
         //選択した部署のIDをarray型に格納
         $lists = [];
         $department_data = [];

@@ -40,9 +40,9 @@ class Ptcm01Controller extends Controller
      * 投影データの登録
      * @param  \Illuminate\Http\Request  $request
      * 
-     * @var  string $client_id　顧客ID
-     * @var  string $high_id 上位ID
-     * @var  string $projection_source_id　投影元ID
+     * @var string $client_id　顧客ID
+     * @var string $high_id 上位ID
+     * @var string $projection_source_id　投影元ID
      * @var string $projection_id　作成する投影ID 
      * @var App\Libraries\php\ProjectionDataBase $projection_db
      * @var App\Libraries\php\Hierarchical $hierarchical

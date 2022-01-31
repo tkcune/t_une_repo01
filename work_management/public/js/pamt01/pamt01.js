@@ -16,6 +16,68 @@ window.addEventListener('pageshow',()=>{
     }
 });
 
+/** 
+ * ページネーションのページ遷移時の状態を引き継ぐメソッド
+ * 
+ * @var string name ページの詳細名(部署詳細or人員詳細)
+ * @var string element 名前の要素
+ * @var string title 名前箇所のtitle属性の内容
+ * @var string session ページ遷移前のtitle属性の内容
+ */
+window.addEventListener('pageshow',()=>{
+
+  //開いたページの詳細名を取得
+  var name = document.getElementById("page_name").querySelector("h2");
+
+  // 開いたページの番号が記載された要素を取得
+  var element = document.getElementById("id_number");
+
+  //  開いたページの番号が記載された要素のtitle属性を取得
+  var title = element.title;
+
+  var session = window.sessionStorage.getItem(['page_id']);
+
+  //ページ遷移前とページ遷移後の番号が同じかどうかの判断
+  if(title == session){
+
+    //チェックボックスの状態の判断
+    if(localStorage.getItem('check') == "undefined") {
+      document.getElementById("check").checked = false;
+    }else{
+      //部署詳細・人員詳細の判断
+      if( name.textContent == "部署詳細"){
+        deleteOn();
+      }else{
+        deleteOn2();
+      }
+      document.getElementById("check").checked = true;
+    }
+  }
+
+  //セッションの削除
+  window.sessionStorage.removeItem(['page_id']);
+
+});
+
+/**
+ * 画面切り替え時にページ遷移前のIDを保存
+ * 
+ * @var string element 名前の要素
+ * @var string title 名前箇所のtitle属性の内容
+ * 
+ */
+window.addEventListener('beforeunload', (event) => {
+  event.preventDefault();
+  // 番号が記載された要素を取得
+  var element = document.getElementById("id_number");
+
+  // 番号が記載された要素のtitle属性を取得
+  var title = element.title ;
+
+  //セッションに保存
+  window.sessionStorage.setItem(['page_id'],[title]);
+});
+
 /**
  * 画面の隠蔽表示メソッド
  * @param string div 対象のdiv
@@ -84,6 +146,8 @@ var listOn = function () {
  * @var int count2 人員一覧テーブルの行数
  * @var int id 部署一覧対象のID
  * @var int id2 人員対象のID
+ * @var string check チェックボタンの状態
+ * 
  */
 function deleteOn() {
   var count = document.getElementById("bs-table").rows.length - 1;
@@ -101,8 +165,15 @@ function deleteOn() {
       var id2 = "list_delete" + j;
       document.getElementById(id2).setAttribute("style", "pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px; color:blue;");
     }
+    
+    //チェック状態の取得
+    var check = document.getElementById("check").value;
+
+    //checkの状態をストレージに保存
+    localStorage.setItem('check', check);
+
   } else {
-    // disabled属性を設定
+    //disabled属性を設定
     document.getElementById("delete").setAttribute("disabled", true);
     document.getElementById("delete").style.opacity = 0.3;
     for (i = 0; i < count; i++) {
@@ -113,6 +184,9 @@ function deleteOn() {
       var id2 = "list_delete" + j;
       document.getElementById(id2).setAttribute("style", "pointer-events: none; display:inline-block; cursor: auto; text-decoration:underline; margin:0px;");
     }
+
+    //checkの状態をストレージに保存
+    localStorage.setItem('check', check);
   }
 }
 
@@ -122,6 +196,7 @@ function deleteOn() {
  * @var int count2 人員一覧テーブルの行数
  * @var int id 部署一覧対象のID
  * @var int id2 人員対象のID
+ * @var string check チェックボタンの状態
  */
  function deleteOn2() {
   var count = document.getElementById("bs-table").rows.length - 1;
@@ -135,6 +210,12 @@ function deleteOn() {
       document.getElementById(id).setAttribute("style", "pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px; color:blue;");
     }
 
+    //チェック状態の取得
+    var check = document.getElementById("check").value;
+
+    //checkの状態をストレージに保存
+    localStorage.setItem('check', check);
+
   } else {
     // disabled属性を設定
     document.getElementById("delete").setAttribute("disabled", true);
@@ -143,6 +224,9 @@ function deleteOn() {
       var id = "bs_list_delete" + i;
       document.getElementById(id).setAttribute("style", "pointer-events: none; display:inline-block; cursor: auto; text-decoration:underline; margin:0px;");
     }
+
+    //checkの状態をストレージに保存
+    localStorage.setItem('check', check);
   }
 }
 
@@ -238,7 +322,6 @@ function search() {
   //
   var name = document.getElementById("search-list").value;
 
-  console.log(name);
   //optionの個数を判断する
   const count = document.getElementById('search-list').list.options;
 
@@ -246,7 +329,6 @@ function search() {
     if (name == document.getElementById('search-list').list.options[i].value) {
       label = document.getElementById('search-list').list.options[i].getAttribute('label');
       mangement = document.getElementById('search-list').list.options[i].getAttribute('managment');
-      console.log(mangement);
     }
   }
 
@@ -321,7 +403,6 @@ $(function () {
         
         searchClass = document.getElementsByClassName('li_name');
 
-        console.log(searchClass);
     $(searchClass).each(function() {
       targetText = $(this).text();
 

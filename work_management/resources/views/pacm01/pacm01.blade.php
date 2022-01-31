@@ -16,13 +16,13 @@
 
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
-                    <div class="col-4" style="margin-top:-5px; margin-right:-12px">
-                        <h2>部署詳細</2>
+                    <div class="col-4" id="page_name" style="margin-top:-5px; margin-right:-12px">
+                        <h2>部署詳細</h2>
                     </div>
 
                     <div class="col-4" style="margin-right:-10px">
                         <p id="palent">
-                            <span data-toggle="tooltip" title="番号:{{$top_department[0]->department_id}}">部署名</span>
+                            <span data-toggle="tooltip" id="id_number" title="番号:{{$top_department[0]->department_id}}">部署名</span>
                             <input type="text" name="name" maxlength="32" style="width:140px;"
                             data-toggle="tooltip" title="部署の名称を入力します" @if(!empty(old('name'))) value="{{ old('name') }}" @else value= "{{$top_department[0]->name}}"@endif>
                         </p>
@@ -163,7 +163,7 @@
                         <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}} alt="開く" >
                     </button>
 
-                    <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                    <input type="checkbox" id="check" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     <font size="-2" color="red">削除有効化</font>
                     </div>
                     
@@ -184,13 +184,13 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
             @endif
                 <div class="row">
-                    <div class="col-4" style="margin-top:-5px; margin-right:-12px">
+                    <div class="col-4" id="page_name" style="margin-top:-5px; margin-right:-12px">
                         <h2>部署詳細</2>
                     </div>
 
                     <div class="col-4" style="margin-right:-10px">
                         <p>
-                            <span data-toggle="tooltip" title="番号:{{$click_department_data[0]->department_id}}">部署名</span>
+                            <span data-toggle="tooltip" id="id_number" title="番号:{{$click_department_data[0]->department_id}}">部署名</span>
                             <input type="text" name="name" maxlength="32" style="width:140px;"
                             data-toggle="tooltip" title="部署の名称を入力します" @if(!empty(old('name'))) value="{{ old('name') }}" @else value= "{{$click_department_data[0]->name}}"@endif>
                         </p>
@@ -335,7 +335,7 @@
                         <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く" >
                     </button>
                     
-                    <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                    <input type="checkbox" onclick="deleteOn()" id="check" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     <font size="-2" color="red">削除有効化</font>
                     </div>
                 </div>
@@ -357,12 +357,12 @@
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
             @endif
                 <div class="row">
-                    <div class="col-4" style="margin-top:-5px; margin-right:-12px">
+                    <div class="col-4" id="page_name" style="margin-top:-5px; margin-right:-12px">
                         <h2>人員詳細</2>
                     </div>
                     <div class="col-4" style="margin-right:-10px">
                         <p id="palent">
-                            <span data-toggle="tooltip" title="番号:{{$click_personnel_data[0]->personnel_id}}">名前</span>
+                            <span data-toggle="tooltip" id="id_number" title="番号:{{$click_personnel_data[0]->personnel_id}}">名前</span>
                             <input type="text" name="name" maxlength="32" style="width:140px;" value="{{$click_personnel_data[0]->name}}" data-toggle="tooltip" title="人員の名称を入力します">
                         </p>
                     </div>
@@ -519,7 +519,7 @@
                             <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く" >
                         </button>
 
-                        <input type="checkbox" onclick="deleteOn2()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                        <input type="checkbox" id="check" onclick="deleteOn2()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                         <font size="-2" color="red">削除有効化</font>
                         </div>
                     </div>

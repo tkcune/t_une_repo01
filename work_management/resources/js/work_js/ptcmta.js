@@ -224,6 +224,7 @@ TreeAction.node = class Node {
         //子要素全体を非表示にする
         this.noneDisplayTree();
       }
+      
     });
   }
 
@@ -293,7 +294,7 @@ TreeAction.node = class Node {
       //ログ確認の場合
       window.location = 'http://localhost:8000/pslg';
     }else if(this.node.id === 'ssnw'){
-      window.location = 'http://localhost:8000/psnw01/index';
+      window.location = 'http://localhost:8000/psnw01';
     }else{
       //@var string Laravelのセッションid
       let clientId = document.getElementById('hidden_client_id').value;
@@ -382,11 +383,16 @@ TreeAction.node = class Node {
     if(splitDir.length !== 1){
       //@var Nodeクラス palent 目的のノードクラスの親要素
       let palent = this.prototype.chainparser.searchNodeDir(splitDir.join('/'), this.prototype.tree);
+      
       //目的のノードクラスの親要素のツリーを開く
-      palent.openBox();
-      palent.openDisplayChild();
-      //また親要素を引数にして再帰的に、openBottomUpTreeを呼び出す
-      palent.openBottomUpTree();
+      //親要素が閉じているなら開く
+      if(palent.element.children[0].children[0].innerText === "+"){
+        //目的のノードクラスの親要素のツリーを開く
+        palent.openBox();
+        palent.openDisplayChild();
+        //また親要素を引数にして再帰的に、openBottomUpTreeを呼び出す
+        palent.openBottomUpTree();
+      }
     }
   }
 
@@ -409,11 +415,15 @@ TreeAction.node = class Node {
     if(splitDir.length !== 1){
       //@var Nodeクラス palent 目的のノードクラスの親要素
       let palent = this.prototype.chainparser.searchNodeDir(splitDir.join('/'), this.prototype.tree);
-      //目的のノードクラスの親要素のツリーを開く
-      palent.openBox();
-      palent.openDisplayChild();
-      //また親要素を引数にして再帰的に、openBottomUpTreeを呼び出す
-      palent.openBottomUpTree();
+      
+      //親要素が閉じているなら開く
+      if(palent.element.children[0].children[0].innerText === "+"){
+        //目的のノードクラスの親要素のツリーを開く
+        palent.openBox();
+        palent.openDisplayChild();
+        //また親要素を引数にして再帰的に、openBottomUpTreeを呼び出す
+        palent.openBottomUpTree();
+      }
     }
   }
 
@@ -1086,10 +1096,13 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
 
   //ツリーの子要素のdom要素を構築、追加していく。
   //@param Nodeクラス treeTop 第一階層のツリーノードクラス
-  let createElement = function createElement(treeTop) {
+  //@param dom fragment 仮のツリーのdom
+  let createElement = function createElement(treeTop, fragment) {
     treeTop.child.forEach(node => {
+      fragment.append(node.createTree());
+
       //<div id="chaintree"></div>にdomを追加
-      treeTop.element.append(node.createTree());
+      // treeTop.element.append(node.createTree());
       
     });
   }
@@ -1208,10 +1221,40 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
   let treeTop = new Node('', '1');
 
   if(document.getElementById('chaintree') && document.getElementById('chaintree').tagName === 'DIV'){
-    // treeTop.prototype.chainparser = chainparser;
+    
+    //@var dom 仮のツリーのdom
+    let fragment = document.createDocumentFragment();
 
     //@var dom this.element dom要素を格納 ツリーのdom要素を加えていく一番上のツリー<div id="chaintree"></div>
     treeTop.element = document.getElementById('chaintree');
+
+    //オプション
+    // const options = {
+    //   childList: true,
+    //   characterData: true,
+    //   characterDataOldValue: true,
+    //   attributes: true,
+    //   subtree: true,
+    // }
+
+    //コールバック関数
+    // function callback(mutationsList, observer) {
+    //   for(const mutation of mutationsList) {
+        // 処理
+        // console.log(mutation);
+        //mutation.target //ターゲット要素
+        //mutation.addedNodes //追加されたDOM
+        //mutation.removedNodes //削除されたDOM
+        // console.log('change chaintree');
+    //   }
+    // }
+
+    //ターゲット要素をDOMで取得
+    // const target = document.getElementById('chaintree');
+    //インスタンス化
+    // const obs = new MutationObserver(callback);
+    //ターゲット要素の監視を開始
+    // obs.observe(target, options);
   
     //@var string this.className ツリーのcssのクラス名
     treeTop.className = 'chaintree';
@@ -1229,12 +1272,15 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
     //投影
     syncProjection(projectionChain);
     //domを生成して、ツリーを描画する
-    createElement(treeTop);
+    createElement(treeTop, fragment);
     //投影を斜体にする
     onSyncTree(treeTop);
 
     //ツリーのdom要素を生成した時は、ツリーは表示しているので、非表示にする。
     closeTree(treeTop);
+
+    //実際のdomにfragmentのdomを追加する
+    treeTop.element.append(fragment);
   }else{
     console.log('chaintree div tag is no');
   }
@@ -1248,7 +1294,7 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
 //@param array projectionChain 投影データ
 //@return TreeActionクラス ツリー機能クラス
 TreeAction = ((treesepalete, projectionChain) => {
-  
+
   //@var Nodeクラス ノードクラス
   let Node = TreeAction.node;
   //@var ChainParser チェインパーサーのクラス
@@ -1437,6 +1483,17 @@ TreeAction = ((treesepalete, projectionChain) => {
         if(!node.element.children[0].classList.value.match('unexpand')){
           //ボックスがマイナス文字(開いているなら)
           if(node.element.children[0].children[0].innerText === '-'){
+
+            //親のノードidを削除する
+            //上からツリーを開くので、子ノードが開く時に、親ノードも開く
+            Object.keys(storage).forEach(key => {
+              //@var Nodeクラス 親ノード
+              let palent = chainparser.searchPalentNode(node.id, tree);
+              //storageに親ノードが保存してあれば、削除する
+              if(palent.id === key){
+                delete storage[key];
+              }
+            });
             storage[node.id] = node.id;
           }
         }
@@ -1455,78 +1512,81 @@ TreeAction = ((treesepalete, projectionChain) => {
   });
 
   //ページ移動後のイベント
-  window.addEventListener('DOMContentLoaded', function(){
+  // window.addEventListener('DOMContentLoaded', function(){
 
-    //ページ移動前のクリップボードのデータを復元する
-    restoreClipboard();
-    //ページ移動前に開いていたノードを開く
-    openNodeAfterPageMove();
-    //ページ移動前に隠蔽していたノードを閉じる
-    hideDisplayAfterPageMove();
+  //   //ページ移動前のクリップボードのデータを復元する
+  //   restoreClipboard();
+  //   //ページ移動前に開いていたノードを開く
+  //   openNodeAfterPageMove();
+  //   //ページ移動前に隠蔽していたノードを閉じる
+  //   hideDisplayAfterPageMove();
 
-    //一覧表示からのノードの表示
-    if(document.location.pathname.split('/')[1] === 'show'){
+  //   //一覧表示からのノードの表示
+  //   if(document.location.pathname.split('/')[1] === 'show'){
       
-      //@var Nodeクラス 開くノード
-      let node;
+  //     //@var Nodeクラス 開くノード
+  //     let node;
 
-      //@var string 開くノードのid
-      let nodeId = document.location.pathname.split('/')[3];
-      //投影のノードをクリックしたら
-      if(nodeId.substr(0, 2) === 'ta'){
-        //@var Nodeクラス 投影ノード
-        let projectionNode = chainparser.searchNodeId(nodeId, tree);
-        //投影元のノードを取得する
-        node = chainparser.searchNodeId(projectionNode.fromLink[0], tree);
-      }else{
-        //@var Nodeクラス 開くノード
-        node = chainparser.searchNodeId(nodeId, tree);
-      }
-
-      if(node !== undefined){
-        //ノードを開く
-        node.openBottomUpTree();
-        //ノードをカレントにする
-        node.focus();
-        //クリップボードのデータをカレントにする
-        currentClipboard(node);
-      }
-    }else if(document.location.pathname.split('/')[1] === ''){
-      //indexルートの場合
-      //@var Nodeクラス カレントにするノード 
-      let node = chainparser.searchNodeId('bs00000001', tree);
+  //     //@var array パスをスラッシュで区切った配列
+  //     let path_array = document.getElementById('copyTarget').parentNode.action.split('/');
+  //     //@var string 詳細行の部署のid
+  //     let nodeId = path_array[path_array.length - 1];
       
-      if(node !== undefined){
-        node.openBottomUpTree();
-        node.focus();
-        currentClipboard(node);
-      }
-    }else{
-      //複写、移動、削除の場合
-      if(document.getElementById('back_treeaction').value === 'delete' || document.getElementById('back_treeaction').value === 'open'){
-        //@var Nodeクラス ツリーの開くノード
-        let node = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree);
+  //     //投影のノードをクリックしたら
+  //     if(nodeId.slice(0, 2) === 'ta'){
+  //       //@var Nodeクラス 投影ノード
+  //       let projectionNode = chainparser.searchNodeId(nodeId, tree);
+  //       //投影元のノードを取得する
+  //       node = chainparser.searchNodeId(projectionNode.fromLink[0], tree);
+  //     }else{
+  //       //@var Nodeクラス 開くノード
+  //       node = chainparser.searchNodeId(nodeId, tree);
+  //     }
 
-        if(node !== undefined){
-          //ノードを開く
-          node.openBottomUpTree();
-          //ノードをカレントにする
-          node.focus();
-          //クリップボードのデータをカレントにする
-          currentClipboard(node);
-        }
-      }else{
-        //showルーティングでも、ツリー機能ルーティングでもない場合
-        //@var Nodeクラス カレントにするノード 
-        let node = chainparser.searchNodeId(clipboard.getCurrentId(), tree);
-        if(node !== undefined){
-          node.openBottomUpTree();
-          node.focus();
-          currentClipboard(node);
-        }
-      }
-    }
-  });
+  //     if(node !== undefined){
+  //       //ノードを開く
+  //       node.openBottomUpTree();
+  //       //ノードをカレントにする
+  //       node.focus();
+  //       //クリップボードのデータをカレントにする
+  //       currentClipboard(node);
+  //     }
+  //   }else if(document.location.pathname.split('/')[1] === ''){
+  //     //indexルートの場合
+  //     //@var Nodeクラス カレントにするノード 
+  //     let node = chainparser.searchNodeId('bs00000001', tree);
+      
+  //     if(node !== undefined){
+  //       node.openBottomUpTree();
+  //       node.focus();
+  //       currentClipboard(node);
+  //     }
+  //   }else{
+  //     //複写、移動、削除の場合
+  //     if(document.getElementById('back_treeaction').value === 'delete' || document.getElementById('back_treeaction').value === 'open'){
+  //       //@var Nodeクラス ツリーの開くノード
+  //       let node = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree);
+
+  //       if(node !== undefined){
+  //         //ノードを開く
+  //         node.openBottomUpTree();
+  //         //ノードをカレントにする
+  //         node.focus();
+  //         //クリップボードのデータをカレントにする
+  //         currentClipboard(node);
+  //       }
+  //     }else{
+  //       //showルーティングでも、ツリー機能ルーティングでもない場合
+  //       //@var Nodeクラス カレントにするノード 
+  //       let node = chainparser.searchNodeId(clipboard.getCurrentId(), tree);
+  //       if(node !== undefined){
+  //         node.openBottomUpTree();
+  //         node.focus();
+  //         currentClipboard(node);
+  //       }
+  //     }
+  //   }
+  // });
 
   //ページ移動前のクリップボードのデータの保存
   let storeClipboard = function storeClipboard() {
@@ -1569,11 +1629,84 @@ TreeAction = ((treesepalete, projectionChain) => {
     if(hiddenStorage !== null && hiddenStorage !== undefined){
       Object.keys(hiddenStorage).forEach(id => {
         //@var Nodeクラス 隠蔽するノード
-        let node = chainparser.searchNodeId(Storage(hiddenStorage[id]), tree);
+        let node = chainparser.searchNodeId(hiddenStorage[id], tree);
         if(node !== undefined){
           displayNoneNode(node);
         }
       });
+    }
+  }
+
+  //ページ移動前のクリップボードのデータを復元する
+  restoreClipboard();
+  //ページ移動前に開いていたノードを開く
+  openNodeAfterPageMove();
+  //ページ移動前に隠蔽していたノードを閉じる
+  hideDisplayAfterPageMove();
+
+  //一覧表示からのノードの表示
+  if(document.location.pathname.split('/')[1] === 'show'){
+    
+    //@var Nodeクラス 開くノード
+    let node;
+
+    //@var array パスをスラッシュで区切った配列
+    let path_array = document.getElementById('copyTarget').parentNode.action.split('/');
+    //@var string 詳細行の部署のid
+    let nodeId = path_array[path_array.length - 1];
+    
+    //投影のノードをクリックしたら
+    if(nodeId.slice(0, 2) === 'ta'){
+      //@var Nodeクラス 投影ノード
+      let projectionNode = chainparser.searchNodeId(nodeId, tree);
+      //投影元のノードを取得する
+      node = chainparser.searchNodeId(projectionNode.fromLink[0], tree);
+    }else{
+      //@var Nodeクラス 開くノード
+      node = chainparser.searchNodeId(nodeId, tree);
+    }
+
+    if(node !== undefined){
+      //ノードを開く
+      node.openBottomUpTree();
+      //ノードをカレントにする
+      node.focus();
+      //クリップボードのデータをカレントにする
+      currentClipboard(node);
+    }
+  }else if(document.location.pathname.split('/')[1] === ''){
+    //indexルートの場合
+    //@var Nodeクラス カレントにするノード 
+    let node = chainparser.searchNodeId('bs00000001', tree);
+    
+    if(node !== undefined){
+      node.openBottomUpTree();
+      node.focus();
+      currentClipboard(node);
+    }
+  }else{
+    //複写、移動、削除の場合
+    if(document.getElementById('back_treeaction').value === 'delete' || document.getElementById('back_treeaction').value === 'open'){
+      //@var Nodeクラス ツリーの開くノード
+      let node = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree);
+
+      if(node !== undefined){
+        //ノードを開く
+        node.openBottomUpTree();
+        //ノードをカレントにする
+        node.focus();
+        //クリップボードのデータをカレントにする
+        currentClipboard(node);
+      }
+    }else{
+      //showルーティングでも、ツリー機能ルーティングでもない場合
+      //@var Nodeクラス カレントにするノード 
+      let node = chainparser.searchNodeId(clipboard.getCurrentId(), tree);
+      if(node !== undefined){
+        node.openBottomUpTree();
+        node.focus();
+        currentClipboard(node);
+      }
     }
   }
   
@@ -1584,12 +1717,15 @@ TreeAction = ((treesepalete, projectionChain) => {
   }
 })(treeChain, projectionChain);
 
+
 //隠蔽のイベント
 //詳細行の表示ではない時は、イベントを追加しない
 if(document.getElementById('tree_change_display')){
   document.getElementById('tree_change_display').addEventListener('click', () => {
-    //@var string 詳細行の部署のid
-    let nodeId = document.getElementById('parent').children[0].children[1].children[0].innerText.substr(3);
+    //@var array パスをスラッシュで区切った配列
+    let path_array = document.getElementById('copyTarget').parentNode.action.split('/');
+    //@var string 詳細行のid
+    let nodeId = path_array[path_array.length - 1];
     //隠蔽のメソッド
     TreeAction.changeDisplay(nodeId);
   });

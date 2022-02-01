@@ -240,9 +240,13 @@ ul.lasttree li:last-child:before {
 #tree {
   display: flex;
   justify-content: space-between;
+  position: relative;
 }
 
 .twobutton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
   display: flex;
 }
 

@@ -655,8 +655,6 @@ class Psbs01Controller extends Controller
         $hierarchical = new Hierarchical();
         $delete_lists = $hierarchical->subordinateSearchRoop($lists,$client,$delete_id);
 
-        dd($delete_lists);
-
         //削除リストの作成
         array_unshift($delete_lists,$delete);
 

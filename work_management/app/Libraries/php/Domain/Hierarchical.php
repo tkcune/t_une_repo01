@@ -176,10 +176,9 @@
             }
             
             if(!empty($lists)){
-                $this->subordinateSearchRoop($lists,$client,$delete_id);
+                return $this->subordinateSearchRoop($lists,$client,$delete_id);
             }
-
-            return $delete_id;
+                return $delete_id;
         }
 
         /**

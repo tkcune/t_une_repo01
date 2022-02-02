@@ -1,3 +1,4 @@
+import { chain } from 'lodash';
 import {clipboard} from './ptcmcb';
 
 //@var TreeActionクラス 公開するクラス,ツリー機能クラス
@@ -1637,6 +1638,26 @@ TreeAction = ((treesepalete, projectionChain) => {
     }
   }
 
+  //ノードまでスクロールする
+  //@var Nodeクラス スクロールするノード
+  let scrollNode = function scrollNode(node){
+    
+    //@var dom id=treeのdom
+    let tree_tag = document.getElementById('tree');
+    //@var int ツリー画面の表示領域とノードの位置の差(width)
+    let left = (tree_tag.getBoundingClientRect().left + tree_tag.clientWidth)*0.6 - node.element.getBoundingClientRect().left;
+    //@var int ツリー画面の表示領域とノードの位置の差(height)
+    let top = (tree_tag.getBoundingClientRect().top + tree_tag.clientHeight)*0.6 - node.element.getBoundingClientRect().top;
+
+    //表示領域よりはみ出していたら、移動する
+    if(left < 0){
+      tree_tag.scrollLeft = 18 - left + 75;
+    }
+    if(top < 0){
+      tree_tag.scrollTop = 9 - top + 60;
+    }
+  }
+
   //ページ移動前のクリップボードのデータを復元する
   restoreClipboard();
   //ページ移動前に開いていたノードを開く
@@ -1671,6 +1692,7 @@ TreeAction = ((treesepalete, projectionChain) => {
       node.openBottomUpTree();
       //ノードをカレントにする
       node.focus();
+      scrollNode(node);
       //クリップボードのデータをカレントにする
       currentClipboard(node);
     }
@@ -1682,6 +1704,7 @@ TreeAction = ((treesepalete, projectionChain) => {
     if(node !== undefined){
       node.openBottomUpTree();
       node.focus();
+      scrollNode(node);
       currentClipboard(node);
     }
   }else{
@@ -1695,6 +1718,7 @@ TreeAction = ((treesepalete, projectionChain) => {
         node.openBottomUpTree();
         //ノードをカレントにする
         node.focus();
+        scrollNode(node);
         //クリップボードのデータをカレントにする
         currentClipboard(node);
       }
@@ -1705,6 +1729,7 @@ TreeAction = ((treesepalete, projectionChain) => {
       if(node !== undefined){
         node.openBottomUpTree();
         node.focus();
+        scrollNode(node);
         currentClipboard(node);
       }
     }
@@ -1716,7 +1741,6 @@ TreeAction = ((treesepalete, projectionChain) => {
     reOpenNode: reOpenNode
   }
 })(treeChain, projectionChain);
-
 
 //隠蔽のイベント
 //詳細行の表示ではない時は、イベントを追加しない

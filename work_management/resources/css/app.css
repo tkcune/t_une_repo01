@@ -233,7 +233,7 @@ ul.lasttree li:last-child:before {
 .sync {
   color: blue;
   font-style: italic;
-  font-family: Times New Roman, "ＭＳ Ｐゴシック";
+  font-family: Times New Roman, "MS Pゴシック";
 }
 
 /* ツリー画面全体のcss */
@@ -241,13 +241,17 @@ ul.lasttree li:last-child:before {
   display: flex;
   justify-content: space-between;
   position: relative;
+  overflow: scroll;
+  white-space: nowrap;
+  height: 100vh;
 }
 
 .twobutton {
-  position: absolute;
+  position: sticky;
   top: 8px;
   right: 8px;
   display: flex;
+  height: 20px;
 }
 
 .btndisplay {

@@ -150,7 +150,7 @@
          * @var array $subordinates 直下の配下データを格納した配列
          * @var Illuminate\Database\QueryException $e エラー内容
          * 
-         * @return  $delete_id 
+         * @return  array $delete_id 
          */
         public function subordinateSearchRoop($lists,$client,$delete_id){
 
@@ -169,7 +169,6 @@
                 //配下データを格納
                 if(isset($subordinates)){
                     foreach($subordinates as $subordinate){
-                        dump($subordinate->lower_id);
                         array_push($delete_id,$subordinate->lower_id);
                         array_push($lists,$subordinate->lower_id);
                     }
@@ -179,7 +178,7 @@
             if(!empty($lists)){
                 $this->subordinateSearchRoop($lists,$client,$delete_id);
             }
-            
+
             return $delete_id;
         }
 

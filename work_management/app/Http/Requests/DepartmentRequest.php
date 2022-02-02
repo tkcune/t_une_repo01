@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Facades\OutputLog;
-use App\Libraries\php\Message;
+use App\Libraries\php\Service\Message;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Rules\JapaneseAndAlphaNumRule;

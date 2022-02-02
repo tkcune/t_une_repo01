@@ -45,7 +45,7 @@ window.addEventListener('pageshow',()=>{
       document.getElementById("check").checked = false;
     }else{
       //部署詳細・人員詳細の判断
-      if( name.textContent == "部署詳細"){
+      if(name.textContent.includes("部署詳細") == true){
         deleteOn();
       }else{
         deleteOn2();

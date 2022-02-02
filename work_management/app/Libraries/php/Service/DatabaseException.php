@@ -3,7 +3,7 @@
     namespace App\Libraries\php\Service;
 
     use App\Facades\OutputLog;
-    use App\Libraries\php\Message;
+    use App\Libraries\php\Service\Message;
     use App\Http\Controllers\PtcmtrController;
 
     /**

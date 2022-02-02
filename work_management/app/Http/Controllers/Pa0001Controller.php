@@ -33,22 +33,25 @@ class Pa0001Controller extends Controller
      * @var  string  $client_id 顧客ID　9/27現在　ダミーデータ
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
-     * @var  App\Libraries\php\DepartmentDataBase $department_db
+     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
+     * @var  App\Libraries\php\Domain\PersonnelDataBase personnel_db
      * @var  array $top_department 最上位の部署データ
      * @var  App\Models\Date $date
+     * @var  array $all_department_data 全体部署データ
+     * @var  array $all_personnel_data 全体人員データ
      * @var  array $operation_date 運用日を格納した配列
-     * @var  array $department_data 全体部署データ
-     * @var  array $personnel_data 全体人員データ
-     * @var  App\Libraries\php\ResponsiblePerson $responsible
+     * @var  array $department_data 一覧表記部署データ
+     * @var  array $personnel_data 一覧表記人員データ
+     * @var  App\Libraries\php\Logic\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
      * @var  array $top_management 最上位の管理者データ
-     * @var  App\Libraries\php\Pagination $pagination
+     * @var  App\Libraries\php\Service\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
      * @var  array $names ページネーション後の人員データ
      * @var  array $responsible_lists 責任者リスト
-     * @var  App\Libraries\php\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
      * @var  array $department_high 部署データの上位階層
      * @var  array $personnel_high 人員データの上位階層
      * @var  App\Http\Controllers\PtcmtrController $tree
@@ -238,12 +241,14 @@ class Pa0001Controller extends Controller
      * @var  int  $client_id 顧客ID　9/27現在　ダミーデータ(route indexでセッション保存)
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
-     * @var  App\Libraries\php\DepartmentDataBase $department_db
+     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
+     * @var  App\Libraries\php\Domain\PersonnelDataBase personnel_db
+     * @var  array $all_personnel_data 全体人員データ
      * @var  array $top_department 最上位の部署データ
      * @var  App\Models\Date $date
      * @var  array $department_data 部署データ
      * @var  array $personnel_data 人員データ
-     * @var  App\Libraries\php\ResponsiblePerson $responsible
+     * @var  App\Libraries\php\Logic\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
      * @var  array $top_management 最上位の管理者データ
      * @var  App\Http\Controllers\PtcmtrController $tree
@@ -362,16 +367,16 @@ class Pa0001Controller extends Controller
      * @var  array  $personnel_data 人員データ
      * @var  array  $click_personnel_data 選択した人員データ
      * @var  array  $affiliation_data　選択した人員の所属部署データ
-     * @var  App\Libraries\php\ResponsiblePerson $responsible
+     * @var  App\Libraries\php\Logic\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
      * @var  array $top_management 最上位の管理者データ
-     * @var  App\Libraries\php\Pagination $pagination
+     * @var  App\Libraries\php\Service\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
      * @var  array $names ページネーション後の人員データ
      * @var  array $responsible_lists 責任者リスト
-     * @var  App\Libraries\php\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
      * @var  array $department_high 部署データの上位階層
      * @var  array $personnel_high 人員データの上位階層
      * @var  App\Http\Controllers\PtcmtrController $tree
@@ -632,7 +637,7 @@ class Pa0001Controller extends Controller
      * 
      * @param  \Illuminate\Http\Request  $request
      * 
-     * @var  int  $client_id 顧客ID　9/27現在　ダミーデータ(route indexでセッション保存)
+     * @var  int $client_id 顧客ID　9/27現在　ダミーデータ(route indexでセッション保存)
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
      * @var  App\Libraries\php\DepartmentDataBase $department_db
@@ -730,15 +735,17 @@ class Pa0001Controller extends Controller
      * 
      * @var  string  $client_id 顧客ID
      * @var  string  $select_id  選択ID
-     * @var  string  $click 選択したID
+     * @var  string  $click_id 選択したID
      * @var  int $count_department 部署ページネーションのページ数
      * @var  int $count_personnel 人員ページネーションのページ数
+     * @var  App\Libraries\php\Domain\PersonnelDataBase personnel_db
+     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
      * @var  array $department_data 部署データ
      * @var  array $personnel_data 人員データ
      * @var  App\Models\Date $date 
-     * @var  App\Libraries\php\ResponsiblePerson $responsible
-     * @var  App\Libraries\php\Hierarchical $hierarchical
-     * @var  App\Libraries\php\Pagination $pagination
+     * @var  App\Libraries\php\Logic\ResponsiblePerson $responsible
+     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Service\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
@@ -943,13 +950,17 @@ class Pa0001Controller extends Controller
      * @var  string  $select_id  選択ID
      * @var  int $count_department 部署ページネーションのページ数
      * @var  int $count_personnel 人員ページネーションのページ数
+     * @var  string $click_id 選択ID
+     * @var  App\Libraries\php\Domain\PersonnelDataBase personnel_db
+     * @var  array $all_personnel_data 全人員データ
+     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
      * @var  array $department_data 部署データ
      * @var  array $personnel_data 人員データ
      * @var  App\Models\Date; $date
-     * @var  App\Libraries\php\ResponsiblePerson $responsible
+     * @var  App\Libraries\php\Logic\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
-     * @var  App\Libraries\php\Hierarchical $hierarchical
-     * @var  App\Libraries\php\Pagination $pagination
+     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Service\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
@@ -1240,6 +1251,26 @@ class Pa0001Controller extends Controller
     /**
      * 部署トップを表示するメソッド
      * 
+     * @var int $count_department 部署のページ番号
+     * @var int $count_personnel　人員のページ番号
+     * @var App\Libraries\php\Domain\DepartmentDataBase $department_db
+     * @var array $top_department 部署トップデータ
+     * @var App\Libraries\php\Domain\PersonnelDataBase personnel_db
+     * @var array $personnel_data 人員データ
+     * @var  App\Models\Date; $date
+     * @var  App\Libraries\php\Logic\ResponsiblePerson $responsible
+     * @var  array $top_responsible 最上位の責任者データ
+     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Service\Pagination $pagination
+     * @var  int $department_max 部署データページネーションの最大値
+     * @var  array $departments ページネーション後の部署データ
+     * @var  int $personnel_max 人員データページネーションの最大値
+     * @var  array $names ページネーション後の人員データ
+     * @var  array $responsible_lists 責任者リスト
+     * @var  array $department_high 部署データの上位階層
+     * @var  array $personnel_high 人員データの上位階層
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
      * 
      * @return \Illuminate\Http\Response
      */

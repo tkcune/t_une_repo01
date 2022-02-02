@@ -76,9 +76,10 @@
         /**
          * 上位階層を取得するメソッド
          * @param array $array 下位階層データ
-         * @param string $code 機能コード
-         * @param array $name_list 上位階層のリスト 
-         * @param array $name_data 上位階層のデータ
+         * 
+         * @var array $name_list 上位階層のリスト 
+         * @var string $code 機能コード
+         * @var array $name_data 上位階層のデータ
          * 
          * @return array $name_list
          */
@@ -112,9 +113,10 @@
          * 配下IDを取得するメソッド
          * @param array $lists 選択したIDを格納した配列
          * @param string $client 顧客ID
-         * @param array $subordinates_id_lists 直下の配下IDを格納した配列
-         * @param array $subordinates 直下の配下データを格納した配列
-         * @param Illuminate\Database\QueryException $e エラー内容
+         * 
+         * @var array $subordinates_id_lists 直下の配下IDを格納した配列
+         * @var array $subordinates 直下の配下データを格納した配列
+         * @var Illuminate\Database\QueryException $e エラー内容
          * 
          * @return array $this->subordinates_list 配下データをまとめた配列
          */
@@ -143,12 +145,12 @@
          * 配下IDを取得するメソッド
          * @param array $lists 選択したIDを格納した配列
          * @param string $client 顧客ID
-         * @param array $subordinates_id_lists 直下の配下IDを格納した配列
-         * @param array $subordinates 直下の配下データを格納した配列
-         * @param array $subordinatesCheck 直下の配下の配下を格納する配列
-         * @param Illuminate\Database\QueryException $e エラー内容
+         * @param array $delete_id 配下データをまとめた配列
          * 
-         * @return  $delete_id 配下データをまとめた配列
+         * @var array $subordinates 直下の配下データを格納した配列
+         * @var Illuminate\Database\QueryException $e エラー内容
+         * 
+         * @return  $delete_id 
          */
         public function subordinateSearchRoop($lists,$client,$delete_id){
 
@@ -261,7 +263,7 @@
          * @var array  $lists　配下リスト 
          * @var array  $id 存在する部署内での最新の部署ID
          * @var string $department_id 登録する部署ID
-         * @var App\Libraries\php\ZeroPadding $padding
+         * @var App\Libraries\php\Service\ZeroPadding $padding
          * @var App\Models\Date $date
          * @var string $code コード
          */

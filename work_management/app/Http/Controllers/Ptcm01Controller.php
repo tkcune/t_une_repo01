@@ -42,10 +42,11 @@ class Ptcm01Controller extends Controller
      * 
      * @var string $client_id　顧客ID
      * @var string $high_id 上位ID
+     * @var array $code 投影元IDの配列
      * @var string $projection_source_id　投影元ID
      * @var string $projection_id　作成する投影ID 
-     * @var App\Libraries\php\ProjectionDataBase $projection_db
-     * @var App\Libraries\php\Hierarchical $hierarchical
+     * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var App\Libraries\php\Domain\Hierarchical $hierarchical
      * @var string $message ログメッセージ
      * 
      * @return \Illuminate\Http\Response
@@ -161,9 +162,9 @@ class Ptcm01Controller extends Controller
      * @param  string  $id 顧客ID
      * @param  string  $id2　投影ID
      * 
-     * @var App\Libraries\php\ProjectionDataBase $projection_db
+     * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
      * @var string $high_id 上位ID
-     * @var App\Libraries\php\Hierarchical $hierarchical
+     * @var App\Libraries\php\Domain\Hierarchical $hierarchical
      * @var string  $message ログメッセージ
      * 
      * @return \Illuminate\Http\Response

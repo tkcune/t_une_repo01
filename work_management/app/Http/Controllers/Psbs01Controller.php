@@ -64,7 +64,7 @@ class Psbs01Controller extends Controller
      * @var  string $management_personnel_id 管理者ID
      * @var  string $high 上位部署のID番号
      * @var  string $id 顧客IDに対応した最新の部署IDを格納する因数
-     * @var  App\Libraries\php\ZeroPadding $padding
+     * @var  App\Libraries\php\Service\ZeroPadding $padding
      * @var  string $operation_start_date 稼働開始日
      * @var  int $department_id 部署ID
      * 
@@ -148,16 +148,16 @@ class Psbs01Controller extends Controller
      * @var  array $select_lists 選択した部署の配下データ
      * @var  string $code 機能コード
      * @var  array  $data 取得したデータ
-     * @var  App\Libraries\php\ResponsiblePerson $responsible
+     * @var  App\Libraries\php\Logic\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
      * @var  array $top_management 最上位の管理者データ
-     * @var  App\Libraries\php\Pagination $pagination
+     * @var  App\Libraries\php\Service\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
      * @var  array $names ページネーション後の人員データ
      * @var  array $responsible_lists 責任者リスト
-     * @var  App\Libraries\php\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
      * @var  array $department_high 部署データの上位階層
      * @var  array $personnel_high 人員データの上位階層
      * @var  App\Http\Controllers\PtcmtrController $tree
@@ -483,6 +483,8 @@ class Psbs01Controller extends Controller
      * @var  string  $status　状態
      * @var  string  $start_day 稼働開始日
      * @var  string  $finish_day 稼働終了日
+     * @var  string  $remarks 備考
+     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
      * @var  string  $message メッセージ
      * 
      * @return \Illuminate\Http\Response
@@ -546,7 +548,7 @@ class Psbs01Controller extends Controller
      * @var string $high_id 上位ID
      * @var string $lower_id 下位ID
      * @var string $message メッセージ
-     * @var \App\Libraries\php\JudgmentHierarchy $judgment_hierarchy
+     * @var \App\Libraries\php\Logic\JudgmentHierarchy $judgment_hierarchy
      * 
      * @return \Illuminate\Http\Response
      */
@@ -611,11 +613,15 @@ class Psbs01Controller extends Controller
      * @param  string  $client 顧客ID
      * @param  string  $delete 削除予定のID
      * 
-     * @var  array   $lists 削除予定のIDを格納した配列
-     * @var  \App\Libraries\php\Hierarchical $hierarchical
-     * @var  array   $delete_lists 削除予定のIDを格納した配列
-     * @var  int     $code 機能コードの頭2文字
+     * @var  array $lists 削除予定のIDを格納した配列
+     * @var  array $delete_id 選択部署の配下の削除予定のID
+     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
+     * @var  \App\Libraries\php\Domain\Hierarchical $hierarchical
+     * @var  array $delete_lists 削除予定のIDを格納した配列
+     * @var  int   $code 機能コードの頭2文字
      * @var  array $delete_projections 削除元
+     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var  App\Libraries\php\Domain\ProjectionDataBase $projection_db
      * @var  string $message メッセージ
      * 
      * @return \Illuminate\Http\Response
@@ -729,12 +735,14 @@ class Psbs01Controller extends Controller
      * @var  string  $click 選択したID
      * @var  int $count_department 部署ページネーションのページ数
      * @var  int $count_personnel 人員ページネーションのページ数
+     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
      * @var  array $department_data 部署データ
+     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
      * @var  array $personnel_data 人員データ
      * @var  App\Models\Date $date 
-     * @var  App\Libraries\php\ResponsiblePerson $responsible
-     * @var  App\Libraries\php\Hierarchical $hierarchical
-     * @var  App\Libraries\php\Pagination $pagination
+     * @var  App\Libraries\php\Logic\ResponsiblePerson $responsible
+     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Service\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
@@ -935,13 +943,16 @@ class Psbs01Controller extends Controller
      * @var string $client_id 顧客ID
      * @var string $copy_id 複製するID
      * @var string $high 複製IDが所属する上位階層ID
+     * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
      * @var string $id 複製前の最新の部署ID
      * @var string $id2 複製前の最新の人員ID
      * @var string $id_num 複製前の最新の部署IDの数字部分
      * @var string $id2_num 複製前の最新の部署IDの数字部分
      * @var string $number 8桁に0埋めした複製前の最新の部署IDの数字部分
      * @var string $number2　8桁に0埋めした複製前の最新の人員IDの数字部分
-     * @var App\Libraries\php\Hierarchical $hierarchical
+     * @var App\Libraries\php\Domain\Hierarchical $hierarchical
+     * @var App\Libraries\php\Domain\DepartmentDataBase $department_db
+     * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
      * 
      * @return \Illuminate\Http\Response
      */

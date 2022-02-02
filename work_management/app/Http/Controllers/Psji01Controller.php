@@ -65,8 +65,8 @@ class Psji01Controller extends Controller
      * @var  int $system_management システム管理者権限
      * @var  int $high 上位部署
      * @var  App\Models\Date $date
-     * @var  App\Libraries\php\PersonnelDataBase $personnel_db
-     * @var  App\Libraries\php\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
      * @var  string $personnel_id 最新の人員ID
      * 
      * @return \Illuminate\Http\Response
@@ -172,7 +172,7 @@ class Psji01Controller extends Controller
      * @var  string  $start_day 稼働開始日
      * @var  string  $finish_day 稼働終了日
      * @var  string  $remarks 備考
-     * @var  App\Libraries\php\PersonnelDataBase $personnel_db
+     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
      * @var  array $check_id 人員が存在するか確認する変数
      * 
      * @return \Illuminate\Http\Response
@@ -244,9 +244,9 @@ class Psji01Controller extends Controller
      * @param  string  $id　顧客ID　
      * @param  string  $id2 人員ID
      * 
-     * @var  App\Libraries\php\PersonnelDataBase $personnel_db
+     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
      * @var array $high_id　上位ID
-     * @var App\Libraries\php\Hierarchical $hierarchical
+     * @var App\Libraries\php\Domain\Hierarchical $hierarchical
      * @var string  $message ログメッセージ
      * 
      * @return \Illuminate\Http\Response
@@ -305,13 +305,21 @@ class Psji01Controller extends Controller
      * @var  string  $select_id  選択ID
      * @var  int $count_department 部署ページネーションのページ数
      * @var  int $count_personnel 人員ページネーションのページ数
+     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var  int $all_personnel_data 全人員データ
+     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
      * @var  array $department_data 部署データ
      * @var  array $personnel_data 人員データ
+     * @var  string $select_code 選択コード
+     * @var  App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var  array $click_department_data 選択部署データ
+     * @var  array $click_personnel_data 選択人員データ
+     * @var  array $top_department 最上位部署データ
      * @var  App\Models\Date; $date
-     * @var  App\Libraries\php\ResponsiblePerson $responsible
+     * @var  App\Libraries\php\Logic\ResponsiblePerson $responsible
      * @var  array $top_responsible 最上位の責任者データ
-     * @var  App\Libraries\php\Hierarchical $hierarchical
-     * @var  App\Libraries\php\Pagination $pagination
+     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Service\Pagination $pagination
      * @var  int $department_max 部署データページネーションの最大値
      * @var  array $departments ページネーション後の部署データ
      * @var  int $personnel_max 人員データページネーションの最大値
@@ -526,12 +534,15 @@ class Psji01Controller extends Controller
      * @var string $copy_id 複製するID
      * @var string $high 複製IDが所属する上位階層ID
      * @var App\Models\Date; $date
+     * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var array  $projection_source_id　複製元ID
+     * @var array  $projection_id 投影ID
      * @var array  $copy_personnel 複製するデータ
      * @var array  $id 存在している最新のID
      * @var string $department_id 登録する部署ID
      * @var string $personnel_id 登録する人員ID
-     * @var App\Libraries\php\PersonnelDataBase $personnel_db
-     * @var App\Libraries\php\Hierarchical $hierarchical
+     * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var App\Libraries\php\Domain\Hierarchical $hierarchical
      * @var string $message メッセージ
      * 
      * @return \Illuminate\Http\Response
@@ -677,7 +688,10 @@ class Psji01Controller extends Controller
      * メールの送信試験メソッド
      * @param  \Illuminate\Http\Request  $request
      * 
-     * 
+     * @var string $client_id 顧客ID 
+     * @var string $name 名前
+     * @var string $email メールアドレス
+     * @var NetworkClient $network
      *
      */
     public function mailSend(Request $request){

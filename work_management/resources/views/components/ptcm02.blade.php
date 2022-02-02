@@ -1,5 +1,5 @@
     {{-- コメント　ツリー画面ここから --}}
-        <div class="col-3 bg-white border p-2" id="tree">
+        <div class="col-3 border p-2" id="tree">
             <div id="chaintree"></div>
             <div class="twobutton">
                 <!-- <img src="/image/lo.png" class="btndisplay" id="openTree"> -->

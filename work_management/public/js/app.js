@@ -1848,15 +1848,17 @@ var _require2 = __webpack_require__(/*! ./work_js/ptcmta */ "./resources/js/work
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-document.getElementById('receive_combobox').addEventListener('change', function () {
-  if (document.getElementById('receive_combobox').value === '1') {
-    document.getElementById('recieving_port_number').value = '995';
-    document.getElementById('recieving_server').value = "pop3.muumuu-mail.com";
-  } else if (document.getElementById('receive_combobox').value === '2') {
-    document.getElementById('recieving_port_number').value = '993';
-    document.getElementById('recieving_server').value = 'imap4.muumuu-mail.com';
-  }
-});
+if (document.getElementById('receive_combobox')) {
+  document.getElementById('receive_combobox').addEventListener('change', function () {
+    if (document.getElementById('receive_combobox').value === '1') {
+      document.getElementById('recieving_port_number').value = '995';
+      document.getElementById('recieving_server').value = "pop3.muumuu-mail.com";
+    } else if (document.getElementById('receive_combobox').value === '2') {
+      document.getElementById('recieving_port_number').value = '993';
+      document.getElementById('recieving_server').value = 'imap4.muumuu-mail.com';
+    }
+  });
+}
 
 /***/ }),
 
@@ -2244,7 +2246,7 @@ TreeAction.node = /*#__PURE__*/function () {
         //ログ確認の場合
         window.location = 'http://localhost:8000/pslg';
       } else if (this.node.id === 'ssnw') {
-        window.location = 'http://localhost:8000/psnw01/index';
+        window.location = 'http://localhost:8000/psnw01';
       } else {
         //@var string Laravelのセッションid
         var clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
@@ -2332,11 +2334,15 @@ TreeAction.node = /*#__PURE__*/function () {
       if (splitDir.length !== 1) {
         //@var Nodeクラス palent 目的のノードクラスの親要素
         var palent = this.prototype.chainparser.searchNodeDir(splitDir.join('/'), this.prototype.tree); //目的のノードクラスの親要素のツリーを開く
+        //親要素が閉じているなら開く
 
-        palent.openBox();
-        palent.openDisplayChild(); //また親要素を引数にして再帰的に、openBottomUpTreeを呼び出す
+        if (palent.element.children[0].children[0].innerText === "+") {
+          //目的のノードクラスの親要素のツリーを開く
+          palent.openBox();
+          palent.openDisplayChild(); //また親要素を引数にして再帰的に、openBottomUpTreeを呼び出す
 
-        palent.openBottomUpTree();
+          palent.openBottomUpTree();
+        }
       }
     } //目的のノードクラスまでツリーを開く
     //@var Nodeクラス tree ツリーの全体のインスタンス
@@ -2356,12 +2362,15 @@ TreeAction.node = /*#__PURE__*/function () {
 
       if (splitDir.length !== 1) {
         //@var Nodeクラス palent 目的のノードクラスの親要素
-        var palent = this.prototype.chainparser.searchNodeDir(splitDir.join('/'), this.prototype.tree); //目的のノードクラスの親要素のツリーを開く
+        var palent = this.prototype.chainparser.searchNodeDir(splitDir.join('/'), this.prototype.tree); //親要素が閉じているなら開く
 
-        palent.openBox();
-        palent.openDisplayChild(); //また親要素を引数にして再帰的に、openBottomUpTreeを呼び出す
+        if (palent.element.children[0].children[0].innerText === "+") {
+          //目的のノードクラスの親要素のツリーを開く
+          palent.openBox();
+          palent.openDisplayChild(); //また親要素を引数にして再帰的に、openBottomUpTreeを呼び出す
 
-        palent.openBottomUpTree();
+          palent.openBottomUpTree();
+        }
       }
     } //現在のスパイラルでは使わない
     //ツリーを閉じる
@@ -3010,12 +3019,13 @@ TreeAction.createTree = function (treesepalete, projectionChain, Node, chainpars
     });
   }; //ツリーの子要素のdom要素を構築、追加していく。
   //@param Nodeクラス treeTop 第一階層のツリーノードクラス
+  //@param dom fragment 仮のツリーのdom
 
 
-  var createElement = function createElement(treeTop) {
+  var createElement = function createElement(treeTop, fragment) {
     treeTop.child.forEach(function (node) {
-      //<div id="chaintree"></div>にdomを追加
-      treeTop.element.append(node.createTree());
+      fragment.append(node.createTree()); //<div id="chaintree"></div>にdomを追加
+      // treeTop.element.append(node.createTree());
     });
   }; //@param array sepalete 上下関係だけのツリーのデータ構造
   //@param Nodeクラス treeTop　ツリーの一番上の親ノードのクラス
@@ -3125,9 +3135,35 @@ TreeAction.createTree = function (treesepalete, projectionChain, Node, chainpars
   var treeTop = new Node('', '1');
 
   if (document.getElementById('chaintree') && document.getElementById('chaintree').tagName === 'DIV') {
-    // treeTop.prototype.chainparser = chainparser;
-    //@var dom this.element dom要素を格納 ツリーのdom要素を加えていく一番上のツリー<div id="chaintree"></div>
-    treeTop.element = document.getElementById('chaintree'); //@var string this.className ツリーのcssのクラス名
+    //@var dom 仮のツリーのdom
+    var fragment = document.createDocumentFragment(); //@var dom this.element dom要素を格納 ツリーのdom要素を加えていく一番上のツリー<div id="chaintree"></div>
+
+    treeTop.element = document.getElementById('chaintree'); //オプション
+    // const options = {
+    //   childList: true,
+    //   characterData: true,
+    //   characterDataOldValue: true,
+    //   attributes: true,
+    //   subtree: true,
+    // }
+    //コールバック関数
+    // function callback(mutationsList, observer) {
+    //   for(const mutation of mutationsList) {
+    // 処理
+    // console.log(mutation);
+    //mutation.target //ターゲット要素
+    //mutation.addedNodes //追加されたDOM
+    //mutation.removedNodes //削除されたDOM
+    // console.log('change chaintree');
+    //   }
+    // }
+    //ターゲット要素をDOMで取得
+    // const target = document.getElementById('chaintree');
+    //インスタンス化
+    // const obs = new MutationObserver(callback);
+    //ターゲット要素の監視を開始
+    // obs.observe(target, options);
+    //@var string this.className ツリーのcssのクラス名
 
     treeTop.className = 'chaintree';
 
@@ -3143,11 +3179,13 @@ TreeAction.createTree = function (treesepalete, projectionChain, Node, chainpars
 
     syncProjection(projectionChain); //domを生成して、ツリーを描画する
 
-    createElement(treeTop); //投影を斜体にする
+    createElement(treeTop, fragment); //投影を斜体にする
 
     onSyncTree(treeTop); //ツリーのdom要素を生成した時は、ツリーは表示しているので、非表示にする。
 
-    closeTree(treeTop);
+    closeTree(treeTop); //実際のdomにfragmentのdomを追加する
+
+    treeTop.element.append(fragment);
   } else {
     console.log('chaintree div tag is no');
   } //ツリーインスタンスを返す
@@ -3337,6 +3375,16 @@ TreeAction = function (treesepalete, projectionChain) {
         if (!node.element.children[0].classList.value.match('unexpand')) {
           //ボックスがマイナス文字(開いているなら)
           if (node.element.children[0].children[0].innerText === '-') {
+            //親のノードidを削除する
+            //上からツリーを開くので、子ノードが開く時に、親ノードも開く
+            Object.keys(storage).forEach(function (key) {
+              //@var Nodeクラス 親ノード
+              var palent = chainparser.searchPalentNode(node.id, tree); //storageに親ノードが保存してあれば、削除する
+
+              if (palent.id === key) {
+                delete storage[key];
+              }
+            });
             storage[node.id] = node.id;
           }
         }
@@ -3353,82 +3401,74 @@ TreeAction = function (treesepalete, projectionChain) {
 
     storeClipboard();
   }); //ページ移動後のイベント
-
-  window.addEventListener('DOMContentLoaded', function () {
-    //ページ移動前のクリップボードのデータを復元する
-    restoreClipboard(); //ページ移動前に開いていたノードを開く
-
-    openNodeAfterPageMove(); //ページ移動前に隠蔽していたノードを閉じる
-
-    hideDisplayAfterPageMove(); //一覧表示からのノードの表示
-
-    if (document.location.pathname.split('/')[1] === 'show') {
-      //@var Nodeクラス 開くノード
-      var node; //@var string 開くノードのid
-
-      var nodeId = document.location.pathname.split('/')[3]; //投影のノードをクリックしたら
-
-      if (nodeId.substr(0, 2) === 'ta') {
-        //@var Nodeクラス 投影ノード
-        var projectionNode = chainparser.searchNodeId(nodeId, tree); //投影元のノードを取得する
-
-        node = chainparser.searchNodeId(projectionNode.fromLink[0], tree);
-      } else {
-        //@var Nodeクラス 開くノード
-        node = chainparser.searchNodeId(nodeId, tree);
-      }
-
-      if (node !== undefined) {
-        //ノードを開く
-        node.openBottomUpTree(); //ノードをカレントにする
-
-        node.focus(); //クリップボードのデータをカレントにする
-
-        currentClipboard(node);
-      }
-    } else if (document.location.pathname.split('/')[1] === '') {
-      //indexルートの場合
-      //@var Nodeクラス カレントにするノード 
-      var _node = chainparser.searchNodeId('bs00000001', tree);
-
-      if (_node !== undefined) {
-        _node.openBottomUpTree();
-
-        _node.focus();
-
-        currentClipboard(_node);
-      }
-    } else {
-      //複写、移動、削除の場合
-      if (document.getElementById('back_treeaction').value === 'delete' || document.getElementById('back_treeaction').value === 'open') {
-        //@var Nodeクラス ツリーの開くノード
-        var _node2 = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree);
-
-        if (_node2 !== undefined) {
-          //ノードを開く
-          _node2.openBottomUpTree(); //ノードをカレントにする
-
-
-          _node2.focus(); //クリップボードのデータをカレントにする
-
-
-          currentClipboard(_node2);
-        }
-      } else {
-        //showルーティングでも、ツリー機能ルーティングでもない場合
-        //@var Nodeクラス カレントにするノード 
-        var _node3 = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(), tree);
-
-        if (_node3 !== undefined) {
-          _node3.openBottomUpTree();
-
-          _node3.focus();
-
-          currentClipboard(_node3);
-        }
-      }
-    }
-  }); //ページ移動前のクリップボードのデータの保存
+  // window.addEventListener('DOMContentLoaded', function(){
+  //   //ページ移動前のクリップボードのデータを復元する
+  //   restoreClipboard();
+  //   //ページ移動前に開いていたノードを開く
+  //   openNodeAfterPageMove();
+  //   //ページ移動前に隠蔽していたノードを閉じる
+  //   hideDisplayAfterPageMove();
+  //   //一覧表示からのノードの表示
+  //   if(document.location.pathname.split('/')[1] === 'show'){
+  //     //@var Nodeクラス 開くノード
+  //     let node;
+  //     //@var array パスをスラッシュで区切った配列
+  //     let path_array = document.getElementById('copyTarget').parentNode.action.split('/');
+  //     //@var string 詳細行の部署のid
+  //     let nodeId = path_array[path_array.length - 1];
+  //     //投影のノードをクリックしたら
+  //     if(nodeId.slice(0, 2) === 'ta'){
+  //       //@var Nodeクラス 投影ノード
+  //       let projectionNode = chainparser.searchNodeId(nodeId, tree);
+  //       //投影元のノードを取得する
+  //       node = chainparser.searchNodeId(projectionNode.fromLink[0], tree);
+  //     }else{
+  //       //@var Nodeクラス 開くノード
+  //       node = chainparser.searchNodeId(nodeId, tree);
+  //     }
+  //     if(node !== undefined){
+  //       //ノードを開く
+  //       node.openBottomUpTree();
+  //       //ノードをカレントにする
+  //       node.focus();
+  //       //クリップボードのデータをカレントにする
+  //       currentClipboard(node);
+  //     }
+  //   }else if(document.location.pathname.split('/')[1] === ''){
+  //     //indexルートの場合
+  //     //@var Nodeクラス カレントにするノード 
+  //     let node = chainparser.searchNodeId('bs00000001', tree);
+  //     if(node !== undefined){
+  //       node.openBottomUpTree();
+  //       node.focus();
+  //       currentClipboard(node);
+  //     }
+  //   }else{
+  //     //複写、移動、削除の場合
+  //     if(document.getElementById('back_treeaction').value === 'delete' || document.getElementById('back_treeaction').value === 'open'){
+  //       //@var Nodeクラス ツリーの開くノード
+  //       let node = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree);
+  //       if(node !== undefined){
+  //         //ノードを開く
+  //         node.openBottomUpTree();
+  //         //ノードをカレントにする
+  //         node.focus();
+  //         //クリップボードのデータをカレントにする
+  //         currentClipboard(node);
+  //       }
+  //     }else{
+  //       //showルーティングでも、ツリー機能ルーティングでもない場合
+  //       //@var Nodeクラス カレントにするノード 
+  //       let node = chainparser.searchNodeId(clipboard.getCurrentId(), tree);
+  //       if(node !== undefined){
+  //         node.openBottomUpTree();
+  //         node.focus();
+  //         currentClipboard(node);
+  //       }
+  //     }
+  //   }
+  // });
+  //ページ移動前のクリップボードのデータの保存
 
   var storeClipboard = function storeClipboard() {
     localStorage.setItem('currentId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId());
@@ -3474,14 +3514,90 @@ TreeAction = function (treesepalete, projectionChain) {
     if (hiddenStorage !== null && hiddenStorage !== undefined) {
       Object.keys(hiddenStorage).forEach(function (id) {
         //@var Nodeクラス 隠蔽するノード
-        var node = chainparser.searchNodeId(Storage(hiddenStorage[id]), tree);
+        var node = chainparser.searchNodeId(hiddenStorage[id], tree);
 
         if (node !== undefined) {
           displayNoneNode(node);
         }
       });
     }
-  };
+  }; //ページ移動前のクリップボードのデータを復元する
+
+
+  restoreClipboard(); //ページ移動前に開いていたノードを開く
+
+  openNodeAfterPageMove(); //ページ移動前に隠蔽していたノードを閉じる
+
+  hideDisplayAfterPageMove(); //一覧表示からのノードの表示
+
+  if (document.location.pathname.split('/')[1] === 'show') {
+    //@var Nodeクラス 開くノード
+    var node; //@var array パスをスラッシュで区切った配列
+
+    var path_array = document.getElementById('copyTarget').parentNode.action.split('/'); //@var string 詳細行の部署のid
+
+    var nodeId = path_array[path_array.length - 1]; //投影のノードをクリックしたら
+
+    if (nodeId.slice(0, 2) === 'ta') {
+      //@var Nodeクラス 投影ノード
+      var projectionNode = chainparser.searchNodeId(nodeId, tree); //投影元のノードを取得する
+
+      node = chainparser.searchNodeId(projectionNode.fromLink[0], tree);
+    } else {
+      //@var Nodeクラス 開くノード
+      node = chainparser.searchNodeId(nodeId, tree);
+    }
+
+    if (node !== undefined) {
+      //ノードを開く
+      node.openBottomUpTree(); //ノードをカレントにする
+
+      node.focus(); //クリップボードのデータをカレントにする
+
+      currentClipboard(node);
+    }
+  } else if (document.location.pathname.split('/')[1] === '') {
+    //indexルートの場合
+    //@var Nodeクラス カレントにするノード 
+    var _node = chainparser.searchNodeId('bs00000001', tree);
+
+    if (_node !== undefined) {
+      _node.openBottomUpTree();
+
+      _node.focus();
+
+      currentClipboard(_node);
+    }
+  } else {
+    //複写、移動、削除の場合
+    if (document.getElementById('back_treeaction').value === 'delete' || document.getElementById('back_treeaction').value === 'open') {
+      //@var Nodeクラス ツリーの開くノード
+      var _node2 = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree);
+
+      if (_node2 !== undefined) {
+        //ノードを開く
+        _node2.openBottomUpTree(); //ノードをカレントにする
+
+
+        _node2.focus(); //クリップボードのデータをカレントにする
+
+
+        currentClipboard(_node2);
+      }
+    } else {
+      //showルーティングでも、ツリー機能ルーティングでもない場合
+      //@var Nodeクラス カレントにするノード 
+      var _node3 = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(), tree);
+
+      if (_node3 !== undefined) {
+        _node3.openBottomUpTree();
+
+        _node3.focus();
+
+        currentClipboard(_node3);
+      }
+    }
+  }
 
   return {
     openTree: openTree,
@@ -3494,8 +3610,10 @@ TreeAction = function (treesepalete, projectionChain) {
 
 if (document.getElementById('tree_change_display')) {
   document.getElementById('tree_change_display').addEventListener('click', function () {
-    //@var string 詳細行の部署のid
-    var nodeId = document.getElementById('parent').children[0].children[1].children[0].innerText.substr(3); //隠蔽のメソッド
+    //@var array パスをスラッシュで区切った配列
+    var path_array = document.getElementById('copyTarget').parentNode.action.split('/'); //@var string 詳細行のid
+
+    var nodeId = path_array[path_array.length - 1]; //隠蔽のメソッド
 
     TreeAction.changeDisplay(nodeId);
   });

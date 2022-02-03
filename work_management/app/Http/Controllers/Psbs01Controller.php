@@ -679,6 +679,8 @@ class Psbs01Controller extends Controller
                         foreach($delete_projections as $delete_projection){
                             $hierarchical = new Hierarchical();
                             $hierarchical->delete($client,$delete_projection->projection_id);
+                            $projection_db = new ProjectionDataBase();
+                            $projection_db->delete($client,$delete_projection->projection_id);
                         }
                         $projection_db = new ProjectionDataBase();
                         $projection_db->delete($client,$delete_list);
@@ -698,6 +700,7 @@ class Psbs01Controller extends Controller
                     $hierarchical = new Hierarchical();
                     $hierarchical->delete($client,$delete_list);
                 }
+
                 DB::commit();
 
             }catch(\Exception $e){

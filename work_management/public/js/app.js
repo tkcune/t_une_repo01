@@ -3649,8 +3649,10 @@ if (document.getElementById('tree_change_display')) {
 
 if (document.getElementById('open_tree')) {
   document.getElementById('open_tree').addEventListener('click', function () {
-    //@var string 詳細行の部署のid
-    var nodeId = document.getElementById('parent').children[0].children[1].children[0].innerText.substr(3); //隠蔽のメソッド
+    //@var array パスをスラッシュで区切った配列
+    var path_array = document.getElementById('copyTarget').parentNode.action.split('/'); //@var string 詳細行のid
+
+    var nodeId = path_array[path_array.length - 1]; //隠蔽のメソッド
 
     TreeAction.reOpenNode(nodeId);
   });

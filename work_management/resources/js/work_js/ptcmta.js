@@ -1759,8 +1759,10 @@ if(document.getElementById('tree_change_display')){
 //詳細行の表示ではない時は、イベントを追加しない
 if(document.getElementById('open_tree')){
   document.getElementById('open_tree').addEventListener('click', () => {
-    //@var string 詳細行の部署のid
-    let nodeId = document.getElementById('parent').children[0].children[1].children[0].innerText.substr(3);
+    //@var array パスをスラッシュで区切った配列
+    let path_array = document.getElementById('copyTarget').parentNode.action.split('/');
+    //@var string 詳細行のid
+    let nodeId = path_array[path_array.length - 1];
     //隠蔽のメソッド
     TreeAction.reOpenNode(nodeId);
   });

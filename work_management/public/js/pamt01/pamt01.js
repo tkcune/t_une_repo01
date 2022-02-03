@@ -43,7 +43,8 @@ window.addEventListener('pageshow',()=>{
     //チェックボックスの状態の判断
     if(localStorage.getItem('check') == "undefined") {
       document.getElementById("check").checked = false;
-    }else{
+      console.log(localStorage.getItem('check'));
+    }else if(localStorage.getItem('check') == "on"){
       //部署詳細・人員詳細の判断
       if(name.textContent.includes("部署詳細") == true){
         deleteOn();
@@ -51,8 +52,12 @@ window.addEventListener('pageshow',()=>{
         deleteOn2();
       }
       document.getElementById("check").checked = true;
+    }else{
+
     }
   }
+  //チェック状態のリセット
+  localStorage.removeItem('check');
 
   //セッションの削除
   window.sessionStorage.removeItem(['page_id']);

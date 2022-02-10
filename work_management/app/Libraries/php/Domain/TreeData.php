@@ -29,11 +29,9 @@ class TreeData{
         $projection_id_name = self::change_projection_name($projection_chain, $database_id_name);
         //@var array 階層テーブルを分ける
         $tree_id_chain = self::divide_hierarchy($database_chain);
-        foreach([$projection_id_name, $projection_chain, $tree_id_chain] as $row){
-            if($row == []){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '7001');
-                return [[], []];
-            }
+        if($tree_id_chain == []){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '7001');
+            return [[], []];
         }
         //@var array ツリー生成用の上下関係のオブジェクトのデータ
         $tree_chain = self::create_hierarchy($tree_id_chain, array_merge($database_id_name, $projection_id_name));

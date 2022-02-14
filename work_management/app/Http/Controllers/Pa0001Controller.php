@@ -66,6 +66,7 @@ class Pa0001Controller extends Controller
         $select_id = "bs00000001";
         $lists = [];
         session(['client_id'=>$client_id]);
+        $select_code = substr($select_id,0,2);
 
         $count_department = Config::get('startcount.count');
         $count_personnel = Config::get('startcount.count');
@@ -160,7 +161,7 @@ class Pa0001Controller extends Controller
 
         //運用状況の確認
         $operation_check = new OperationCheck();
-        $operation_check->check($top_department);
+        $operation_check->check($top_department,$select_code);
 
         return view('pacm01.pacm01',compact('top_management','department_max','departments','personnel_max','names',
         'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
@@ -263,7 +264,7 @@ class Pa0001Controller extends Controller
         $count_personnel = $_GET['personnel_page'];
         $department_db = new DepartmentDataBase();
         $personnel_db = new PersonnelDataBase();
-
+        $select_code = "bs";
         //一番上の部署を取得
         try{
             $top_department = $department_db->getTop($client_id);
@@ -341,7 +342,7 @@ class Pa0001Controller extends Controller
 
         //運用状況の確認
         $operation_check = new OperationCheck();
-        $operation_check->check($top_department);
+        $operation_check->check($top_department,$select_code);
 
         return view('pacm01.pacm01',compact('top_department','top_responsible','department_max','departments','personnel_max','names',
         'department_data','responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data','operation_date','all_personnel_data'));

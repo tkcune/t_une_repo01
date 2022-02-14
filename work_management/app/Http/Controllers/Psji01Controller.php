@@ -12,6 +12,7 @@ use App\Libraries\php\Domain\DepartmentDataBase;
 use App\Libraries\php\Domain\PersonnelDataBase;
 use App\Libraries\php\Domain\ProjectionDataBase;
 use App\Libraries\php\Logic\ResponsiblePerson;
+use App\Libraries\php\Logic\MailAddressCheck;
 use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
 use App\Libraries\php\Service\Pagination;
@@ -104,6 +105,17 @@ class Psji01Controller extends Controller
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('index');
+        }
+
+        $mail_check = new MailAddressCheck();
+        $mail_flag = $mail_check->check($client_id,$personnel_id,$email);
+
+        //メールアドレス重複チェック
+        if($mail_flag == false){
+            OutputLog::message_log(__FUNCTION__, 'mhjier0001','01');
+            $message = Message::get_message_handle('mhjier0001',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
+            return back();
         }
 
         try{
@@ -215,6 +227,25 @@ class Psji01Controller extends Controller
         }
         if($check_id == null){
             return redirect()->route('index');
+        }
+
+        $mail_check = new MailAddressCheck();
+        $mail_flag = $mail_check->check($client_id,$personnel_id,$mail);
+
+        //メールアドレス重複チェック
+        if($mail_flag == false){
+            OutputLog::message_log(__FUNCTION__, 'mhjier0001','01');
+            $message = Message::get_message_handle('mhjier0001',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
+            return back();
+        }
+
+        //日付チェック
+        if($start_day>$finish_day){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0008','01');
+            $message = Message::get_message_handle('mhcmer0008',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
+            return back();
         }
 
         //人員情報の更新
@@ -372,6 +403,9 @@ class Psji01Controller extends Controller
 
         //検索結果が0件なら戻る
         if(empty($personnel_data)){
+            OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
+            $message = Message::get_message_handle('mhcmwn0001',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             return redirect()->route('plbs01.show',[$client_id,$select_id]);
         }
 

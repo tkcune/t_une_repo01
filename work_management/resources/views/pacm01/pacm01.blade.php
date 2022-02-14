@@ -773,7 +773,7 @@
                             <table id="bs-table" class="bs-table table_sticky table table-striped sort-table" style="margin-bottom:0px;margin-top:0px;">
                                 <thead>
                                     <tr>
-                                    <th width="102">部署番号</th>
+                                    <th z>部署番号</th>
                                     <th width="160">部署名</th>
                                     <th width="160">上位部署</th>
                                     <th width="90">状態</th>

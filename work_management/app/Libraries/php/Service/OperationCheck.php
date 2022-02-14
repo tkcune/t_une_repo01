@@ -17,27 +17,37 @@ use App\Models\Date;
      * 
      * @var   App\Models\Date $date 日付クラス
      * @var   $today 今日の日付
+     * @var   $message_code 稼働中の場合のエラーメッセージコード
+     * @var   $message_code2 廃止の場合のエラーメッセージコード
      */
-    public static function check($datas){
+    public static function check($datas,$code){
 
         //日付クラスの取得
         $date = new Date();
         $today = Carbon::parse($date->today())->format('Y-m-d');
-        
+
+        if($code == 'bs'){
+            $message_code = 'mhbswn0001';
+            $message_code2 = 'mhbswn0002';
+        }else{
+            $message_code = 'mhjiwn0001';
+            $message_code2 = 'mhjiwn0002';
+        }
 
         foreach($datas as $data){
             if($data->status == "13" && (Carbon::parse($data->operation_start_date)->format('Y-m-d') > $today || Carbon::parse($data->operation_end_date)->format('Y-m-d') < $today) ){
-                OutputLog::message_log(__FUNCTION__,'mhbswn0001');
-                $message = Message::get_message_handle('mhbswn0001',[0=>'01']);
+                OutputLog::message_log(__FUNCTION__,$message_code);
+                $message = Message::get_message_handle($message_code,[0=>'01']);
                 session(['message'=>$message[0],'handle_message'=>$message[3]]);
             }
             
             if($data->status == "18" && (Carbon::parse($data->operation_start_date)->format('Y-m-d') < $today && $today < Carbon::parse($data->operation_end_date)->format('Y-m-d')) ){
-                OutputLog::message_log(__FUNCTION__, 'mhbswn0002');
-                $message = Message::get_message_handle('mhbswn0002',[0=>'02']);
+                OutputLog::message_log(__FUNCTION__, $message_code2);
+                $message = Message::get_message_handle($message_code2,[0=>'02']);
                 session(['message'=>$message[0],'handle_message'=>$message[3]]);
             }
 
         }
     }
+
  }

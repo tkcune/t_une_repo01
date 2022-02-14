@@ -279,7 +279,7 @@ class Psbs01Controller extends Controller
 
             //運用状況の確認
             $operation_check = new OperationCheck();
-            $operation_check->check($click_department_data);
+            $operation_check->check($click_department_data,$select_code);
 
             return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel','click_department_data',
             'department_max','departments','personnel_max','names','responsible_lists','department_high','personnel_high',
@@ -376,7 +376,7 @@ class Psbs01Controller extends Controller
 
                 //運用状況の確認
                 $operation_check = new OperationCheck();
-                $operation_check->check($top_department);
+                $operation_check->check($top_department,$select_code);
 
                 //クリックコードの保存
                 session(['click_code'=>$select_code]);
@@ -450,7 +450,7 @@ class Psbs01Controller extends Controller
 
             //運用状況の確認
             $operation_check = new OperationCheck();
-            $operation_check->check($click_personnel_data);
+            $operation_check->check($click_personnel_data,$select_code);
 
             return view('pacm01.pacm01',compact('data','count_department','count_personnel','department_max','departments','personnel_max','names',
             'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists',
@@ -519,6 +519,14 @@ class Psbs01Controller extends Controller
         if($management_personnel_id == null){
 
             return redirect()->route('index');
+        }
+
+        //日付チェック
+        if($start_day>$finish_day){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0008','01');
+            $message = Message::get_message_handle('mhcmer0008',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
+            return back();
         }
 
         //部署情報の更新
@@ -797,7 +805,12 @@ class Psbs01Controller extends Controller
         }
 
         if(empty($department_data)){
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
+            $message = Message::get_message_handle('mhcmwn0001',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
             return redirect()->route('plbs01.show',[$client_id,$select_id]);
+
         }
 
         //詳細画面のデータ表示

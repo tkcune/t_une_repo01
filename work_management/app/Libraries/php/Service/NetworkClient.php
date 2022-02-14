@@ -184,8 +184,8 @@ class NetworkClient {
             HeaderMessage::set_header_message('mmnwok0002');
         }else{
             //メール送信が失敗したなら
-            OutputLog::message_log(__FUNCTION__, 'mmnwer0001');
-            HeaderMessage::set_header_message('mmnwer0001');
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0004');
+            HeaderMessage::set_header_message('mhcmer0004');
         }
     }
 

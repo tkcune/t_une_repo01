@@ -8,6 +8,7 @@ use App\Http\Controllers\Ptcm01Controller;
 use App\Http\Controllers\Pslg01Controller;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\Psnw01Controller;
+use App\Http\Controllers\Pppu01Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,3 +92,6 @@ Route::prefix('psnw01')->group(function () {
   //メール受信試験
   Route::post('/receive', [Psnw01Controller::class, 'receive'])->name('psnw01.receive');
 });
+
+//Pppu01Controllerに関するルーティング
+Route::resource('pppu01', Pppu01Controller::class)->only('index');

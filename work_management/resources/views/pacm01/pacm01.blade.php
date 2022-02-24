@@ -125,7 +125,8 @@
                     <div class="col">
                     <p>
                     <div style="display:inline-flex">
-                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" id="updateOn" data-toggle="tooltip" title="クリックにより、登録、更新を確定します" 
+                    style="opacity: 0.3;" disabled>
     </form>
     
                     <form action="{{ route('psbs01.index') }}" method="get">
@@ -165,6 +166,9 @@
 
                     <input type="checkbox" id="check" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     <font size="-2" color="red">削除有効化</font>
+
+                    <input type="checkbox" id="check2" onclick="updateOn()" data-toggle="tooltip" title="チェックを入れることで更新ボタンがクリックできるようになります（権限がある場合）">
+                    <font size="-2" color="red">更新有効化</font>
                     </div>
                     
                 </div>
@@ -289,7 +293,8 @@
                     <div class="col">
                     <p>
                     <div style="display:inline-flex">
-                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" id="updateOn" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します" 
+                    style="opacity: 0.3;" disabled>
     </form>
     
                     <form action="{{ route('psbs01.index') }}" method="get">
@@ -337,6 +342,9 @@
                     
                     <input type="checkbox" onclick="deleteOn()" id="check" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     <font size="-2" color="red">削除有効化</font>
+
+                    <input type="checkbox" id="check2" onclick="updateOn()" data-toggle="tooltip" title="チェックを入れることで更新ボタンがクリックできるようになります（権限がある場合）">
+                    <font size="-2" color="red">更新有効化</font>
                     </div>
                 </div>
             </div>
@@ -468,7 +476,7 @@
                     <div class="col">
                         <div style="display:inline-flex">
                         <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();"
-                        data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                        id="updateOn" data-toggle="tooltip" title="クリックにより、登録、更新を確定します" style="opacity: 0.3;" disabled>
     </form>
     
                         <form action="{{ route('psji01.index') }}" method="get">
@@ -521,6 +529,9 @@
 
                         <input type="checkbox" id="check" onclick="deleteOn2()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                         <font size="-2" color="red">削除有効化</font>
+
+                        <input type="checkbox" id="check2" onclick="updateOn()" data-toggle="tooltip" title="チェックを入れることで更新ボタンがクリックできるようになります（権限がある場合）">
+                        <font size="-2" color="red">更新有効化</font>
                         </div>
                     </div>
                 </div>

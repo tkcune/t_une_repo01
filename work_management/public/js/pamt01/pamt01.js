@@ -84,6 +84,22 @@ window.addEventListener('beforeunload', (event) => {
 });
 
 /**
+ * 更新のON・OFF切替メソッド
+ */
+ function updateOn() {
+  if (document.getElementById("updateOn").disabled === true) {
+    // disabled属性を削除
+    document.getElementById("updateOn").removeAttribute("disabled");
+    document.getElementById("updateOn").style.opacity = 1;
+
+  } else {
+    // disabled属性を設定
+    document.getElementById("updateOn").setAttribute("disabled", true);
+    document.getElementById("updateOn").style.opacity = 0.3;
+  }
+}
+
+/**
  * 画面の隠蔽表示メソッド
  * @param string div 対象のdiv
  * @param string state 対象のdivの状態

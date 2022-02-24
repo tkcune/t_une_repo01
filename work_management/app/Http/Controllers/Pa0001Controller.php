@@ -239,9 +239,9 @@ class Pa0001Controller extends Controller
      * 
      * @param  \Illuminate\Http\Request  $request
      * 
-     * @var  int  $client_id 顧客ID　9/27現在　ダミーデータ(route indexでセッション保存)
-     * @var　int $count_department 部署ページネーションのページ数
-     * @var　int $count_personnel  人員ページネーションのページ数
+     * @var  int  $client_id 顧客ID 9/27現在 ダミーデータ(route indexでセッション保存)
+     * @var  int $count_department 部署ページネーションのページ数
+     * @var  int $count_personnel  人員ページネーションのページ数
      * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
      * @var  App\Libraries\php\Domain\PersonnelDataBase personnel_db
      * @var  array $all_personnel_data 全体人員データ

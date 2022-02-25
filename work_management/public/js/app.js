@@ -1846,6 +1846,9 @@ var _require = __webpack_require__(/*! ./work_js/ptcmcb */ "./resources/js/work_
 var _require2 = __webpack_require__(/*! ./work_js/ptcmta */ "./resources/js/work_js/ptcmta.js"),
     TreeAction = _require2.TreeAction;
 
+var _require3 = __webpack_require__(/*! ./work_js/ptcmrd */ "./resources/js/work_js/ptcmrd.js"),
+    findMobile = _require3.findMobile;
+
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 if (document.getElementById('receive_combobox')) {
@@ -1964,6 +1967,67 @@ var clipboard = function () {
     getCurrentId: getCurrentId,
     getCurrentDir: getCurrentDir
   };
+}();
+
+
+
+/***/ }),
+
+/***/ "./resources/js/work_js/ptcmrd.js":
+/*!****************************************!*\
+  !*** ./resources/js/work_js/ptcmrd.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "findMobile": () => (/* binding */ findMobile)
+/* harmony export */ });
+//@var object モバイル端末かパソコンかを検出する 
+var findMobile = {};
+
+findMobile = function () {
+  //@var string デバイスの名前(pc,smartphone,tablet)
+  var device_name; //@var boolean モバイルデバイスか(タッチ操作可能か、画面回転可能か)、どうか
+
+  var is_mobile_device = false; //@var boolean user-agent文字にMobileが入っているか
+
+  var is_mobile = /Mobile/i.test(navigator.userAgent); //@var boolean タッチ操作可能か
+
+  var has_touchscreen = false; //タッチ可能かを検出する
+
+  if ("maxTouchPoints" in navigator) {
+    has_touchscreen = navigator.maxTouchPoints > 0; //タッチ可能かを検出する
+  } else if ("msMaxTouchPoints" in navigator) {
+    has_touchscreen = navigator.msMaxTouchPoints > 0;
+  } else {
+    //回転可能か調べる
+    if ('orientation' in window) {
+      has_touchscreen = true;
+    }
+  } //mobileの文字があるか、タッチ可能かのどちらかで、trueにする
+
+
+  if (is_mobile || hasTouchScreen) {
+    is_mobile_device = true;
+  } //モバイル端末ではない場合、パソコン
+
+
+  if (is_mobile_device === false) {
+    device_name = 'pc';
+  } else {
+    //モバイル端末の場合
+    //横幅が420以下かつ縦幅が920以下の場合smartphone
+    if (window.screen.width <= 420 && window.screen.height <= 920) {
+      device_name = 'smartphone';
+    } else {
+      //それ以外はtablet
+      device_name = 'tablet';
+    }
+  }
+
+  console.log(device_name);
 }();
 
 

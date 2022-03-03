@@ -9,6 +9,7 @@ use App\Http\Controllers\Pslg01Controller;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\Psnw01Controller;
 use App\Http\Controllers\Pppu01Controller;
+use App\Http\Controllers\Pskb01Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,3 +96,8 @@ Route::prefix('psnw01')->group(function () {
 
 //Pppu01Controllerに関するルーティング
 Route::resource('pppu01', Pppu01Controller::class)->only('index');
+
+//Pskb01Controllerに関するルーティング
+Route::prefix('pskb')->group(function () {
+  Route::get('/', [Pskb01Controller::class, 'index'])->name('pskb.index');
+});

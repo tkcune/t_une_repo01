@@ -146,12 +146,6 @@ class Pa0001Controller extends Controller
         $pagination_object = new Pagination();
         //ページネーションオブジェクトをセットする
         $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
-        //ページネーションオブジェクトを表示する
-<<<<<<< HEAD
-        //var_dump($pagination_object);
-=======
-        //var_dump($pagination_object);
->>>>>>> 33401e06da43835d99dbdb7d2035c804b2bfb48a
 
         //責任者を名前で取得
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);

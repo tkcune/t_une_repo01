@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request;
 
+//サンプルプログラム
+use App\Libraries\php\Service\PaginationObject;
+
 
 
 /**
@@ -137,6 +140,13 @@ class Pa0001Controller extends Controller
         $departments = $pagination->pagination($department_data,count($department_data),$count_department);
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //@var object ページネーションオブジェクト
+        $pagination_object = new PaginationObject();
+        //ページネーションオブジェクトをセットする
+        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
+        //ページネーションオブジェクトを表示する
+        var_dump($pagination_object);
 
         //責任者を名前で取得
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);

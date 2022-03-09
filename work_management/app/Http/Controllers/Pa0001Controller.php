@@ -54,6 +54,7 @@ class Pa0001Controller extends Controller
      * @var  int $personnel_max 人員データページネーションの最大値
      * @var  array $names ページネーション後の人員データ
      * @var  array $responsible_lists 責任者リスト
+     * @var  $pagination_object ページネーションオブジェクト
      * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
      * @var  array $department_high 部署データの上位階層
      * @var  array $personnel_high 人員データの上位階層
@@ -141,12 +142,12 @@ class Pa0001Controller extends Controller
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
-        //@var object ページネーションオブジェクト
-        $pagination_object = new PaginationObject();
+        //ページネーションオブジェクト設定
+        $pagination_object = new Pagination();
         //ページネーションオブジェクトをセットする
         $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
         //ページネーションオブジェクトを表示する
-        var_dump($pagination_object);
+        //var_dump($pagination_object);
 
         //責任者を名前で取得
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
@@ -331,6 +332,11 @@ class Pa0001Controller extends Controller
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
+        //ページネーションオブジェクト設定
+        $pagination_object = new Pagination();
+        //ページネーションオブジェクトをセットする
+        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
+
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
@@ -485,6 +491,11 @@ class Pa0001Controller extends Controller
             $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
+            //ページネーションオブジェクト設定
+            $pagination_object = new Pagination();
+            //ページネーションオブジェクトをセットする
+            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
+
             //責任者を名前で取得
             $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
@@ -561,6 +572,11 @@ class Pa0001Controller extends Controller
                 $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
                 $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
+                //ページネーションオブジェクト設定
+                $pagination_object = new Pagination();
+                //ページネーションオブジェクトをセットする
+                $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
+
                 //責任者を名前で取得
                 $responsible = new ResponsiblePerson();
                 $top_responsible = $responsible->getResponsibleLists($client,$top_department);
@@ -619,6 +635,11 @@ class Pa0001Controller extends Controller
             $departments = $pagination->pagination($department_data,count($department_data),$count_department);
             $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+            //ページネーションオブジェクト設定
+            $pagination_object = new Pagination();
+            //ページネーションオブジェクトをセットする
+            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
             //責任者を名前で取得
             $responsible_lists = $responsible->getResponsibleLists($client,$departments);
@@ -715,6 +736,11 @@ class Pa0001Controller extends Controller
         $departments = $pagination->pagination($department_data,count($department_data),$count_department);
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //ページネーションオブジェクト設定
+        $pagination_object = new Pagination();
+        //ページネーションオブジェクトをセットする
+        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
         //責任者を名前で取得
         $responsible = new ResponsiblePerson();
@@ -926,6 +952,11 @@ class Pa0001Controller extends Controller
         $departments = $pagination->pagination($department_data,count($department_data),$count_department);
         $personnel_max = $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //ページネーションオブジェクト設定
+        $pagination_object = new Pagination();
+        //ページネーションオブジェクトをセットする
+        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
         //責任者を名前で取得
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
@@ -1152,6 +1183,11 @@ class Pa0001Controller extends Controller
         $departments = $pagination->pagination($department_data,count($department_data),$count_department);
         $personnel_max = $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //ページネーションオブジェクト設定
+        $pagination_object = new Pagination();
+        //ページネーションオブジェクトをセットする
+        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
         //責任者を名前で取得
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);

@@ -16,7 +16,13 @@
          */
         private array $array;
         private int $arrayNum; 
-        const MAX = 20; 
+        const MAX = 20;
+
+        //bladeに渡す変数
+        public int $department_max;
+        public array $departments;
+        public int $personnel_max;
+        public array $names;
 
         /**
          * ページネーションの最大ページ数を計算
@@ -55,5 +61,17 @@
             $disp_data = array_values($data);
 
             return $disp_data;
+        }
+
+        //ページネーション変数をセットする
+        //@var  int $department_max 部署データページネーションの最大値
+        //@var  array $departments ページネーション後の部署データ
+        //@var  int $personnel_max 人員データページネーションの最大値
+        //@var  array $names ページネーション後の人員データ
+        public function set_pagination($department_data, $count_department, $personnel_data, $count_personnel){
+            $this->department_max = $this->pageMax($department_data,count($department_data));
+            $this->departments = $this->pagination($department_data,count($department_data),$count_department);
+            $this->personnel_max = $this->pageMax($personnel_data,count($personnel_data));
+            $this->names = $this->pagination($personnel_data,count($personnel_data),$count_personnel);
         }
     }

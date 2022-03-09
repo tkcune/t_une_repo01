@@ -256,6 +256,11 @@ class Psbs01Controller extends Controller
             $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
+            //ページネーションオブジェクト設定
+            $pagination_object = new Pagination();
+            //ページネーションオブジェクトをセットする
+            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
+
             //責任者を名前で取得
             $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
@@ -356,6 +361,11 @@ class Psbs01Controller extends Controller
                 $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
                 $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
+                //ページネーションオブジェクト設定
+                $pagination_object = new Pagination();
+                //ページネーションオブジェクトをセットする
+                $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
+
                 //責任者を名前で取得
                 $responsible = new ResponsiblePerson();
                 $responsible_lists = $responsible->getResponsibleLists($client,$departments);
@@ -427,6 +437,11 @@ class Psbs01Controller extends Controller
             $departments = $pagination->pagination($department_data,count($department_data),$count_department);
             $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+            //ページネーションオブジェクト設定
+            $pagination_object = new Pagination();
+            //ページネーションオブジェクトをセットする
+            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
             //責任者を名前で取得
             $responsible = new ResponsiblePerson();
@@ -925,6 +940,11 @@ class Psbs01Controller extends Controller
         $departments = $pagination->pagination($department_data,count($department_data),$count_department);
         $personnel_max = $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+
+        //ページネーションオブジェクト設定
+        $pagination_object = new Pagination();
+        //ページネーションオブジェクトをセットする
+        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
         //責任者を名前で取得
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);

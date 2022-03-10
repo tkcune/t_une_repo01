@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 
+use App\Libraries\php\Service\DepartmentDetailsObject;
+use App\Libraries\php\Service\PersonnelDetailsObject;
+
 /**
  * 部署データを操作するコントローラー
  */
@@ -256,11 +259,6 @@ class Psbs01Controller extends Controller
             $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
-            //ページネーションオブジェクト設定
-            $pagination_object = new Pagination();
-            //ページネーションオブジェクトをセットする
-            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
-
             //責任者を名前で取得
             $responsible_lists = $responsible->getResponsibleLists($client,$departments);
 
@@ -285,6 +283,14 @@ class Psbs01Controller extends Controller
             //運用状況の確認
             $operation_check = new OperationCheck();
             $operation_check->check($click_department_data,$select_code);
+
+            //部署詳細オブジェクトの設定
+            $department_details_object = new DepartmentDetailsObject();
+            $department_details_object->setDepartmentObject($click_department_data,$click_responsible_lists,$click_management_lists,$operation_date);
+
+            //ページネーションオブジェクト設定
+            $pagination_object = new Pagination();
+            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
             return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel','click_department_data',
             'department_max','departments','personnel_max','names','responsible_lists','department_high','personnel_high',
@@ -361,11 +367,6 @@ class Psbs01Controller extends Controller
                 $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
                 $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
-                //ページネーションオブジェクト設定
-                $pagination_object = new Pagination();
-                //ページネーションオブジェクトをセットする
-                $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
-
                 //責任者を名前で取得
                 $responsible = new ResponsiblePerson();
                 $responsible_lists = $responsible->getResponsibleLists($client,$departments);
@@ -390,6 +391,14 @@ class Psbs01Controller extends Controller
 
                 //クリックコードの保存
                 session(['click_code'=>$select_code]);
+
+                //詳細画面オブジェクトの設定
+                $personnel_details_object = new PersonnelDetailsObject();
+                $personnel_details_object->setPersonnelObject($click_personnel_data,$responsible_lists,$click_management_lists,$operation_date);
+
+                //ページネーションオブジェクト設定
+                $pagination_object = new Pagination();
+                $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
                 return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments','personnel_max','names',
                 'top_department','top_responsible','count_department','count_personnel','client','responsible_lists','personnel_high',
@@ -438,11 +447,6 @@ class Psbs01Controller extends Controller
             $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
-            //ページネーションオブジェクト設定
-            $pagination_object = new Pagination();
-            //ページネーションオブジェクトをセットする
-            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
-
             //責任者を名前で取得
             $responsible = new ResponsiblePerson();
             $responsible_lists = $responsible->getResponsibleLists($client,$departments);
@@ -466,6 +470,14 @@ class Psbs01Controller extends Controller
             //運用状況の確認
             $operation_check = new OperationCheck();
             $operation_check->check($click_personnel_data,$select_code);
+
+            //詳細画面オブジェクトの設定
+            $personnel_details_object = new PersonnelDetailsObject();
+            $personnel_details_object->setPersonnelObject($click_personnel_data,$responsible_lists,$click_management_lists,$operation_date);
+
+            //ページネーションオブジェクト設定
+            $pagination_object = new Pagination();
+            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
             return view('pacm01.pacm01',compact('data','count_department','count_personnel','department_max','departments','personnel_max','names',
             'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists',
@@ -941,11 +953,6 @@ class Psbs01Controller extends Controller
         $personnel_max = $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
-        //ページネーションオブジェクト設定
-        $pagination_object = new Pagination();
-        //ページネーションオブジェクトをセットする
-        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
-
         //責任者を名前で取得
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
@@ -966,6 +973,14 @@ class Psbs01Controller extends Controller
 
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
+
+        //部署詳細オブジェクトの設定
+        $department_details_object = new DepartmentDetailsObject();
+        $department_details_object->setDepartmentObject($click_department_data,$click_responsible_lists,$click_management_lists,$operation_date);
+
+        //ページネーションオブジェクト設定
+        $pagination_object = new Pagination();
+        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
         return view('pacm01.pacm01',compact('count_department','department_data','personnel_data','select_id','department_max','departments','personnel_max',
         'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data','click_department_data'));

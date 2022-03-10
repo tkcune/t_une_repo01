@@ -22,11 +22,21 @@
          */
         public static function get($client,$select_id){
 
+            //副問合せは上位部署名を取得
             $data = DB::select('select dcbs01.client_id,department_id,responsible_person_id,
                     name,status,management_personnel_id,operation_start_date,operation_end_date,
-                    remarks,lower_id, high_id, dcbs01.created_at, dcbs01.updated_at
-                    from dcbs01 inner join dccmks on dcbs01.department_id = dccmks.lower_id 
-                    where dcbs01.client_id = ? and department_id = ?',[$client,$select_id]
+                    remarks,lower_id, high_id, 
+    
+                    (select name from dcbs01 left join dccmks on dcbs01.department_id = dccmks.lower_id 
+                        where department_id = 
+                            (SELECT high_id from dcbs01 
+                                left join dccmks on dcbs01.department_id = dccmks.lower_id 
+                                 where dcbs01.client_id = ? and department_id = ?))
+                                    AS high_name,
+
+                    dcbs01.created_at, dcbs01.updated_at
+                    from dcbs01 left join dccmks on dcbs01.department_id = dccmks.lower_id 
+                    where dcbs01.client_id = ? and department_id = ?',[$client,$select_id,$client,$select_id]
                     );
 
             //登録日・修正日のフォーマットを変換

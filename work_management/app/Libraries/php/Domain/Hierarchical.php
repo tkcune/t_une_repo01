@@ -105,7 +105,6 @@
                 
                     array_push($name_list,$name_data[0]);
             }
-            
             return $name_list;
         }
 

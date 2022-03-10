@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\View;
 
+use App\Libraries\php\Service\DepartmentDetailsObject;
+
+
 /**
  * 人員データを操作するコントローラー
  */
@@ -533,11 +536,6 @@ class Psji01Controller extends Controller
         $personnel_max = $pagination->pageMax($personnel_data,count($personnel_data));
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
-        //ページネーションオブジェクト設定
-        $pagination_object = new Pagination();
-        //ページネーションオブジェクトをセットする
-        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
-
         //責任者を名前で取得
         $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
 
@@ -559,6 +557,14 @@ class Psji01Controller extends Controller
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
+
+       //部署詳細オブジェクトの設定
+       $department_details_object = new DepartmentDetailsObject();
+       $department_details_object->setDepartmentObject($click_department_data,$click_responsible_lists,$click_management_lists,$operation_date);
+
+        //ページネーションオブジェクト設定
+        $pagination_object = new Pagination();
+        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
         return view('pacm01.pacm01',compact('count_department','department_data','personnel_data','select_id','count_personnel','department_max',
         'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date','all_personnel_data'));

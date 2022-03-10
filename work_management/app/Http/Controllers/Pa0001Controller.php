@@ -21,6 +21,7 @@ use Illuminate\Http\Request;
 
 //サンプルプログラム
 use App\Libraries\php\Service\PaginationObject;
+use App\Libraries\php\Service\DepartmentDetailsObject;
 
 
 
@@ -78,9 +79,9 @@ class Pa0001Controller extends Controller
         $department_db = new DepartmentDataBase();
         $personnel_db = new PersonnelDataBase();
 
-        //一番上の部署を取得
+        //選択部署を取得
         try{
-            $top_department = $department_db->getTop($client_id);
+            $top_department = $department_db->get($client_id,$select_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -171,6 +172,10 @@ class Pa0001Controller extends Controller
         //運用状況の確認
         $operation_check = new OperationCheck();
         $operation_check->check($top_department,$select_code);
+
+        //詳細画面オブジェクトの設定
+        $department_details_object = new DepartmentDetailsObject();
+        $department_details_object->setDepartmentObject($top_department,$top_responsible,$top_management,$operation_date);
 
         return view('pacm01.pacm01',compact('top_management','department_max','departments','personnel_max','names',
         'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',

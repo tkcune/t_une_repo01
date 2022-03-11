@@ -25,7 +25,7 @@ findMobile = (() => {
         }
     }
     //mobileの文字があるか、タッチ可能かのどちらかで、trueにする
-    if(is_mobile || hasTouchScreen){
+    if(is_mobile || has_touchscreen){
         is_mobile_device = true;
     }
     //モバイル端末ではない場合、パソコン
@@ -41,7 +41,19 @@ findMobile = (() => {
             device_name = 'tablet';
         }
     }
-    console.log(device_name);
+    //@var string デバイスの名前
+    let device = localStorage.getItem('device');
+    localStorage.setItem('device', device_name);
+    if(device === null && device === undefined && (device_name === 'smartphone' || device_name === 'tablet')){
+        window.location = 'http://localhost:8000/pa0001/responsible/set';
+    }else if(device === 'pc' && (device_name === 'smartphone' || device_name === 'tablet')){
+        window.location = 'http://localhost:8000/pa0001/responsible/set';
+    }else if(device === 'smartphone' && device_name === 'pc'){
+        window.location = 'http://localhost:8000/pa0001/responsible/reset';
+    }
+    return {
+        device_name: device_name
+    }
 })();
 
 export {findMobile};

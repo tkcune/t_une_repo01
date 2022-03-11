@@ -1,5 +1,5 @@
-import { chain } from 'lodash';
 import {clipboard} from './ptcmcb';
+import { findMobile } from './ptcmrd'
 
 //@var TreeActionクラス 公開するクラス,ツリー機能クラス
 let TreeAction = {};
@@ -1101,10 +1101,6 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
   let createElement = function createElement(treeTop, fragment) {
     treeTop.child.forEach(node => {
       fragment.append(node.createTree());
-
-      //<div id="chaintree"></div>にdomを追加
-      // treeTop.element.append(node.createTree());
-      
     });
   }
 
@@ -1221,69 +1217,45 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
   //@var nodeクラス this.treeTop ツリーの一番上のノード
   let treeTop = new Node('', '1');
 
-  if(document.getElementById('chaintree') && document.getElementById('chaintree').tagName === 'DIV'){
+  if(findMobile.device_name === 'pc'){
+    if(document.getElementById('chaintree') && document.getElementById('chaintree').tagName === 'DIV'){
     
-    //@var dom 仮のツリーのdom
-    let fragment = document.createDocumentFragment();
-
-    //@var dom this.element dom要素を格納 ツリーのdom要素を加えていく一番上のツリー<div id="chaintree"></div>
-    treeTop.element = document.getElementById('chaintree');
-
-    //オプション
-    // const options = {
-    //   childList: true,
-    //   characterData: true,
-    //   characterDataOldValue: true,
-    //   attributes: true,
-    //   subtree: true,
-    // }
-
-    //コールバック関数
-    // function callback(mutationsList, observer) {
-    //   for(const mutation of mutationsList) {
-        // 処理
-        // console.log(mutation);
-        //mutation.target //ターゲット要素
-        //mutation.addedNodes //追加されたDOM
-        //mutation.removedNodes //削除されたDOM
-        // console.log('change chaintree');
-    //   }
-    // }
-
-    //ターゲット要素をDOMで取得
-    // const target = document.getElementById('chaintree');
-    //インスタンス化
-    // const obs = new MutationObserver(callback);
-    //ターゲット要素の監視を開始
-    // obs.observe(target, options);
+      //@var dom 仮のツリーのdom
+      let fragment = document.createDocumentFragment();
   
-    //@var string this.className ツリーのcssのクラス名
-    treeTop.className = 'chaintree';
+      //@var dom this.element dom要素を格納 ツリーのdom要素を加えていく一番上のツリー<div id="chaintree"></div>
+      treeTop.element = document.getElementById('chaintree');
   
-    if(Array.isArray(treesepalete)){
-      treesepalete.forEach(sepalete => {
-
-        //treeTopのchildに、かたまりごとのノードを追加していく。
-        createTopNode(sepalete, treeTop);
-      });
+      //@var string this.className ツリーのcssのクラス名
+      treeTop.className = 'chaintree';
+    
+      if(Array.isArray(treesepalete)){
+        treesepalete.forEach(sepalete => {
+  
+          //treeTopのchildに、かたまりごとのノードを追加していく。
+          createTopNode(sepalete, treeTop);
+        });
+      }
+  
+      //ツリーの全体のcssのクラス名を決める
+      decisionClass(treeTop);
+      //投影
+      syncProjection(projectionChain);
+      //domを生成して、ツリーを描画する
+      createElement(treeTop, fragment);
+      //投影を斜体にする
+      onSyncTree(treeTop);
+  
+      //ツリーのdom要素を生成した時は、ツリーは表示しているので、非表示にする。
+      closeTree(treeTop);
+  
+      //実際のdomにfragmentのdomを追加する
+      treeTop.element.append(fragment);
+    }else{
+      console.log('chaintree div tag is no');
     }
-
-    //ツリーの全体のcssのクラス名を決める
-    decisionClass(treeTop);
-    //投影
-    syncProjection(projectionChain);
-    //domを生成して、ツリーを描画する
-    createElement(treeTop, fragment);
-    //投影を斜体にする
-    onSyncTree(treeTop);
-
-    //ツリーのdom要素を生成した時は、ツリーは表示しているので、非表示にする。
-    closeTree(treeTop);
-
-    //実際のdomにfragmentのdomを追加する
-    treeTop.element.append(fragment);
   }else{
-    console.log('chaintree div tag is no');
+    document.getElementById('tree').style = 'display: none';
   }
 
   //ツリーインスタンスを返す
@@ -1511,83 +1483,6 @@ TreeAction = ((treesepalete, projectionChain) => {
     //クリップボードのデータを保存する
     storeClipboard();
   });
-
-  //ページ移動後のイベント
-  // window.addEventListener('DOMContentLoaded', function(){
-
-  //   //ページ移動前のクリップボードのデータを復元する
-  //   restoreClipboard();
-  //   //ページ移動前に開いていたノードを開く
-  //   openNodeAfterPageMove();
-  //   //ページ移動前に隠蔽していたノードを閉じる
-  //   hideDisplayAfterPageMove();
-
-  //   //一覧表示からのノードの表示
-  //   if(document.location.pathname.split('/')[1] === 'show'){
-      
-  //     //@var Nodeクラス 開くノード
-  //     let node;
-
-  //     //@var array パスをスラッシュで区切った配列
-  //     let path_array = document.getElementById('copyTarget').parentNode.action.split('/');
-  //     //@var string 詳細行の部署のid
-  //     let nodeId = path_array[path_array.length - 1];
-      
-  //     //投影のノードをクリックしたら
-  //     if(nodeId.slice(0, 2) === 'ta'){
-  //       //@var Nodeクラス 投影ノード
-  //       let projectionNode = chainparser.searchNodeId(nodeId, tree);
-  //       //投影元のノードを取得する
-  //       node = chainparser.searchNodeId(projectionNode.fromLink[0], tree);
-  //     }else{
-  //       //@var Nodeクラス 開くノード
-  //       node = chainparser.searchNodeId(nodeId, tree);
-  //     }
-
-  //     if(node !== undefined){
-  //       //ノードを開く
-  //       node.openBottomUpTree();
-  //       //ノードをカレントにする
-  //       node.focus();
-  //       //クリップボードのデータをカレントにする
-  //       currentClipboard(node);
-  //     }
-  //   }else if(document.location.pathname.split('/')[1] === ''){
-  //     //indexルートの場合
-  //     //@var Nodeクラス カレントにするノード 
-  //     let node = chainparser.searchNodeId('bs00000001', tree);
-      
-  //     if(node !== undefined){
-  //       node.openBottomUpTree();
-  //       node.focus();
-  //       currentClipboard(node);
-  //     }
-  //   }else{
-  //     //複写、移動、削除の場合
-  //     if(document.getElementById('back_treeaction').value === 'delete' || document.getElementById('back_treeaction').value === 'open'){
-  //       //@var Nodeクラス ツリーの開くノード
-  //       let node = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree);
-
-  //       if(node !== undefined){
-  //         //ノードを開く
-  //         node.openBottomUpTree();
-  //         //ノードをカレントにする
-  //         node.focus();
-  //         //クリップボードのデータをカレントにする
-  //         currentClipboard(node);
-  //       }
-  //     }else{
-  //       //showルーティングでも、ツリー機能ルーティングでもない場合
-  //       //@var Nodeクラス カレントにするノード 
-  //       let node = chainparser.searchNodeId(clipboard.getCurrentId(), tree);
-  //       if(node !== undefined){
-  //         node.openBottomUpTree();
-  //         node.focus();
-  //         currentClipboard(node);
-  //       }
-  //     }
-  //   }
-  // });
 
   //ページ移動前のクリップボードのデータの保存
   let storeClipboard = function storeClipboard() {

@@ -43,6 +43,8 @@ findMobile = (() => {
     }
     //@var string デバイスの名前
     let device = localStorage.getItem('device');
+    device_name = 'smartphone';
+    device = 'smartphone';
     localStorage.setItem('device', device_name);
     if(device === null && device === undefined && (device_name === 'smartphone' || device_name === 'tablet')){
         window.location = 'http://localhost:8000/pa0001/responsible/set';

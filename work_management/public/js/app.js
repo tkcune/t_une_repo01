@@ -2029,6 +2029,8 @@ findMobile = function () {
 
 
   var device = localStorage.getItem('device');
+  device_name = 'smartphone';
+  device = 'smartphone';
   localStorage.setItem('device', device_name);
 
   if (device === null && device === undefined && (device_name === 'smartphone' || device_name === 'tablet')) {

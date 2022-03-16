@@ -49,6 +49,8 @@ Route::prefix('pa0001')->group(function () {
   Route::get('/deleteclipboard', [Pa0001Controller::class, 'deleteclipboard'])->name('pa0001.deleteclipboard');
   Route::get('/redirect', [Pa0001Controller::class, 'redirect'])->name('pa0001.redirect');
   Route::get('/bs/top', [Pa0001Controller::class, 'top'])->name('pa0001.top');
+  Route::get('/responsible/set', [Pa0001Controller::class, 'setMobile'])->name('pa001.setMobile');
+  Route::get('/responsible/reset', [Pa0001Controller::class, 'resetMobile'])->name('pa001.resetMobile');
 });
 
 //Psbs01Controllerに関するルーティング

@@ -1,6 +1,6 @@
+const { findMobile } = require('./work_js/ptcmrd');
 const { clipboard } = require('./work_js/ptcmcb');
 const { TreeAction } = require('./work_js/ptcmta');
-const { findMobile } = require('./work_js/ptcmrd');
 
 require('./bootstrap');
 

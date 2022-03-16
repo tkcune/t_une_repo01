@@ -14,6 +14,7 @@
          * @var $client_id 顧客ID
          * @var $high_id 上位ID
          * @var $high_name 上位部署名
+         * @var $lower_id 下位ID
          * @var $management_personnel_id 管理者番号
          * @var $management_name 管理者名
          * @var $status 状態
@@ -26,21 +27,23 @@
          * @var $registered_person 登録者
          * 
          */
-        private $department_data;
-        private $name;
-        private $department_id;
-        private $high_id;
-        private $high_name;
-        private $management_personnel_id;
-        private $management_name;
-        private $status;
-        private $responsible;
-        private $operation_start_date;
-        private $operation_finish_date; 
-        private $remarks;
-        private $created_at;
-        private $updated_at;
-        private $registered_person;
+        public $department_data;
+        public $name;
+        public $department_id;
+        public $high_id;
+        public $high_name;
+        public $lower_id;
+        public $management_personnel_id;
+        public $management_name;
+        public $status;
+        public $responsible;
+        public $responsible_person_id;
+        public $operation_start_date;
+        public $operation_finish_date; 
+        public $remarks;
+        public $created_at;
+        public $updated_at;
+        public $registered_person;
 
 
         /** 
@@ -59,11 +62,13 @@
             $this->department_id = $department_data[0]->department_id;
             $this->high_id = $department_data[0]->high_id;
             $this->high_name = $department_data[0]->high_name;
+            $this->lower_id = $department_data[0]->lower_id;
             $this->management_personnel_id = $department_data[0]->management_personnel_id;
             $this->management_name = $management[0];
             $this->status = $department_data[0]->status;
             $this->responsible_id = $department_data[0]->responsible_person_id;
             $this->responsible = $responsible[0];
+            $this->responsible_person_id = $department_data[0]->responsible_person_id;
             $this->operation_start_date = $operation_date["operation_start_date"];
             $this->operation_finish_date = $operation_date["operation_end_date"];
             $this->remarks = $department_data[0]->remarks;

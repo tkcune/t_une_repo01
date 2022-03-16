@@ -1840,14 +1840,14 @@ module.exports = {
   \*****************************/
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
-var _require = __webpack_require__(/*! ./work_js/ptcmcb */ "./resources/js/work_js/ptcmcb.js"),
-    clipboard = _require.clipboard;
+var _require = __webpack_require__(/*! ./work_js/ptcmrd */ "./resources/js/work_js/ptcmrd.js"),
+    findMobile = _require.findMobile;
 
-var _require2 = __webpack_require__(/*! ./work_js/ptcmta */ "./resources/js/work_js/ptcmta.js"),
-    TreeAction = _require2.TreeAction;
+var _require2 = __webpack_require__(/*! ./work_js/ptcmcb */ "./resources/js/work_js/ptcmcb.js"),
+    clipboard = _require2.clipboard;
 
-var _require3 = __webpack_require__(/*! ./work_js/ptcmrd */ "./resources/js/work_js/ptcmrd.js"),
-    findMobile = _require3.findMobile;
+var _require3 = __webpack_require__(/*! ./work_js/ptcmta */ "./resources/js/work_js/ptcmta.js"),
+    TreeAction = _require3.TreeAction;
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
@@ -2009,7 +2009,7 @@ findMobile = function () {
   } //mobileの文字があるか、タッチ可能かのどちらかで、trueにする
 
 
-  if (is_mobile || hasTouchScreen) {
+  if (is_mobile || has_touchscreen) {
     is_mobile_device = true;
   } //モバイル端末ではない場合、パソコン
 
@@ -2025,9 +2025,23 @@ findMobile = function () {
       //それ以外はtablet
       device_name = 'tablet';
     }
+  } //@var string デバイスの名前
+
+
+  var device = localStorage.getItem('device');
+  localStorage.setItem('device', device_name);
+
+  if (device === null && device === undefined && (device_name === 'smartphone' || device_name === 'tablet')) {
+    window.location = 'http://localhost:8000/pa0001/responsible/set';
+  } else if (device === 'pc' && (device_name === 'smartphone' || device_name === 'tablet')) {
+    window.location = 'http://localhost:8000/pa0001/responsible/set';
+  } else if (device === 'smartphone' && device_name === 'pc') {
+    window.location = 'http://localhost:8000/pa0001/responsible/reset';
   }
 
-  console.log(device_name);
+  return {
+    device_name: device_name
+  };
 }();
 
 
@@ -2045,9 +2059,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "TreeAction": () => (/* binding */ TreeAction)
 /* harmony export */ });
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _ptcmcb__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ptcmcb */ "./resources/js/work_js/ptcmcb.js");
+/* harmony import */ var _ptcmcb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ptcmcb */ "./resources/js/work_js/ptcmcb.js");
+/* harmony import */ var _ptcmrd__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ptcmrd */ "./resources/js/work_js/ptcmrd.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -2296,9 +2309,9 @@ TreeAction.node = /*#__PURE__*/function () {
 
       this.node.focus(); //クリップボードに選択したノードクラスのidとディレクトリを保存する
 
-      _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.select(this.node.dir, this.node.id); //選択したノードがカレントノード
+      _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(this.node.dir, this.node.id); //選択したノードがカレントノード
 
-      _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.current(_ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getSelectDir(), _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getSelectId()); //選択したノードの親要素がマイツリーである場合は、本来のノードクラスまでツリーを開く
+      _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectDir(), _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectId()); //選択したノードの親要素がマイツリーである場合は、本来のノードクラスまでツリーを開く
 
       if (topDir === "マイツリー") {
         //@var string id 選択したノードクラスのid
@@ -2328,7 +2341,7 @@ TreeAction.node = /*#__PURE__*/function () {
     key: "focus",
     value: function focus() {
       //@var string beforeSelectId 前回選択したid
-      var beforeSelectId = _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getCurrentId(); //@var Nodeクラス beforeSelect　前回選択したノードクラス
+      var beforeSelectId = _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(); //@var Nodeクラス beforeSelect　前回選択したノードクラス
 
       var beforeSelect = this.prototype.chainparser.searchNodeId(beforeSelectId, this.prototype.tree); //前回選択したノードクラスのフォーカスを消す
 
@@ -3091,8 +3104,7 @@ TreeAction.createTree = function (treesepalete, projectionChain, Node, chainpars
 
   var createElement = function createElement(treeTop, fragment) {
     treeTop.child.forEach(function (node) {
-      fragment.append(node.createTree()); //<div id="chaintree"></div>にdomを追加
-      // treeTop.element.append(node.createTree());
+      fragment.append(node.createTree());
     });
   }; //@param array sepalete 上下関係だけのツリーのデータ構造
   //@param Nodeクラス treeTop　ツリーの一番上の親ノードのクラス
@@ -3201,60 +3213,39 @@ TreeAction.createTree = function (treesepalete, projectionChain, Node, chainpars
 
   var treeTop = new Node('', '1');
 
-  if (document.getElementById('chaintree') && document.getElementById('chaintree').tagName === 'DIV') {
-    //@var dom 仮のツリーのdom
-    var fragment = document.createDocumentFragment(); //@var dom this.element dom要素を格納 ツリーのdom要素を加えていく一番上のツリー<div id="chaintree"></div>
+  if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.device_name === 'pc') {
+    if (document.getElementById('chaintree') && document.getElementById('chaintree').tagName === 'DIV') {
+      //@var dom 仮のツリーのdom
+      var fragment = document.createDocumentFragment(); //@var dom this.element dom要素を格納 ツリーのdom要素を加えていく一番上のツリー<div id="chaintree"></div>
 
-    treeTop.element = document.getElementById('chaintree'); //オプション
-    // const options = {
-    //   childList: true,
-    //   characterData: true,
-    //   characterDataOldValue: true,
-    //   attributes: true,
-    //   subtree: true,
-    // }
-    //コールバック関数
-    // function callback(mutationsList, observer) {
-    //   for(const mutation of mutationsList) {
-    // 処理
-    // console.log(mutation);
-    //mutation.target //ターゲット要素
-    //mutation.addedNodes //追加されたDOM
-    //mutation.removedNodes //削除されたDOM
-    // console.log('change chaintree');
-    //   }
-    // }
-    //ターゲット要素をDOMで取得
-    // const target = document.getElementById('chaintree');
-    //インスタンス化
-    // const obs = new MutationObserver(callback);
-    //ターゲット要素の監視を開始
-    // obs.observe(target, options);
-    //@var string this.className ツリーのcssのクラス名
+      treeTop.element = document.getElementById('chaintree'); //@var string this.className ツリーのcssのクラス名
 
-    treeTop.className = 'chaintree';
+      treeTop.className = 'chaintree';
 
-    if (Array.isArray(treesepalete)) {
-      treesepalete.forEach(function (sepalete) {
-        //treeTopのchildに、かたまりごとのノードを追加していく。
-        createTopNode(sepalete, treeTop);
-      });
-    } //ツリーの全体のcssのクラス名を決める
+      if (Array.isArray(treesepalete)) {
+        treesepalete.forEach(function (sepalete) {
+          //treeTopのchildに、かたまりごとのノードを追加していく。
+          createTopNode(sepalete, treeTop);
+        });
+      } //ツリーの全体のcssのクラス名を決める
 
 
-    decisionClass(treeTop); //投影
+      decisionClass(treeTop); //投影
 
-    syncProjection(projectionChain); //domを生成して、ツリーを描画する
+      syncProjection(projectionChain); //domを生成して、ツリーを描画する
 
-    createElement(treeTop, fragment); //投影を斜体にする
+      createElement(treeTop, fragment); //投影を斜体にする
 
-    onSyncTree(treeTop); //ツリーのdom要素を生成した時は、ツリーは表示しているので、非表示にする。
+      onSyncTree(treeTop); //ツリーのdom要素を生成した時は、ツリーは表示しているので、非表示にする。
 
-    closeTree(treeTop); //実際のdomにfragmentのdomを追加する
+      closeTree(treeTop); //実際のdomにfragmentのdomを追加する
 
-    treeTop.element.append(fragment);
+      treeTop.element.append(fragment);
+    } else {
+      console.log('chaintree div tag is no');
+    }
   } else {
-    console.log('chaintree div tag is no');
+    document.getElementById('tree').style = 'display: none';
   } //ツリーインスタンスを返す
 
 
@@ -3375,8 +3366,8 @@ TreeAction = function (treesepalete, projectionChain) {
 
         node.focus(); //クリップボードのデータをカレントにする
 
-        _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.select(node.dir, node.id);
-        _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.current(node.dir, node.id);
+        _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(node.dir, node.id);
+        _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(node.dir, node.id);
       }
     }
   }; //現在のスパイラルでは使わない
@@ -3467,93 +3458,25 @@ TreeAction = function (treesepalete, projectionChain) {
     localStorage.setItem('hiddenId', JSON.stringify(hiddenStorage)); //クリップボードのデータを保存する
 
     storeClipboard();
-  }); //ページ移動後のイベント
-  // window.addEventListener('DOMContentLoaded', function(){
-  //   //ページ移動前のクリップボードのデータを復元する
-  //   restoreClipboard();
-  //   //ページ移動前に開いていたノードを開く
-  //   openNodeAfterPageMove();
-  //   //ページ移動前に隠蔽していたノードを閉じる
-  //   hideDisplayAfterPageMove();
-  //   //一覧表示からのノードの表示
-  //   if(document.location.pathname.split('/')[1] === 'show'){
-  //     //@var Nodeクラス 開くノード
-  //     let node;
-  //     //@var array パスをスラッシュで区切った配列
-  //     let path_array = document.getElementById('copyTarget').parentNode.action.split('/');
-  //     //@var string 詳細行の部署のid
-  //     let nodeId = path_array[path_array.length - 1];
-  //     //投影のノードをクリックしたら
-  //     if(nodeId.slice(0, 2) === 'ta'){
-  //       //@var Nodeクラス 投影ノード
-  //       let projectionNode = chainparser.searchNodeId(nodeId, tree);
-  //       //投影元のノードを取得する
-  //       node = chainparser.searchNodeId(projectionNode.fromLink[0], tree);
-  //     }else{
-  //       //@var Nodeクラス 開くノード
-  //       node = chainparser.searchNodeId(nodeId, tree);
-  //     }
-  //     if(node !== undefined){
-  //       //ノードを開く
-  //       node.openBottomUpTree();
-  //       //ノードをカレントにする
-  //       node.focus();
-  //       //クリップボードのデータをカレントにする
-  //       currentClipboard(node);
-  //     }
-  //   }else if(document.location.pathname.split('/')[1] === ''){
-  //     //indexルートの場合
-  //     //@var Nodeクラス カレントにするノード 
-  //     let node = chainparser.searchNodeId('bs00000001', tree);
-  //     if(node !== undefined){
-  //       node.openBottomUpTree();
-  //       node.focus();
-  //       currentClipboard(node);
-  //     }
-  //   }else{
-  //     //複写、移動、削除の場合
-  //     if(document.getElementById('back_treeaction').value === 'delete' || document.getElementById('back_treeaction').value === 'open'){
-  //       //@var Nodeクラス ツリーの開くノード
-  //       let node = chainparser.searchNodeId(document.getElementById('action_node_id').value, tree);
-  //       if(node !== undefined){
-  //         //ノードを開く
-  //         node.openBottomUpTree();
-  //         //ノードをカレントにする
-  //         node.focus();
-  //         //クリップボードのデータをカレントにする
-  //         currentClipboard(node);
-  //       }
-  //     }else{
-  //       //showルーティングでも、ツリー機能ルーティングでもない場合
-  //       //@var Nodeクラス カレントにするノード 
-  //       let node = chainparser.searchNodeId(clipboard.getCurrentId(), tree);
-  //       if(node !== undefined){
-  //         node.openBottomUpTree();
-  //         node.focus();
-  //         currentClipboard(node);
-  //       }
-  //     }
-  //   }
-  // });
-  //ページ移動前のクリップボードのデータの保存
+  }); //ページ移動前のクリップボードのデータの保存
 
   var storeClipboard = function storeClipboard() {
-    localStorage.setItem('currentId', _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getCurrentId());
-    localStorage.setItem('currentDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getCurrentDir());
-    localStorage.setItem('selectId', _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getSelectId());
-    localStorage.setItem('selectDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getSelectDir());
+    localStorage.setItem('currentId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId());
+    localStorage.setItem('currentDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentDir());
+    localStorage.setItem('selectId', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectId());
+    localStorage.setItem('selectDir', _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getSelectDir());
   }; //ページ移動後のクリップボードのデータの復元
 
 
   var restoreClipboard = function restoreClipboard() {
-    _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.current(localStorage.getItem('currentDir'), localStorage.getItem('currentId'));
-    _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.select(localStorage.getItem('selectDir'), localStorage.getItem('selectId'));
+    _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(localStorage.getItem('currentDir'), localStorage.getItem('currentId'));
+    _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(localStorage.getItem('selectDir'), localStorage.getItem('selectId'));
   }; //カレントのデータをクリップボードのデータに代入する
 
 
   var currentClipboard = function currentClipboard(node) {
-    _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.current(node.dir, node.id);
-    _ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.select(node.dir, node.id);
+    _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.current(node.dir, node.id);
+    _ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.select(node.dir, node.id);
   }; //ページ移動後にページ移動前のノードを開く
 
 
@@ -3676,7 +3599,7 @@ TreeAction = function (treesepalete, projectionChain) {
     } else {
       //showルーティングでも、ツリー機能ルーティングでもない場合
       //@var Nodeクラス カレントにするノード 
-      var _node3 = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_1__.clipboard.getCurrentId(), tree);
+      var _node3 = chainparser.searchNodeId(_ptcmcb__WEBPACK_IMPORTED_MODULE_0__.clipboard.getCurrentId(), tree);
 
       if (_node3 !== undefined) {
         _node3.openBottomUpTree();
@@ -21210,18 +21133,6 @@ process.umask = function() { return 0; };
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
 /******/ 		};
 /******/ 	})();
 /******/ 	

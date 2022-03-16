@@ -177,9 +177,20 @@ class Pa0001Controller extends Controller
         $department_details_object = new DepartmentDetailsObject();
         $department_details_object->setDepartmentObject($top_department,$top_responsible,$top_management,$operation_date);
 
-        return view('pacm01.pacm01',compact('top_management','department_max','departments','personnel_max','names',
-        'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
-        'department_data','count_personnel','personnel_data','operation_date','all_personnel_data'));
+        if(session('device') != 'mobile'){
+            return view('pacm01.pacm01',compact('top_management','department_max','departments','personnel_max','names',
+            'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
+            'department_data','count_personnel','personnel_data','operation_date','all_personnel_data'));
+        }else{
+            $click_id = NULL;
+            $click_department_high = NULL;
+            $click_management_lists = $top_management;
+            $click_responsible_lists = $top_responsible;
+            return view('pacm01.pacm02',compact('top_management', 'pagination_object', 'department_details_object',
+            'click_department_high', 'click_management_lists', 'click_responsible_lists', 'click_id',
+            'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
+            'department_data','count_personnel','personnel_data','operation_date','all_personnel_data'));
+        }
     }
 
     /**
@@ -1253,6 +1264,20 @@ class Pa0001Controller extends Controller
         session(['message'=>$message[0]]);
 
         return back();
+    }
+
+    //モバイル端末情報をセッションにセットする
+    public function setMobile(){
+        session(['device' => 'mobile']);
+
+        return redirect()->route('index');
+    }
+
+    //モバイル端末情報をセッションにリセットする
+    public function resetMobile(){
+        session(['device' => 'pc']);
+
+        return redirect()->route('index');
     }
 
     public function log_redirct(){

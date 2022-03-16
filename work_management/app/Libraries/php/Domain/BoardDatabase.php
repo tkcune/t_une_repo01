@@ -84,4 +84,21 @@
 
             return $data;
         }
+
+        /**
+         * 選択した掲示板の配下データを取得するメソッド
+         * 
+         * @param $client 顧客ID
+         * @param $name タイトル
+         * @param $status 状態
+         * @param $management_personnel_id 管理者ID
+         * @param $remarks 備考
+         * 
+         */
+        public static function insert($client_id,$name,$status,$management_personnel_id,$remarks){
+
+            DB::insert('insert into dckb01 (client_id,board_id,name,status,management_personnel_id,remarks) 
+            select (?,board_id,?,?,?,?)',[$client_id,$name,$status,$management_personnel_id,$remarks]);
+
+        }
     }

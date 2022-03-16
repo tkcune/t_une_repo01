@@ -60,7 +60,36 @@ class Pskb01Controller extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $client_id = $request->client_id;
+        $name = $request->name;
+        $status = $request->status;
+        $management_personnel_id = $request->management_number;
+        $high = $request->high;
+        $remarks = $request->remarks;
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
+
+        try{
+            DB::beginTransaction();
+            //データベースに掲示板情報を登録
+            $borad_db = new BoardDataBase();
+            $borad_db->insert($client_id,$name,$status,$management_personnel_id,$remarks);
+
+            //データベースに階層情報を登録
+            $hierarchical = new Hierarchical();
+            $hierarchical->insert2($client_id,$high);
+
+            DB::commit();
+
+        }catch(\Exception $e){
+            DB::rollBack();
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+
     }
 
     /**

@@ -4,7 +4,7 @@
 @section('content')
     <div class="col border border-primary" style="padding:10px;">
         <div class="row">
-            <form action="#" method="post">
+            <form action="{{ route('pskb01.store') }}" method="post">
             @csrf
             @method('post')
             {{-- hiddenのvalueはダミーデータ--}}
@@ -36,7 +36,7 @@
                 <div class="row">
                     <div class="col-4">
                         <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="" style="width:100px;"
-                        data-toggle="tooltip" title="" readonly></p>
+                        data-toggle="tooltip" title=""></p>
                     </div>
                     <div class="col-3" style="padding:0px">
                         <p>管理者名：</p>

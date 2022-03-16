@@ -296,7 +296,26 @@ TreeAction.node = class Node {
       window.location = 'http://localhost:8000/pslg';
     }else if(this.node.id === 'ssnw'){
       window.location = 'http://localhost:8000/psnw01';
-    }else{
+    }else if(this.node.id.substr(0, 2) === 'ji' || this.node.id.substr(0, 2) === 'bs'){
+      //@var string Laravelのセッションid
+      let clientId = document.getElementById('hidden_client_id').value;
+      //@var string ノードのid
+      let nodeId = this.node.id;
+      //移動命令
+      window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
+    }else if(this.node.id.substr(0, 2) === 'kb'){
+      //@var string Laravelのセッションid
+      let clientId = document.getElementById('hidden_client_id').value;
+      //@var string ノードのid
+      let nodeId = this.node.id;
+      if(nodeId === 'kb'){
+        //移動命令
+        window.location = `http://localhost:8000/pskb/`;
+      }else{
+        //移動命令
+        window.location = `http://localhost:8000/pskb/show/${clientId}/${nodeId}`;
+      }
+    }else if(this.node.id.substr(0, 2) === 'ta'){
       //@var string Laravelのセッションid
       let clientId = document.getElementById('hidden_client_id').value;
       //@var string ノードのid
@@ -582,6 +601,10 @@ TreeAction.node = class Node {
       // src = '<img width = "15" length = "17" src="/image/ss.png">';
       //システム設計の場合
       src = '<img width = "15" length = "17" src="data:image/png;base64,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">';
+    }else if(src === 'kb'){
+      // src = '<img width = "15" length = "17" src="/image/ss.png">';
+      //システム設計の場合
+      src = '<img width = "15" length = "17" src="data:image/png;base64,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">';
     }
 
     return src;
@@ -600,7 +623,7 @@ TreeAction.chainparser = (() => {
       let decisionTreeClass = function decisionTreeClass(topNode) {
       
         let isExpand = false;
-       if(topNode.id === 'bs' || topNode.id === 'ss'){
+       if(topNode.id === 'bs' || topNode.id === 'ss' || topNode.id === 'kb'){
          isExpand = true;
        }
 

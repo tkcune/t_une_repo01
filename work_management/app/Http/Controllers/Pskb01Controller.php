@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Facades\OutputLog;
 use App\Libraries\php\Domain\BoardDataBase;
+use App\Libraries\php\Domain\Hierarchical;
+use App\Libraries\php\Service\DatabaseException;
+use App\Libraries\php\Service\ZeroPadding;
 use App\Http\Controllers\PtcmtrController;
 
 class Pskb01Controller extends Controller
@@ -70,24 +75,45 @@ class Pskb01Controller extends Controller
         // 重複クリック対策
         $request->session()->regenerateToken();
 
+        //顧客IDに対応した最新の部署IDを取得
+        try{
+            $board_db = new BoardDataBase();
+            $id = $board_db->getId($client_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            
+            return redirect()->route('pskb.index');
+        }
+
+        if(empty($id)){
+            $board_id = "kb00000001";
+        }else{
+            //登録する番号を作成
+            $padding = new ZeroPadding();
+            $board_id = $padding->padding($id[0]->board_id);
+        }
+
         try{
             DB::beginTransaction();
             //データベースに掲示板情報を登録
-            $borad_db = new BoardDataBase();
-            $borad_db->insert($client_id,$name,$status,$management_personnel_id,$remarks);
+            $board_db = new BoardDataBase();
+            $board_db->insert($client_id,$board_id,$name,$status,$management_personnel_id,$remarks);
 
             //データベースに階層情報を登録
             $hierarchical = new Hierarchical();
-            $hierarchical->insert2($client_id,$high);
+            $hierarchical->insert($client_id,$board_id,$high);
 
             DB::commit();
+
+            return redirect()->route('pskb01.show',[$client_id,$high]);
 
         }catch(\Exception $e){
             DB::rollBack();
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
-            return redirect()->route('index');
+            return redirect()->route('pskb01.index');
         }
 
     }
@@ -113,7 +139,6 @@ class Pskb01Controller extends Controller
 
         //一覧に記載する掲示板データの取得
         $board_lists = $board->getList($client_id,$select_id);
-        //dd($board_lists);
 
         return view('pskb01.pskb01',compact('board_details','board_lists'));
     }
@@ -133,12 +158,51 @@ class Pskb01Controller extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,$board_id)
     {
-        //
+        //リクエストの取得
+        $client_id = $request->client_id;
+        $name = $request->name;
+        $management_number = $request->management_number;
+        $status = $request->status;
+        $remarks = $request->remarks;
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
+        
+        //入力された番号の人員が存在するかの確認
+        try{
+            $personnel_db = new PersonnelDataBase();
+            $management_personnel_id = $personnel_db->getData($client_id,$management_number);
+        }catch(\Exception $e){
+                //エラー処理
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+        }
+        
+        if($management_personnel_id == null){
+            return redirect()->route('index');
+        }
+
+        //情報の更新
+        try{
+            $board_db = new BoardDataBase();
+            $board_db->update();
+        }catch(\Exception $e){
+            //エラー処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
+            $message = Message::get_message('mhcmok0002',[0=>'']);
+            session(['message'=>$message[0]]);
+
+        return back();
     }
 
     /**

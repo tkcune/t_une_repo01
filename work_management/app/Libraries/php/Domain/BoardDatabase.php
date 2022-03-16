@@ -86,6 +86,22 @@
         }
 
         /**
+         * 最新のID取得
+         * @param $client_id 顧客ID
+         * 
+         * @var   $id 取得id
+         * 
+         * @return  array $id
+         */
+        public static function getId($client_id){
+
+            $id = DB::select('select board_id from dckb01 where client_id = ? 
+            order by board_id desc limit 1',[$client_id]);
+
+            return $id;
+        }
+
+        /**
          * 選択した掲示板の配下データを取得するメソッド
          * 
          * @param $client 顧客ID
@@ -95,10 +111,16 @@
          * @param $remarks 備考
          * 
          */
-        public static function insert($client_id,$name,$status,$management_personnel_id,$remarks){
+        public static function insert($client_id,$board_id,$name,$status,$management_personnel_id,$remarks){
 
             DB::insert('insert into dckb01 (client_id,board_id,name,status,management_personnel_id,remarks) 
-            select (?,board_id,?,?,?,?)',[$client_id,$name,$status,$management_personnel_id,$remarks]);
+            value (?,?,?,?,?,?)',[$client_id,$board_id,$name,$status,$management_personnel_id,$remarks]);
 
+        }
+
+        public static function update($client_id,$board_id,$name,$status,$management_personnel_id,$remarks){
+
+            DB::update('update dckb01 set name = ?,status = ?,management_personnel_id = ?,remarks = ? where client_id = ? and board_id = ?
+            ',[$name,$status,$management_personnel_id,$remarks,$client_id,$board_id]);
         }
     }

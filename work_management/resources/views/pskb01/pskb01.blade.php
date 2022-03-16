@@ -4,10 +4,9 @@
 @section('content')
     <div class="col border border-primary" style="padding:10px;">
         <div class="row">
-            <form action="#" method="post">
+            <form action="{{ route('pskb01.update',$board_details[0]->board_id) }}" method="post">
             @csrf
-            @method('post')
-
+            @method('patch')
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4" style="margin-top:-5px; margin-right:-12px">

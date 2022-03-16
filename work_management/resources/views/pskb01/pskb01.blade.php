@@ -14,21 +14,26 @@
                         <h2>掲示板詳細</h2>
                     </div>
                     <div class="col-4" style="margin-right:-10px">
-                        <p id="palent">名前<input type="text" name="name" value="" data-toggle="tooltip" title=""></p>
+                        <p id="palent">
+                            <span data-toggle="tooltip" id="id_number" title="番号:{{$board_details[0]->board_id}}">タイトル</span>
+                            <input type="text" name="name" value="{{$board_details[0]->name}}">
+                        </p>
                     </div>
                     
                     <div class="col-3">
-                        上位:
+                        @if(isset($board_details[0]->high_id))
+                        <p>上位:<a href="{{ route('pskb01.show',[session('client_id'),$board_details[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$board_details[0]->high_name}}</a></p>
+                        @endif
                     </div>
                 <div>
 
                 <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="" style="width:100px;"
+                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$board_details[0]->management_personnel_id}}" style="width:100px;"
                         data-toggle="tooltip" title="" readonly></p>
                     </div>
                     <div class="col-3" style="padding:0px">
-                        <p>管理者名：</p>
+                        <p>管理者名：{{$board_details[0]->management_name}}</p>
                     </div>
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
@@ -46,16 +51,13 @@
                         <div class="col">
                             <p>状態:
                             <select name="status" data-toggle="tooltip" title="人員の状態を選択します">
-                            <option value="10">応募</option>
-                            <option value="11">審査</option>
-                            <option value="12">入社待</option>
-                            <option value="13">在職</option>
-                            <option value="14">休職</option>
-                            <option value="18">退職</option>
+                            <option value="10" @if($board_details[0]->status == "10") selected @endif>応募</option>
+                            <option value="11" @if($board_details[0]->status == "11") selected @endif>審査</option>
+                            <option value="12" @if($board_details[0]->status == "12") selected @endif>入社待</option>
+                            <option value="13" @if($board_details[0]->status == "13") selected @endif>在職</option>
+                            <option value="14" @if($board_details[0]->status == "14") selected @endif>休職</option>
+                            <option value="18" @if($board_details[0]->status == "18") selected @endif>退職</option>
                             </select>
-                            
-                            運用開始日<input name="start_day" type="date" style="width:140px; margin:0px;" value="{{date('Y-m-d')}}" readonly>
-                            運用終了日<input name="finish_day" type="date" style="width:140px; margin:0px;" value="" readonly>
 
                             <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                                 <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
@@ -64,19 +66,19 @@
                         </div>
                     </div>
 
-                    <input type="hidden" id="remarks" name="remarks" value="">
+                    <input type="hidden" id="remarks" name="remarks" value="{{$board_details[0]->remarks}}">
 
                     <div class="row margin-reset" id="remarks-field" style="display:none"">
                         <div>
                             備考
                         </div>
                         <div>
-                            <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;"></textarea>
+                            <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;">{{$board_details[0]->remarks}}</textarea>
                         </div>
                     </div>
 
                     <div class="row" id="little-information-field" style="display:none">
-                    <p>登録日: 修正日:</p>
+                    <p>登録日:{{$board_details[0]->created_at}} 修正日:{{$board_details[0]->updated_at}}</p>
                     </div>
 
                     <div class="row margin-reset">
@@ -85,11 +87,11 @@
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" id="updateOn" data-toggle="tooltip" title="クリックにより、登録、更新を確定します"
                             style="opacity: 0.3;" disabled>
         </form>
-                            <form action="#" method="get">
+                            <form action="{{ route('pskb01.create') }}" method="get">
                             @csrf
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規" onclick="submit();"
                             data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
-                            <input type="hidden" id="high_new" name="high" value="">
+                            <input type="hidden" id="high_new" name="high" value="{{$board_details[0]->board_id}}">
                             </form>
 
                             <form action="#" method="post">
@@ -234,29 +236,30 @@
                                 <thead>
                                 <tr>
                                     <th >番号</th>
-                                    <th width="160">名称</th>
-                                    <th width="160">上位</th>
-                                    <th width="90">登録日</th>
+                                    <th width="140">名称</th>
+                                    <th width="140">上位</th>
+                                    <th width="150">登録日</th>
                                     <th width="120">管理者</th>
                                     <th width="190">操作</th>
                                 </thead>
                                 <tbody>
+                                @foreach($board_lists as $board_list)
                                     <tr>
-                                    <td width="100"></td>
-                                    <td width="160"><s><a href="#" data-toggle="tooltip" title=""></a> </s> </td>
+                                    <td width="100">{{$board_list->board_id}}</td>
+                                    <td width="140"><a href="{{ route('pskb01.show',[session('client_id'),$board_list->board_id])}}" data-toggle="tooltip" title="">{{$board_list->name}}</a></td>
                                     
-                                    <td width="160"><a href="#" data-toggle="tooltip" title=""></a></td>
+                                    <td width="140"><a @if(isset($board_list->high_id))<a href="{{ route('pskb01.show',[session('client_id'),$board_list->high_id])}}" data-toggle="tooltip" title="">{{$board_list->high_name}}</a>@endif</td>
                         
-                                    <td width="90"><a href="#" data-toggle="tooltip" title=""></a>
-                                    <td width="120">
-                                    </td>
-                                    <td width="190">【<a href="#">複写</a>】
+                                    <td width="150">{{$board_list->created_at}}
+                                    <td width="120"><a href="{{ route('plbs01.show',[session('client_id'),$board_list->management_personnel_id])}}" data-toggle="tooltip" title="">{{$board_list->management_name}}</a></td>
+                                    <td width="170">【<a href="#">複写</a>】
                                     【<p id="" name="" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('').submit();">削除</p>】
                                     <form id="" action="#" method="post" style="display: none;">
                                     @csrf
                                     </form>
                                     </td>
                                     </tr>
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>

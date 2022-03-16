@@ -105,5 +105,21 @@ class DccmksSeeder extends Seeder
         DB::insert('insert into dccmks (client_id, lower_id, high_id, created_at, updated_at)
             VALUE (?, ?, ?, ?, ?)',
             ['aa00000001', 'ta00000005', 'bs00000003', NULL, NULL]);
+
+        DB::insert('insert into dccmks (client_id, lower_id, high_id, created_at, updated_at)
+            VALUE (?, ?, ?, ?, ?)',
+            ['aa00000001', 'kb00000002', 'kb00000001', NULL, NULL]);
+        
+        DB::insert('insert into dccmks (client_id, lower_id, high_id, created_at, updated_at)
+            VALUE (?, ?, ?, ?, ?)',
+            ['aa00000001', 'kb00000003', 'kb00000002', NULL, NULL]);
+        
+        DB::insert('insert into dccmks (client_id, lower_id, high_id, created_at, updated_at)
+            VALUE (?, ?, ?, ?, ?)',
+            ['aa00000001', 'kb00000004', 'kb00000002', NULL, NULL]);
+
+        DB::insert('insert into dccmks (client_id, lower_id, high_id, created_at, updated_at)
+            VALUE (?, ?, ?, ?, ?)',
+            ['aa00000001', 'kb00000005', 'kb00000004', NULL, NULL]);
     }
 }

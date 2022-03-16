@@ -35,6 +35,19 @@ use Carbon\Carbon;
      * 
      * 
      */
+    public function date(&$datas){
+        foreach($datas as $data){
+            $data->created_at = Carbon::parse($data->created_at)->format('Y/m/d H:i:s');
+            $data->updated_at = Carbon::parse($data->updated_at)->format('Y/m/d H:i:s');
+        }
+    }
+
+    /**
+     * 登録日と更新日,運用開始日と運用終了日のフォーマットを変換するメソッド
+     * @param array $datas DBデータ 
+     * 
+     * 
+     */
     public function formatDate(&$datas){
         foreach($datas as $data){
             $data->created_at = Carbon::parse($data->created_at)->format('Y/m/d H:i:s');

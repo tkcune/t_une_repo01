@@ -91,7 +91,7 @@
 
                 <div class="row">
                     <div class="col">
-                        <p>
+              
                         <div style="display:inline-flex">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
                         </div>

@@ -182,7 +182,12 @@ class Pa0001Controller extends Controller
             'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
             'department_data','count_personnel','personnel_data','operation_date','all_personnel_data'));
         }else{
-            return view('pacm01.pacm01',compact('top_management','department_max','departments','personnel_max','names',
+            $click_id = NULL;
+            $click_department_high = NULL;
+            $click_management_lists = $top_management;
+            $click_responsible_lists = $top_responsible;
+            return view('pacm01.pacm02',compact('top_management', 'pagination_object', 'department_details_object',
+            'click_department_high', 'click_management_lists', 'click_responsible_lists', 'click_id',
             'top_department','top_responsible','count_department','responsible_lists','department_high','personnel_high',
             'department_data','count_personnel','personnel_data','operation_date','all_personnel_data'));
         }

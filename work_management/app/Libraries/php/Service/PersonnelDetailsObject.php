@@ -29,23 +29,24 @@
          * @var $registered_person 登録者
          * 
          */
-        private $name;
-        private $client_id; 
-        private $personnel_id;
-        private $high_id;
-        private $high_name;
-        private $email;
-        private $management_personnel_id;
-        private $management_name;
-        private $status;
-        private $login_authority;
-        private $system_management;
-        private $operation_start_date;
-        private $operation_finish_date; 
-        private $remarks;
-        private $created_at;
-        private $updated_at;
-        private $registered_person;
+        public $name;
+        public $client_id; 
+        public $personnel_id;
+        public $high_id;
+        public $high_name;
+        public $lower_id;
+        public $email;
+        public $management_personnel_id;
+        public $management_name;
+        public $status;
+        public $login_authority;
+        public $system_management;
+        public $operation_start_date;
+        public $operation_end_date; 
+        public $remarks;
+        public $created_at;
+        public $updated_at;
+        public $registered_person;
 
 
         /** 
@@ -60,6 +61,7 @@
             $this->personnel_id = $personnel_data[0]->personnel_id;
             $this->high_id = $personnel_data[0]->high_id;
             $this->high_name = $personnel_data[0]->high_name;
+            $this->lower_id = $personnel_data[0]->lower_id;
             $this->email = $personnel_data[0]->email;
             $this->management_personnel_id = $personnel_data[0]->management_personnel_id;
             $this->management_name = $management[0];
@@ -67,7 +69,7 @@
             $this->login_authority = $personnel_data[0]->login_authority;
             $this->system_management = $personnel_data[0]->system_management;
             $this->operation_start_date = $operation_date["operation_start_date"];
-            $this->operation_finish_date = $operation_date["operation_end_date"];
+            $this->operation_end_date = $operation_date["operation_end_date"];
             $this->remarks = $personnel_data[0]->remarks;
             $this->created_at = $personnel_data[0]->created_at;
             $this->updated_at = $personnel_data[0]->updated_at;

@@ -42,7 +42,11 @@ class Psbs01Controller extends Controller
     {
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
-        return view('psbs01.psbs01');
+        if(session('device') != 'mobile'){
+            return view('psbs01.psbs01');
+        }else{
+            return view('psbs01.psbs02');
+        }
     }
 
     /**
@@ -292,10 +296,15 @@ class Psbs01Controller extends Controller
             $pagination_object = new Pagination();
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
-            return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel','click_department_data',
-            'department_max','departments','personnel_max','names','responsible_lists','department_high','personnel_high',
-            'department_data','click_department_high','click_management_lists','client','select_id','personnel_data','operation_date','all_personnel_data'));
-            
+            if(session('device') != 'mobile'){
+                return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel','click_department_data',
+                'department_max','departments','personnel_max','names','responsible_lists','department_high','personnel_high',
+                'department_data','click_department_high','click_management_lists','client','select_id','personnel_data','operation_date','all_personnel_data'));
+            }else{
+                $click_data = $click_department_data;
+                return view('pacm01.pacm02',compact('click_data', 'pagination_object', 'department_details_object',
+                'responsible_lists', 'personnel_high', 'click_management_lists', 'select_id', 'personnel_data', 'all_personnel_data'));
+            }
         }else{
             //選択した人員のデータを取得
             try{
@@ -400,9 +409,15 @@ class Psbs01Controller extends Controller
                 $pagination_object = new Pagination();
                 $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
-                return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments','personnel_max','names',
-                'top_department','top_responsible','count_department','count_personnel','client','responsible_lists','personnel_high',
-                'department_data','select_id','department_data','personnel_data','click_personnel_data','operation_date','all_personnel_data','click_department_data'));
+                if(session('device') != 'mobile'){
+                    return view('pacm01.pacm01',compact('top_management','click_management_lists','department_max','departments','personnel_max','names',
+                    'top_department','top_responsible','count_department','count_personnel','client','responsible_lists','personnel_high',
+                    'department_data','select_id','department_data','personnel_data','click_personnel_data','operation_date','all_personnel_data','click_department_data'));
+                }else{
+                    $click_data = $top_department;
+                    return view('pacm01.pacm02',compact('personnel_details_object', 'click_data', 'pagination_object',
+                    'responsible_lists', 'select_id','click_management_lists', 'all_personnel_data'));
+                }
             }
 
             array_push($department_data,$data[0]);
@@ -479,9 +494,15 @@ class Psbs01Controller extends Controller
             $pagination_object = new Pagination();
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
-            return view('pacm01.pacm01',compact('data','count_department','count_personnel','department_max','departments','personnel_max','names',
-            'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists',
-            'department_data','operation_date','all_personnel_data','click_department_data'));
+            if(session('device') != 'mobile'){
+                return view('pacm01.pacm01',compact('data','count_department','count_personnel','department_max','departments','personnel_max','names',
+                'department_high','personnel_high','responsible_lists','client','select_id','click_personnel_data','click_management_lists',
+                'department_data','operation_date','all_personnel_data','click_department_data'));
+            }else{
+                $click_data = $click_department_data;
+                return view('pacm01.pacm02',compact('personnel_details_object', 'click_data', 'pagination_object', 
+                'responsible_lists', 'select_id','click_management_lists', 'all_personnel_data'));
+            }
         }
     }
 
@@ -982,8 +1003,13 @@ class Psbs01Controller extends Controller
         $pagination_object = new Pagination();
         $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
-        return view('pacm01.pacm01',compact('count_department','department_data','personnel_data','select_id','department_max','departments','personnel_max',
-        'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data','click_department_data'));
+        if(session('device') != 'mobile'){
+            return view('pacm01.pacm01',compact('count_department','department_data','personnel_data','select_id','department_max','departments','personnel_max',
+            'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data','click_department_data'));
+        }else{
+            return view('pacm01.pacm02',compact('count_department','department_data','personnel_data','select_id','department_max','departments','personnel_max',
+            'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data','click_department_data'));
+        }
     }
 
     /**

@@ -19,9 +19,8 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request;
 
-//サンプルプログラム
-use App\Libraries\php\Service\PaginationObject;
 use App\Libraries\php\Service\DepartmentDetailsObject;
+use App\Libraries\php\Service\PersonnelDetailsObject;
 
 
 
@@ -186,9 +185,11 @@ class Pa0001Controller extends Controller
             $click_management_lists = $top_management;
             $click_responsible_lists = $top_responsible;
             $click_data = $top_department;
+            $select_id = "bs00000001";
+            $department_high = NULL;
             return view('pacm01.pacm02',compact('click_data', 'pagination_object', 'department_details_object',
-            'click_management_lists', 'click_responsible_lists', 'click_id',
-            'responsible_lists', 'personnel_high', 'personnel_data', 'all_personnel_data'));
+            'click_management_lists', 'click_responsible_lists', 'click_id', 'select_id',
+            'responsible_lists', 'personnel_high', 'department_high', 'personnel_data', 'all_personnel_data'));
         }
     }
 
@@ -531,12 +532,16 @@ class Pa0001Controller extends Controller
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
 
-            if(session('session') != 'mobile'){
+            if(session('device') != 'mobile'){
                 return view('pacm01.pacm01',compact('click_department_data','click_management_lists','department_max','departments','personnel_max','names','responsible_lists',
                 'department_data','department_high','personnel_high','count_department','count_personnel','click_department_high','client','select_id','personnel_data','operation_date','all_personnel_data'));
             }else{
-                return view('pacm01.pacm02',compact('click_department_data','click_management_lists','department_max','departments','personnel_max','names','responsible_lists',
-                'department_data','department_high','personnel_high','count_department','count_personnel','click_department_high','client','select_id','personnel_data','operation_date','all_personnel_data'));
+                //部署詳細オブジェクトの設定
+                $department_details_object = new DepartmentDetailsObject();
+                $department_details_object->setDepartmentObject($click_department_data,$click_responsible_lists,$click_management_lists,$operation_date);
+                $click_data = $click_department_data;
+                return view('pacm01.pacm02',compact('department_high', 'click_data', 'pagination_object', 'department_details_object',
+                'responsible_lists', 'personnel_high', 'click_management_lists', 'select_id', 'personnel_data', 'all_personnel_data'));
             }
         }else{
             //選択した人員のデータを取得
@@ -627,9 +632,12 @@ class Pa0001Controller extends Controller
                     'personnel_max','names','personnel_high','responsible_lists','top_department','top_responsible','count_department','count_personnel','client',
                     'department_data','select_id','personnel_data','click_personnel_data','operation_date','all_personnel_data'));
                 }else{
-                    return view('pacm01.pacm02',compact('top_management','click_management_lists','department_max','departments',
-                    'personnel_max','names','personnel_high','responsible_lists','top_department','top_responsible','count_department','count_personnel','client',
-                    'department_data','select_id','personnel_data','click_personnel_data','operation_date','all_personnel_data'));
+                    //詳細画面オブジェクトの設定
+                    $personnel_details_object = new PersonnelDetailsObject();
+                    $personnel_details_object->setPersonnelObject($click_personnel_data,$responsible_lists,$click_management_lists,$operation_date);
+                    $click_data = $top_department;
+                    return view('pacm01.pacm02',compact('department_high', 'personnel_details_object', 'click_data', 'pagination_object', 
+                    'responsible_lists', 'select_id','click_management_lists', 'all_personnel_data'));
                 }
             }
             array_push($department_data,$data[0]);
@@ -691,8 +699,12 @@ class Pa0001Controller extends Controller
                 return view('pacm01.pacm01',compact('count_department','count_personnel','click_management_lists','data','department_max','departments','click_department_data',
                 'department_data','personnel_max','names','responsible_lists','department_high','personnel_high','client','select_id','click_personnel_data','operation_date','all_personnel_data'));
             }else{
-                return view('pacm01.pacm02',compact('count_department','count_personnel','click_management_lists','data','department_max','departments','click_department_data',
-                'department_data','personnel_max','names','responsible_lists','department_high','personnel_high','client','select_id','click_personnel_data','operation_date','all_personnel_data'));
+                //詳細画面オブジェクトの設定
+                $personnel_details_object = new PersonnelDetailsObject();
+                $personnel_details_object->setPersonnelObject($click_personnel_data,$responsible_lists,$click_management_lists,$operation_date);
+                $click_data = $click_department_data;
+                return view('pacm01.pacm02',compact('department_high', 'personnel_details_object', 'click_data', 'pagination_object', 
+                'responsible_lists', 'select_id','click_management_lists', 'all_personnel_data'));
             }
         }
     }
@@ -1021,8 +1033,12 @@ class Pa0001Controller extends Controller
             return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','department_max','departments','personnel_max',
             'department_data','names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data'));
         }else{
-            return view('pacm01.pacm02',compact('count_department','personnel_data','select_id','department_max','departments','personnel_max',
-            'department_data','names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data'));
+            //部署詳細オブジェクトの設定
+            $department_details_object = new DepartmentDetailsObject();
+            $department_details_object->setDepartmentObject($click_department_data,$click_responsible_lists,$click_management_lists,$operation_date);
+            $click_data = $click_department_data;
+            return view('pacm01.pacm02',compact('department_high', 'click_data', 'pagination_object', 'department_details_object',
+            'responsible_lists', 'personnel_high', 'click_management_lists', 'select_id', 'personnel_data', 'all_personnel_data'));
         }
     }
 
@@ -1258,8 +1274,12 @@ class Pa0001Controller extends Controller
             return view('pacm01.pacm01',compact('count_department','personnel_data','select_id','count_personnel','department_max',
             'department_data','departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date','all_personnel_data'));
         }else{
-            return view('pacm01.pacm02',compact('count_department','personnel_data','select_id','count_personnel','department_max',
-            'department_data','departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date','all_personnel_data'));
+            //部署詳細オブジェクトの設定
+            $department_details_object = new DepartmentDetailsObject();
+            $department_details_object->setDepartmentObject($click_department_data,$click_responsible_lists,$click_management_lists,$operation_date);
+            $click_data = $click_department_data;
+            return view('pacm01.pacm02',compact('department_high', 'click_data', 'pagination_object', 'department_details_object',
+            'responsible_lists', 'personnel_high', 'click_management_lists', 'select_id', 'personnel_data', 'all_personnel_data'));
         }
     }
 

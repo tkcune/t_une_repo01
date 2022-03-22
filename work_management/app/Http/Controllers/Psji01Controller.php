@@ -42,7 +42,11 @@ class Psji01Controller extends Controller
     {
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
-        return view('psji01.psji01');
+        if(session('device') != 'mobile'){
+            return view('psji01.psji01');
+        }else{
+            return view('psji01.psji02');
+        }
     }
 
     /**
@@ -566,8 +570,14 @@ class Psji01Controller extends Controller
         $pagination_object = new Pagination();
         $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
-        return view('pacm01.pacm01',compact('count_department','department_data','personnel_data','select_id','count_personnel','department_max',
-        'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date','all_personnel_data'));
+        if(session('device') != 'mobile'){
+            return view('pacm01.pacm01',compact('count_department','department_data','personnel_data','select_id','count_personnel','department_max',
+            'departments','personnel_max','names','responsible_lists','department_high','personnel_high','operation_date','all_personnel_data'));
+        }else{
+            $click_data = $click_department_data;
+            return view('pacm01.pacm02',compact('department_high', 'click_data', 'pagination_object', 'department_details_object',
+            'responsible_lists', 'personnel_high', 'click_management_lists', 'select_id', 'personnel_data', 'all_personnel_data'));
+        }
     }
 
     /**

@@ -303,7 +303,7 @@ class Psbs01Controller extends Controller
             }else{
                 $click_data = $click_department_data;
                 return view('pacm01.pacm02',compact('click_data', 'pagination_object', 'department_details_object',
-                'responsible_lists', 'personnel_high', 'click_management_lists', 'select_id', 'personnel_data', 'all_personnel_data'));
+                'responsible_lists', 'personnel_high', 'department_high', 'click_management_lists', 'select_id', 'personnel_data', 'all_personnel_data'));
             }
         }else{
             //選択した人員のデータを取得
@@ -415,8 +415,9 @@ class Psbs01Controller extends Controller
                     'department_data','select_id','department_data','personnel_data','click_personnel_data','operation_date','all_personnel_data','click_department_data'));
                 }else{
                     $click_data = $top_department;
+                    $department_high = NULL;
                     return view('pacm01.pacm02',compact('personnel_details_object', 'click_data', 'pagination_object',
-                    'responsible_lists', 'select_id','click_management_lists', 'all_personnel_data'));
+                    'responsible_lists', 'select_id','click_management_lists', 'all_personnel_data', 'department_high'));
                 }
             }
 
@@ -501,7 +502,7 @@ class Psbs01Controller extends Controller
             }else{
                 $click_data = $click_department_data;
                 return view('pacm01.pacm02',compact('personnel_details_object', 'click_data', 'pagination_object', 
-                'responsible_lists', 'select_id','click_management_lists', 'all_personnel_data'));
+                'responsible_lists', 'select_id','click_management_lists', 'all_personnel_data', 'department_high'));
             }
         }
     }
@@ -995,7 +996,7 @@ class Psbs01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        //部署詳細オブジェクトの設定
+        // 部署詳細オブジェクトの設定
         $department_details_object = new DepartmentDetailsObject();
         $department_details_object->setDepartmentObject($click_department_data,$click_responsible_lists,$click_management_lists,$operation_date);
 
@@ -1007,8 +1008,9 @@ class Psbs01Controller extends Controller
             return view('pacm01.pacm01',compact('count_department','department_data','personnel_data','select_id','department_max','departments','personnel_max',
             'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data','click_department_data'));
         }else{
-            return view('pacm01.pacm02',compact('count_department','department_data','personnel_data','select_id','department_max','departments','personnel_max',
-            'names','responsible_lists','department_high','personnel_high','count_personnel','operation_date','all_personnel_data','click_department_data'));
+            $click_data = $click_department_data;
+            return view('pacm01.pacm02',compact('department_high', 'click_data', 'pagination_object', 'department_details_object',
+            'responsible_lists', 'personnel_high', 'personnel_high', 'click_management_lists', 'select_id', 'personnel_data', 'all_personnel_data'));
         }
     }
 

@@ -20,8 +20,12 @@
 
         //bladeに渡す変数
         public int $department_max;
+        public int $count_department;
+        public int $total_department;
         public array $departments;
         public int $personnel_max;
+        public int $count_personnel;
+        public int $total_personnel;
         public array $names;
 
         /**
@@ -69,6 +73,10 @@
         //@var  int $personnel_max 人員データページネーションの最大値
         //@var  array $names ページネーション後の人員データ
         public function set_pagination($department_data, $count_department, $personnel_data, $count_personnel){
+            $this->count_department = $count_department;
+            $this->count_personnel = $count_personnel;
+            $this->total_department = count($department_data);
+            $this->total_personnel = count($personnel_data);
             $this->department_max = $this->pageMax($department_data,count($department_data));
             $this->departments = $this->pagination($department_data,count($department_data),$count_department);
             $this->personnel_max = $this->pageMax($personnel_data,count($personnel_data));

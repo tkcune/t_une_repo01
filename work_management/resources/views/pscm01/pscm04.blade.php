@@ -3,7 +3,6 @@
     <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規" onclick="submit();" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
     <input type="hidden" id="high_new" name="high" value="{{$click_department_data->department_id}}">
 </form>
-
 @if(isset($click_id) && substr($click_id,0,2) == "ta")
 <form action="{{ route('ptcm01.delete',[session('client_id'),$click_id])}}" method="post">
 @else

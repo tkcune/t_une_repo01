@@ -39,7 +39,7 @@
         public $responsible;
         public $responsible_person_id;
         public $operation_start_date;
-        public $operation_finish_date; 
+        public $operation_end_date; 
         public $remarks;
         public $created_at;
         public $updated_at;
@@ -70,7 +70,7 @@
             $this->responsible = $responsible[0];
             $this->responsible_person_id = $department_data[0]->responsible_person_id;
             $this->operation_start_date = $operation_date["operation_start_date"];
-            $this->operation_finish_date = $operation_date["operation_end_date"];
+            $this->operation_end_date = $operation_date["operation_end_date"];
             $this->remarks = $department_data[0]->remarks;
             $this->created_at = $department_data[0]->created_at;
             $this->updated_at = $department_data[0]->updated_at;

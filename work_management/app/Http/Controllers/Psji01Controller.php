@@ -558,9 +558,9 @@ class Psji01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-       //部署詳細オブジェクトの設定
-       $department_details_object = new DepartmentDetailsObject();
-       $department_details_object->setDepartmentObject($click_department_data,$click_responsible_lists,$click_management_lists,$operation_date);
+        //部署詳細オブジェクトの設定
+        $department_details_object = new DepartmentDetailsObject();
+        $department_details_object->setDepartmentObject($click_department_data,$click_responsible_lists,$click_management_lists,$operation_date);
 
         //ページネーションオブジェクト設定
         $pagination_object = new Pagination();

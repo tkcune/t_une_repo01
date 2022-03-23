@@ -14,8 +14,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 
     <!-- JS -->
+    @yield('js')
     <script src="{{ asset('js/pamt01/pamt01.js') }}" defer></script>
     <script src="{{ asset('js/pamt01/pamt02.js') }}" defer></script>
+    
     
     <!-- ツリー表示のjsプログラム -->
     <!-- <script src="{{ asset('js/pamt01/ptcmcb.js') }}" type="module"></script> -->
@@ -52,6 +54,8 @@
         });
     });
     </script>
+
+    @yield('script')
 </head>
 
 <body class="p-3 mb-2 bg-light">

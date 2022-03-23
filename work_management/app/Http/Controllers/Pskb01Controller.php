@@ -9,6 +9,7 @@ use App\Libraries\php\Domain\PersonnelDataBase;
 use App\Libraries\php\Domain\BoardDataBase;
 use App\Libraries\php\Domain\Hierarchical;
 use App\Libraries\php\Service\DatabaseException;
+use App\Libraries\php\Service\Message;
 use App\Libraries\php\Service\ZeroPadding;
 use App\Http\Controllers\PtcmtrController;
 
@@ -66,7 +67,7 @@ class Pskb01Controller extends Controller
      */
     public function store(Request $request)
     {
-        $client_id = $request->client_id;
+        $client_id = session('client_id');
         $name = $request->name;
         $status = $request->status;
         $management_personnel_id = $request->management_number;
@@ -164,7 +165,7 @@ class Pskb01Controller extends Controller
     public function update(Request $request,$board_id)
     {
         //リクエストの取得
-        $client_id = $request->client_id;
+        $client_id = session('client_id');
         $name = $request->name;
         $management_number = $request->management_number;
         $status = $request->status;
@@ -181,22 +182,22 @@ class Pskb01Controller extends Controller
                 //エラー処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
-                return redirect()->route('index');
+                return redirect()->route('pskb.index');
         }
         
         if($management_personnel_id == null){
-            return redirect()->route('index');
+            return redirect()->route('pskb.index');
         }
 
         //情報の更新
         try{
             $board_db = new BoardDataBase();
-            $board_db->update();
+            $board_db->update($client_id,$board_id,$name,$status,$management_number,$remarks);
         }catch(\Exception $e){
             //エラー処理
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
-            return redirect()->route('index');
+            return redirect()->route('pskb.index');
         }
             //ログ処理
             OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
@@ -207,13 +208,18 @@ class Pskb01Controller extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * 掲示板の削除
      *
+     * DB:アンチパターンになってしまっている為、親子関係を示すテーブルの修正の必要性大
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($delete_id)
     {
-        //
+        $client_id = session('client_id');
+
+        //選択した部署の配下を取得
+        $hierarchical = new Hierarchical();
+        $delete_lists = $hierarchical->getAll($client_id,$delete_id);
     }
 }

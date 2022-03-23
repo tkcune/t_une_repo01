@@ -7,11 +7,7 @@
             <form action="{{ route('pskb01.store') }}" method="post">
             @csrf
             @method('post')
-            {{-- hiddenのvalueはダミーデータ--}}
 
-            <input type="hidden" name="client_id" value="{{ session('client_id') }}">
-
-            {{-- ダミーデータここまで--}}
             <input type="hidden" name="high" value="{{ $_GET["high"] }}">
 
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">

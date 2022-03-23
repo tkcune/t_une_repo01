@@ -1,5 +1,21 @@
 @extends('pc0001.pc0001')
 
+@section('js')
+    <script src="{{ asset('js/pskb01/pskb01.js') }}" defer></script>
+@endsection
+
+@section('script')
+    {{-- テーブルソート --}}
+    <script>
+    $(document).ready(function() {
+        $('#kb-table').tablesorter({
+            headers: {
+               5: { sorter: false }
+            }
+        });
+    });
+    </script>
+@endsection
     
 @section('content')
     <div class="col border border-primary" style="padding:10px;">
@@ -93,20 +109,20 @@
                             <input type="hidden" id="high_new" name="high" value="{{$board_details[0]->board_id}}">
                             </form>
 
-                            <form action="#" method="post">
+                            <form action="{{ route('pskb01.destroy',$board_details[0]->board_id) }}" method="post">
                             @csrf
-                            @method('post')
+                            @method('delete')
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.delete')}}" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip" 
                             title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します"  disabled>
                             </form>
 
-                            <form action="#" method="get">
+                            <form action="{{ route('pa0001.clipboard',$board_details[0]->board_id)}}" method="get">
                             @csrf
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写" onclick="submit();" id="copyTarget"
                             data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                             </form>
 
-                            <form action="#" method="get">
+                            <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
                             @csrf
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.remove')}}" alt="取消" onclick="submit();"
                             data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3;" @endif>
@@ -125,7 +141,7 @@
                                 <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く" >
                             </button>
 
-                            <input type="checkbox" id="check" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                            <input type="checkbox" id="check" onclick="deleteOn3()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                             <font size="-2" color="red">削除有効化</font>
 
                             <input type="checkbox" id="check2" onclick="updateOn()" data-toggle="tooltip" title="チェックを入れることで更新ボタンがクリックできるようになります（権限がある場合）">
@@ -231,7 +247,7 @@
                 <div class="row margin-reset">
                     <div class="col">
                         <div class="border border-dark">
-                            <table id="bs-table" class="bs-table table_sticky table table-striped" style="margin-bottom:0px;margin-top:0px;">
+                            <table id="kb-table" class="kb-table table_sticky table table-striped" style="margin-bottom:0px;margin-top:0px;">
                                 <thead>
                                 <tr>
                                     <th >番号</th>
@@ -252,8 +268,8 @@
                                     <td width="150">{{$board_list->created_at}}
                                     <td width="120"><a href="{{ route('plbs01.show',[session('client_id'),$board_list->management_personnel_id])}}" data-toggle="tooltip" title="">{{$board_list->management_name}}</a></td>
                                     <td width="170">【<a href="#">複写</a>】
-                                    【<p id="" name="" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('').submit();">削除</p>】
-                                    <form id="" action="#" method="post" style="display: none;">
+                                    【<p id="kb_list_delete{{$loop->index}}" name="kb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
+                                    <form id="delete{{$loop->index}}" action="#" method="post" style="display: none;">
                                     @csrf
                                     </form>
                                     </td>

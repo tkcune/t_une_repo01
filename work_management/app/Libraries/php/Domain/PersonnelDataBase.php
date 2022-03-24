@@ -76,6 +76,34 @@
         }
 
         /**
+         * 一覧の人員データの取得
+         * @param $client 顧客ID
+         * 
+         * @var   $data 取得データ
+         * @var   $date App\Models\Date;
+         * 
+         * @return  array $data
+         */
+        public static function getList($client_id){
+
+            $data = DB::select('SELECT ji1.client_id,ji1.personnel_id,ji1.name,ji1.email,ji1.password,ji1.password_update_day,
+                    ji1.status,ji1.management_personnel_id,ji1.login_authority,ji1.system_management,ji1.operation_start_date,
+                    ji1.operation_end_date,ji1.remarks,ji1.created_at,ji1.updated_at,dcbs01.name AS high_name,high_id,ji2.name AS management_name 
+                    FROM dcji01 AS ji1
+                    left join dccmks on ji1.personnel_id = dccmks.lower_id 
+                    left join dcbs01 on dccmks.high_id = dcbs01.department_id
+                    left join dcji01 AS ji2 on ji1.management_personnel_id = ji2.personnel_id
+                    where ji1.client_id = ? order by ji1.personnel_id',[$client_id]
+                    );
+            
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
+
+            return $data;
+        }
+
+        /**
          * 最新の人員IDを取得
          * @param $client 顧客ID
          * 

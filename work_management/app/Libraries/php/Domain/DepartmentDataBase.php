@@ -66,6 +66,33 @@
         }
 
         /**
+         * 一覧の部署データの取得
+         * @param $client 顧客ID
+         * 
+         * @var   $data 取得データ
+         * @var   $date App\Models\Date;
+         * 
+         * @return  array $data
+         */
+        public static function getList($client_id){
+
+            $data = DB::select('SELECT bs1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
+                    bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,high_id,dcji01.name AS management_name 
+                    FROM dcbs01 AS bs1
+                    left join dccmks on bs1.department_id = dccmks.lower_id 
+                    left join dcbs01 as bs2 on dccmks.high_id = bs2.department_id
+                    left join dcji01 on bs1.management_personnel_id = dcji01.personnel_id
+                    where bs1.client_id = ? order by bs1.department_id',[$client_id]
+                    );
+            
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
+
+            return $data;
+        }
+
+        /**
          * 最上位部署データの取得
          * @param $client 顧客ID
          * 
@@ -169,13 +196,14 @@
          */
         public static function search($client,$search){
 
-            $data = DB::select('select 
-                    dcbs01.client_id, department_id,responsible_person_id,name,status,
-                    management_personnel_id,operation_start_date,operation_end_date,remarks,
-                    lower_id, high_id, dcbs01.created_at,dcbs01.updated_at from dcbs01 inner join 
-                    dccmks on dcbs01.department_id = dccmks.lower_id and dcbs01.client_id = ? 
-                    where dcbs01.name like ?',[$client,'%'.$search.'%']
-                    );
+            $data = DB::select('SELECT bs1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
+            bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,high_id,dcji01.name AS management_name 
+            FROM dcbs01 AS bs1
+            left join dccmks on bs1.department_id = dccmks.lower_id 
+            left join dcbs01 as bs2 on dccmks.high_id = bs2.department_id
+            left join dcji01 on bs1.management_personnel_id = dcji01.personnel_id
+            where bs1.client_id = ? and bs1.name like ? order by bs1.department_id',
+            [$client,'%'.$search.'%']);
 
             return $data;
         }

@@ -153,9 +153,11 @@
          */
         public function subordinateSearchRoop($lists,$client,$delete_id){
 
+            $lowers = [];
             //直下の配下データを取得
+
             foreach($lists as $list){
-            
+
                 try{
                     $subordinates = DB::select('select lower_id from dccmks where client_id = ? 
                     and high_id = ?',[$client,$list]);
@@ -164,15 +166,16 @@
                     return redirect()->route('index');
                 }
                 
-                $lists = [];
                 //配下データを格納
                 if(isset($subordinates)){
                     foreach($subordinates as $subordinate){
                         array_push($delete_id,$subordinate->lower_id);
-                        array_push($lists,$subordinate->lower_id);
+                        array_push($lowers,$subordinate->lower_id);
                     }
                 }
             }
+
+            $lists = $lowers;
             
             if(!empty($lists)){
                 return $this->subordinateSearchRoop($lists,$client,$delete_id);

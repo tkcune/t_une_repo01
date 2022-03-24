@@ -776,8 +776,8 @@ class Psbs01Controller extends Controller
 
         PtcmtrController::delete_node($delete_data[0]->high_id);
         
-        if($delete_data[0]->high_id == "bs"){
-            redirect()->route('index');
+        if(!isset($delete_data[0]->high_id)){
+            return redirect()->route('pa0001.top');
         }
         return redirect()->route('plbs01.show',[$client,$delete_data[0]->high_id]);
     

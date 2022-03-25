@@ -2649,7 +2649,7 @@ TreeAction.chainparser = function () {
   var decisionTreeClass = function decisionTreeClass(topNode) {
     var isExpand = false;
 
-    if (topNode.id === 'bs' || topNode.id === 'ss' || topNode.id === 'kb') {
+    if (topNode.id !== '0') {
       isExpand = true;
     } //子要素があれば、展開されるボックスのあるツリー(expandtree)
 

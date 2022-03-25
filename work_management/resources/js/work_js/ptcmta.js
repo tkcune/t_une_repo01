@@ -623,7 +623,7 @@ TreeAction.chainparser = (() => {
       let decisionTreeClass = function decisionTreeClass(topNode) {
       
         let isExpand = false;
-       if(topNode.id === 'bs' || topNode.id === 'ss' || topNode.id === 'kb'){
+       if(topNode.id !== '0'){
          isExpand = true;
        }
 

@@ -46,7 +46,7 @@ class TreeData{
         //@var array 返り値の配列
         $tree_chain = [];
         //@var array データを分ける基準
-        $database_index_idname = ['bs', 'kb'];
+        $database_index_idname = ['bs', 'sb', 'kb'];
         
         foreach($database_index_idname as $idname){
             //@var array 基準で分けたデータを入れる
@@ -106,7 +106,7 @@ class TreeData{
         $tree_chain = [];
 
         //@var array ツリーの第一階層のidとタイトル
-        $database_index_chain = ['bs.部署', 'kb.掲示板','ss.システム設定', '0.notitle'];
+        $database_index_chain = ['bs.部署', 'sb.作業場所', 'kb.掲示板','ss.システム設定', '0.notitle'];
     
         //一つ一つのテーブルから上下関係のオブジェクトのデータを作成する
         //@var int $index ループのインデックス
@@ -201,7 +201,7 @@ class TreeData{
     //@return array テーブルのデータを1つにまとめた配列
     private static function create_db_table(){
         //@var array データベースのテーブル名
-        $database_array = ['dcbs01', 'dcji01', 'dckb01'];
+        $database_array = ['dcbs01', 'dcji01', 'dckb01', 'dcsb01'];
         //@var array テーブルのデータをため込む配列
         $query_stack = [];
         //@var array 返り値の配列
@@ -237,7 +237,7 @@ class TreeData{
     //@return array $database_id_name データベースのidとnameが紐づいた配列
     private static function change_id_name($db_table){
         //@var array データベースのidのカラム名
-        $database_colmns_id = ['department_id', 'personnel_id', 'board_id'];
+        $database_colmns_id = ['department_id', 'personnel_id', 'board_id', 'space_id'];
         //@var array 返り値の配列
         $database_id_name = [];
         foreach($db_table as $row){

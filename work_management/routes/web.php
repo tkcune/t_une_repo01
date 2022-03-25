@@ -12,6 +12,7 @@ use App\Http\Controllers\Pppu01Controller;
 use App\Http\Controllers\Pskb01Controller;
 use App\Http\Controllers\Pssb01Controller;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,7 +33,8 @@ Route::resource('psbs01', Psbs01Controller::class);
 Route::resource('psji01', Psji01Controller::class);
 Route::resource('pskb01', Pskb01Controller::class);
 Route::resource('ptcm01', Ptcm01Controller::class);
-Route::resource('ptcm01', Pssb01Controller::class);
+Route::resource('ptcm01', Ptcm01Controller::class);
+Route::resource('pssb01', Pssb01Controller::class);
 
 Route::get('/', [Pa0001Controller::class, 'index'])->name('index');
 

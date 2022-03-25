@@ -714,18 +714,15 @@ class Pa0001Controller extends Controller
      * 
      * @param  \Illuminate\Http\Request  $request
      * 
-     * @var  int $client_id 顧客ID　9/27現在　ダミーデータ(route indexでセッション保存)
+     * @var  int $client_id 顧客ID
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
      * @var  App\Libraries\php\DepartmentDataBase $department_db
      * @var  App\Libraries\php\PersonnelDataBase $personnel_db
-     * @var  array $top_department 最上位の部署データ
-     * @var  App\Models\Date $date
      * @var  array $department_data 部署データ
      * @var  array $personnel_data 人員データ
-     * @var  App\Libraries\php\ResponsiblePerson $responsible
-     * @var  array $top_responsible 最上位の責任者データ
-     * @var  array $top_management 最上位の管理者データ
+     * @var  array $department_details 一覧部署データ
+     * @var  array $personnel_details 一覧人員データ
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
      *
@@ -739,76 +736,35 @@ class Pa0001Controller extends Controller
         $department_db = new DepartmentDataBase();
         $personnel_db = new PersonnelDataBase();
 
-        //一番上の部署を取得
-        try{
-            $top_department = $department_db->getTop($client_id);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('pa0001.errormsg');
-        }
-        
         //部署データの取得
         try{
-            $department_data = $department_db->getAll($client_id);
+            $department_data = $department_db->getList($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
         }
         //人員データの取得
         try{
-            $personnel_data = $personnel_db->getAll($client_id);
+            $personnel_data = $personnel_db->getList($client_id);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
         }
 
-        //責任者を名前で取得
-        $responsible = new ResponsiblePerson();
-        $top_responsible = $responsible->getResponsibleLists($client_id,$top_department);
-
-        //管理者を名前で取得
-        $top_management = $responsible->getManagementLists($client_id,$top_department);
-        
-        //日付フォーマットを変更
-        $date = new Date();
-        $date->formatDate($department_data);
-        $date->formatDate($personnel_data);
-
         //基本ページネーション設定
         $pagination = new Pagination();
         $department_max = $pagination->pageMax($department_data,count($department_data));
-        $departments = $pagination->pagination($department_data,count($department_data),$count_department);
+        $department_details = $pagination->pagination($department_data,count($department_data),$count_department);
         $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
-        $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
-
-        //ページネーションオブジェクト設定
-        $pagination_object = new Pagination();
-        //ページネーションオブジェクトをセットする
-        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
-
-        //責任者を名前で取得
-        $responsible = new ResponsiblePerson();
-        $responsible_lists = $responsible->getResponsibleLists($client_id,$departments);
-
-        //上位階層取得
-        $hierarchical = new Hierarchical();
-        try{
-            $department_high = $hierarchical->upperHierarchyName($departments);
-            $personnel_high = $hierarchical->upperHierarchyName($names);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','02');
-            DatabaseException::dataCatchMiss($e);
-            return redirect()->route('pa0001.errormsg');
-        }
+        $personnel_details = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
         //ツリーデータ取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
         if(session('device') != 'mobile'){
-            return view('pvbs01.pvbs01',compact('top_department','top_responsible','department_max','departments','personnel_max','names',
-            'department_data','responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data'));
+            return view('pvbs01.pvbs01',compact('department_max','department_details','personnel_max','personnel_details',
+            'department_data','count_department','count_personnel','personnel_data'));
         }else{
             return view('pvbs01.pvbs02',compact('top_department','top_responsible','department_max','departments','personnel_max','names',
             'department_data','responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data'));

@@ -16,7 +16,7 @@ class DcsbSeeder extends Seeder
     public function run()
     {
         //@var string dcsb01のカラム列
-        $dcsb_columns = 'client_id,space_id, space_name, management_personnel_id, post_code, prefectural_office_location, address, URL, remarks, created_at, updated_at';
+        $dcsb_columns = 'client_id,space_id, name, management_personnel_id, post_code, prefectural_office_location, address, URL, remarks, created_at, updated_at';
         //@var string カラム列のホルダー
         $dcsb_holder = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?';
         //@var array dcsb01の挿入データ

@@ -34,15 +34,15 @@
                         <p>管理者名：{{$space_details[0]->management_name}}</p>
                     </div>
                     <div class="col" style="padding:0px">
-                    <p>管理者検索：
-                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32"
-
+                        <p>管理者検索：
+                        <input type="text" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
-                        <datalist id="keywords">
-                        </datalist>
-                    </p>
+                        </p>
                     </div>
+                    <div id="output_message">
+
                     </div>
+                </div>
 
                         <div class="row margin-reset">
                             <div class="col-4">

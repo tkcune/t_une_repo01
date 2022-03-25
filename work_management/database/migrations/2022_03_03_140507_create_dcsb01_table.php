@@ -21,7 +21,7 @@ class CreateDcsb01Table extends Migration
                 ->comment('顧客ID');
             $table->string('space_id', '10')
                 ->comment('作業場所ID');
-            $table->string('space_name', '32')
+            $table->string('name', '32')
                 ->comment('作業場所名称');
             $table->string('management_personnel_id', '10')
                 ->comment('管理者人員番号');

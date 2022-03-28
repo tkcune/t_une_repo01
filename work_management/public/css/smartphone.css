@@ -1,0 +1,19 @@
+html, body {
+    width: 100%;
+}
+.header-content {
+    width: 100%;
+}
+
+.hasStickyHeaders {
+    border:1px solid;
+    border-collapse: collapse;
+    position: relative;
+}
+
+.hasStickyHeaders thead th {
+    position: sticky;
+    top: 0;
+    background: gold;
+    border-top:#FFFFFF;
+}

@@ -1,9 +1,10 @@
 import {clipboard} from './ptcmcb';
-import { findMobile } from './ptcmrd'
+import { findMobile } from './ptcmrd';
 
 //@var TreeActionクラス 公開するクラス,ツリー機能クラス
 let TreeAction = {};
 
+if(findMobile.device_name === 'pc'){
 //TreeActionの名前空間
 //ツリー作成クラス
 TreeAction.createTree = {};
@@ -1267,7 +1268,6 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
   //@var nodeクラス this.treeTop ツリーの一番上のノード
   let treeTop = new Node('', '1');
 
-  if(findMobile.device_name === 'pc'){
     if(document.getElementById('chaintree') && document.getElementById('chaintree').tagName === 'DIV'){
     
       //@var dom 仮のツリーのdom
@@ -1304,9 +1304,6 @@ TreeAction.createTree = function(treesepalete, projectionChain, Node, chainparse
     }else{
       console.log('chaintree div tag is no');
     }
-  }else{
-    document.getElementById('tree').style = 'display: none';
-  }
 
   //ツリーインスタンスを返す
   return treeTop;
@@ -1717,5 +1714,7 @@ if(document.getElementById('open_tree')){
 document.getElementById('openTree').addEventListener('click', () => {
   TreeAction.openTree();
 });
-
+}else{
+  document.getElementById('tree').style = 'display: none';
+}
 export {TreeAction};

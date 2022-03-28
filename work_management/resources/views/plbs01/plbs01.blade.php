@@ -1,15 +1,22 @@
-<div class="row margin-reset">
-    <div class="col">
-        <div class="border border-dark">    
-            <table id="bs-table" class="bs-table table_sticky table table-striped sort-table" style="margin-bottom:0px;margin-top:0px;">
+
+        <div class="border border-dark" style="max-height: 100px; overflow-y:scroll;">
+            <table id="bs-table" class="tablesorter hasStickyHeaders" style="margin-bottom:0px;margin-top:0px;">
+            <!-- <colgroup class="tablesorter-colgroup">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+                <col style="width: 30%;">
+                <col style="width: 30%;">
+            </colgroup> -->
                 <thead>
                     <tr>
-                        <th style="white-space: nowrap;">部署番号</th>
-                        <th style="white-space: nowrap;">部署名</th>
-                        <th style="white-space: nowrap;">上位部署</th>
-                        <th style="white-space: nowrap;">状態</th>
-                        <th style="white-space: nowrap;">責任者</th>
-                        <th style="white-space: nowrap;">操作</th>
+                        <th>部署番号</th>
+                        <th>部署名</th>
+                        <th>上位部署</th>
+                        <th>状態</th>
+                        <th>責任者</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,5 +64,3 @@
                 </tbody>
             </table>
         </div>
-    </div>
-</div>

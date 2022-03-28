@@ -1,0 +1,47 @@
+html, body {
+    width: 100%;
+}
+.header-content {
+    width: 100%;
+}
+
+.hasStickyHeaders {
+    border:1px solid;
+    border-collapse: collapse;
+    position: relative;
+}
+
+.hasStickyHeaders thead th {
+    position: sticky;
+    top: 0;
+    background: gold;
+    border-top:#FFFFFF;
+}
+
+#panlist {
+    display: flex;
+    border: 1px solid;
+    position: relative;
+}
+
+.barlist {
+    list-style-type: none;
+    padding: 0;
+    position: absolute;
+    border: 1px solid;
+    right: auto;
+    z-index: 300;
+    background-color: white;
+}
+
+.projection_bar {
+    color: blue;
+}
+
+.current_bar {
+    font-weight: bold;
+}
+
+.notdisplaylist {
+    display: none;
+}

@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -16,11 +16,6 @@
     <!-- JS -->
     <script src="{{ asset('js/pamt01/pamt01.js') }}" defer></script>
     <script src="{{ asset('js/pamt01/pamt02.js') }}" defer></script>
-    
-    <!-- ツリー表示のjsプログラム -->
-    <!-- <script src="{{ asset('js/pamt01/ptcmcb.js') }}" type="module"></script> -->
-    <!-- <script src="{{ asset('js/pamt01/ptcmta.js') }}" type="module"></script> -->
-
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -29,9 +24,10 @@
     <!-- Styles -->
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/smartphone.css') }}" rel="stylesheet">
 
     <!-- Table Sort-->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"　></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/js/jquery.tablesorter.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/css/theme.default.min.css">
     
@@ -54,22 +50,22 @@
     </script>
 </head>
 
-<body class="p-3 mb-2 bg-light">
-<div class="header container-md">
+<body class="bg-light">
+<div id="panlist"></div>
+<div class="header-content">
     @component('components.phcm02')
     @endcomponent
-
-    <div class="container-md">
-        <div class="row">
+</div>
+<div>
+    <div style="display: flex; width: 100%;">
             
-        @component('components.ptcm02')
-        @endcomponent
+    @component('components.ptcm02')
+    @endcomponent
     
             
-        @yield('content')
+    @yield('content')
             
-        </div>
     </div>
-</div>    
+</div>
 </body>
 </html>

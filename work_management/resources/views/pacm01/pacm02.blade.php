@@ -4,7 +4,7 @@
 
     {{-- コメント　詳細画面ここから --}}
     {{-- 部署の詳細表示--}}
-    <div class="col border border-primary" style="padding:10px;">
+    <div class="col border border-primary">
 
     @if( empty(session('click_code')) or session('click_code') == "bs")
     <form action="{{ route('psbs01.update') }}" method="post">

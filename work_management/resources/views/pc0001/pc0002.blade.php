@@ -51,6 +51,7 @@
 </head>
 
 <body class="bg-light">
+<div id="panlist"></div>
 <div class="header-content">
     @component('components.phcm02')
     @endcomponent

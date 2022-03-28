@@ -1,5 +1,3 @@
-<input type="hidden" id="remarks" name="remarks" value="{{$click_personnel_data->remarks}}">
-
 <div class="row margin-reset" id="remarks-field" style="display:none"">
     <div>
         備考

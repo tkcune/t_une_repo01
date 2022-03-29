@@ -6,8 +6,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PtcmtrController;
-use App\Libraries\php\Logic\ResponsiblePerson;
-use Mockery\Undefined;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Pslg01Controller extends Controller
@@ -33,7 +31,11 @@ class Pslg01Controller extends Controller
         session()->put('name_data', $name_data);
         $personnel_data = session()->get('name_data');
 
-        return view('pslg01.pslg01', ['personnel_data' => $personnel_data]);
+        if(session('device') != 'mobile'){
+            return view('pslg01.pslg01', ['personnel_data' => $personnel_data]);
+        }else{
+            return view('pslg01.pslg02', ['personnel_data' => $personnel_data]);
+        }
     }
 
      /**
@@ -53,7 +55,11 @@ class Pslg01Controller extends Controller
 
         $personnel_data = session()->get('name_data');
 
-        return view('pslg01.pslg01', ['personnel_data' => $personnel_data]);
+        if(session('device') != 'mobile'){
+            return view('pslg01.pslg01', ['personnel_data' => $personnel_data]);
+        }else{
+            return view('pslg01.pslg02', ['personnel_data' => $personnel_data]);
+        }
     }
 
 
@@ -129,12 +135,21 @@ class Pslg01Controller extends Controller
         // sessionからname_dataを抽出する
         $personnel_data = session()->get('name_data');
 
-        return view('pslg01.pslg01', [
-            'items' => $items,
-            'count' => $count,
-            'personnel_data' => $personnel_data,
-
-        ]);
+        if(session('device') != 'mobile'){
+            return view('pslg01.pslg01', [
+                'items' => $items,
+                'count' => $count,
+                'personnel_data' => $personnel_data,
+    
+            ]);
+        }else{
+            return view('pslg01.pslg02', [
+                'items' => $items,
+                'count' => $count,
+                'personnel_data' => $personnel_data,
+    
+            ]);
+        }
     }
 
  

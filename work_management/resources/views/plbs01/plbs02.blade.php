@@ -1,8 +1,8 @@
-<div class="row">
+<div class="row m-0" style="box-sizing: border-box;">
                     {{-- ツリー操作機能　--}}
                     
-                    <div class="col-4" style="display:inline-flex; padding-top:15px;">
-                        <p>@if(session('click_code') == "bs")配下@else所属@endif部署</p>
+                    <div class="col-4" style="display:inline-flex;">
+                        <p class="m-0">@if(session('click_code') == "bs")配下@else所属@endif部署</p>
                         {{-- 部署新規ボタン --}}
                         <form action="{{ route('psbs01.index') }}" method="get">
                         <input type="hidden" id="high" name="high" value="{{$click_data[0]->department_id}}">
@@ -50,7 +50,7 @@
                     {{-- ツリー操作機能ここまで　--}}
 
                     {{-- ページネーション--}}
-                    <div class="col-3" style="padding-top:15px;">
+                    <div class="col-3">
 @if(!empty($_POST['search']))
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
@@ -192,8 +192,8 @@
                     </div>
                     {{-- ページネーションここまで--}}
                     {{-- 検索機能　--}}
-                    <div class="col-4" style="display:inline-flex; padding-top:15px">
-                        <p>部署</p>
+                    <div class="col-4" style="display:inline-flex;">
+                        <p class="m-0">部署</p>
                         <form action="{{ route('psbs01.search',[session('client_id'),$select_id])}}" method="post">
                         @csrf
                         @method('post')
@@ -208,7 +208,7 @@
                         </form>
                     </div> 
 
-                    <div class="col" style="padding-top:15px" onclick="listOn()">
-                        <p style="cursor: hand; cursor:pointer;">✕</p>
+                    <div class="col p-0" onclick="listOn()">
+                        <p class="m-0" style="cursor: hand; cursor:pointer;">✕</p>
                     </div>
                 </div>

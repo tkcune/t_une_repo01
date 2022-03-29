@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row m-0" style="box-sizing: border-box;">
                     {{-- ツリー操作機能　--}}
                     <div class="col-4" style="display:inline-flex">
                         <p>所属人員</p>

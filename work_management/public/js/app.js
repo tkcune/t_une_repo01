@@ -1987,12 +1987,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "HierarchyBar": () => (/* binding */ HierarchyBar)
 /* harmony export */ });
-/* harmony import */ var _ptcmrd__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ptcmrd */ "./resources/js/work_js/ptcmrd.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _ptcmrd__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ptcmrd */ "./resources/js/work_js/ptcmrd.js");
+
  //var HIerarchyBarクラス パンくずリストクラス
 
 var HierarchyBar = {};
 
-if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.device_name !== 'pc') {
+if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.device_name !== 'pc') {
   HierarchyBar = function (bar_info) {
     //@var object 作業管理システムのデータ階層
     var bar = {}; //@var dom パンくずリストのdom
@@ -2001,7 +2004,7 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.device_name !== 'pc') {
 
     if (document.getElementById('panlist')) {
       bar_element = document.getElementById('panlist');
-    } //@var
+    } //@var string 次の表示リスト
 
 
     var next = ''; //パンくずリストのオブジェクトデータの作成
@@ -2070,57 +2073,9 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.device_name !== 'pc') {
 
       if (info !== '作業管理システム') {
         titleDiv.innerText = info.split('.')[1];
-        titleDiv.addEventListener('click', function () {
-          //次の要素を保存する
-          next = info;
-          var id = info.split('.')[0];
-
-          if (id === 'sslg') {
-            //ログ確認の場合
-            window.location = 'http://localhost:8000/pslg';
-          } else if (id === 'ssnw') {
-            window.location = 'http://localhost:8000/psnw01';
-          } else if (id.substr(0, 2) === 'ji' || id.substr(0, 2) === 'bs') {
-            //@var string Laravelのセッションid
-            var clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
-
-            var nodeId = id; //移動命令
-
-            window.location = "http://localhost:8000/show/".concat(clientId, "/").concat(nodeId);
-          } else if (id.substr(0, 2) === 'kb') {
-            //@var string Laravelのセッションid
-            var _clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
-
-            var _nodeId = id;
-
-            if (_nodeId === 'kb') {
-              //移動命令
-              window.location = "http://localhost:8000/pskb/";
-            } else {
-              //移動命令
-              window.location = "http://localhost:8000/pskb/show/".concat(_clientId, "/").concat(_nodeId);
-            }
-          } else if (id.substr(0, 2) === 'sb') {
-            //@var string Laravelのセッションid
-            var _clientId2 = document.getElementById('hidden_client_id').value; //@var string ノードのid
-
-            var _nodeId2 = id;
-
-            if (_nodeId2 === 'sb') {
-              //移動命令
-              window.location = "http://localhost:8000/pssb01/";
-            } else {
-              //移動命令
-              window.location = "http://localhost:8000/pssb01/show/".concat(_clientId2, "/").concat(_nodeId2);
-            }
-          } else if (id.substr(0, 2) === 'ta') {
-            //@var string Laravelのセッションid
-            var _clientId3 = document.getElementById('hidden_client_id').value; //@var string ノードのid
-
-            var _nodeId3 = id; //移動命令
-
-            window.location = "http://localhost:8000/show/".concat(_clientId3, "/").concat(_nodeId3);
-          }
+        titleDiv.addEventListener('click', {
+          info: info,
+          handleEvent: page_move
         });
       } else {
         titleDiv.innerText = '作業管理システム';
@@ -2168,57 +2123,9 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.device_name !== 'pc') {
         } //移動のクリック処理
 
 
-        li.addEventListener('click', function () {
-          //次の要素を保存する
-          next = info;
-          var id = info.split('.')[0];
-
-          if (id === 'sslg') {
-            //ログ確認の場合
-            window.location = 'http://localhost:8000/pslg';
-          } else if (id === 'ssnw') {
-            window.location = 'http://localhost:8000/psnw01';
-          } else if (id.substr(0, 2) === 'ji' || id.substr(0, 2) === 'bs') {
-            //@var string Laravelのセッションid
-            var clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
-
-            var nodeId = id; //移動命令
-
-            window.location = "http://localhost:8000/show/".concat(clientId, "/").concat(nodeId);
-          } else if (id.substr(0, 2) === 'kb') {
-            //@var string Laravelのセッションid
-            var _clientId4 = document.getElementById('hidden_client_id').value; //@var string ノードのid
-
-            var _nodeId4 = id;
-
-            if (_nodeId4 === 'kb') {
-              //移動命令
-              window.location = "http://localhost:8000/pskb/";
-            } else {
-              //移動命令
-              window.location = "http://localhost:8000/pskb/show/".concat(_clientId4, "/").concat(_nodeId4);
-            }
-          } else if (id.substr(0, 2) === 'sb') {
-            //@var string Laravelのセッションid
-            var _clientId5 = document.getElementById('hidden_client_id').value; //@var string ノードのid
-
-            var _nodeId5 = id;
-
-            if (_nodeId5 === 'sb') {
-              //移動命令
-              window.location = "http://localhost:8000/pssb01/";
-            } else {
-              //移動命令
-              window.location = "http://localhost:8000/pssb01/show/".concat(_clientId5, "/").concat(_nodeId5);
-            }
-          } else if (id.substr(0, 2) === 'ta') {
-            //@var string Laravelのセッションid
-            var _clientId6 = document.getElementById('hidden_client_id').value; //@var string ノードのid
-
-            var _nodeId6 = id; //移動命令
-
-            window.location = "http://localhost:8000/show/".concat(_clientId6, "/").concat(_nodeId6);
-          }
+        li.addEventListener('click', {
+          info: info,
+          handleEvent: page_move
         }); //pc確認のためのポインター
 
         li.style = 'cursor: pointer;';
@@ -2227,6 +2134,76 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.device_name !== 'pc') {
       nextDiv.appendChild(nextClickDiv);
       nextDiv.appendChild(ul);
       return nextDiv;
+    }; //ページ移動
+
+
+    var page_move = function page_move() {
+      //次の要素を保存する
+      next = this.info;
+      var id = this.info.split('.')[0];
+
+      if (id === 'sslg') {
+        //ログ確認の場合
+        window.location = 'http://localhost:8000/pslg';
+      } else if (id === 'ssnw') {
+        window.location = 'http://localhost:8000/psnw01';
+      } else if (id.substr(0, 2) === 'ji' || id.substr(0, 2) === 'bs') {
+        //@var string Laravelのセッションid
+        var clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
+
+        var nodeId = id; //移動命令
+
+        window.location = "http://localhost:8000/show/".concat(clientId, "/").concat(nodeId);
+      } else if (id.substr(0, 2) === 'kb') {
+        //@var string Laravelのセッションid
+        var _clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
+
+        var _nodeId = id;
+
+        if (_nodeId === 'kb') {
+          //移動命令
+          window.location = "http://localhost:8000/pskb/";
+        } else {
+          //移動命令
+          window.location = "http://localhost:8000/pskb/show/".concat(_clientId, "/").concat(_nodeId);
+        }
+      } else if (id.substr(0, 2) === 'sb') {
+        //@var string Laravelのセッションid
+        var _clientId2 = document.getElementById('hidden_client_id').value; //@var string ノードのid
+
+        var _nodeId2 = id;
+
+        if (_nodeId2 === 'sb') {
+          //移動命令
+          window.location = "http://localhost:8000/pssb01/";
+        } else {
+          //移動命令
+          window.location = "http://localhost:8000/pssb01/show/".concat(_clientId2, "/").concat(_nodeId2);
+        }
+      } else if (id.substr(0, 2) === 'ta') {
+        //@var string Laravelのセッションid
+        var _clientId3 = document.getElementById('hidden_client_id').value; //@var string ノードのid
+
+        var _nodeId3 = id; //移動命令
+
+        window.location = "http://localhost:8000/show/".concat(_clientId3, "/").concat(_nodeId3);
+      } else if (id.substr(0, 2) === 'ss') {
+        //@var string Laravelのセッションid
+        var _clientId4 = document.getElementById('hidden_client_id').value; //@var string ノードのid
+
+        var _nodeId4 = id; //システム設計への移動は、ログ画面に移動する
+
+        if (_nodeId4 === 'ss') {
+          //移動命令
+          window.location = "http://localhost:8000/pslg/";
+        } else if (_nodeId4 === 'ssnw') {
+          //移動命令
+          window.location = "http://localhost:8000/psnw01/";
+        } else if (_nodeId4 === 'sslg') {
+          //移動命令
+          window.location = "http://localhost:8000/pslg/";
+        }
+      }
     };
 
     var chain = [];
@@ -2242,12 +2219,37 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.device_name !== 'pc') {
       } else {
         chain.push(title);
       }
-    }; //変数barにパンくずリスト階層のオブジェクトデータを作成、代入する
+    }; //パンくずリストに表示する次の要素を画面移動の前に保存する
 
+
+    window.addEventListener('beforeunload', function () {
+      localStorage.setItem('next', next);
+    }); //変数barにパンくずリスト階層のオブジェクトデータを作成、代入する
 
     createBarinfo(); //次の要素を取得する
 
-    next = localStorage.getItem('next'); //次の要素がない(初期表示の場合)
+    next = localStorage.getItem('next'); //@var string パス
+
+    var pathname = document.location.pathname;
+
+    if (pathname === '/') {
+      next = 'bs00000001.部署A';
+    } else if (pathname.split('/')[1] === 'show') {
+      //@var string パスの最後のid
+      var next_id = pathname.split('/')[3];
+      bar_info.forEach(function (block) {
+        block.forEach(function (info) {
+          if (Object.keys(info)[0].split('.')[0] === next_id) {
+            next = Object.keys(info)[0];
+          }
+
+          if (Object.values(info)[0].split('.')[0] === next_id) {
+            next = Object.values(info)[0];
+          }
+        });
+      });
+    } //次の要素がない(初期表示の場合)
+
 
     if (!next) {
       next = 'bs00000001.部署A';
@@ -2256,11 +2258,7 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.device_name !== 'pc') {
 
     createChainBar(next); //パンくずリストのdom作成
 
-    createBar(chain.reverse()); //パンくずリストに表示する次の要素を画面移動の前に保存する
-
-    window.addEventListener('unload', function () {
-      localStorage.setItem('next', next);
-    });
+    createBar(chain.reverse());
   }(treeChain);
 }
 
@@ -21480,6 +21478,18 @@ process.umask = function() { return 0; };
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
 /******/ 		};
 /******/ 	})();
 /******/ 	

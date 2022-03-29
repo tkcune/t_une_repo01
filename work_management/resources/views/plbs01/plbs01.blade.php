@@ -1,14 +1,6 @@
 
         <div class="border border-dark" style="max-height: 100px; overflow-y:scroll;">
             <table id="bs-table" class="tablesorter hasStickyHeaders" style="margin-bottom:0px;margin-top:0px;">
-            <!-- <colgroup class="tablesorter-colgroup">
-                <col style="width: 10%;">
-                <col style="width: 10%;">
-                <col style="width: 10%;">
-                <col style="width: 10%;">
-                <col style="width: 30%;">
-                <col style="width: 30%;">
-            </colgroup> -->
                 <thead>
                     <tr>
                         <th>部署番号</th>

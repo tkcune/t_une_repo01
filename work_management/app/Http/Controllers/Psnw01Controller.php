@@ -21,10 +21,17 @@ class Psnw01Controller extends Controller
         if($request->old() == []){
             //@var arrat デフォルトのデータ
             $default_client = NetworkClient::get_default_client_data();
-
-            return view('psnw01/psnw01')->with('client', $default_client);
+            if(session('device') != 'mobile'){
+                return view('psnw01/psnw01')->with('client', $default_client);
+            }else{
+                return view('psnw01/psnw02')->with('client', $default_client);
+            }
         }else{
-            return view('psnw01/psnw01')->with('client', $request->old());
+            if(session('device') != 'mobile'){
+                return view('psnw01/psnw01')->with('client', $request->old());
+            }else{
+                return view('psnw01/psnw02')->with('client', $request->old());
+            }
         }
     }
 

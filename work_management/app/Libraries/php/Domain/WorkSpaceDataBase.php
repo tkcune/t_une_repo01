@@ -282,10 +282,10 @@ class WorkSpaceDataBase
         return $data;
     }
 
-    public static function getClickTop($client,$high_id)
+    public static function getClickTop($client, $high_id)
     {
 
-        $data = DB::select('select * from dcsb01 where client_id = ? and space_id = ?', [$client,$high_id]);
+        $data = DB::select('select * from dcsb01 where client_id = ? and space_id = ?', [$client, $high_id]);
 
         return $data;
     }
@@ -316,7 +316,7 @@ class WorkSpaceDataBase
         DB::update(
             'update dcsb01 set name = ?,management_personnel_id = ?, post_code = ?,prefectural_office_location = ?,address = ? , URL = ? ,remarks = ?
             where client_id=? and space_id = ?',
-            [$name,$management_personnel_id,$post_code,$prefectural_office_location,$address,$URL,$remarks,$client_id,$space_id]
+            [$name, $management_personnel_id, $post_code, $prefectural_office_location, $address, $URL, $remarks, $client_id, $space_id]
         );
     }
 

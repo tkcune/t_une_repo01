@@ -1,14 +1,15 @@
 @extends('pc0001.pc0001')
 
-
 @section('content')
 <div class="col border border-primary" style="padding:10px;">
     <div class="row">
-        <form action="#" method="post">
+        <form action="{{ route('pssb01.update',$space_details[0]->space_id) }}" method="post">
             @csrf
             @method('post')
+            <input type="hidden" id="space_id" name="space_id" value="{{ $space_details[0]->space_id }}">
+            <input type="hidden" name="client_id" value="{{ session('client_id') }}">
 
-            <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
+            <div class="details-area border border-dark bg-info" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4" style="margin-top:-5px; margin-right:-12px">
                         <h2>作業場所詳細</h2>
@@ -34,15 +35,15 @@
                         <p>管理者名：{{$space_details[0]->management_name}}</p>
                     </div>
                     <div class="col" style="padding:0px">
-                    <p>管理者検索：
-                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32"
-
+                        <p>管理者検索：
+                        <input type="text" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
-                        <datalist id="keywords">
-                        </datalist>
-                    </p>
+                        </p>
                     </div>
+                    <div id="output_message">
+
                     </div>
+                </div>
 
                         <div class="row margin-reset">
                             <div class="col-4">
@@ -96,16 +97,16 @@
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" id="updateOn" data-toggle="tooltip" title="クリックにより、登録、更新を確定します"
                             style="opacity: 0.3;" disabled>
         </form>
-                            <form action="#" method="get">
+                            <form action="{{ route('pssb01.create') }}" method="get">
                             @csrf
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規" onclick="submit();"
                             data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
-                            <input type="hidden" id="high_new" name="high" value="">
+                            <input type="hidden" id="high_new" name="high" value="{{ $space_details[0]->space_id }}">
                             </form>
 
                             <form action="#" method="post">
                             @csrf
-                            @method('post')
+                            @method('delete')
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.delete')}}" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip"
                             title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します"  disabled>
                             </form>
@@ -243,7 +244,7 @@
                 <div class="row margin-reset">
                     <div class="col">
                         <div class="border border-dark">
-                            <table id="bs-table" class="bs-table table_sticky table table-striped" style="margin-bottom:0px;margin-top:0px;">
+                            <table id="bs-table" class="bs-table table_sticky-info table table-striped" style="margin-bottom:0px;margin-top:0px;">
                                 <thead>
                                 <tr>
                                     <th width="100">番号</th>

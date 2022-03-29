@@ -29,27 +29,6 @@ class Pssb01Controller extends Controller
     /**
      * 作業場所トップを表示するメソッド
      *
-     * @var int $count_department 部署のページ番号
-     * @var int $count_personnel　人員のページ番号
-     * @var App\Libraries\php\Domain\DepartmentDataBase $department_db
-     * @var array $top_department 部署トップデータ
-     * @var App\Libraries\php\Domain\PersonnelDataBase personnel_db
-     * @var array $personnel_data 人員データ
-     * @var  App\Models\Date; $date
-     * @var  App\Libraries\php\Logic\ResponsiblePerson $responsible
-     * @var  array $top_responsible 最上位の責任者データ
-     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
-     * @var  App\Libraries\php\Service\Pagination $pagination
-     * @var  int $department_max 部署データページネーションの最大値
-     * @var  array $departments ページネーション後の部署データ
-     * @var  int $personnel_max 人員データページネーションの最大値
-     * @var  array $names ページネーション後の人員データ
-     * @var  array $responsible_lists 責任者リスト
-     * @var  array $department_high 部署データの上位階層
-     * @var  array $personnel_high 人員データの上位階層
-     * @var  App\Http\Controllers\PtcmtrController $tree
-     * @var  array $tree_data ツリーデータ
-     *
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -132,37 +111,34 @@ class Pssb01Controller extends Controller
     /**
      * 作業場所新規登録画面表示
      *
-     * @var  App\Http\Controllers\PtcmtrController $tree
-     * @var  array $tree_data ツリーデータ
-     *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
         //  PtcmtrController：ツリーデータをblade側に渡すクラス
-        $tree = new PtcmtrController();
-        $tree_data = $tree->set_view_treedata();
-        return view('pssb01.pssb01');
+        try {
+
+            $tree = new PtcmtrController();
+            $tree_data = $tree->set_view_treedata();
+            return view('pssb01.pssb01');
+        } catch (\Exception $e) {
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
+            DatabaseException::common($e);
+            echo $e->getMessage(), "\n";
+            echo "エラー：" . $e->getMessage();
+            return redirect()->route('index');
+        }
     }
 
     /**
      * 作業場所の新規登録
-     *
-     * @param  \Illuminate\Http\Request  $request
-     *
-     * @var  string $space_id 作業場所ID
-     * @var  string $name 作業場所名称
-     * @var  string $management_personnel_id 管理者ID
-     * @var  string $high 上位作業場所のID番号
-     * @var  string $id 作業場所IDに対応した最新の作業場所IDを格納する因数
-     * @var  App\Libraries\php\Service\ZeroPadding $padding：作業管理システムIDの0埋め機能クラス
      *
      * @return \Illuminate\Http\Response
      */
     public function store(WorkSpaceRequest $request)
     {
         //リクエストの取得
-        $client_id = $request->client_id;
+        $client_id = session('client_id');
         $space_id = $request->space_id;
         $name = $request->name;
         $management_personnel_id = $request->management_number;
@@ -183,9 +159,7 @@ class Pssb01Controller extends Controller
         } catch (\Exception $e) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
             DatabaseException::common($e);
-            echo $e->getMessage(), "\n";
-            echo "エラー：" . $e->getMessage();
-            return redirect()->route('index');
+            return redirect()->route('pssb01.index');
         }
         if (empty($id)) {
             $space_id = "sb00000001";
@@ -212,8 +186,7 @@ class Pssb01Controller extends Controller
         } catch (\Exception $e) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
-            echo "エラー：" . $e->getMessage();
-            return redirect()->route('index');
+            return redirect()->route('pssb01.index');
         }
 
         //データベースに階層情報を登録
@@ -223,7 +196,6 @@ class Pssb01Controller extends Controller
         } catch (\Exception $e) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
             DatabaseException::common($e);
-            echo "エラー：" . $e->getMessage();
         }
         OutputLog::message_log(__FUNCTION__, 'mhcmok0001');
         //メッセージの表示
@@ -254,7 +226,7 @@ class Pssb01Controller extends Controller
         $space_details = $space->get($client_id, $select_id);
 
         //一覧に記載する作業場所データの取得
-        $space_lists = $space->getClickSub($client_id, $select_id);
+        $space_lists = $space->getList($client_id, $select_id);
 
         return view('pssb01.pssb02', compact('space_details', 'space_lists'));
     }
@@ -271,28 +243,84 @@ class Pssb01Controller extends Controller
     }
 
     /**
+     *
+     * 作業場所情報の更新
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        //リクエストの取得
+        $client_id = $request->client_id;
+        $space_id = $request->space_id;
+        $name = $request->name;
+        $management_number = $request->management_number;
+        $post_code = $request->postcode;
+        $prefectural_office_location = $request->prefectural;
+        $address = $request->address;
+        $URL = $request->URL;
+        $remarks = $request->remarks;
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
+
+        //入力されたIDの作業場所が存在するかの確認
+        try {
+            $space_db = new WorkspaceDataBase();
+            $management_personnel_id = $space_db->get($client_id, $space_id);
+        } catch (\Exception $e) {
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
+            return redirect()->route('pssb01.index');
+        }
+
+        if ($management_personnel_id == null) {
+            return redirect()->route('pssb01.index');
+        }
+
+        //情報の更新
+        try {
+            $space_db = new WorkspaceDataBase();
+            $space_db->update(
+                $client_id,
+                $space_id,
+                $name,
+                $management_number,
+                $post_code,
+                $prefectural_office_location,
+                $address,
+                $URL,
+                $remarks,
+            );
+        } catch (\Exception $e) {
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
+            return redirect()->route('pssb01.index');
+        }
+
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0002');
+        $message = Message::get_message('mhcmok0002', [0 => '']);
+        session(['message' => $message[0]]);
+
+        return back();
     }
 
     /**
+     *
+     * 作業場所の削除
      * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($client, $delete)
     {
         //
     }
-
 
     /**
      * Remove the specified resource from storage.

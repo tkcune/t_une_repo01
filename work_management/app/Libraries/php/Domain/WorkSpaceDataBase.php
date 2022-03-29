@@ -45,10 +45,11 @@ class WorkSpaceDataBase
      *
      * @return  array $data
      */
-    public static function getData($space, $select_id)
+    public static function getData($client, $select_id)
     {
 
-        $data = DB::select('select * from dcsb01 where space_id = ?', [$space, $select_id]);
+        $data = DB::select('select * from dcsb01 where client_id = ?
+            and space_id = ?', [$client, $select_id]);
 
         return $data;
     }
@@ -147,7 +148,7 @@ class WorkSpaceDataBase
      *
      * @return  array $data
      */
-    public static function getClickSub($client_id, $select_id)
+    public static function getList($client_id, $select_id)
     {
 
         $data = DB::select('SELECT sb1.client_id,sb1.space_id,sb1.name, sb1.management_personnel_id,
@@ -170,11 +171,11 @@ class WorkSpaceDataBase
      *
      * @return  array $high_id
      */
-    public static function getHighId($space, $space_id)
+    public static function getHighId($client, $space_id)
     {
 
         $high_id = DB::select('select high_id from dcsb01 inner join dccmks on dcsb01.space_id = dccmks.lower_id
-        where dcsb01.space_id = ?', [$space, $space_id]);
+        where dcsb01.client_id = ? and dcsb01.space_id = ?', [$client, $space_id]);
 
         return $high_id;
     }
@@ -219,8 +220,6 @@ class WorkSpaceDataBase
         $URL,
         $remarks
     ) {
-
-        $date = new Date();
 
         //dcsb01のカラム列
         $dcsb_columns = 'client_id, space_id, name, management_personnel_id, post_code, prefectural_office_location,
@@ -283,6 +282,14 @@ class WorkSpaceDataBase
         return $data;
     }
 
+    public static function getClickTop($client,$high_id)
+    {
+
+        $data = DB::select('select * from dcsb01 where client_id = ? and space_id = ?', [$client,$high_id]);
+
+        return $data;
+    }
+
     /**
      * 更新
      * @param $name　作業場所名称
@@ -296,18 +303,20 @@ class WorkSpaceDataBase
      */
 
     public static function update(
+        $client_id,
+        $space_id,
         $name,
+        $management_personnel_id,
         $post_code,
         $prefectural_office_location,
         $address,
         $URL,
-        $remarks,
-        $space_id
+        $remarks
     ) {
         DB::update(
-            'update dcsb01 set management_personnel_id = ?, name = ?,post_code = ?,
-            prefectural_office_location = ?,address = ? , URL = ? ,remarks = ? where space_id = ?',
-            [$name, $post_code, $prefectural_office_location, $address, $URL, $remarks, $space_id]
+            'update dcsb01 set name = ?,management_personnel_id = ?, post_code = ?,prefectural_office_location = ?,address = ? , URL = ? ,remarks = ?
+            where client_id=? and space_id = ?',
+            [$name,$management_personnel_id,$post_code,$prefectural_office_location,$address,$URL,$remarks,$client_id,$space_id]
         );
     }
 
@@ -316,12 +325,13 @@ class WorkSpaceDataBase
      * @param $space_id 作業場所ID
      *
      */
-    public static function delete($client, $select_id)
+    public static function delete($client_id, $lower_id)
     { {
 
             DB::delete(
-                'delete from dcsb01 where space_id = ?',
-                [$client, $select_id]
+                'delete from dcsb01 where client_id = ?
+                and space_id = ?',
+                [$client_id, $lower_id]
             );
         }
     }

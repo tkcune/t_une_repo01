@@ -4,7 +4,7 @@
 @section('content')
 {{--作業場所トップページ　--}}
 <div class="col border border-primary" style="padding:10px;">
-    <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
+    <div class="details-area border border-dark bg-info" style="padding:10px;" id="parent">
         <div class="row">
 
             <div class="col-2" style="margin-top:-5px; margin-right:-12px">
@@ -142,7 +142,7 @@
                 <div class="row margin-reset">
                     <div class="col">
                         <div class="border border-dark">
-                            <table id="bs-table" class="bs-table table_sticky table table-striped sort-table" style="margin-bottom:0px;margin-top:0px;">
+                            <table id="bs-table" class="bs-table table_sticky-info table table-striped sort-table" style="margin-bottom:0px;margin-top:0px;">
                                 <thead>
                                     <tr>
                                         <th widht="100">番号</th>

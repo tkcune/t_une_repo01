@@ -20,13 +20,6 @@
                         <p id="palent">名称：<input type="text" name="name" data-toggle="tooltip" value="" title="作業場所の名称を入力します"></p>
                     </div>
 
-                    <div class="col-3">
-                        @if(isset($space_details[0]->high_id))
-                        <p>上位：<a href="{{ route('pssb01.show',[session('client_id'),$space_details[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$space_details[0]->high_name}}</a></p>
-                        @endif
-                    </div>
-                    <div>
-
                         <div class="row">
                             <div class="col-4">
                                 <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="ji00000001" style="width:100px;" data-toggle="tooltip" title="作業場所情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます" readonly></p>

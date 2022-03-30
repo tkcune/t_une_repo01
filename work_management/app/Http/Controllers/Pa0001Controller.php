@@ -986,6 +986,7 @@ class Pa0001Controller extends Controller
 
             session()->forget('clipboard_id');
 
+            
             //ログ処理
             OutputLog::message_log(__FUNCTION__, 'mhcmok0005');
             $message = Message::get_message('mhcmok0005',[0=>'']);

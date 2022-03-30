@@ -30,7 +30,7 @@ class Pskb01Controller extends Controller
     {
         //ログインしている顧客IDの取得
         $client_id = session('client_id');
-
+        
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();

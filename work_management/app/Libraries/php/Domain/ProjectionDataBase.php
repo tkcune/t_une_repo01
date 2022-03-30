@@ -27,6 +27,126 @@
         }
 
         /**
+         * 部署一覧画面の投影データ
+         * @param string $client 顧客ID
+         * @param string $select_id 選択ID
+         * 
+         * @var string $data データ
+         * @var $date App\Models\Date
+         * 
+         * @return $data
+         */
+        public function getDepartmentList($client,$select_id){
+
+            $data = DB::select('SELECT ta1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
+                    bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,ks1.high_id,ji1.name AS management_name,ji2.name AS responsible_name
+                    FROM dccmta AS ta1
+                    left join dcbs01 as bs1 on ta1.projection_source_id = bs1.department_id
+                    left join dccmks as ks1 on ta1.projection_id = ks1.lower_id 
+                    left join dcbs01 as bs2 on ks1.high_id = bs2.department_id
+                    inner join dcji01 as ji1 on bs1.management_personnel_id = ji1.personnel_id
+                    inner join dcji01 as ji2 on ji1.management_personnel_id = ji2.personnel_id
+                    where ta1.client_id = ? and ks1.high_id = ? order by bs1.department_id',[$client,$select_id]
+                    );
+
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
+
+            return $data;
+        }
+
+        /**
+         * 部署一覧画面の検索投影データ
+         * @param string $client 顧客ID
+         * @param string $select_id 選択ID
+         * 
+         * @var string $data データ
+         * @var $date App\Models\Date
+         * 
+         * @return $data
+         */
+        public function getDepartmentSearch($client,$select_id,$search){
+
+            $data = DB::select('SELECT ta1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
+                    bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,ks1.high_id,ji1.name AS management_name,ji2.name AS responsible_name
+                    FROM dccmta AS ta1
+                    left join dcbs01 as bs1 on ta1.projection_source_id = bs1.department_id
+                    left join dccmks as ks1 on ta1.projection_id = ks1.lower_id 
+                    left join dcbs01 as bs2 on ks1.high_id = bs2.department_id
+                    inner join dcji01 as ji1 on bs1.management_personnel_id = ji1.personnel_id
+                    inner join dcji01 as ji2 on ji1.management_personnel_id = ji2.personnel_id
+                    where ta1.client_id = ? and ks1.high_id = ? and bs1.name like ? order by bs1.department_id',[$client,$select_id,'%'.$search.'%']
+                    );
+
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
+
+            return $data;
+        }
+
+        /**
+         * 人員一覧画面の投影データ
+         * @param string $client 顧客ID
+         * @param string $select_id 選択ID
+         * 
+         * @var string $data データ
+         * @var $date App\Models\Date
+         * 
+         * @return $data
+         */
+        public function getPersonnelList($client,$select_id){
+
+            $data = DB::select('SELECT ta1.client_id,ji1.personnel_id,ji1.name,ji1.email,ji1.password,ji1.password_update_day,
+                    ji1.status,ji1.management_personnel_id,ji1.login_authority,ji1.system_management,ji1.operation_start_date,
+                    ji1.operation_end_date,ji1.remarks,ji1.created_at,ji1.updated_at,bs1.name AS high_name,ks1.high_id,ji2.name AS management_name 
+                    FROM dccmta AS ta1
+                    left join dcji01 AS ji1 on ta1.projection_source_id = ji1.personnel_id
+                    left join dccmks AS ks1 on ta1.projection_id = ks1.lower_id 
+                    left join dcbs01 AS bs1 on ks1.high_id = bs1.department_id
+                    left join dcji01 AS ji2 on ji1.management_personnel_id = ji2.personnel_id
+                    where ji1.client_id = ? and high_id = ? order by ji1.personnel_id',[$client,$select_id]
+                    );
+
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
+
+            return $data;
+        }
+
+        /**
+         * 人員一覧画面の検索投影データ
+         * @param string $client 顧客ID
+         * @param string $select_id 選択ID
+         * 
+         * @var string $data データ
+         * @var $date App\Models\Date
+         * 
+         * @return $data
+         */
+        public function getPersonnelSearch($client,$select_id,$search){
+
+            $data = DB::select('SELECT ta1.client_id,ji1.personnel_id,ji1.name,ji1.email,ji1.password,ji1.password_update_day,
+                    ji1.status,ji1.management_personnel_id,ji1.login_authority,ji1.system_management,ji1.operation_start_date,
+                    ji1.operation_end_date,ji1.remarks,ji1.created_at,ji1.updated_at,bs1.name AS high_name,ks1.high_id,ji2.name AS management_name 
+                    FROM dccmta AS ta1
+                    left join dcji01 AS ji1 on ta1.projection_source_id = ji1.personnel_id
+                    left join dccmks AS ks1 on ta1.projection_id = ks1.lower_id 
+                    left join dcbs01 AS bs1 on ks1.high_id = bs1.department_id
+                    left join dcji01 AS ji2 on ji1.management_personnel_id = ji2.personnel_id
+                    where ji1.client_id = ? and high_id = ? and ji1.name like ? order by ji1.personnel_id',[$client,$select_id,'%'.$search.'%']
+                    );
+
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
+
+            return $data;
+        }
+
+        /**
          * 選択した投影IDを取得する
          * @param string $client 顧客ID
          * @param string $select_id 選択ID

@@ -40,7 +40,6 @@ Route::get('/show/{id}/{id2}', [Psbs01Controller::class, 'show'])->name('plbs01.
 Route::prefix('pa0001')->group(function () {
   Route::get('/log', [Pa0001Controller::class, 'log_redirct'])->name('pa0001.log');
   Route::get('/errormsg', [Pa0001Controller::class, 'errormsg'])->name('pa0001.errormsg');
-  Route::get('/count', [Pa0001Controller::class, 'count'])->name('pa0001.count');
   Route::get('/count/narrowdown', [Pa0001Controller::class, 'countNarrowDown'])->name('pa0001.count_narrowdown');
   Route::get('/count/top', [Pa0001Controller::class, 'countTop'])->name('pa0001.count_top');
   Route::get('/count/department', [Pa0001Controller::class, 'countSearchDepartment'])->name('pa0001.count_search_department');

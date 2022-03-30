@@ -56,6 +56,10 @@ use Carbon\Carbon;
                 $data->password_update_day = Carbon::parse($data->password_update_day)->format('Y-m-d');
             }
             $data->operation_start_date = Carbon::parse($data->operation_start_date)->format('Y-m-d');
+
+            if(isset($data->operation_end_date)){
+                $data->operation_end_date = Carbon::parse($data->operation_end_date)->format('Y-m-d');
+            }
         }
     }
 

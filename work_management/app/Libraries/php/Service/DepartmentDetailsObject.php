@@ -55,7 +55,7 @@
          * @param $operation_date 運用日時データ
          * 
          */
-        public function setDepartmentObject($department_data,$responsible,$management,$operation_date){
+        public function setDepartmentObject($department_data){
 
             $this->client_id = $department_data[0]->client_id;
             $this->name = $department_data[0]->name;
@@ -64,13 +64,13 @@
             $this->high_name = $department_data[0]->high_name;
             $this->lower_id = $department_data[0]->lower_id;
             $this->management_personnel_id = $department_data[0]->management_personnel_id;
-            $this->management_name = $management[0];
+            $this->management_name = $department_data[0]->management_name;
             $this->status = $department_data[0]->status;
             $this->responsible_id = $department_data[0]->responsible_person_id;
-            $this->responsible = $responsible[0];
+            $this->responsible = $department_data[0]->responsible_name;
             $this->responsible_person_id = $department_data[0]->responsible_person_id;
-            $this->operation_start_date = $operation_date["operation_start_date"];
-            $this->operation_end_date = $operation_date["operation_end_date"];
+            $this->operation_start_date = $department_data[0]->operation_start_date;
+            $this->operation_end_date = $department_data[0]->operation_end_date;
             $this->remarks = $department_data[0]->remarks;
             $this->created_at = $department_data[0]->created_at;
             $this->updated_at = $department_data[0]->updated_at;

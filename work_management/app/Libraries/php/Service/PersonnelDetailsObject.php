@@ -55,7 +55,7 @@
          * @param $department_high 上位部署
          * 
          */
-        public function setPersonnelObject($personnel_data,$responsible,$management,$operation_date){
+        public function setPersonnelObject($personnel_data){
 
             $this->name = $personnel_data[0]->name;
             $this->personnel_id = $personnel_data[0]->personnel_id;
@@ -64,12 +64,12 @@
             $this->lower_id = $personnel_data[0]->lower_id;
             $this->email = $personnel_data[0]->email;
             $this->management_personnel_id = $personnel_data[0]->management_personnel_id;
-            $this->management_name = $management[0];
+            $this->management_name = $personnel_data[0]->management_name;
             $this->status = $personnel_data[0]->status;
             $this->login_authority = $personnel_data[0]->login_authority;
             $this->system_management = $personnel_data[0]->system_management;
-            $this->operation_start_date = $operation_date["operation_start_date"];
-            $this->operation_end_date = $operation_date["operation_end_date"];
+            $this->operation_start_date = $personnel_data[0]->operation_start_date;
+            $this->operation_end_date = $personnel_data[0]->operation_end_date;
             $this->remarks = $personnel_data[0]->remarks;
             $this->created_at = $personnel_data[0]->created_at;
             $this->updated_at = $personnel_data[0]->updated_at;

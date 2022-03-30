@@ -22,21 +22,15 @@
          */
         public static function get($client,$select_id){
 
-            //副問合せは上位部署名を取得
-            $data = DB::select('select dcbs01.client_id,department_id,responsible_person_id,
-                    name,status,management_personnel_id,operation_start_date,operation_end_date,
-                    remarks,lower_id, high_id, 
-    
-                    (select name from dcbs01 left join dccmks on dcbs01.department_id = dccmks.lower_id 
-                        where department_id = 
-                            (SELECT high_id from dcbs01 
-                                left join dccmks on dcbs01.department_id = dccmks.lower_id 
-                                 where dcbs01.client_id = ? and department_id = ?))
-                                    AS high_name,
-
-                    dcbs01.created_at, dcbs01.updated_at
-                    from dcbs01 left join dccmks on dcbs01.department_id = dccmks.lower_id 
-                    where dcbs01.client_id = ? and department_id = ?',[$client,$select_id,$client,$select_id]
+            
+            $data = DB::select('SELECT bs1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
+                    bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,lower_id,high_id,ji1.name AS management_name,ji2.name AS responsible_name
+                    FROM dcbs01 AS bs1
+                    left join dccmks on bs1.department_id = dccmks.lower_id 
+                    left join dcbs01 as bs2 on dccmks.high_id = bs2.department_id
+                    left join dcji01 as ji1 on bs1.management_personnel_id = ji1.personnel_id
+                    left join dcji01 as ji2 on bs1.responsible_person_id = ji2.personnel_id
+                    where bs1.client_id = ? and bs1.department_id = ? order by bs1.department_id',[$client,$select_id]
                     );
 
             //登録日・修正日のフォーマットを変換
@@ -83,6 +77,66 @@
                     left join dcbs01 as bs2 on dccmks.high_id = bs2.department_id
                     left join dcji01 on bs1.management_personnel_id = dcji01.personnel_id
                     where bs1.client_id = ? order by bs1.department_id',[$client_id]
+                    );
+            
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
+
+            return $data;
+        }
+
+        /**
+         * 選択部署の一覧部署データの取得
+         * @param $client 顧客ID
+         * 
+         * @var   $data 取得データ
+         * @var   $date App\Models\Date;
+         * 
+         * @return  array $data
+         */
+        public static function getSelectList($client_id,$select_id){
+
+            $data = DB::select('SELECT bs1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
+                    bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,high_id,ji1.name AS management_name,ji2.name AS responsible_name
+                    FROM dcbs01 AS bs1
+                    left join dccmks on bs1.department_id = dccmks.lower_id 
+                    left join dcbs01 as bs2 on dccmks.high_id = bs2.department_id
+                    left join dcji01 as ji1 on bs1.management_personnel_id = ji1.personnel_id
+                    left join dcji01 as ji2 on bs1.responsible_person_id = ji2.personnel_id
+                    where bs1.client_id = ? and high_id = ? order by bs1.department_id',[$client_id,$select_id]
+                    );
+            
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
+
+            return $data;
+        }
+
+        /**
+         * 人員詳細の部署一覧データ
+         * @param $client 顧客ID
+         * @param $select_id 選択ID
+         * 
+         * @var   $data 取得データ
+         * @var   $date App\Models\Date;
+         * 
+         * @return  array $data
+         */
+
+        public static function getDepartmentList($client_id,$select_id){
+
+            $data = DB::select('SELECT 
+                    bs1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
+                    bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,ks2.high_id,ji1.name AS management_name,ji2.name AS responsible_name
+                    FROM dcji01 AS ji1
+                    left join dccmks as ks1 on ji1.personnel_id = ks1.lower_id
+                    inner join dcbs01 as bs1 on ks1.high_id = bs1.department_id
+                    left join dccmks as ks2 on bs1.department_id = ks2.lower_id
+                    left join dcbs01 as bs2 on ks2.high_id = bs2.department_id
+                    inner join dcji01 as ji2 on ji1.management_personnel_id = ji2.personnel_id
+                    where ji1.client_id = ? and ji1.personnel_id = ?',[$client_id,$select_id]
                     );
             
             //登録日・修正日のフォーマットを変換
@@ -191,19 +245,56 @@
          * @param $search 検索文字
          * 
          * @var   $data 取得データ
+         * @var   $date App\Models\Date
          * 
          * @return  array $data
          */
-        public static function search($client,$search){
+        public static function search($client,$select_id,$search){
 
             $data = DB::select('SELECT bs1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
-            bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,high_id,dcji01.name AS management_name 
+            bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,high_id,ji1.name AS management_name,ji2.name AS responsible_name
             FROM dcbs01 AS bs1
             left join dccmks on bs1.department_id = dccmks.lower_id 
             left join dcbs01 as bs2 on dccmks.high_id = bs2.department_id
-            left join dcji01 on bs1.management_personnel_id = dcji01.personnel_id
-            where bs1.client_id = ? and bs1.name like ? order by bs1.department_id',
-            [$client,'%'.$search.'%']);
+            left join dcji01 as ji1 on bs1.management_personnel_id = ji1.personnel_id
+            inner join dcji01 as ji2 on ji1.management_personnel_id = ji2.personnel_id
+            where bs1.client_id = ? and high_id = ? and bs1.name like ? order by bs1.department_id',
+            [$client,$select_id,'%'.$search.'%']);
+            
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
+
+            return $data;
+        }
+
+        /**
+         * 人員詳細画面による部署データの検索
+         * @param $client 顧客ID
+         * @param $search 検索文字
+         * 
+         * @var   $data 取得データ
+         * @var   $date App\Models\Date
+         * 
+         * @return  array $data
+         */
+        public static function searchDetailPersonnel($client,$select_id,$search){
+
+            $data = DB::select('SELECT ji1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
+            bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,ks2.high_id,ji2.name AS management_name,ji3.name AS responsible_name
+            FROM dcji01 AS ji1
+            left join dccmks as ks1 on ji1.personnel_id = ks1.lower_id 
+            left join dcbs01 as bs1 on ks1.high_id = bs1.department_id
+            left join dccmks as ks2 on bs1.department_id = ks2.lower_id
+            left join dcbs01 as bs2 on ks2.high_id = bs2.department_id
+            inner join dcji01 as ji2 on bs1.management_personnel_id = ji2.personnel_id
+            inner join dcji01 as ji3 on ji2.management_personnel_id = ji3.personnel_id
+            where bs1.client_id = ? and ji1.personnel_id = ? and bs1.name like ? order by bs1.department_id',
+            [$client,$select_id,'%'.$search.'%']);
+
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
 
             return $data;
         }

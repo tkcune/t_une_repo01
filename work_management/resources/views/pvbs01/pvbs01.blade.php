@@ -302,7 +302,7 @@
                         {{-- 検索機能　--}}
                     <div class="col-4" style="display:inline-flex;">
                         <p>氏名</p>
-                        <form action="{{ route('psji01.search',[session('client_id'),$personnel_details[0]->personnel_id])}}" method="post">
+                        <form action="#" method="post">
                         @csrf
                         @method('post')
                         @if(!empty($_POST['search2']))

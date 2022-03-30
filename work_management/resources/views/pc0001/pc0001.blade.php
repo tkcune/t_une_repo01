@@ -69,7 +69,6 @@
         @component('components.ptcm02')
         @endcomponent
     
-            
         @yield('content')
             
         </div>

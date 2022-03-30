@@ -59,7 +59,7 @@ class Pa0001Controller extends Controller
         $client_id = "aa00000001";
         $select_id = "bs00000001";
 
-        //ログイン機能が完成次第、そちらで取得可能なため、このセッション取得を削除する。
+        //ログイン機能が完成次第、そちらで取得可能な為、このセッション取得を削除する。
         session(['client_id'=>$client_id]);
 
         $select_code = substr($select_id,0,2);

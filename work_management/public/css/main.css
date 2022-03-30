@@ -1,34 +1,28 @@
-
-
 /*周辺の隙間をリセットするスタイル*/
-.main_button_style{
-
-  padding: 0;
-  border: none;
-  background: transparent;
-
+.main_button_style {
+    padding: 0;
+    border: none;
+    background: transparent;
 }
 
 /*ボタン周辺の隙間をリセットするスタイル*/
-.main_button_display{
-
-  margin-top: -30px;
-  border: none;
-  background: transparent;
-
+.main_button_display {
+    margin-top: -30px;
+    border: none;
+    background: transparent;
 }
 
 /*メイン画面ボタンの基本スタイル*/
 .main_button_img {
     display: block;
-    height:30px;
-    border-style:inset;
+    height: 30px;
+    border-style: inset;
 }
 
 /*備考を開くボタン*/
 .remarks_button {
-  height:30px;
-  border-style:inset;
+    height: 30px;
+    border-style: inset;
 }
 
 /*削除ボタンの非活性状態のスタイル*/
@@ -39,42 +33,59 @@
 /*ボタンの上揃え*/
 
 .top {
-  vertical-align: top;
+    vertical-align: top;
 }
 
 /*ブートストラップのmarginの隙間を消す*/
-.margin-reset{
-  margin-top: -10px;
+.margin-reset {
+    margin-top: -10px;
 }
 
 /*テーブルスクロールのcss*/
-thead{
-  margin-bottom: -16px;
+thead {
+    margin-bottom: -16px;
 }
 
-table th ,td {
-  border:1px solid;
-  }
+table th,
+td {
+    border: 1px solid;
+}
 
 .table_sticky {
-  display: block;
-  overflow-y: scroll;
-  max-height: 120px;
-  border:1px solid;
-  border-collapse: collapse;
+    display: block;
+    overflow-y: scroll;
+    max-height: 120px;
+    border: 1px solid;
+    border-collapse: collapse;
 }
+
+/* 作業場所用 */
+.table_sticky-info {
+    display: block;
+    overflow-y: scroll;
+    max-height: 120px;
+    border: 1px solid;
+    border-collapse: collapse;
+}
+
 .table_sticky thead th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: gold;
-  border-top:#FFFFFF;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: gold;
+    border-top: #ffffff;
+}
+
+/* 作業場所用 */
+.table_sticky-info thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #0dcaf0;
+    border-top: #ffffff;
 }
 
 /*ソート機能のcss*/
 .sorter-false {
-  background-image: none;
+    background-image: none;
 }
-
-
-

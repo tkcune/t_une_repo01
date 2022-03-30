@@ -48,7 +48,7 @@ findMobile = (() => {
         window.location = 'http://localhost:8000/pa0001/responsible/set';
     }else if(device === 'pc' && (device_name === 'smartphone' || device_name === 'tablet')){
         window.location = 'http://localhost:8000/pa0001/responsible/set';
-    }else if(device === 'smartphone' && device_name === 'pc'){
+    }else if((device === 'smartphone' || device === 'tablet') && device_name === 'pc'){
         window.location = 'http://localhost:8000/pa0001/responsible/reset';
     }
     return {

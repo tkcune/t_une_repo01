@@ -1,6 +1,6 @@
-@extends('pc0001.pc0001')
+@extends('pc0001.pc0002')
 
-
+    
 @section('content')
 <div class="col border border-primary" style="padding:10px;">
     <div class="row">
@@ -19,7 +19,7 @@
                     <div class="col-4" style="margin-right:-10px">
                         <p id="palent">名前<input type="text" name="name" value="" data-toggle="tooltip" title="人員の名称を入力します"></p>
                     </div>
-
+                    
                     <div class="col-3">
                         上位:
                     </div>
@@ -36,7 +36,7 @@
                     <div class="col" style="padding:0px">
                     <p>管理者検索：
                         <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32"
-
+                        
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                         <datalist id="keywords">
                         </datalist>
@@ -73,7 +73,7 @@
                             ログイン：
                             <input type="hidden" name="login_authority" value="0">
                             <input type="checkbox" name="login_authority" value="1">
-
+                            
                             運用開始日<input name="start_day" type="date" style="width:140px; margin:0px;" value="{{date('Y-m-d')}}" readonly>
                             運用終了日<input name="finish_day" type="date" style="width:140px; margin:0px;" value="" readonly>
 
@@ -96,7 +96,7 @@
                     </div>
 
                     <div class="row" id="little-information-field" style="display:none">
-
+                        
                     </div>
 
                     <div class="row">
@@ -106,13 +106,10 @@
                                 <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
                             </div>
             </form>
-                            <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
-                                <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く" >
-                            </button>
                         </div>
                     </div>
             </div>
-    </div>
+    </div>     
 </div>
 
 @endsection

@@ -1,6 +1,7 @@
 const { findMobile } = require('./work_js/ptcmrd');
 const { clipboard } = require('./work_js/ptcmcb');
 const { TreeAction } = require('./work_js/ptcmta');
+const { HierarchyBar } = require('./work_js/ptcmhb');
 
 require('./bootstrap');
 

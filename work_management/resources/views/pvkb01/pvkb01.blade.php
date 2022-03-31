@@ -66,42 +66,42 @@
                     {{-- ツリー操作機能　--}}
                     <div class="col-4" style="display:inline-flex">
                         <p>一覧画面</p>
-                        <form action="" method="get">
-                        <input type="hidden" id="ji_high_new" name="high" value="">
+                        <form action="{{ route('pskb01.create') }}" method="get">
+                        <input type="hidden" id="kb_high_new" name="high" value="{{$board_details[0]->board_id}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                         </button>
                         </form>
 
-                        <form action="#" method="post">
+                        <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
                         @csrf
                         @method('patch')
-                        <input type="hidden" id="" name="" value="">
-                        <input type="hidden" id="" name="lower_id" value="{{session('clipboard_id')}}"> 
+                        <input type="hidden" id="high_move" name="high_id" value="{{$board_details[0]->board_id}}">
+                        <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}"> 
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動" disabled style="opacity:0.3">
                         </button>
                         </form>
 
-                        <form action="#" method="post">
+                        <form action="{{ route('pskb01.copy') }}" method="post">
                         @csrf
                         @method('post')
-                        <input type="hidden" name="client_id" value="">
-                        <input type="hidden" name="high_id" value="">
-                        <input type="hidden" id="" name="" value="">
+                        <input type="hidden" name="client_id" value="{{ session('client_id') }}">
+                        <input type="hidden" id="copy" name="copy_id" value="{{session('clipboard_id')}}">
+                        <input type="hidden" id="high_insert" name="high_id" value="{{$board_lists[0]->board_id}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入" disabled style="opacity:0.3">
                         </button>
                         </form>
 
-                        <form action="#" method="post">
+                        <form action="{{ route('ptcm01.store') }}" method="post">
                         @csrf
                         @method('post')
-                        <input type="hidden" name="projection_source_id" value="">
-                        <input type="hidden" name="client_id" value="">
-                        <input type="hidden" id="" name="high_id" value="">
+                        <input type="hidden" name="client_id" value="{{ session('client_id') }}">
+                        <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
+                        <input type="hidden" id="high_projection" name="high_id" value="{{$board_lists[0]->board_id}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影" disabled style="opacity:0.3">
                         </button>
                         </form>
                     </div>

@@ -147,6 +147,31 @@
         }
 
         /**
+         * 掲示板一覧画面の投影データ
+         * @param string $client 顧客ID
+         * @param string $select_id 選択ID
+         * 
+         * @var string $data データ
+         * @var $date App\Models\Date
+         * 
+         * @return $data
+         */
+        public function getBoardList($client,$select_id){
+
+            $data = DB::select('SELECT ta1.client_id,kb1.board_id,kb1.name,kb1.status,kb1.management_personnel_id,
+                                kb1.remarks,kb1.created_at,kb1.updated_at,kb2.name AS high_name,high_id,dcji01.name AS management_name
+                                FROM dccmta AS ta1
+                                left join dckb01 AS kb1 on ta1.projection_source_id = kb1.board_id
+                                left join dccmks AS ks1 on ta1.projection_id = ks1.lower_id
+                                left join dckb01 AS kb2 on ks1.high_id = kb2.board_id
+                                left join dcji01 on kb1.management_personnel_id = dcji01.personnel_id
+                                where ta1.client_id = ? and high_id = ? order by kb1.board_id',[$client,$select_id]
+                    );
+
+            return $data;
+        }
+
+        /**
          * 選択した投影IDを取得する
          * @param string $client 顧客ID
          * @param string $select_id 選択ID

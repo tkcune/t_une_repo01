@@ -115,5 +115,6 @@ Route::prefix('pskb')->group(function () {
 //作業場所に関するルーティング
 Route::prefix('pssb01')->group(function () {
     Route::get('/', [Pssb01Controller::class, 'index'])->name('pssb01.index');
+    Route::post('/kbcopy', [Pskb01Controller::class, 'copy'])->name('pskb01.copy');
     Route::get('/show/{id}/{id2}', [Pssb01Controller::class, 'show'])->name('pssb01.show');
 });

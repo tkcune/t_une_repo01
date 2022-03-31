@@ -167,6 +167,19 @@ class Pskb01Controller extends Controller
         //一覧に記載する掲示板データの取得
         $board_lists = $board_db->getList($client_id,$select_id);
 
+        //一覧の投影部署データの取得
+        try{
+            $projection_db = new ProjectionDataBase();
+            $projection_board = $projection_db->getBoardList($client_id,$select_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('pa0001.errormsg');
+        }
+
+        //投影データを一覧に追加
+        $board_lists = array_merge($board_lists,$projection_board);
+
         //システム管理者のリストを取得
         try{
             $personnel_db = new PersonnelDataBase();
@@ -349,7 +362,17 @@ class Pskb01Controller extends Controller
         if(!isset($delete_data[0]->high_id)){
             return redirect()->route('pskb.index');
         }
-        return redirect()->route('plbs01.show',[$client_id,$delete_data[0]->high_id]);
+        return redirect()->route('pskb01.show',[$client_id,$delete_data[0]->high_id]);
     }
 
+    /**
+     * 
+     * 複製したデータを挿入するメソッド
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function copy(Request $request){
+
+    }
 }

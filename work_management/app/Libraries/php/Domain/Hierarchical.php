@@ -146,6 +146,7 @@
          * @param string $client 顧客ID
          * @param array $delete_id 配下データをまとめた配列
          * 
+         * @var array $lowers 下位IDを格納した配列
          * @var array $subordinates 直下の配下データを格納した配列
          * @var Illuminate\Database\QueryException $e エラー内容
          * 
@@ -179,7 +180,7 @@
             if(!empty($lists)){
                 return $this->subordinateSearchRoop($lists,$client,$delete_id);
             }
-                return $delete_id;
+            return $delete_id;
         }
 
         /**

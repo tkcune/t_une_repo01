@@ -22,7 +22,7 @@ class Pskb01Controller extends Controller
      * @var  string $client_id 顧客ID
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
-     * @var  App\Libraries\php\Domain\BoardDataBase $board
+     * @var  App\Libraries\php\Domain\BoardDataBase $board_db
      * @var  array $board_lists 掲示板一覧データ
      * 
      * @return \Illuminate\Http\Response
@@ -37,8 +37,8 @@ class Pskb01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         //一覧に記載する掲示板データの取得
-        $board = new BoardDataBase();
-        $board_lists = $board->getAll($client_id);
+        $board_db = new BoardDataBase();
+        $board_lists = $board_db->getAll($client_id);
 
         return view('pvkb01.pvkb01',compact('board_lists'));
     }
@@ -46,6 +46,10 @@ class Pskb01Controller extends Controller
     /**
      * 新規登録ページに遷移
      *
+     * @var $client_id 顧客ID
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
+     * 
      * @return \Illuminate\Http\Response
      */
     public function create()
@@ -61,9 +65,21 @@ class Pskb01Controller extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 掲示板登録
      *
      * @param  \Illuminate\Http\Request  $request
+     * 
+     * @var $client_id　顧客ID
+     * @var $name 名称
+     * @var $status 状態
+     * @var $management_personnel_id 管理者ID
+     * @var $high 上位ID
+     * @var $remarks 備考
+     * @var App\Libraries\php\Domain\BoardDataBase $board_db
+     * @var $id 現時点でDBに存在している最新のID
+     * @var $board_id 最新の掲示板ID
+     * @var App\Libraries\php\Domain\Hierarchical $hierarchical
+     * 
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -124,7 +140,15 @@ class Pskb01Controller extends Controller
     /**
      * 選択掲示板の表示
      *
-     * @param  int  $id
+     * @param  int  $client_id 顧客ID
+     * @param  int  $select_id 選択ID
+     * 
+     * @var App\Libraries\php\Domain\BoardDataBase $board_db
+     * @var array $board_details 掲示板詳細データ
+     * @var array $board_lists 掲示板一覧データ
+     * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var $system_management_lists システム管理者リスト
+     * 
      * @return \Illuminate\Http\Response
      */
     public function show($client_id,$select_id)
@@ -137,13 +161,23 @@ class Pskb01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         //詳細に記載する掲示板データの取得
-        $board = new BoardDataBase();
-        $board_details = $board->get($client_id,$select_id);
+        $board_db = new BoardDataBase();
+        $board_details = $board_db->get($client_id,$select_id);
 
         //一覧に記載する掲示板データの取得
-        $board_lists = $board->getList($client_id,$select_id);
+        $board_lists = $board_db->getList($client_id,$select_id);
 
-        return view('pskb01.pskb01',compact('board_details','board_lists'));
+        //システム管理者のリストを取得
+        try{
+            $personnel_db = new PersonnelDataBase();
+            $system_management_lists = $personnel_db->getSystemManagement($client_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('pa0001.errormsg');
+        }
+
+        return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists'));
     }
 
     /**
@@ -161,6 +195,18 @@ class Pskb01Controller extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  int $board_id 掲示板ID
+     * 
+     * @var $client_id　顧客ID
+     * @var $name 名称
+     * @var $status 状態
+     * @var $management_personnel_id 管理者ID
+     * @var $high 上位ID
+     * @var $remarks 備考
+     * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var $management_personnel_id 管理者人員ID
+     * @var App\Libraries\php\Domain\BoardDataBase $board_db
+     * 
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request,$board_id)
@@ -211,7 +257,20 @@ class Pskb01Controller extends Controller
     /**
      * 掲示板の削除
      *
-     * @param  int  $id
+     * @param  int  $delete　削除ID
+     * 
+     * @var  $client_id 顧客ID
+     * @var  array $lists 削除予定のIDを格納した配列
+     * @var  array $delete_id 選択部署の配下の削除予定のID
+     * @var  array $delete_data 削除掲示板の上位ID
+     * @var  App\Libraries\php\Domain\BoardDataBase $board_db
+     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
+     * @var  array $delete_lists 削除予定のIDを格納した配列
+     * @var  int   $code 機能コードの頭2文字
+     * @var  array $delete_projections 削除元
+     * @var  App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var  string $message メッセージ
+     * 
      * @return \Illuminate\Http\Response
      */
     public function destroy($delete)
@@ -272,7 +331,6 @@ class Pskb01Controller extends Controller
             DB::commit();
 
         }catch(\Exception $e){
-            dd($e);
             //ロールバック
             DB::rollBack();
 

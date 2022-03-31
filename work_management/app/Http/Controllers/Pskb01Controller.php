@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Facades\OutputLog;
 use App\Libraries\php\Domain\PersonnelDataBase;
 use App\Libraries\php\Domain\BoardDataBase;
+use App\Libraries\php\Domain\ProjectionDataBase;
 use App\Libraries\php\Domain\Hierarchical;
 use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
@@ -210,16 +211,87 @@ class Pskb01Controller extends Controller
     /**
      * 掲示板の削除
      *
-     * DB:アンチパターンになってしまっている為、親子関係を示すテーブルの修正の必要性大
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($delete_id)
+    public function destroy($delete)
     {
         $client_id = session('client_id');
+        $lists = [];
+        $delete_id = [];
+        array_push($lists,$delete);
 
-        //選択した部署の配下を取得
+        $board_db = new BoardDataBase();
+
+        //削除予定の掲示板の上位IDを取得(削除後のページ遷移に必要)
+        $delete_data = $board_db->get($client_id,$delete);
+
+        //削除予定の配下掲示板IDを取得
         $hierarchical = new Hierarchical();
-        $delete_lists = $hierarchical->getAll($client_id,$delete_id);
+        $delete_lists = $hierarchical->subordinateSearchRoop($lists,$client_id,$delete_id);
+
+        //選択した削除予定掲示板のIDを追加
+        array_unshift($delete_lists,$delete);
+
+        try{
+            //トランザクション
+            DB::beginTransaction();
+
+            foreach($delete_lists as $delete_list){
+                //機能コードの判定
+                $code = substr($delete_list,0,2);
+
+                //対応したデータの削除
+                if ($code == "kb"){
+                    $board_db->delete($client_id,$delete_list);
+
+                    //削除予定の配下掲示板が元になった投影を削除
+                    $projection_db = new ProjectionDataBase();
+                    $delete_projections = $projection_db->getProjectionId($client_id,$delete_list);
+                    foreach($delete_projections as $delete_projection){
+                        $hierarchical = new Hierarchical();
+                        $hierarchical->delete($client_id,$delete_projection->projection_id);
+                        $projection_db = new ProjectionDataBase();
+                        $projection_db->delete($client_id,$delete_projection->projection_id);
+                    }
+                    $projection_db = new ProjectionDataBase();
+                    $projection_db->delete($client_id,$delete_list);
+
+                }elseif($code == "ta"){
+                    //投影の削除
+                    $projection_db = new ProjectionDataBase();
+                    $projection_db->delete($client_id,$delete_list);
+                }else{
+
+                }
+                //データの階層構造を削除
+                $hierarchical = new Hierarchical();
+                $hierarchical->delete($client_id,$delete_list);
+            }
+
+            DB::commit();
+
+        }catch(\Exception $e){
+            dd($e);
+            //ロールバック
+            DB::rollBack();
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
+        $message = Message::get_message('mhcmok0003',[0=>'']);
+        session(['message'=>$message[0]]);
+
+        PtcmtrController::delete_node($delete_data[0]->high_id);
+
+        if(!isset($delete_data[0]->high_id)){
+            return redirect()->route('pskb.index');
+        }
+        return redirect()->route('plbs01.show',[$client_id,$delete_data[0]->high_id]);
     }
+
 }

@@ -123,4 +123,9 @@
             DB::update('update dckb01 set name = ?,status = ?,management_personnel_id = ?,remarks = ? where client_id = ? and board_id = ?
             ',[$name,$status,$management_personnel_id,$remarks,$client_id,$board_id]);
         }
+
+        public static function delete($client_id,$board_id){
+
+            DB::delete('delete from dckb01 where client_id = ? and board_id = ?',[$client_id,$board_id]);
+        }
     }

@@ -165,7 +165,6 @@
                     OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                     return redirect()->route('index');
                 }
-                
                 //配下データを格納
                 if(isset($subordinates)){
                     foreach($subordinates as $subordinate){

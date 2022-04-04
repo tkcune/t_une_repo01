@@ -22,17 +22,16 @@
                 {{--  部署詳細,名称  --}}
                 @include('pscm01.pscm06', ['click_department_data' => $department_details_object, 'click_department_high_name' => $department_details_object->high_name])
                 {{-- 管理者番号、管理者名、管理者検索 --}}
-                @include('pscm01.pscm07', ['click_department_data' => $department_details_object, 'click_management_lists' => $click_management_lists, 'all_personnel_data' => $all_personnel_data])
+                @include('pscm01.pscm07', ['click_department_data' => $department_details_object, 'click_management_lists' => $system_management_lists])
                 {{-- 状態、責任者、運用開始日、運用終了日 --}}
                 @include('pscm01.pscm03', 
                     [
-                        'click_department_data' => $department_details_object, 
-                        'top_responsible' => $click_responsible_lists, 
+                        'click_department_data' => $department_details_object,
                         'personnel_data' => $personnel_data
                     ]
                 )
                 {{-- 備考 --}}
-                @include('pscm01.pscm05', ['click_department_data' => $department_details_object, 'click_responsible_lists' => $click_responsible_lists])
+                @include('pscm01.pscm05', ['click_department_data' => $department_details_object])
 
                 <div class="row">
                     <div class="col">
@@ -65,7 +64,7 @@
                 <!-- 人事詳細,名前,上位 -->
                 @include('pscm01.pscm09', ['click_personnel_data' => $personnel_details_object])
                 <!-- 管理者番号,管理者名,管理者検索 -->
-                @include('pscm01.pscm10', ['click_personnel_data' => $personnel_details_object, 'all_personnel_data' => $all_personnel_data, 'click_management_lists' => $click_management_lists])
+                @include('pscm01.pscm10', ['click_personnel_data' => $personnel_details_object, 'system_management_lists' => $system_management_lists])
 
                 <!-- メールアドレス、パスワード、メール送信 -->
                 @include('pscm01.pscm11', ['click_personnel_data' => $personnel_details_object])
@@ -110,7 +109,7 @@
                     )
                 </div>
                 {{-- 部署一覧表示画面 --}}
-                @include('plbs01.plbs01', ['department_high' => $department_high, 'departments' => $pagination_object->departments, 'responsible_lists' => $responsible_lists])
+                @include('plbs01.plbs01', ['departments' => $pagination_object->departments])
             </div>
 @if( empty(session('click_code')) or session('click_code') == "bs")
             <div class="personnel-area" style="padding-top:5px">
@@ -128,7 +127,7 @@
                     )
                 </div>
                 {{-- 人事一覧表示画面 --}}
-                @include('plji01.plji01', ['names' => $pagination_object->names, 'personnel_high' => $personnel_high])
+                @include('plji01.plji01', ['names' => $pagination_object->names])
             </div>
         </div>
     </div>

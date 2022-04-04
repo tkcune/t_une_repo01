@@ -22,7 +22,7 @@
                         @else
                         <td><a href="{{ route('plbs01.show',[session('client_id'),$name->personnel_id])}}" data-toggle="tooltip" title="クリックにより、当該人員に遷移します">{{$name->name}}</a></td>
                         @endif 
-                        <td><a href="{{ route('plbs01.show',[session('client_id'),$personnel_high[$loop->index]->department_id])}}" data-toggle="tooltip" title="クリックにより、所属部署に遷移します">{{$personnel_high[$loop->index]->name}}</a>
+                        <td><a href="{{ route('plbs01.show',[session('client_id'),$name->high_id])}}" data-toggle="tooltip" title="クリックにより、所属部署に遷移します">{{$name->high_name}}</a>
                         <td>
                         @switch($name->status)
                             @case(10)

@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-4" id="page_name">
-        <h2>部署詳細</2>
+        <h2>部署詳細</2><div class="bs_question_parent"><span id="bs_question">?</span><span id="bs_question_baloon" class="bs_not_baloon">部署詳細<span></div>
     </div>
     <div id="name_value" class="col-4">
         <p>

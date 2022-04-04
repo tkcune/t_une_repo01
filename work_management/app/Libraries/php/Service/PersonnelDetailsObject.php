@@ -33,6 +33,7 @@
         public $client_id; 
         public $personnel_id;
         public $high_id;
+        public $department_id;
         public $high_name;
         public $lower_id;
         public $email;
@@ -60,6 +61,7 @@
             $this->name = $personnel_data[0]->name;
             $this->personnel_id = $personnel_data[0]->personnel_id;
             $this->high_id = $personnel_data[0]->high_id;
+            $this->department_id = $this->high_id;
             $this->high_name = $personnel_data[0]->high_name;
             $this->lower_id = $personnel_data[0]->lower_id;
             $this->email = $personnel_data[0]->email;

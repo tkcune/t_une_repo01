@@ -5,7 +5,7 @@
                         <p class="m-0">@if(session('click_code') == "bs")配下@else所属@endif部署</p>
                         {{-- 部署新規ボタン --}}
                         <form action="{{ route('psbs01.index') }}" method="get">
-                        <input type="hidden" id="high" name="high" value="{{$click_data[0]->department_id}}">
+                        <input type="hidden" id="high" name="high" value="{{$click_data->department_id}}">
                         
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
@@ -14,7 +14,7 @@
 
                         {{-- 部署移動ボタン --}}
                         <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
-                        <input type="hidden" id="high_move" name="high_id" value="{{$click_data[0]->department_id}}">
+                        <input type="hidden" id="high_move" name="high_id" value="{{$click_data->department_id}}">
                         <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}">
                         @csrf
                         @method('patch')
@@ -29,7 +29,7 @@
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         <input type="hidden" id="copy" name="copy_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" id="high_insert" name="high_id" value="{{$click_data[0]->department_id}}">
+                        <input type="hidden" id="high_insert" name="high_id" value="{{$click_data->department_id}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入">
                         </button>
@@ -41,7 +41,7 @@
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" id="high_projection" name="high_id" value="{{$click_data[0]->department_id}}">
+                        <input type="hidden" id="high_projection" name="high_id" value="{{$click_data->department_id}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
                         </button>

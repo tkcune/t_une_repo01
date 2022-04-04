@@ -15,8 +15,8 @@
             ログイン:
             <input name="login_authority" type="checkbox" value="1" onclick="loginDisabled()" @if($click_personnel_data->login_authority == "1") checked @endif>
                         
-            運用開始日<input name="start_day" type="date" style="width:140px; margin:0px;" value="{{$click_personnel_data->operation_start_date}}">
-            運用終了日<input name="finish_day" type="date" style="width:140px; margin:0px;" value="{{$click_personnel_data->operation_end_date}}">
+            運用開始日<input name="start_day" type="date" style="margin:0px;" value="{{$click_personnel_data->operation_start_date}}">
+            運用終了日<input name="finish_day" type="date" style="margin:0px;" value="{{$click_personnel_data->operation_end_date}}">
 
             <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                 <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >

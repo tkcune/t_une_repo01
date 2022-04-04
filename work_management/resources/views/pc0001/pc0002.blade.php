@@ -50,7 +50,7 @@
     </script>
 </head>
 
-<body class="bg-light">
+<body class="bg-light" id="body">
 <div id="panlist"></div>
 <div class="header-content">
     @component('components.phcm02')

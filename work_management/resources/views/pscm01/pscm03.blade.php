@@ -26,7 +26,7 @@
     </div>
     <div>
         <select name="responsible_person_id" style="width:90px; margin:0px;" data-toggle="tooltip" title="部署の責任者を選択します">
-            <option value="{{$department_details_object->responsible_person_id}}">{{$top_responsible[0]}}</option>
+            <option value="{{$department_details_object->responsible_person_id}}">{{$click_department_data->responsible}}</option>
                        
             @for($i = 0;$i < count($personnel_data);$i++)
                 @if($personnel_data[$i]->high_id == $department_details_object->department_id)

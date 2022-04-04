@@ -20,7 +20,7 @@
                             @else
                             <td><a href="{{ route('plbs01.show',[session('client_id'),$department->department_id])}}" data-toggle="tooltip" title="クリックにより、当該部署に遷移します">{{$department->name}}</a></td>
                             @endif
-                            <td>@if(!(empty($department_high)))<a href="{{ route('plbs01.show',[session('client_id'),$department_high[$loop->index]->department_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$department_high[$loop->index]->name}}</a>@endif</td>
+                            <td>@if(!(empty($department->high_id)))<a href="{{ route('plbs01.show',[session('client_id'),$department->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$department->high_name}}</a>@endif</td>
                             <td>
                             @switch($department->status)
                                     @case(10)
@@ -43,7 +43,7 @@
                                     @break
                                 @endswitch
                             </td>
-                            <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}" data-toggle="tooltip" title="クリックにより、責任者の人員詳細に遷移します">{{ $responsible_lists[$loop->index] }}</a></td>
+                            <td><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}" data-toggle="tooltip" title="クリックにより、責任者の人員詳細に遷移します">{{$department->responsible_name}}</a></td>
                                 <td width="190">
                                     【<a href="{{ route('pa0001.clipboard',$department->department_id)}}">複写</a>】
                                     【<p id="bs_list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('bs_delete{{$loop->index}}').submit();">削除</p>】

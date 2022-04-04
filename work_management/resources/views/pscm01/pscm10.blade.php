@@ -4,7 +4,7 @@
         data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
     </div>
     <div class="col-3" style="padding:0px">
-        <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$click_personnel_data->management_personnel_id])}}">{{$click_management_lists[0]}}</a></p>
+        <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$click_personnel_data->management_personnel_id])}}">{{$click_personnel_data->management_name}}</a></p>
     </div>
     <div class="col" style="padding:0px">
         <p>管理者検索：
@@ -12,11 +12,9 @@
             data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                 <datalist id="keywords">
                         
-@for($j = 0; $j < count($all_personnel_data);$j++)
-@if($all_personnel_data[$j]->system_management == 1)
-                    <option value="{{$all_personnel_data[$j]->name}}" label="{{$all_personnel_data[$j]->personnel_id}}"></option>
-@endif
-@endfor
+                @foreach($system_management_lists as $system_management_list)
+                    <option value="{{$system_management_list->name}}" label="{{$system_management_list->personnel_id}}"></option>
+                @endforeach
                 </datalist>
         </p>
     </div>

@@ -572,13 +572,6 @@ class Psbs01Controller extends Controller
             return redirect()->route('index');
         }
 
-        ////選択した部署が最上位部署かの確認
-        if(empty($delete_data)){
-            $department_db = new DepartmentDataBase();
-            $delete_data = $department_db->getClickTop($client,$delete);
-            $delete_data[0]->high_id = "bs";
-        }
-
         //選択した部署の配下を取得
         $hierarchical = new Hierarchical();
         $delete_lists = $hierarchical->subordinateSearchRoop($lists,$client,$delete_id);
@@ -645,9 +638,14 @@ class Psbs01Controller extends Controller
         $message = Message::get_message('mhcmok0003',[0=>'']);
         session(['message'=>$message[0]]);
 
-        PtcmtrController::delete_node($delete_data[0]->high_id);
         
         if(!isset($delete_data[0]->high_id)){
+            $delete_data[0]->high_id = "bs";
+        }
+
+        PtcmtrController::delete_node($delete_data[0]->high_id);
+        
+        if($delete_data[0]->high_id == "bs"){
             return redirect()->route('pa0001.top');
         }
         return redirect()->route('plbs01.show',[$client,$delete_data[0]->high_id]);

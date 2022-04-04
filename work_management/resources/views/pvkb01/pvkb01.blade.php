@@ -67,7 +67,7 @@
                     <div class="col-4" style="display:inline-flex">
                         <p>一覧画面</p>
                         <form action="{{ route('pskb01.create') }}" method="get">
-                        <input type="hidden" id="kb_high_new" name="high" value="{{$board_details[0]->board_id}}">
+                        <input type="hidden" id="kb_high_new" name="high" value="kb00000000">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                         </button>
@@ -76,7 +76,7 @@
                         <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
                         @csrf
                         @method('patch')
-                        <input type="hidden" id="high_move" name="high_id" value="{{$board_details[0]->board_id}}">
+                        <input type="hidden" id="high_move" name="high_id" value="">
                         <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}"> 
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動" disabled style="opacity:0.3">

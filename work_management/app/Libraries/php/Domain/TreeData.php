@@ -89,9 +89,7 @@ class TreeData{
                     }
                 }
             }
-            if($chain_block != []){
-                $tree_chain[] = $chain_block;
-            }
+            $tree_chain[] = $chain_block;
         }
         return $tree_chain;
     }
@@ -136,35 +134,44 @@ class TreeData{
                 //マイツリーでもnotitleでもない場合
                 //第一階層の下のデータを探して代入していく
                 if($database_id_name !== [] && $tree_id_chain !== []){
-                    foreach($tree_id_chain[$index] as $value){
-                        //@var string データベースのid
-                        $search = $value['high_id'];
-                        if(!in_array($value['high_id'], $was_search_array)){
-                            $search = $value['high_id'];
-                            $was_search_array[] = $value['high_id'];
-                        }else{
-                            continue;
-                        }
-
-                        //@var boolean下位の方にデータがないか判断するフラグ
-                        $top_flag = true;
-                        //上下関係のオブジェクトのデータ(idだけ)をループする
-                        foreach($tree_id_chain[$index] as $search_row){
-                            //下位に、データが存在すれば、フラグをfalseにする
-                            if($search == $search_row['lower_id']){
-                                $top_flag = false;
+                    //空の時は階層テーブル(dccmks)にデータがない。
+                    if($tree_id_chain[$index] == []){
+                        foreach($database_id_name as $key => $value){
+                            if(substr($database_index_chain[$index], 0, 2) == substr($key, 0, 2)){
+                                $chain[] = array($database_index_chain[$index] => $key.'.'.$value);
                             }
                         }
-                        //下位に、データが存在しない上位にしかデータが存在しない場合、
-                        if($top_flag){
-                            //配列にidと名称を結合して代入する
-                            $chain[] = array($database_index_chain[$index] => $search.'.'.$database_id_name[$search]);
+                    }else{
+                        foreach($tree_id_chain[$index] as $value){
+                            //@var string データベースのid
+                            $search = $value['high_id'];
+                            if(!in_array($value['high_id'], $was_search_array)){
+                                $search = $value['high_id'];
+                                $was_search_array[] = $value['high_id'];
+                            }else{
+                                continue;
+                            }
+    
+                            //@var boolean下位の方にデータがないか判断するフラグ
+                            $top_flag = true;
+                            //上下関係のオブジェクトのデータ(idだけ)をループする
+                            foreach($tree_id_chain[$index] as $search_row){
+                                //下位に、データが存在すれば、フラグをfalseにする
+                                if($search == $search_row['lower_id']){
+                                    $top_flag = false;
+                                }
+                            }
+                            //下位に、データが存在しない上位にしかデータが存在しない場合、
+                            if($top_flag){
+                                //配列にidと名称を結合して代入する
+                                $chain[] = array($database_index_chain[$index] => $search.'.'.$database_id_name[$search]);
+                            }
                         }
-                    }
-                    //第一階層と第一階層の下以外の上下関係のオブジェクトのデータを作成する
-                    foreach($tree_id_chain[$index] as $row){
-                        if(array_key_exists($row['high_id'], $database_id_name) && array_key_exists($row['lower_id'], $database_id_name)){
-                            $chain[] = array($row['high_id'].'.'.$database_id_name[$row['high_id']] => $row['lower_id'].'.'.$database_id_name[$row['lower_id']]);
+                        //第一階層と第一階層の下以外の上下関係のオブジェクトのデータを作成する
+                        foreach($tree_id_chain[$index] as $row){
+                            if(array_key_exists($row['high_id'], $database_id_name) && array_key_exists($row['lower_id'], $database_id_name)){
+                                $chain[] = array($row['high_id'].'.'.$database_id_name[$row['high_id']] => $row['lower_id'].'.'.$database_id_name[$row['lower_id']]);
+                            }
                         }
                     }
                 }

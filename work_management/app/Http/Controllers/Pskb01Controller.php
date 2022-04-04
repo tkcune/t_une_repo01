@@ -357,9 +357,13 @@ class Pskb01Controller extends Controller
         $message = Message::get_message('mhcmok0003',[0=>'']);
         session(['message'=>$message[0]]);
 
+        if(!isset($delete_data[0]->high_id)){
+            $delete_data[0]->high_id = "kb";
+        }
+
         PtcmtrController::delete_node($delete_data[0]->high_id);
 
-        if(!isset($delete_data[0]->high_id)){
+        if($delete_data[0]->high_id == "kb"){
             return redirect()->route('pskb.index');
         }
         return redirect()->route('pskb01.show',[$client_id,$delete_data[0]->high_id]);

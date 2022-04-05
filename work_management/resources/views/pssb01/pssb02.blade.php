@@ -1,5 +1,22 @@
 @extends('pc0001.pc0001')
 
+@section('js')
+    <script src="{{ asset('js/pssb01/pssb01.js') }}" defer></script>
+@endsection
+
+@section('script')
+    {{-- テーブルソート --}}
+    <script>
+    $(document).ready(function() {
+        $('#sb-table').tablesorter({
+            headers: {
+               5: { sorter: false }
+            }
+        });
+    });
+    </script>
+@endsection
+
 @section('content')
 <div class="col border border-primary" style="padding:10px;">
     <div class="row">
@@ -28,8 +45,12 @@
 
                     <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$space_details[0]->management_personnel_id}}" style="width:100px;"
-                        data-toggle="tooltip" title="" readonly></p>
+                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10"
+                        @if(!empty(old('management_number'))) value="{{ old('management_number') }}"
+                        @else
+                        value="{{$space_details[0]->management_personnel_id}}"
+                        @endif
+                        style="width:100px;" data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"></p>
                     </div>
                     <div class="col-3" style="padding:0px">
                         <p>管理者名：{{$space_details[0]->management_name}}</p>
@@ -88,7 +109,7 @@
                     </div>
 
                     <div class="row" id="little-information-field" style="display:none">
-                    <p>登録日: 修正日:</p>
+                    <p>登録日:{{$space_details[0]->created_at}} 修正日:{{$space_details[0]->updated_at}}</p>
                     </div>
 
                     <div class="row margin-reset">
@@ -104,23 +125,22 @@
                             <input type="hidden" id="high_new" name="high" value="{{ $space_details[0]->space_id }}">
                             </form>
 
-                            <form action="#" method="post">
+                            <form action="{{ route('pssb01.destroy',[session('client_id'),$space_details[0]->space_id])}}" method="post">
                             @csrf
-                            @method('delete')
+                            @method('post')
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.delete')}}" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip"
-                            title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します"  disabled>
+                            title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します"
+                            disabled>
                             </form>
 
-                            <form action="#" method="get">
+                            <form action="{{ route('pa0001.clipboard',$space_details[0]->space_id)}}" method="get">
                             @csrf
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写" onclick="submit();" id="copyTarget"
-                            data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写"  onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                             </form>
 
-                            <form action="#" method="get">
+                            <form action="{{ route('pa0001.deleteclipboard')}}" method="get">
                             @csrf
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.remove')}}" alt="取消" onclick="submit();"
-                            data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3;" @endif>
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.remove')}}" alt="取消" onclick="submit();" data-toggle="tooltip" title="クリップボードに複写した内容を抹消します" @if(null == session()->get('clipboard_id'))) disabled style="opacity:0.3" @endif>
                             </form>
 
                             <input type="hidden" id="tree_disabled" value="{{session('client_id')}}">
@@ -128,15 +148,15 @@
                                 <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.ng')}}" alt="隠蔽/表示" >
                             </button>
 
-                            <form action="#" method="get">
-                                <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.road')}}" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
+                            <form action="{{ route('pa0001.redirect')}}" method="get">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.road')}}" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="画面を再表示します">
                             </form>
 
                             <button class="main_button_style" type="button" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
-                                <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く" >
+                                <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}} alt="開く" >
                             </button>
 
-                            <input type="checkbox" id="check" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                            <input type="checkbox" id="check" onclick="deleteOn4()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                             <font size="-2" color="red">削除有効化</font>
 
                             <input type="checkbox" id="check2" onclick="updateOn()" data-toggle="tooltip" title="チェックを入れることで更新ボタンがクリックできるようになります（権限がある場合）">
@@ -154,30 +174,42 @@
                 <div class="row">
                     {{-- ツリー操作機能　--}}
                     <div class="col-4" style="display:inline-flex">
-                        <p>一覧画面</p>
-                        <form action="" method="get">
-                        <input type="hidden" id="ji_high_new" name="high" value="">
+                        <p>配下場所</p>
+                        <form action="{{ route('pssb01.create') }}" method="get">
+                        @if(isset($space_details))
+                        <input type="hidden" id="high" name="high" value="{{$space_details[0]->space_id}}">
+                        @else
+                        <input type="hidden" id="high" name="high" value="{{$space_lists[0]->space_id}}">
+                        @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                         </button>
-                        </form>
+                    </form>
 
-                        <form action="#" method="post">
+                        <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
+                        @if(isset($space_details))
+                            <input type="hidden" id="high_move" name="high_id" value="{{$space_details[0]->space_id}}">
+                        @else
+                            <input type="hidden" id="high_move" name="high_id" value="{{$space_details[0]->space_id}}">
+                        @endif
+                        <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}">
                         @csrf
                         @method('patch')
-                        <input type="hidden" id="" name="" value="">
-                        <input type="hidden" id="" name="lower_id" value="{{session('clipboard_id')}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動">
                         </button>
                         </form>
 
-                        <form action="#" method="post">
+                        <form action="{{ route('pssb01.copy') }}" method="post">
                         @csrf
                         @method('post')
-                        <input type="hidden" name="client_id" value="">
-                        <input type="hidden" name="high_id" value="">
-                        <input type="hidden" id="" name="" value="">
+                        <input type="hidden" name="client_id" value="{{ session('client_id') }}">
+                        <input type="hidden" id="copy" name="copy_id" value="{{session('clipboard_id')}}">
+                        @if(isset($space_details))
+                        <input type="hidden" id="high_insert" name="high_id" value="{{$space_details[0]->space_id}}">
+                        @else
+                        <input type="hidden" id="high_insert" name="high_id" value="{{$space_details[0]->space_id}}">
+                        @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入">
                         </button>
@@ -244,7 +276,7 @@
                 <div class="row margin-reset">
                     <div class="col">
                         <div class="border border-dark">
-                            <table id="bs-table" class="bs-table table_sticky-info table table-striped" style="margin-bottom:0px;margin-top:0px;">
+                            <table id="sb-table" class="sb-table table_sticky-info table table-striped" style="margin-bottom:0px;margin-top:0px;">
                                 <thead>
                                 <tr>
                                     <th width="100">番号</th>
@@ -258,9 +290,9 @@
                                     <td>{{$space_list->space_id}}</td>
                                     <td><a href="{{ route('pssb01.show',[session('client_id'),$space_list->space_id])}}" data-toggle="tooltip" title="">{{$space_list->name}}</a></td>
                                     <td><a @if(isset($space_list->high_id))<a href="{{ route('pssb01.show',[session('client_id'),$space_list->high_id])}}" data-toggle="tooltip" title="">{{$space_list->high_name}}</a>@endif</td>
-                                    <td width="190">【<a href="#">複写</a>】
-                                    【<p id="" name="" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('').submit();">削除</p>】
-                                    <form id="" action="#" method="post" style="display: none;">
+                                    <td>【<a href="{{ route('pa0001.clipboard',$space_list->space_id)}}">複写</a>】
+                                    【<p id="sb_list_delete{{$loop->index}}" name="sb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
+                                    <form id="delete{{$loop->index}}" action="{{ route('pssb01.destroy',[session('client_id'),$space_list->space_id])}}" method="post" style="display: none;">
                                     @csrf
                                     </form>
                                     </td>

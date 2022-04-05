@@ -29,6 +29,27 @@ class Pssb01Controller extends Controller
     /**
      * 作業場所トップを表示するメソッド
      *
+     * @var int $count_department 部署のページ番号
+     * @var int $count_personnel　人員のページ番号
+     * @var App\Libraries\php\Domain\DepartmentDataBase $department_db
+     * @var array $top_department 部署トップデータ
+     * @var App\Libraries\php\Domain\PersonnelDataBase personnel_db
+     * @var array $personnel_data 人員データ
+     * @var  App\Models\Date; $date
+     * @var  App\Libraries\php\Logic\ResponsiblePerson $responsible
+     * @var  array $top_responsible 最上位の責任者データ
+     * @var  App\Libraries\php\Domain\Hierarchical $hierarchical
+     * @var  App\Libraries\php\Service\Pagination $pagination
+     * @var  int $department_max 部署データページネーションの最大値
+     * @var  array $departments ページネーション後の部署データ
+     * @var  int $personnel_max 人員データページネーションの最大値
+     * @var  array $names ページネーション後の人員データ
+     * @var  array $responsible_lists 責任者リスト
+     * @var  array $department_high 部署データの上位階層
+     * @var  array $personnel_high 人員データの上位階層
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
+     *
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -111,34 +132,37 @@ class Pssb01Controller extends Controller
     /**
      * 作業場所新規登録画面表示
      *
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
+     *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
         //  PtcmtrController：ツリーデータをblade側に渡すクラス
-        try {
-
-            $tree = new PtcmtrController();
-            $tree_data = $tree->set_view_treedata();
-            return view('pssb01.pssb01');
-        } catch (\Exception $e) {
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
-            DatabaseException::common($e);
-            echo $e->getMessage(), "\n";
-            echo "エラー：" . $e->getMessage();
-            return redirect()->route('index');
-        }
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
+        return view('pssb01.pssb01');
     }
 
     /**
      * 作業場所の新規登録
+     *
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @var  string $space_id 作業場所ID
+     * @var  string $name 作業場所名称
+     * @var  string $management_personnel_id 管理者ID
+     * @var  string $high 上位作業場所のID番号
+     * @var  string $id 作業場所IDに対応した最新の作業場所IDを格納する因数
+     * @var  App\Libraries\php\Service\ZeroPadding $padding：作業管理システムIDの0埋め機能クラス
      *
      * @return \Illuminate\Http\Response
      */
     public function store(WorkSpaceRequest $request)
     {
         //リクエストの取得
-        $client_id = session('client_id');
+        $client_id = $request->client_id;
         $space_id = $request->space_id;
         $name = $request->name;
         $management_personnel_id = $request->management_number;
@@ -154,12 +178,13 @@ class Pssb01Controller extends Controller
 
         //顧客IDに対応した最新の作業場所IDを取得
         try {
-            $space_db = new WorkspaceDataBase();
+            $space_db = new WorkSpaceDataBase();
             $id = $space_db->getId($client_id);
         } catch (\Exception $e) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
             DatabaseException::common($e);
-            return redirect()->route('pssb01.index');
+            echo $e->getMessage(), "\n";
+            return redirect()->route('index');
         }
         if (empty($id)) {
             $space_id = "sb00000001";
@@ -171,7 +196,7 @@ class Pssb01Controller extends Controller
 
         //データベースに作業場所を登録
         try {
-            $space_db = new WorkspaceDataBase();
+            $space_db = new WorkSpaceDataBase();
             $space_db->insert(
                 $client_id,
                 $space_id,
@@ -186,7 +211,8 @@ class Pssb01Controller extends Controller
         } catch (\Exception $e) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
             DatabaseException::common($e);
-            return redirect()->route('pssb01.index');
+            echo "エラー：" . $e->getMessage();
+            return redirect()->route('index');
         }
 
         //データベースに階層情報を登録
@@ -196,6 +222,7 @@ class Pssb01Controller extends Controller
         } catch (\Exception $e) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
             DatabaseException::common($e);
+            echo "エラー：" . $e->getMessage();
         }
         OutputLog::message_log(__FUNCTION__, 'mhcmok0001');
         //メッセージの表示
@@ -242,6 +269,7 @@ class Pssb01Controller extends Controller
         //
     }
 
+
     /**
      *
      * 作業場所情報の更新
@@ -269,7 +297,7 @@ class Pssb01Controller extends Controller
 
         //入力されたIDの作業場所が存在するかの確認
         try {
-            $space_db = new WorkspaceDataBase();
+            $space_db = new WorkSpaceDataBase();
             $management_personnel_id = $space_db->get($client_id, $space_id);
         } catch (\Exception $e) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -283,7 +311,7 @@ class Pssb01Controller extends Controller
 
         //情報の更新
         try {
-            $space_db = new WorkspaceDataBase();
+            $space_db = new WorkSpaceDataBase();
             $space_db->update(
                 $client_id,
                 $space_id,
@@ -309,6 +337,7 @@ class Pssb01Controller extends Controller
         return back();
     }
 
+
     /**
      *
      * 作業場所の削除
@@ -319,17 +348,238 @@ class Pssb01Controller extends Controller
      */
     public function destroy($client, $delete)
     {
-        //
+        //選択の作業場所IDをarray型に格納
+        $lists = [];
+        $delete_id = [];
+        array_push($lists, $delete);
+
+        //選択した作業場所を取得
+        try {
+            $space_db = new WorkSpaceDataBase();
+            $delete_data = $space_db->get($client, $delete);
+        } catch (\Exception $e) {
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
+            return redirect()->route('pssb01.index');
+        }
+
+        if (empty($delete_data)) {
+            $space_db = new WorkSpaceDataBase();
+            $delete_data = $space_db->getClickTop($client, $delete);
+            $delete_data[0]->high_id = "sb";
+        }
+
+        $hierarchical = new Hierarchical();
+        $delete_lists = $hierarchical->subordinateSearchRoop($lists, $client, $delete_id);
+
+        //削除リストの作成
+        array_unshift($delete_lists, $delete);
+
+        //選択したデータ及び配下データを削除
+        if (!empty($delete_lists)) {
+            try {
+                //トランザクション
+                DB::beginTransaction();
+
+                foreach ($delete_lists as $delete_list) {
+                    //機能コードの判定
+                    $code = substr($delete_list, 0, 2);
+
+                    //対応したデータの削除
+                    if ($code == "sb") {
+                        $space_db = new WorkSpaceDataBase();
+                        $space_db->delete($client, $delete_list);
+
+                        //削除予定の配下作業場所が元になった投影を削除
+                        $projection_db = new ProjectionDataBase();
+                        $delete_projections = $projection_db->getProjectionId($client, $delete_list);
+                        foreach ($delete_projections as $delete_projection) {
+                            $hierarchical = new Hierarchical();
+                            $hierarchical->delete($client, $delete_projection->projection_id);
+                            $projection_db = new ProjectionDataBase();
+                            $projection_db->delete($client, $delete_projection->projection_id);
+                        }
+                        $projection_db = new ProjectionDataBase();
+                        $projection_db->delete($client, $delete_list);
+                    } elseif ($code == "ta") {
+                        //投影の削除
+                        $projection_db = new ProjectionDataBase();
+                        $projection_db->delete($client, $delete_list);
+                    } else {
+                        //データの階層構造を削除
+                        $hierarchical = new Hierarchical();
+                        $hierarchical->delete($client, $delete_list);
+                    }
+                    DB::commit();
+                }
+            } catch (\Exception $e) {
+                //ロールバック
+                DB::rollBack();
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
+                DatabaseException::common($e);
+                return redirect()->route('pssb01.index');
+            }
+        }
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
+        $message = Message::get_message('mhcmok0003', [0 => '']);
+        session(['message' => $message[0]]);
+
+        PtcmtrController::delete_node($delete_data[0]->high_id);
+
+        if (!isset($delete_data[0]->high_id)) {
+            return redirect()->route('pssb01.index');
+        }
+        return redirect()->route('pssb01.show', [$client, $delete_data[0]->high_id]);
     }
 
+
+
     /**
-     * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * 複製したデータを挿入するメソッド
+     * @param  \Illuminate\Http\Request  $request
+     *
      * @return \Illuminate\Http\Response
      */
-    public function top()
+    public function copy(Request $request)
     {
-        //
+
+        $client_id = $request->client_id;
+        $copy_id = $request->copy_id;
+        $high = $request->high_id;
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
+
+        $date = new Date();
+
+        //複写番号が空白の場合エラーメッセージを表示
+        if ($request->copy_id == null) {
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009', '01');
+            $message = Message::get_message_handle('mhcmer0009', [0 => '']);
+            session(['message' => $message[0], 'handle_message' => $message[3]]);
+            return redirect()->route('pssb01.index');
+        }
+
+        //投影を複製する場合
+        if (substr($copy_id, 0, 2) == "ta") {
+            try {
+                $projection_db = new ProjectionDataBase();
+                $code = $projection_db->getId($copy_id);
+            } catch (\Exception $e) {
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            $projection_source_id = $code[0]->projection_source_id;
+
+            //人員の配下に部署を複製しないように分岐
+            if (substr($projection_source_id, 0, 2) == "sb") {
+                //エラーメッセージ表示
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0010');
+                $message = Message::get_message_handle('mhcmer0010', [0 => '']);
+                session(['message' => $message[0], 'handle_message' => $message[3]]);
+                return redirect()->route('pssb01.index');
+            }
+
+            //最新の投影番号を生成
+            try {
+                $projection_db = new ProjectionDataBase();
+                $projection_id = $projection_db->getNewId($client_id);
+            } catch (\Exception $e) {
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('pssb01.index');
+            }
+
+            //データベースに投影情報を登録
+            try {
+                //トランザクション
+                DB::beginTransaction();
+
+                //データベースに投影情報を登録
+                $projection_db = new ProjectionDataBase();
+                $projection_db->insert($client_id, $projection_id, $projection_source_id);
+                //データベースに階層情報を登録
+                $hierarchical = new Hierarchical();
+                $hierarchical->insert($client_id, $projection_id, $high);
+
+                DB::commit();
+            } catch (\Exception $e) {
+                //ロールバック
+                DB::rollBack();
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
+            $message = Message::get_message('mhcmok0009', [0 => '']);
+            session(['message' => $message[0]]);
+            return back();
+        } else {
+            //複製する人員情報の取得
+            try {
+                $space_db = new WorkSpaceDataBase();
+                $copy_space = $space_db->getData($client_id, $copy_id);
+            } catch (\Exception $e) {
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
+                DatabaseException::common($e);
+                return redirect()->route('pssb01.index');
+            }
+
+            //顧客IDに対応した最新の人員IDを取得
+            try {
+                $space_db = new WorkSpaceDataBase();
+                $space_id = $space_db->getNewId($client_id);
+            } catch (\Exception $e) {
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
+                DatabaseException::common($e);
+                return redirect()->route('pssb01.index');
+            }
+
+            //データベースに登録
+            try {
+                //トランザクション
+                DB::beginTransaction();
+
+                //データベースに人員情報を登録
+                $space_db = new WorkSpaceDataBase();
+                $space_db->copy(
+                    $client_id,
+                    $space_id,
+                    $copy_space[0]->name,
+                    $copy_space[0]->management_personnel_id,
+                    $copy_space[0]->post_code,
+                    $copy_space[0]->prefectural_office_location,
+                    $copy_space[0]->address,
+                    $copy_space[0]->URL,
+                    $copy_space[0]->remarks
+                );
+
+
+                //データベースに階層情報を登録
+                $hierarchical = new Hierarchical();
+                $hierarchical->insert($client_id, $space_id, $high);
+
+                DB::commit();
+            } catch (\Exception $e) {
+                //ロールバック
+                DB::rollBack();
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
+                DatabaseException::common($e);
+                return redirect()->route('pssb01.index');
+            }
+            //ツリー開閉
+            PtcmtrController::open_node($client_id);
+
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
+            $message = Message::get_message('mhcmok0009', [0 => '']);
+            session(['message' => $message[0]]);
+            return back();
+        }
     }
 }

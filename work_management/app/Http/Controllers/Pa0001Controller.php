@@ -14,6 +14,7 @@ use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
 use App\Libraries\php\Service\OperationCheck;
 use App\Libraries\php\Service\Pagination;
+use App\Libraries\php\Service\PaginationObject;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
@@ -142,7 +143,7 @@ class Pa0001Controller extends Controller
         $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
         //ページネーションオブジェクト設定
-        $pagination_object = new Pagination();
+        $pagination_object = new PaginationObject();
         //ページネーションオブジェクトをセットする
         $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
@@ -352,7 +353,7 @@ class Pa0001Controller extends Controller
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
             //ページネーションオブジェクト設定
-            $pagination_object = new Pagination();
+            $pagination_object = new PaginationObject();
             //ページネーションオブジェクトをセットする
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
@@ -427,7 +428,7 @@ class Pa0001Controller extends Controller
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
             //ページネーションオブジェクト設定
-            $pagination_object = new Pagination();
+            $pagination_object = new PaginationObject();
             //ページネーションオブジェクトをセットする
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
         
@@ -647,7 +648,7 @@ class Pa0001Controller extends Controller
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
             //ページネーションオブジェクト設定
-            $pagination_object = new Pagination();
+            $pagination_object = new PaginationObject();
             //ページネーションオブジェクトをセットする
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
@@ -745,7 +746,7 @@ class Pa0001Controller extends Controller
             $tree_data = $tree->set_view_treedata();
 
             //ページネーションオブジェクト設定
-            $pagination_object = new Pagination();
+            $pagination_object = new PaginationObject();
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
             //詳細画面オブジェクトの設定
@@ -888,7 +889,7 @@ class Pa0001Controller extends Controller
         $department_details_object->setDepartmentObject($click_department_data);
 
         //ページネーションオブジェクト設定
-        $pagination_object = new Pagination();
+        $pagination_object = new PaginationObject();
         $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
         if(session('device') != 'mobile'){

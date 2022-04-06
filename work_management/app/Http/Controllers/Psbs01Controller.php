@@ -16,6 +16,7 @@ use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
 use App\Libraries\php\Service\OperationCheck;
 use App\Libraries\php\Service\Pagination;
+use App\Libraries\php\Service\PaginationObject;
 use App\Libraries\php\Service\ZeroPadding;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -280,7 +281,7 @@ class Psbs01Controller extends Controller
             $department_details_object->setDepartmentObject($click_department_data);
 
             //ページネーションオブジェクト設定
-            $pagination_object = new Pagination();
+            $pagination_object = new PaginationObject();
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
             if(session('device') != 'mobile'){
@@ -364,7 +365,7 @@ class Psbs01Controller extends Controller
             $personnel_details_object->setPersonnelObject($click_personnel_data);
 
             //ページネーションオブジェクト設定
-            $pagination_object = new Pagination();
+            $pagination_object = new PaginationObject();
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
             if(session('device') != 'mobile'){
@@ -783,7 +784,7 @@ class Psbs01Controller extends Controller
             $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
             //ページネーションオブジェクト設定
-            $pagination_object = new Pagination();
+            $pagination_object = new PaginationObject();
             //ページネーションオブジェクトをセットする
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
@@ -869,7 +870,7 @@ class Psbs01Controller extends Controller
             $tree_data = $tree->set_view_treedata();
 
             //ページネーションオブジェクト設定
-            $pagination_object = new Pagination();
+            $pagination_object = new PaginationObject();
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
             //詳細画面オブジェクトの設定

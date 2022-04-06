@@ -16,6 +16,7 @@ use App\Libraries\php\Logic\MailAddressCheck;
 use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
 use App\Libraries\php\Service\Pagination;
+use App\Libraries\php\Service\PaginationObject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -469,7 +470,7 @@ class Psji01Controller extends Controller
         $department_details_object->setDepartmentObject($click_department_data);
 
         //ページネーションオブジェクト設定
-        $pagination_object = new Pagination();
+        $pagination_object = new PaginationObject();
         $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
         if(session('device') != 'mobile'){

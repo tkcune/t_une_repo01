@@ -374,9 +374,114 @@ class Pskb01Controller extends Controller
      * 複製したデータを挿入するメソッド
      * @param  \Illuminate\Http\Request  $request
      * 
+     * @var string $client_id 顧客ID
+     * @var string $copy_id 複製するID
+     * @var string $high 複製IDが所属する上位階層ID
+     * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var string $id 複製前の最新の部署ID
+     * @var string $id2 複製前の最新の人員ID
+     * @var string $id_num 複製前の最新の部署IDの数字部分
+     * @var string $id2_num 複製前の最新の部署IDの数字部分
+     * @var string $number 8桁に0埋めした複製前の最新の部署IDの数字部分
+     * @var string $number2　8桁に0埋めした複製前の最新の人員IDの数字部分
+     * @var App\Libraries\php\Domain\Hierarchical $hierarchical
+     * 
      * @return \Illuminate\Http\Response
      */
     public function copy(Request $request){
 
+        $client_id = $request->client_id;
+        $copy_id = $request->copy_id;
+        $high = $request->high_id;
+
+        // 重複クリック対策
+        //$request->session()->regenerateToken();
+
+        if($request->copy_id == null){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
+            $message = Message::get_message_handle('mhcmer0009',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
+            return redirect()->route('index');
+        }
+
+        //保存先の部署及び人員の上位階層IDを取得し、そのIDが複製する部署IDと一致した場合は処理を中止
+
+        //投影を複製する場合
+        if(substr($copy_id,0,2) == "ta"){
+            try{
+                $projection_db = new ProjectionDataBase();
+                $code = $projection_db->getId($copy_id);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            $projection_source_id = $code[0]->projection_source_id;
+            //最新の投影番号を生成
+            try{
+                $projection_db = new ProjectionDataBase();
+                $projection_id = $projection_db->getNewId($client_id);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+
+            try{
+                //トランザクション
+                DB::beginTransaction();
+
+                //データベースに投影情報を登録
+                $projection_db = new ProjectionDataBase();
+                $projection_db->insert($client_id,$projection_id,$projection_source_id);
+
+                //データベースに階層情報を登録
+                $hierarchical = new Hierarchical();
+                $hierarchical->insert($client_id,$projection_id,$high);
+
+                DB::commit();
+            }catch(\Exception $e){
+                //ロールバック
+                DB::rollBack();
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
+            $message = Message::get_message('mhcmok0009',[0=>'']);
+            session(['message'=>$message[0]]);
+            return back();
+        }else{
+            //複製動作
+            
+            //複製前の最新の掲示板番号を取得
+            try{
+                $board_db = new BoardDataBase();
+                $id = $board_db->getId($client_id);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            $id_num = substr($id[0]->board_id,3);
+            $number = str_pad($id_num, 8, '0', STR_PAD_LEFT);
+
+            //掲示板情報の複製
+            try{
+                $board_db = new BoardDataBase();
+                $board_db->copy($copy_id,$client_id,$high,$number);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
+            $message = Message::get_message('mhcmok0009',[0=>'']);
+            session(['message'=>$message[0]]);
+            return back();
+        }
     }
 }

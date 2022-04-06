@@ -4,6 +4,10 @@
 
     use App\Models\Date;
     use Illuminate\Support\Facades\DB;
+    use App\Facades\OutputLog;
+    use App\Libraries\php\Service\ZeroPadding;
+    use App\Libraries\php\Service\DatabaseException;
+    use App\Libraries\php\Domain\ProjectionDataBase;
 
     /**
      * 作業管理システム掲示板データベース動作クラス
@@ -118,14 +122,111 @@
 
         }
 
+        /**
+         * 更新メソッド
+         * 
+         * @param $client 顧客ID
+         * @param $board_id 掲示板ID
+         * @param $name 名前
+         * @param $status 状態
+         * @param $management_personnel_id 管理者ID
+         * @param $remarks 備考
+         * 
+         */
         public static function update($client_id,$board_id,$name,$status,$management_personnel_id,$remarks){
 
             DB::update('update dckb01 set name = ?,status = ?,management_personnel_id = ?,remarks = ? where client_id = ? and board_id = ?
             ',[$name,$status,$management_personnel_id,$remarks,$client_id,$board_id]);
         }
 
+        /**
+         * 削除メソッド
+         * 
+         * @param $client 顧客ID
+         * @param $board_id 掲示板ID
+         * 
+         */
+
         public static function delete($client_id,$board_id){
 
             DB::delete('delete from dckb01 where client_id = ? and board_id = ?',[$client_id,$board_id]);
+        }
+
+        /**
+         * 掲示板を複製するメソッド
+         * 
+         * @param $copy_id 複製ID
+         * @param $client 顧客ID
+         * @param $high 上位ID
+         * @param $number 複製直前の最新の部署ID
+         * 
+         */
+        public function copy($copy_id,$client_id,$high,$number){
+
+            //複製するデータの取得
+            try{
+                $copy_board = DB::select('select * from dckb01 where client_id = ? 
+                and board_id = ?',[$client_id,$copy_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+
+            //複製開始前の状態で、複製するデータに直下配下があるかどうかの確認
+            try{
+                $lists = DB::select('select * from dccmks where client_id = ? and substring(lower_id, 1, 2) = "kb" and substring(lower_id, 3, 10) <= ? and high_id = ?',
+                [$client_id,$number,$copy_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+
+            //顧客IDに対応した最新の掲示板IDを取得
+            try{
+                $id = DB::select('select board_id from dckb01 where client_id = ? 
+                order by board_id desc limit 1',[$client_id]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+
+            //登録する番号を作成
+            $padding = new ZeroPadding();
+            $board_id = $padding->padding($id[0]->board_id);
+
+            //dd($copy_board[0]);
+            //データベースに掲示板情報を登録
+            try{
+                DB::insert('insert into dckb01 (client_id,board_id,name,status,management_personnel_id,remarks) value (?,?,?,?,?,?)',
+                [$client_id,$board_id,$copy_board[0]->name,$copy_board[0]->status,$copy_board[0]->management_personnel_id,$copy_board[0]->remarks]);
+            }catch(\Exception $e){
+                dd($e);
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+
+            //データベースに階層情報を登録
+            try{
+                DB::insert('insert into dccmks
+                (client_id,lower_id,high_id)
+                VALUE (?,?,?)',
+                [$client_id,$board_id,$high]);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+
+            if(isset($lists)){
+                foreach($lists as $list){
+                    $copy_id = $list->lower_id;
+                    $high = $board_id;
+                    $this->copy($copy_id,$client_id,$high,$number);
+                }
+            }
         }
     }

@@ -20,13 +20,13 @@
             <div class="col">
                 <div style="display:inline-flex">
 
-                    <form action="#" method="get">
+                    <form action="{{ route('pa0001.clipboard',"bs00000000")}}" method="get">
                         @csrf
-                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写" onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
-                    </form>
-                    <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
-                        <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く">
-                    </button>
+                        <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写"  onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
+                        </form>
+                        <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+                            <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く" >
+                        </button>
 
                     {{--動作の為に非表示で設置--}}
                     <form action="#" method="post">
@@ -73,27 +73,31 @@
                         </button>
                     </form>
 
-                    <form action="#" method="post">
-                        @csrf
-                        @method('post')
-                        <input type="hidden" name="client_id" value="">
-                        <input type="hidden" name="high_id" value="">
-                        <input type="hidden" id="" name="" value="">
-                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入">
-                        </button>
+                    <form action="{{ route('pssb01.copy') }}" method="post">
+                            @csrf
+                            @method('post')
+                            <input type="hidden" name="client_id" value="{{ session('client_id') }}">
+                            @if(isset($top_space))
+                            <input type="hidden" name="high_id" value="{{$top_space[0]->space_id}}">
+                            @else
+                            <input type="hidden" name="high_id" value="{{$spaces[0]->space_id}}">
+                            @endif
+                            <input type="hidden" id="sb_copy_id" name="copy_id" value="{{session('clipboard_id')}}">
+                            <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
+                                <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入" disabled style="opacity:0.3">
+                            </button>
                     </form>
 
-                    <form action="#" method="post">
+                    <form action="{{ route('ptcm01.store') }}" method="post">
                         @csrf
                         @method('post')
-                        <input type="hidden" name="projection_source_id" value="">
-                        <input type="hidden" name="client_id" value="">
-                        <input type="hidden" id="" name="high_id" value="">
+                        <input type="hidden" name="client_id" value="{{ session('client_id') }}">
+                        <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
+                        <input type="hidden" id="high_projection" name="high_id" value="{{$top_space[0]->space_id}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影" disabled style="opacity:0.3">
                         </button>
-                    </form>
+                        </form>
                 </div>
                 {{-- ツリー操作機能ここまで　--}}
 
@@ -129,7 +133,7 @@
                 {{-- 検索機能　--}}
                 <div class="col-4" style="display:inline-flex; padding-top:15px">
                     <p>場所</p>
-                    <form action="#" method="post">
+                    <form action="{{ route('pssb01.search',[session('client_id'),$top_space[0]->space_id])}}" method="post">
                         @csrf
                         @method('post')
                         <input type="text" name="search" class="top" maxlength="32">
@@ -157,10 +161,9 @@
                                         <td>{{$space_date->space_id}}</td>
                                         <td><a href="{{ route('pssb01.show',[session('client_id'),$space_date->space_id])}}" data-toggle="tooltip" title="クリックにより、当該作業場所に遷移します">{{$space_date->name}}</a></td>
                                         <td>@if(isset($space_date->high_id))<a href="{{ route('pssb01.show',[session('client_id'),$space_date->high_id])}}" data-toggle="tooltip" title="">{{$space_date->high_name}}</a>@endif</td>
-                                        <td>
-                                            【<a href="#">複写</a>】
-                                            【<p id="bs_list_delete{{$loop->index}}" name="delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('bs_delete{{$loop->index}}').submit();">削除</p>】
-                                            <form id="delete{{$loop->index}}" action="#" method="post" style="display: none;">
+                                        <td>【<a href="{{ route('pa0001.clipboard',$space_date->space_id)}}">複写</a>】
+                                            【<p id="bs_list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
+                                            <form id="delete{{$loop->index}}" action="{{ route('pssb01.destroy',[session('client_id'),$space_date->space_id])}}" method="post" style="display: none;">
                                                 @csrf
                                             </form>
                                         </td>

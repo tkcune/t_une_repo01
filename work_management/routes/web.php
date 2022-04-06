@@ -116,5 +116,10 @@ Route::prefix('pskb')->group(function () {
 //作業場所に関するルーティング
 Route::prefix('pssb01')->group(function () {
     Route::get('/', [Pssb01Controller::class, 'index'])->name('pssb01.index');
+    Route::post('/sbcopy', [Pssb01Controller::class, 'copy'])->name('pssb01.copy');
     Route::get('/show/{id}/{id2}', [Pssb01Controller::class, 'show'])->name('pssb01.show');
+    Route::post('/update', [Pssb01Controller::class, 'update'])->name('pssb01.update');
+    Route::get('/{id}/{id2}', [Pssb01Controller::class, 'search']);
+    Route::post('/{id}/{id2}', [Pssb01Controller::class, 'search'])->name('pssb01.search');
+    Route::post('/delete/{id}/{id2}', [Pssb01Controller::class, 'destroy'])->name('pssb01.destroy');
 });

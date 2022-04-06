@@ -38,7 +38,7 @@
          */
         public function getDepartmentList($client,$select_id){
 
-            $data = DB::select('SELECT ta1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
+            $data = DB::select('SELECT ta1.client_id,ta1.projection_id AS department_id ,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
                     bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,ks1.high_id,ji1.name AS management_name,ji2.name AS responsible_name
                     FROM dccmta AS ta1
                     left join dcbs01 as bs1 on ta1.projection_source_id = bs1.department_id
@@ -68,7 +68,7 @@
          */
         public function getDepartmentSearch($client,$select_id,$search){
 
-            $data = DB::select('SELECT ta1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
+            $data = DB::select('SELECT ta1.client_id,ta1.projection_id AS department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
                     bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,ks1.high_id,ji1.name AS management_name,ji2.name AS responsible_name
                     FROM dccmta AS ta1
                     left join dcbs01 as bs1 on ta1.projection_source_id = bs1.department_id
@@ -98,7 +98,7 @@
          */
         public function getPersonnelList($client,$select_id){
 
-            $data = DB::select('SELECT ta1.client_id,ji1.personnel_id,ji1.name,ji1.email,ji1.password,ji1.password_update_day,
+            $data = DB::select('SELECT ta1.client_id,ta1.projection_id AS personnel_id,ji1.name,ji1.email,ji1.password,ji1.password_update_day,
                     ji1.status,ji1.management_personnel_id,ji1.login_authority,ji1.system_management,ji1.operation_start_date,
                     ji1.operation_end_date,ji1.remarks,ji1.created_at,ji1.updated_at,bs1.name AS high_name,ks1.high_id,ji2.name AS management_name 
                     FROM dccmta AS ta1
@@ -128,7 +128,7 @@
          */
         public function getPersonnelSearch($client,$select_id,$search){
 
-            $data = DB::select('SELECT ta1.client_id,ji1.personnel_id,ji1.name,ji1.email,ji1.password,ji1.password_update_day,
+            $data = DB::select('SELECT ta1.client_id,ta1.projection_id AS personnel_id,ji1.name,ji1.email,ji1.password,ji1.password_update_day,
                     ji1.status,ji1.management_personnel_id,ji1.login_authority,ji1.system_management,ji1.operation_start_date,
                     ji1.operation_end_date,ji1.remarks,ji1.created_at,ji1.updated_at,bs1.name AS high_name,ks1.high_id,ji2.name AS management_name 
                     FROM dccmta AS ta1
@@ -158,7 +158,7 @@
          */
         public function getBoardList($client,$select_id){
 
-            $data = DB::select('SELECT ta1.client_id,kb1.board_id,kb1.name,kb1.status,kb1.management_personnel_id,
+            $data = DB::select('SELECT ta1.client_id,ta1.projection_id AS board_id,kb1.name,kb1.status,kb1.management_personnel_id,
                                 kb1.remarks,kb1.created_at,kb1.updated_at,kb2.name AS high_name,high_id,dcji01.name AS management_name
                                 FROM dccmta AS ta1
                                 left join dckb01 AS kb1 on ta1.projection_source_id = kb1.board_id

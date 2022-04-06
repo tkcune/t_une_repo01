@@ -31,7 +31,7 @@ class Pskb01Controller extends Controller
     {
         //ログインしている顧客IDの取得
         $client_id = session('client_id');
-        
+
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
@@ -483,5 +483,81 @@ class Pskb01Controller extends Controller
             session(['message'=>$message[0]]);
             return back();
         }
+    }
+
+    /**
+     * 検索
+     *
+     * @param  int  $client_id 顧客ID
+     * @param  int  $select_id 選択ID
+     * 
+     * @var App\Libraries\php\Domain\BoardDataBase $board_db
+     * @var array $board_details 掲示板詳細データ
+     * @var array $board_lists 掲示板一覧データ
+     * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var $system_management_lists システム管理者リスト
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request,$client_id,$select_id)
+    {
+        //ログインしている顧客IDの取得
+        $client_id = session('client_id');
+
+        //ツリーデータの取得
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
+
+        //詳細に記載する掲示板データの取得
+        $board_db = new BoardDataBase();
+        $board_details = $board_db->get($client_id,$select_id);
+
+        //一覧に記載する掲示板データの取得
+        try{
+            if($select_id == 'kb00000000'){
+                $board_lists = $board_db->getSearchTop($client_id,$request->search);
+            }else{
+                $board_lists = $board_db->getSearchList($client_id,$select_id,$request->search);
+            }
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('pa0001.errormsg');
+        }
+
+        //一覧の投影部署データの取得
+        try{
+            $projection_db = new ProjectionDataBase();
+            $projection_board = $projection_db->getBoardList($client_id,$select_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('pa0001.errormsg');
+        }
+
+        //投影データを一覧に追加
+        $board_lists = array_merge($board_lists,$projection_board);
+
+        if(empty($board_lists)){
+            OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
+            $message = Message::get_message_handle('mhcmwn0001',[0=>'']);
+            session(['message'=>$message[0],'handle_message'=>$message[3]]);
+            return redirect()->route('pskb01.show',[$client_id,$select_id]);
+        }
+
+        //システム管理者のリストを取得
+        try{
+            $personnel_db = new PersonnelDataBase();
+            $system_management_lists = $personnel_db->getSystemManagement($client_id);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('pa0001.errormsg');
+        }
+
+        if($select_id == 'kb00000000'){
+            return view('pvkb01.pvkb01',compact('board_lists'));
+        }
+        return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists'));
     }
 }

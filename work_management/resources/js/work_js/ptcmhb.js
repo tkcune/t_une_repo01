@@ -1,5 +1,4 @@
-import { forEach } from 'lodash';
-import { findMobile } from './ptcmrd'
+import { findMobile } from './ptcmrd';
 
 //var HIerarchyBarクラス パンくずリストクラス
 let HierarchyBar = {};

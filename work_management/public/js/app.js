@@ -1852,6 +1852,9 @@ var _require3 = __webpack_require__(/*! ./work_js/ptcmta */ "./resources/js/work
 var _require4 = __webpack_require__(/*! ./work_js/ptcmhb */ "./resources/js/work_js/ptcmhb.js"),
     HierarchyBar = _require4.HierarchyBar;
 
+var _require5 = __webpack_require__(/*! ./work_js/ptcmtp */ "./resources/js/work_js/ptcmtp.js"),
+    customToolTip = _require5.customToolTip;
+
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 if (document.getElementById('receive_combobox')) {
@@ -1862,18 +1865,6 @@ if (document.getElementById('receive_combobox')) {
     } else if (document.getElementById('receive_combobox').value === '2') {
       document.getElementById('recieving_port_number').value = '993';
       document.getElementById('recieving_server').value = 'imap4.muumuu-mail.com';
-    }
-  });
-}
-
-if (document.getElementById('bs_question')) {
-  var bs_question = document.getElementById('bs_question');
-  var bs_question_baloon = document.getElementById('bs_question_baloon');
-  bs_question.addEventListener('click', function () {
-    if (bs_question_baloon.className == 'bs_baloon') {
-      bs_question_baloon.className = 'bs_not_baloon';
-    } else {
-      bs_question_baloon.className = 'bs_baloon';
     }
   });
 }
@@ -1999,15 +1990,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "HierarchyBar": () => (/* binding */ HierarchyBar)
 /* harmony export */ });
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _ptcmrd__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ptcmrd */ "./resources/js/work_js/ptcmrd.js");
-
+/* harmony import */ var _ptcmrd__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ptcmrd */ "./resources/js/work_js/ptcmrd.js");
  //var HIerarchyBarクラス パンくずリストクラス
 
 var HierarchyBar = {};
 
-if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.device_name !== 'pc') {
+if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.device_name !== 'pc') {
   HierarchyBar = function (bar_info) {
     //@var object 作業管理システムのデータ階層
     var bar = {}; //@var dom パンくずリストのdom
@@ -4004,6 +3992,181 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.device_name === 'pc') {
   });
 } else {
   document.getElementById('tree').style = 'display: none';
+}
+
+
+
+/***/ }),
+
+/***/ "./resources/js/work_js/ptcmtp.js":
+/*!****************************************!*\
+  !*** ./resources/js/work_js/ptcmtp.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "customToolTip": () => (/* binding */ customToolTip)
+/* harmony export */ });
+/* harmony import */ var _ptcmrd__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ptcmrd */ "./resources/js/work_js/ptcmrd.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+ //@var object ツールチップのクラス
+
+var customToolTip = {};
+
+if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.device_name !== 'pc') {
+  customToolTip = function () {
+    //<custom-tooltip></custom-tooltip>の宣言
+    var CustomToolTip = /*#__PURE__*/function (_HTMLElement) {
+      _inherits(CustomToolTip, _HTMLElement);
+
+      var _super = _createSuper(CustomToolTip);
+
+      //ツールチップのdom生成
+      function CustomToolTip() {
+        var _this;
+
+        _classCallCheck(this, CustomToolTip);
+
+        _this = _super.call(this);
+
+        _this._updateRendering();
+
+        return _this;
+      } //domの生成と描画
+
+
+      _createClass(CustomToolTip, [{
+        key: "_updateRendering",
+        value: function _updateRendering() {
+          //@var dom ？マーク
+          var span = this._create_select(); //custom-tooltipタグに追加する
+
+
+          this.appendChild(span); //ツールチップの表示の基準とする
+
+          this.style.position = 'relative'; //@var dom ツールチップのdom
+
+          var tooltip_span = this._create_tooltip();
+
+          tooltip_span = this.appendChild(tooltip_span); //ツールチップの表示が画面よりはみ出ていたら、修正する
+
+          this._change_position(span, tooltip_span); //？マークのクリック処理
+
+
+          span.addEventListener('click', function () {
+            //非表示なら表示
+            if (tooltip_span.style.visibility === 'hidden') {
+              tooltip_span.style.visibility = 'visible';
+            }
+          }); //表示したツールチップを非表示にする
+
+          function clearToolTip() {
+            if (this.tooltip_span.style.visibility === 'visible') {
+              this.tooltip_span.style.visibility = 'hidden';
+            }
+          } //？マーク以外をクリックしたら、ツールチップを非表示にする
+
+
+          window.addEventListener('click', {
+            tooltip_span: tooltip_span,
+            handleEvent: clearToolTip
+          }, true);
+        } //？マークの生成
+        //@return dom ？マーク
+
+      }, {
+        key: "_create_select",
+        value: function _create_select() {
+          //@var dom ？マーク
+          var span = document.createElement('span');
+          span.innerText = '?';
+          span.style.color = 'red';
+          span.style.border = "1px solid blue";
+          return span;
+        } //ツールチップのdomの生成
+        //@var dom ツールチップのdom
+
+      }, {
+        key: "_create_tooltip",
+        value: function _create_tooltip() {
+          //@var dom ツールチップのdom
+          var tooltip_span = document.createElement('span');
+          tooltip_span.style.position = 'absolute';
+          tooltip_span.style.width = '10rem';
+          tooltip_span.style.top = '1rem';
+          tooltip_span.style.left = '1rem'; //改行を実現する
+
+          tooltip_span.style.whiteSpace = 'pre-line !important';
+          tooltip_span.style.backgroundColor = 'white';
+          tooltip_span.style.visibility = 'hidden';
+          tooltip_span.style.zIndex = '500';
+          tooltip_span.innerText = this.getAttribute('title');
+          return tooltip_span;
+        } //ツールチップが画面からはみ出していたら、位置を変更する
+        //@param dom span ？マーク
+        //@param dom tooltip_span ツールチップのdom
+        //@return dom ツールチップのdom
+
+      }, {
+        key: "_change_position",
+        value: function _change_position(span, tooltip_span) {
+          //@var int spanの表示位置
+          var px = window.pageXOffset + span.getBoundingClientRect().left; //@vat int 画面の長さ と spanとツールチップの長さの差
+
+          var diff_width = document.body.clientWidth - (px + tooltip_span.clientWidth); //横にはみ出していたら、横にずらす
+
+          if (diff_width < 0) {
+            tooltip_span.style.left = diff_width - 8 + 'px';
+          } //@var int spanの表示位置
+
+
+          var py = window.pageYOffset + span.getBoundingClientRect().top; //@var int 画面の高さ と spanとツールチップの高さの差
+
+          var diff_hight = document.body.clientHeight - (py + tooltip_span.clientHeight); //縦にはみ出していたら、下げる
+
+          if (diff_hight < 0) {
+            tooltip_span.style.top = -tooltip_span.clientHeight - 8 + 'px';
+          }
+
+          return tooltip_span;
+        }
+      }]);
+
+      return CustomToolTip;
+    }( /*#__PURE__*/_wrapNativeSuper(HTMLElement)); //custom-tooltipを使えるように設定する
+
+
+    customElements.define('custom-tooltip', CustomToolTip);
+  }();
 }
 
 
@@ -21490,18 +21653,6 @@ process.umask = function() { return 0; };
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
 /******/ 		};
 /******/ 	})();
 /******/ 	

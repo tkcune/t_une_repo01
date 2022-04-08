@@ -279,4 +279,20 @@
 
             return $data;
         }
+
+        /**
+         * 上位IDの取得
+         * @param $client_id 顧客ID
+         * @param $select_id 選択ID
+         * 
+         * @var   $id 取得id
+         * 
+         * @return  array $id
+         */
+        public static function getHigh($client_id,$select_id){
+
+            $id = DB::select('SELECT high_id FROM `dccmks` WHERE client_id = ? and lower_id = ?;',[$client_id,$select_id]);
+
+            return $id;
+        }
     }

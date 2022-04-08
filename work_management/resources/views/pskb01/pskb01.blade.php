@@ -115,14 +115,22 @@
                             <input type="hidden" id="high_new" name="high" value="{{$board_details[0]->board_id}}">
                             </form>
 
+                            @if(substr($click_id,0,2) == "ta")
+                            <form action="{{ route('pskb01.destroy',$click_id)}}" method="post">
+                            @else
                             <form action="{{ route('pskb01.destroy',$board_details[0]->board_id) }}" method="post">
+                            @endif
                             @csrf
                             @method('delete')
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.delete')}}" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip" 
                             title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します"  disabled>
                             </form>
 
+                            @if(substr($click_id,0,2) == "ta")
+                            <form action="{{ route('pa0001.clipboard',$click_id)}}" method="get">
+                            @else
                             <form action="{{ route('pa0001.clipboard',$board_details[0]->board_id)}}" method="get">
+                            @endif
                             @csrf
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写" onclick="submit();" id="copyTarget"
                             data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
@@ -139,7 +147,11 @@
                                 <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.ng')}}" alt="隠蔽/表示" >
                             </button>
 
-                            <form action="#" method="get">
+                            @if(substr($click_id,0,2) == "ta")
+                            <form action="{{ route('pskb01.show',[session('client_id'),$click_id])}}" method="get">
+                            @else
+                            <form action="{{ route('pskb01.show',[session('client_id'),$board_details[0]->board_id])}}" method="get">
+                            @endif
                                 <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.road')}}" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                             </form>
 

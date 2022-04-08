@@ -572,7 +572,7 @@ class Psbs01Controller extends Controller
             DatabaseException::common($e);
             return redirect()->route('index');
         }
-
+        
         //選択した部署の配下を取得
         $hierarchical = new Hierarchical();
         $delete_lists = $hierarchical->subordinateSearchRoop($lists,$client,$delete_id);

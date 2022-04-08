@@ -356,7 +356,12 @@ class Pskb01Controller extends Controller
         $board_db = new BoardDataBase();
 
         //削除予定の掲示板の上位IDを取得(削除後のページ遷移に必要)
-        $delete_data = $board_db->get($client_id,$delete);
+
+        if(substr($delete,0,2) == 'ta'){
+            $delete_data = $board_db->getHigh($client_id,$delete);
+        }else{
+            $delete_data = $board_db->get($client_id,$delete);
+        }
 
         //削除予定の配下掲示板IDを取得
         $hierarchical = new Hierarchical();
@@ -413,7 +418,7 @@ class Pskb01Controller extends Controller
         }
 
         //ログ処理
-        OutputLog::message_log(__FUNCTION__, 'mhcmok0003');
+        OutputLog::message_log(__FUNCTION__,'mhcmok0003');
         $message = Message::get_message('mhcmok0003',[0=>'']);
         session(['message'=>$message[0]]);
 
@@ -424,8 +429,9 @@ class Pskb01Controller extends Controller
         PtcmtrController::delete_node($delete_data[0]->high_id);
 
         if($delete_data[0]->high_id == "kb"){
-            return redirect()->route('pskb.index');
+            return redirect()->route('pskb01.index');
         }
+
         return redirect()->route('pskb01.show',[$client_id,$delete_data[0]->high_id]);
     }
 

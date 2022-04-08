@@ -89,7 +89,7 @@
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         <input type="hidden" id="copy" name="copy_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" id="high_insert" name="high_id" value="{{$board_lists[0]->board_id}}">
+                        <input type="hidden" id="high_insert" name="high_id" value="kb00000000">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入" disabled style="opacity:0.3">
                         </button>
@@ -100,7 +100,7 @@
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" id="high_projection" name="high_id" value="{{$board_lists[0]->board_id}}">
+                        <input type="hidden" id="high_projection" name="high_id" value="kb00000000">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影" disabled style="opacity:0.3">
                         </button>

@@ -246,7 +246,7 @@
                     left join dccmks on kb1.board_id = dccmks.lower_id 
                     left join dckb01 as kb2 on dccmks.high_id = kb2.board_id
                     left join dcji01 on kb1.management_personnel_id = dcji01.personnel_id
-                    where kb1.client_id = ? and kb1.board_id = ? and kb1.name like ? order by kb1.board_id',[$client_id,$select_id,'%'.$search.'%']);
+                    where kb1.client_id = ? and dccmks.high_id = ? and kb1.name like ? order by kb1.board_id',[$client_id,$select_id,'%'.$search.'%']);
 
             //登録日・修正日のフォーマットを変換
             $date = new Date();

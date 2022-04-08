@@ -23,7 +23,11 @@
             <form action="{{ route('pskb01.update',$board_details[0]->board_id) }}" method="post">
             @csrf
             @method('patch')
+            @if(substr($click_id,0,2) == "ta")
+            <div class="details-area border border-dark bg-info" style="padding:10px;" id="parent">
+            @else
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
+            @endif
                 <div class="row">
                     <div class="col-4" style="margin-top:-5px; margin-right:-12px">
                         <h2>掲示板詳細</h2>
@@ -206,25 +210,49 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$board_details[0]->board_id,'count'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$board_details[0]->board_id,'count'=>1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                @endif
                                 </li>
                                 <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&lt;</span>
-                                </a>
+                                @if(!empty($_POST['search']))
+                                <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$board_details[0]->board_id,'count'=>$count_board-1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$board_details[0]->board_id,'count'=>$count_board-1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                @endif
                                 </li>
-                                0/0&nbsp;&nbsp;0件
+                                {{$count_board}}/{{$board_max}}&nbsp;&nbsp;{{count($board_data)}}件
                                 <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$board_details[0]->board_id,'count'=>$count_board+1,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$board_details[0]->board_id,'count'=>$count_board+1]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                @endif
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$board_details[0]->board_id,'count'=>$board_max,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$board_details[0]->board_id,'count'=>$board_max]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                @endif
                                 </li>
                             </ul>
                         </nav>

@@ -16,9 +16,10 @@
     });
     </script>
 @endsection
-    
 @section('content')
+
     <div class="col border border-primary" style="padding:10px;">
+    
         <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
             <div class="row">
                 <div class="col-3" style="margin-top:-5px; margin-right:-12px">
@@ -112,25 +113,53 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),'kb00000000','count'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pskb01.index',['count'=>1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                @endif
                                 </li>
+                                
                                 <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&lt;</span>
-                                </a>
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),'kb00000000','count'=>$count_board-1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pskb01.index',['count'=>$count_board-1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                @endif
                                 </li>
-                                0/0&nbsp;&nbsp;0件
+
+                                {{$count_board}}/{{$board_max}}&nbsp;&nbsp;{{count($board_data)}}件
+
                                 <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),'kb00000000','count'=>$count_board+1,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pskb01.index',['count'=>$count_board+1]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                @endif
                                 </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
+
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),'kb00000000','count'=>$board_max,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
+                                @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('pskb01.index',['count'=>$board_max]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                @endif
                                 </li>
                             </ul>
                         </nav>

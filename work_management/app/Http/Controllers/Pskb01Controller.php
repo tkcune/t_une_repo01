@@ -11,8 +11,11 @@ use App\Libraries\php\Domain\ProjectionDataBase;
 use App\Libraries\php\Domain\Hierarchical;
 use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
+use App\Libraries\php\Service\Pagination;
 use App\Libraries\php\Service\ZeroPadding;
 use App\Http\Controllers\PtcmtrController;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\View;
 
 class Pskb01Controller extends Controller
 {
@@ -20,10 +23,14 @@ class Pskb01Controller extends Controller
      * 掲示板トップ画面
      *
      * @var  string $client_id 顧客ID
+     * @var  int $count_board ページ番号
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
      * @var  App\Libraries\php\Domain\BoardDataBase $board_db
-     * @var  array $board_lists 掲示板一覧データ
+     * @var  array $board_data 掲示板一覧データ
+     * @var  App\Libraries\php\Service\Pagination $pagination
+     * @var  int $board_max ページネーションの最大値
+     * @var  array $board_lists ページネーション掲示板一覧データ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -31,6 +38,11 @@ class Pskb01Controller extends Controller
     {
         //ログインしている顧客IDの取得
         $client_id = session('client_id');
+        if(isset($_GET['count'])){
+            $count_board = $_GET['count'];
+        }else{
+            $count_board = Config::get('startcount.count');
+        }
 
         //ツリーデータの取得
         $tree = new PtcmtrController();
@@ -38,9 +50,23 @@ class Pskb01Controller extends Controller
 
         //一覧に記載する掲示板データの取得
         $board_db = new BoardDataBase();
-        $board_lists = $board_db->getAll($client_id);
+        $board_data = $board_db->getAll($client_id);
 
-        return view('pvkb01.pvkb01',compact('board_lists'));
+        //基本ページネーション設定
+        $pagination = new Pagination();
+        $board_max = $pagination->pageMax($board_data,count($board_data));
+
+        //ページネーションの最大値・最小値チェック
+        if($count_board<Config::get('startcount.count')){
+            $count_board = Config::get('startcount.count');
+        }
+        if($count_board>$board_max){
+            $count_board = $board_max;
+        }
+
+        $board_lists = $pagination->pagination($board_data,count($board_data),$count_board);
+
+        return view('pvkb01.pvkb01',compact('board_lists','board_data','board_max','count_board'));
     }
 
     /**
@@ -143,6 +169,10 @@ class Pskb01Controller extends Controller
      * @param  int  $client_id 顧客ID
      * @param  int  $select_id 選択ID
      * 
+     * @var  App\Http\Controllers\PtcmtrController $tree
+     * @var  array $tree_data ツリーデータ
+     * @var  App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var  array $projection_code 投影元のデータコード
      * @var App\Libraries\php\Domain\BoardDataBase $board_db
      * @var array $board_details 掲示板詳細データ
      * @var array $board_lists 掲示板一覧データ
@@ -156,16 +186,31 @@ class Pskb01Controller extends Controller
         //ログインしている顧客IDの取得
         $client_id = session('client_id');
 
+        if(isset($_GET['count'])){
+            $count_board = $_GET['count'];
+        }else{
+            $count_board = Config::get('startcount.count');
+        }
+
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
+
+        View::share('click_id',$select_id);
+
+        if(substr($select_id,0,2) == "ta"){
+            //選択部署が投影だった場合は対応するIDを取得 
+            $projection_db = new ProjectionDataBase();
+            $projection_code = $projection_db->getId($select_id);
+            $select_id = $projection_code[0]->projection_source_id;
+        }
 
         //詳細に記載する掲示板データの取得
         $board_db = new BoardDataBase();
         $board_details = $board_db->get($client_id,$select_id);
 
         //一覧に記載する掲示板データの取得
-        $board_lists = $board_db->getList($client_id,$select_id);
+        $board_data = $board_db->getList($client_id,$select_id);
 
         //一覧の投影部署データの取得
         try{
@@ -178,7 +223,7 @@ class Pskb01Controller extends Controller
         }
 
         //投影データを一覧に追加
-        $board_lists = array_merge($board_lists,$projection_board);
+        $board_data = array_merge($board_data,$projection_board);
 
         //システム管理者のリストを取得
         try{
@@ -190,7 +235,22 @@ class Pskb01Controller extends Controller
             return redirect()->route('pa0001.errormsg');
         }
 
-        return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists'));
+        //基本ページネーション設定
+        $pagination = new Pagination();
+        $board_max = $pagination->pageMax($board_data,count($board_data));
+
+        //ページネーションの最大値・最小値チェック
+        if($count_board<Config::get('startcount.count')){
+            $count_board = Config::get('startcount.count');
+        }
+        if($count_board>$board_max){
+            $count_board = $board_max;
+        }
+
+        $board_lists = $pagination->pagination($board_data,count($board_data),$count_board);
+
+        return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists',
+        'board_data','board_max','count_board'));
     }
 
     /**
@@ -270,7 +330,7 @@ class Pskb01Controller extends Controller
     /**
      * 掲示板の削除
      *
-     * @param  int  $delete　削除ID
+     * @param  int  $delete 削除ID
      * 
      * @var  $client_id 顧客ID
      * @var  array $lists 削除予定のIDを格納した配列
@@ -378,12 +438,9 @@ class Pskb01Controller extends Controller
      * @var string $copy_id 複製するID
      * @var string $high 複製IDが所属する上位階層ID
      * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
-     * @var string $id 複製前の最新の部署ID
-     * @var string $id2 複製前の最新の人員ID
-     * @var string $id_num 複製前の最新の部署IDの数字部分
-     * @var string $id2_num 複製前の最新の部署IDの数字部分
-     * @var string $number 8桁に0埋めした複製前の最新の部署IDの数字部分
-     * @var string $number2　8桁に0埋めした複製前の最新の人員IDの数字部分
+     * @var string $id 複製前の最新掲示板ID
+     * @var string $id_num 複製前の最新IDの数字部分
+     * @var string $number 8桁に0埋めした複製前の最新掲示板IDの数字部分
      * @var App\Libraries\php\Domain\Hierarchical $hierarchical
      * 
      * @return \Illuminate\Http\Response
@@ -395,7 +452,7 @@ class Pskb01Controller extends Controller
         $high = $request->high_id;
 
         // 重複クリック対策
-        //$request->session()->regenerateToken();
+        $request->session()->regenerateToken();
 
         if($request->copy_id == null){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0009','01');
@@ -488,14 +545,21 @@ class Pskb01Controller extends Controller
     /**
      * 検索
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  int  $client_id 顧客ID
      * @param  int  $select_id 選択ID
      * 
+     * @var  int $count_board ページ番号
      * @var App\Libraries\php\Domain\BoardDataBase $board_db
      * @var array $board_details 掲示板詳細データ
      * @var array $board_lists 掲示板一覧データ
+     * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var array $projection_board 掲示板投影データ
      * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
      * @var $system_management_lists システム管理者リスト
+     * @var  App\Libraries\php\Service\Pagination $pagination
+     * @var  int $board_max ページネーションの最大値
+     * @var  array $board_lists ページネーション掲示板一覧データ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -504,9 +568,28 @@ class Pskb01Controller extends Controller
         //ログインしている顧客IDの取得
         $client_id = session('client_id');
 
-        //ツリーデータの取得
-        $tree = new PtcmtrController();
-        $tree_data = $tree->set_view_treedata();
+        //ページネーションの番号チェック
+        if(isset($_GET['count'])){
+            $count_board = $_GET['count'];
+        }else{
+            $count_board = Config::get('startcount.count');
+        }
+
+        //検索語のチェック
+        if(isset($_GET['search'])){
+            $_POST['search'] = $_GET['search'];
+        }
+
+        $select_code = substr($select_id,0,2);
+        View::share('click_id',$select_id);
+
+        if($select_code == "ta"){
+            //選択部署が投影だった場合は対応するIDを取得 
+            $projection_db = new ProjectionDataBase();
+            $projection_code = $projection_db->getId($select_id);
+            $select_id = $projection_code[0]->projection_source_id;
+            $select_code = substr($projection_code[0]->projection_source_id,0,2);
+        }
 
         //詳細に記載する掲示板データの取得
         $board_db = new BoardDataBase();
@@ -515,9 +598,9 @@ class Pskb01Controller extends Controller
         //一覧に記載する掲示板データの取得
         try{
             if($select_id == 'kb00000000'){
-                $board_lists = $board_db->getSearchTop($client_id,$request->search);
+                $board_data = $board_db->getSearchTop($client_id,$request->search);
             }else{
-                $board_lists = $board_db->getSearchList($client_id,$select_id,$request->search);
+                $board_data = $board_db->getSearchList($client_id,$select_id,$request->search);
             }
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
@@ -536,12 +619,15 @@ class Pskb01Controller extends Controller
         }
 
         //投影データを一覧に追加
-        $board_lists = array_merge($board_lists,$projection_board);
+        $board_data = array_merge($board_data,$projection_board);
 
-        if(empty($board_lists)){
+        if(empty($board_data)){
             OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
             $message = Message::get_message_handle('mhcmwn0001',[0=>'']);
             session(['message'=>$message[0],'handle_message'=>$message[3]]);
+            if($select_id == 'kb00000000'){
+                return redirect()->route('pskb01.index');
+            }
             return redirect()->route('pskb01.show',[$client_id,$select_id]);
         }
 
@@ -555,9 +641,27 @@ class Pskb01Controller extends Controller
             return redirect()->route('pa0001.errormsg');
         }
 
-        if($select_id == 'kb00000000'){
-            return view('pvkb01.pvkb01',compact('board_lists'));
+        //基本ページネーション設定
+        $pagination = new Pagination();
+        $board_max = $pagination->pageMax($board_data,count($board_data));
+
+        if($count_board<Config::get('startcount.count')){
+            $count_board = Config::get('startcount.count');
         }
-        return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists'));
+        if($count_board>$board_max){
+            $count_board = $board_max;
+        }
+        
+        $board_lists = $pagination->pagination($board_data,count($board_data),$count_board);
+
+        //ツリーデータの取得
+        $tree = new PtcmtrController();
+        $tree_data = $tree->set_view_treedata();
+
+        if($select_id == 'kb00000000'){
+            return view('pvkb01.pvkb01',compact('board_lists','board_data','board_max','count_board'));
+        }
+        return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists',
+        'board_data','board_max','count_board'));
     }
 }

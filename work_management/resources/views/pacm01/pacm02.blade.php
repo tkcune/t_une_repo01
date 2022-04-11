@@ -33,7 +33,7 @@
                 {{-- 備考 --}}
                 @include('pscm01.pscm05', ['click_department_data' => $department_details_object])
 
-                <div class="row">
+                <div class="row" style="margin-top: 3px;">
                     <div class="col">
                     <div style="display:inline-flex">
                     <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" id="updateOn" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します" 

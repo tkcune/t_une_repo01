@@ -48,7 +48,8 @@ if(findMobile.device_name !== 'pc'){
                 let span = document.createElement('span');
                 span.innerText = '?';
                 span.style.color = 'red';
-                span.style.border = "1px solid blue";
+                span.style.borderBottom = '1px solid blue';
+                span.style.margin = '2px';
                 return span;
             }
             //ツールチップのdomの生成
@@ -65,7 +66,12 @@ if(findMobile.device_name !== 'pc'){
                 tooltip_span.style.backgroundColor = 'white';
                 tooltip_span.style.visibility = 'hidden';
                 tooltip_span.style.zIndex = '500';
+                tooltip_span.style.border = '1px solid';
+                tooltip_span.style.fontWeight = 'bold';
                 tooltip_span.innerText = this.getAttribute('title');
+                if(this.getAttribute('title').length >= 100){
+                    tooltip_span.style.width = '20rem';
+                }
                 return tooltip_span;
             }
             //ツールチップが画面からはみ出していたら、位置を変更する

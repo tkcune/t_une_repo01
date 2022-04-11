@@ -21,7 +21,9 @@
                         <h2>部署登録</2>
                     </div>
                     <div class="col-4">
-                        <p id="palent">部署名<input type="text" name="name" value="{{ old('name') }}" data-toggle="tooltip" title="部署の名称を入力します"></p>
+                        <p id="palent">部署名<input type="text" name="name" value="{{ old('name') }}" data-toggle="tooltip" title="部署の名称を入力します">
+                        <custom-tooltip title="部署の名称を入力します"></custom-tooltip>
+                        </p>
                     </div>
                 </div>
 
@@ -29,7 +31,10 @@
                     <div class="col-4">
                         <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" data-toggle="tooltip" 
                         title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます"
-                        value="ji00000001" style="width:100px;" readonly></p>
+                        value="ji00000001" style="width:100px;" readonly>
+                        <custom-tooltip title="部署情報を修正、抹消できる管理者を変更する場合ここを修正します
+                        管理者自身とシステム管理者だけが修正できます"></custom-tooltip>
+                        </p>
                     </div>
                     <div class="col-3" style="padding:0px">
                         <p>管理者名：</p>
@@ -38,10 +43,9 @@
                         <p>管理者検索：
                         <input type="text" list="keywords" style="width:150px;"autocomplete="on" maxlength="32"
                         data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
+                        <custom-tooltip title="人員の候補を一覧に表示します
+                        表示された人員を選択した場合管理者人員番号に表示されます。"></custom-tooltip>
                         </p>
-                    </div>
-                    <div id="output_message">
-                        
                     </div>
                 </div>
 
@@ -56,10 +60,12 @@
                         <option value="14" @if(old("status") == 14) selected @endif>休止</option>
                         <option value="18" @if(old("status") == 18) selected @endif>廃止</option>
                         </select>
+                        <custom-tooltip title="部署の状態を選択します"></custom-tooltip>
                         責任者:
                         <select name="responsible_person_id" style="width:90px; margin:0px;" data-toggle="tooltip" title="部署の責任者を選択します" readonly>
                             <option value="ji00000001">山田一郎</option>
                         </select>
+                        <custom-tooltip title="部署の責任者を選択します"></custom-tooltip>
 
                         運用開始日<input name="start_day" type="date" style="width:140px; margin:0px; value="{{date('Y-m-d')}}" readonly>
                         運用終了日<input name="finish_day" type="date" style="width:140px; margin:0px; value="" readonly>
@@ -69,6 +75,7 @@
                         <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                             <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
                         </button>
+                        <custom-tooltip title="備考及び登録日などの情報を開きます"></custom-tooltip>
 
                         </p>
                     </div>
@@ -94,6 +101,7 @@
               
                         <div style="display:inline-flex">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                            <custom-tooltip title="登録を確定します"></custom-tooltip>
                         </div>
             </form>
                     </div>

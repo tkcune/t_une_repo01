@@ -23,6 +23,7 @@
                         @csrf
                         <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写"  onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                         </form>
+                        <form><custom-tooltip title="詳細領域のデータをクリップボードに複写します"></custom-tooltip></form>
                         </div>
                     </div>
             </div>
@@ -44,6 +45,7 @@
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                         </button>
                         </form>
+                        <form><custom-tooltip title="詳細情報に属する下位情報を新規登録する詳細画面に遷移します"></custom-tooltip></form>
                     </div>
                     {{-- ツリー操作機能ここまで　--}}
 
@@ -85,7 +87,7 @@
                     </div>
                     {{-- ページネーションここまで--}}
                     {{-- 検索機能　--}}
-                    <div class="col-4" style="display:inline-flex; padding-top:15px">
+                    <div class="col-5" style="display:inline-flex; padding-top:15px">
                         <p>部署</p>
                         <form action="{{ route('psbs01.search',[session('client_id'),$department_details[0]->department_id])}}" method="post">
                         @csrf
@@ -99,6 +101,8 @@
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索" disabled style="opacity:0.3">
                         </button>
                         </form>
+                        <form><custom-tooltip title="検索文字に従い検索し、一覧に表示するレコードを限定します
+                        文字が入力されていない場合は、全件を表示します"></custom-tooltip></form>
                     </div>
 
                     <div class="col p-0" style="padding-top:15px" onclick="listOn()">
@@ -180,6 +184,7 @@
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                         </button>
                         </form>
+                        <form><custom-tooltip title="詳細情報に属する下位情報を新規登録する詳細画面に遷移します"></custom-tooltip></form>
                     </div>
                         {{-- ツリー操作機能ここまで　--}}
 
@@ -222,7 +227,7 @@
                         {{-- ページネーションここまで --}}
 
                         {{-- 検索機能　--}}
-                    <div class="col-4 p-0" style="display:inline-flex;">
+                    <div class="col-5 p-0" style="display:inline-flex;">
                         <p>氏名</p>
                         <form action="{{ route('psji01.search',[session('client_id'),$personnel_details[0]->personnel_id])}}" method="post">
                         @csrf
@@ -236,6 +241,8 @@
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索" disabled style="opacity:0.3">
                         </button>
                         </form>
+                        <form><custom-tooltip title="検索文字に従い検索し、一覧に表示するレコードを限定します
+                        文字が入力されていない場合は、全件を表示します"></custom-tooltip></form>
                         {{-- 検索機能ここまで　--}}
                     
                     </div>

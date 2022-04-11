@@ -2,7 +2,7 @@
                     {{-- ツリー操作機能　--}}
                     
                     <div class="col-4" style="display:inline-flex;">
-                        <p class="m-0">@if(session('click_code') == "bs")配下@else所属@endif部署</p>
+                        <span class="m-0">@if(session('click_code') == "bs")配下@else所属@endif部署</span>
                         {{-- 部署新規ボタン --}}
                         <form action="{{ route('psbs01.index') }}" method="get">
                         <input type="hidden" id="high" name="high" value="{{$click_data->department_id}}">
@@ -46,6 +46,10 @@
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
                         </button>
                         </form>
+                        <form><custom-tooltip title="新規 : 新規登録する詳細画面に遷移します
+                        移動 : クリップボードにコピーした情報を一覧に移動します。移動元は抹消されます
+                        挿入 : クリップボードにコピーした情報を一覧に挿入します。移動元は消えません
+                        投影 : クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません"></custom-tooltip></form>
                     </div>
                     {{-- ツリー操作機能ここまで　--}}
 
@@ -192,23 +196,25 @@
                     </div>
                     {{-- ページネーションここまで--}}
                     {{-- 検索機能　--}}
-                    <div class="col-4" style="display:inline-flex;">
+                    <div class="col-4" style="display: inline-flex;">
                         <p class="m-0">部署</p>
                         <form action="{{ route('psbs01.search',[session('client_id'),$select_id])}}" method="post">
                         @csrf
                         @method('post')
                         @if(!empty($_POST['search']))
-                            <input type="text" name="search" class="top" maxlength="32" value="{{ $_POST['search'] }}">
+                            <input type="text" name="search" class="top" style="width: 10rem;" maxlength="32" value="{{ $_POST['search'] }}">
                         @else
-                            <input type="text" name="search" class="top" maxlength="32">
+                            <input type="text" name="search" class="top" style="width: 10rem;" maxlength="32">
                         @endif
-                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
-                        </button>
+                            <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
+                                <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
+                            </button>
                         </form>
+                        <form><custom-tooltip title="検索文字に従い検索し、一覧に表示するレコードを限定します。
+                        文字が入力されていない場合は、全件を表示します"></custom-tooltip></form>
                     </div> 
-
-                    <div class="col p-0" onclick="listOn()">
-                        <p class="m-0" style="cursor: hand; cursor:pointer;">✕</p>
+                    
+                    <div class="col p-0" style="display: flex;">
+                        <p class="m-0" style="cursor: hand; cursor:pointer;"  onclick="listOn()">✕</p>
                     </div>
                 </div>

@@ -1,12 +1,13 @@
 <div class="row">
     <div class="col-4" id="page_name">
-        <h2>部署詳細</2><div class="bs_question_parent"><span id="bs_question">?</span><span id="bs_question_baloon" class="bs_not_baloon">部署詳細<span></div>
+        <h2>部署詳細</h2>
     </div>
-    <div id="name_value" class="col-4">
+    <div id="name_value" class="col-4" style="display: flex;">
         <p>
             <span data-toggle="tooltip" id="id_number" title="番号:{{$click_department_data->department_id}}">部署名</span>
             <input type="text" name="name" maxlength="32" style="width:140px;"
             data-toggle="tooltip" title="部署の名称を入力します" @if(!empty(old('name'))) value="{{ old('name') }}" @else value= "{{$click_department_data->name}}"@endif>
+            <custom-tooltip title="番号:{{$click_department_data->department_id}}"></custom-tooltip>
         </p>
     </div>
     @if(isset($click_department_high_name))

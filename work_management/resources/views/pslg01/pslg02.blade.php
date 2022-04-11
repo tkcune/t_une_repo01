@@ -35,7 +35,9 @@
                                                                     ]  -->
                             </form>
                             <p>顧客番号&nbsp;&nbsp;: <input type="text" name="name" style="width:100px;"></p>
-                            <p>顧客名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">(例)前川一号生</a></p>
+                            <p>顧客名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <a href="#" style="color:black;" title="クリックにより顧客詳細に遷移します">(例)前川一号生</a>
+                            <custom-tooltip title="顧客詳細に遷移します"></custom-tooltip>
+                            </p>
 
                             <p class="box" title="入力に該当した顧客の候補を一覧に表示します。表示された人員を選択した場合、その番号が顧客番号に表示されます">顧客検索&nbsp;&nbsp;:
                                 <select class="box" style="width:100px; margin-left:5px;">
@@ -44,12 +46,19 @@
                                     <option name="client_id" value="{{$parson->client_id}}"> {{$parson->client_id}}</option>
                                     @endforeach
                                 </select>
+                                <custom-tooltip title="入力に該当した顧客の候補を一覧に表示します
+                                表示された人員を選択した場合その番号が顧客番号に表示されます"></custom-tooltip>
                             </p>
                         </div>
 
                         <div class="col-4">
-                            <p>部署人員番号&nbsp;&nbsp;:&nbsp;&nbsp;<input type="text" id="management_number" name="management_number" form="create" maxlength="10" data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます" value="" style="width:100px;"></p>
-                            <p>部署人員名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:<span id="management_name" name="management_name" style="text-decoration:underline; margin-left: 10px;" data-toggle="tooltip" title="クリックにより顧客詳細に遷移します"></span></p>
+                            <p>部署人員番号&nbsp;&nbsp;:&nbsp;&nbsp;<input type="text" id="management_number" name="management_number" form="create" maxlength="10" data-toggle="tooltip" title="部署情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます" value="" style="width:100px;">
+                            <custom-tooltip title="部署情報を修正、抹消できる管理者を変更する場合ここを修正します
+                            管理者自身とシステム管理者だけが修正できます"></custom-tooltip>
+                            </p>
+                            <p>部署人員名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:<span id="management_name" name="management_name" style="text-decoration:underline; margin-left: 10px;" data-toggle="tooltip" title="クリックにより顧客詳細に遷移します"></span>
+                            <custom-tooltip title="顧客詳細に遷移します"></custom-tooltip>
+                            </p>
 
                             <p>部署人員検索&nbsp;&nbsp;:
                                 <input type="text" id="search-list" list="keywords" style="width:150px;" autocomplete="on" name="management_name" form="create" data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
@@ -59,6 +68,8 @@
                                         </option>
                                         @endfor
                                 </datalist>
+                                <custom-tooltip title="入力に該当した人員の候補を一覧に表示します
+                                表示された人員を選択した場合その番号が管理者人員番号に表示されます"></custom-tooltip>
                             </p>
                         </div>
 
@@ -71,15 +82,19 @@
                         <div class="row justify-content-start">
                             <div class="col-3">
                                 <input type="checkbox" name="check[]" value="nm" title="通常メッセージログを表示するかどうかを指定します" form="create"> 通常メッセージ
+                                <custom-tooltip title="通常メッセージログを表示するかどうかを指定します"></custom-tooltip>
                             </div>
                             <div class="col-3">
                                 <input type="checkbox" name="check[]" value="wn" title="警告メッセージログを表示するかどうかを指定します" form="create" checked> 警告メッセージ
+                                <custom-tooltip title="警告メッセージログを表示するかどうかを指定します"></custom-tooltip>
                             </div>
                             <div class="col-3">
                                 <input type="checkbox" name="check[]" value="er" title="異常メッセージログを表示するかどうかを指定します" form="create" checked> 異常メッセージ
+                                <custom-tooltip title="異常メッセージログを表示するかどうかを指定します"></custom-tooltip>
                             </div>
                             <div class="col-3">
                                 <input type="checkbox" name="check[]" value="ok" title="正常メッセージログを表示するかどうかを指定します" checked form="create"> 正常メッセージ
+                                <custom-tooltip title="正常メッセージログを表示するかどうかを指定します"></custom-tooltip>
                             </div>
                         </div>
 

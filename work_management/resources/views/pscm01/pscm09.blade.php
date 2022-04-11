@@ -6,6 +6,7 @@
         <p id="palent">
             <span data-toggle="tooltip" id="id_number" title="番号:{{$click_personnel_data->personnel_id}}">名前</span>
             <input type="text" name="name" maxlength="32" style="width:140px;" value="{{$click_personnel_data->name}}" data-toggle="tooltip" title="人員の名称を入力します">
+            <custom-tooltip title="人員の名称を入力します"></custom-tooltip>
         </p>
     </div>
 

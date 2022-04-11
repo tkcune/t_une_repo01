@@ -48,6 +48,10 @@
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
                         </button>
                         </form>
+                        <form><custom-tooltip title="新規: 新規登録する詳細画面に遷移します
+                        移動: クリップボードにコピーした情報を一覧に移動します。移動元は抹消されます
+                        挿入: クリップボードにコピーした情報を一覧に挿入します。移動元は消えません
+                        投影: クリップボードにコピーした情報を、一覧にショートカットして投影します。移動元は消えません"></custom-tooltip></form>
                     </div>
                     {{-- ツリー操作機能ここまで　--}}
 
@@ -206,20 +210,22 @@
                     {{-- ページネーションここまで --}}
 
                     {{-- 検索機能　--}}
-                    <div class="col-4" style="display:inline-flex">
+                    <div class="col-5" style="display:inline-flex">
                         <p>氏名</p>
                         <form action="{{ route('psji01.search',[session('client_id'),$select_id])}}" method="post">
                         @csrf
                         @method('post')
                         @if(!empty($_POST['search2']))
-                            <input type="text" name="search2" class="top" maxlength="32" value="{{ $_POST['search2'] }}">
+                            <input type="text" name="search2" class="top" style="width: 10rem;" maxlength="32" value="{{ $_POST['search2'] }}">
                         @else
-                            <input type="text" name="search2" class="top" maxlength="32">
+                            <input type="text" name="search2" class="top" style="width: 10rem;" maxlength="32">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
                         </button>
                         </form>
+                        <form><custom-tooltip title="検索文字に従い検索し、一覧に表示するレコードを限定します。
+                        文字が入力されていない場合は、全件を表示します"></custom-tooltip></form>
                     </div>
                     {{-- 検索機能ここまで　--}}
                 </div>

@@ -1,5 +1,23 @@
 @extends('pc0001.pc0001')
 
+@section('js')
+    <script src="{{ asset('js/pssb01/pssb01.js') }}" defer></script>
+@endsection
+
+@section('script')
+    {{-- テーブルソート --}}
+    <script>
+    $(document).ready(function() {
+        $('#sb-table').tablesorter({
+            headers: {
+               5: { sorter: false }
+            }
+        });
+    });
+    </script>
+@endsection
+@section('content')
+
 <!-- 0310　作業場所一覧作成開始 -->
 @section('content')
 {{--作業場所トップページ　--}}
@@ -20,7 +38,7 @@
             <div class="col">
                 <div style="display:inline-flex">
 
-                    <form action="{{ route('pa0001.clipboard',"bs00000000")}}" method="get">
+                    <form action="{{ route('pa0001.clipboard',"sb00000000")}}" method="get">
                         @csrf
                         <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写"  onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                         </form>
@@ -36,7 +54,7 @@
                     </form>
                     {{--ここまで--}}
 
-                    <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                    <input type="checkbox" onclick="deleteOn4()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                     <font size="-2" color="red">削除有効化</font>
                 </div>
             </div>
@@ -53,12 +71,7 @@
                 <div class="col-4" style="display:inline-flex; padding-top:15px;">
                     <p>配下場所</p>
                     <form action="{{ route('pssb01.create') }}" method="get">
-                        @if(isset($top_space))
-                        <input type="hidden" id="high" name="high" value="{{$top_space[0]->space_id}}">
-                        @else
-                        <input type="hidden" id="high" name="high" value="{{$spaces[0]->space_id}}">
-                        @endif
-
+                        <input type="hidden" id="high" name="high" value="sb00000000">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                         </button>
@@ -74,18 +87,14 @@
                     </form>
 
                     <form action="{{ route('pssb01.copy') }}" method="post">
-                            @csrf
-                            @method('post')
-                            <input type="hidden" name="client_id" value="{{ session('client_id') }}">
-                            @if(isset($top_space))
-                            <input type="hidden" name="high_id" value="{{$top_space[0]->space_id}}">
-                            @else
-                            <input type="hidden" name="high_id" value="{{$spaces[0]->space_id}}">
-                            @endif
-                            <input type="hidden" id="sb_copy_id" name="copy_id" value="{{session('clipboard_id')}}">
-                            <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
-                                <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入" disabled style="opacity:0.3">
-                            </button>
+                        @csrf
+                        @method('post')
+                        <input type="hidden" name="client_id" value="{{ session('client_id') }}">
+                        <input type="hidden" id="copy" name="copy_id" value="{{session('clipboard_id')}}">
+                        <input type="hidden" id="high_insert" name="high_id" value="sb00000000">
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入" disabled style="opacity:0.3">
+                        </button>
                     </form>
 
                     <form action="{{ route('ptcm01.store') }}" method="post">
@@ -93,7 +102,7 @@
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" id="high_projection" name="high_id" value="{{$top_space[0]->space_id}}">
+                        <input type="hidden" id="high_projection" name="high_id" value="sb00000000">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影" disabled style="opacity:0.3">
                         </button>
@@ -106,47 +115,81 @@
                     <nav aria-label="Page navigation example">
                         <ul class="pagination pagination-sm">
                             <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
+                            @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','count'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pssb01.index',['count'=>1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                @endif
+                                </li>
+
+                                <li class="page-item">
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','count'=>$count_space-1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pssb01.index',['count'=>$count_space-1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                @endif
+                                </li>
+
+                            {{$count_space}}/{{$space_max}}&nbsp;&nbsp;{{count($space_data)}}件
+
                             <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&lt;</span>
-                                </a>
-                            </li>
-                            0/0&nbsp;&nbsp;0件
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&gt;</span>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','count'=>$count_space+1,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pssb01.index',['count'=>$count_space+1]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                @endif
+                                </li>
+
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','count'=>$space_max,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('pssb01.index',['count'=>$space_max]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                @endif
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 {{-- ページネーションここまで--}}
                 {{-- 検索機能　--}}
                 <div class="col-4" style="display:inline-flex; padding-top:15px">
                     <p>場所</p>
-                    <form action="{{ route('pssb01.search',[session('client_id'),$top_space[0]->space_id])}}" method="post">
+                    <form action="{{ route('pssb01.search',[session('client_id'),'sb00000000']) }}" method="post">
                         @csrf
                         @method('post')
-                        <input type="text" name="search" class="top" maxlength="32">
+                        @if(!empty($_POST['search']))
+                            <input type="text" name="search" class="top" maxlength="32" value="{{ $_POST['search'] }}">
+                        @else
+                            <input type="text" name="search" class="top" maxlength="32">
+                        @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
                         </button>
-                    </form>
+                        </form>
+                    </div>
+                    {{-- 検索機能ここまで　--}}
                 </div>
                 <!-- 作業場所一覧部分（0310編集開始） -->
                 <div class="row margin-reset">
                     <div class="col">
                         <div class="border border-dark">
-                            <table id="bs-table" class="bs-table table_sticky-info table table-striped sort-table" style="margin-bottom:0px;margin-top:0px;">
+                            <table id="sb-table" class="sb-table table_sticky-info table table-striped sort-table" style="margin-bottom:0px;margin-top:0px;">
                                 <thead>
                                     <tr>
                                         <th widht="100">番号</th>
@@ -156,14 +199,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($space_dates as $space_date)
+                                    @foreach($spaces as $space)
                                     <tr>
-                                        <td>{{$space_date->space_id}}</td>
-                                        <td><a href="{{ route('pssb01.show',[session('client_id'),$space_date->space_id])}}" data-toggle="tooltip" title="クリックにより、当該作業場所に遷移します">{{$space_date->name}}</a></td>
-                                        <td>@if(isset($space_date->high_id))<a href="{{ route('pssb01.show',[session('client_id'),$space_date->high_id])}}" data-toggle="tooltip" title="">{{$space_date->high_name}}</a>@endif</td>
-                                        <td>【<a href="{{ route('pa0001.clipboard',$space_date->space_id)}}">複写</a>】
-                                            【<p id="bs_list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
-                                            <form id="delete{{$loop->index}}" action="{{ route('pssb01.destroy',[session('client_id'),$space_date->space_id])}}" method="post" style="display: none;">
+                                        <td>{{$space->space_id}}</td>
+                                        <td><a href="{{ route('pssb01.show',[session('client_id'),$space->space_id])}}" data-toggle="tooltip" title="クリックにより、当該作業場所に遷移します">{{$space->name}}</a></td>
+                                        <td>@if(isset($space->high_id))<a href="{{ route('pssb01.show',[session('client_id'),$space->high_id])}}" data-toggle="tooltip" title="">{{$space->high_name}}</a>@endif</td>
+                                        <td>【<a href="{{ route('pa0001.clipboard',$space->space_id)}}">複写</a>】
+                                            【<p id="sb_list_delete{{$loop->index}}" name="sb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
+                                            <form id="delete{{$loop->index}}" action="{{ route('pssb01.destroy',[session('client_id'),$space->space_id])}}" method="post" style="display: none;">
                                                 @csrf
                                             </form>
                                         </td>

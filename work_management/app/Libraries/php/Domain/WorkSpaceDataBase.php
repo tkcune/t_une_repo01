@@ -16,7 +16,7 @@ class WorkSpaceDataBase
 
     /**
      * 選択した作業場所の情報を取得するメソッド
-     * @param $client 顧客ID
+     * @param $client_id 顧客ID
      * @param $select_id 選択したID
      *
      * @var   $data 取得データ
@@ -27,7 +27,7 @@ class WorkSpaceDataBase
     {
         $data = DB::select('SELECT sb1.client_id,sb1.space_id,sb1.name, sb1.management_personnel_id,
         sb1.post_code,sb1.prefectural_office_location, sb1.address,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at, sb2.name
-        AS high_name, high_id, high_id, dcji01.name AS management_name FROM dcsb01 as sb1
+        AS high_name, high_id, dcji01.name AS management_name FROM dcsb01 as sb1
         left join dccmks on sb1.space_id = dccmks.lower_id
         left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id
         left join dcji01 on sb1.management_personnel_id = dcji01.personnel_id
@@ -38,7 +38,7 @@ class WorkSpaceDataBase
 
     /**
      * 作業場所の情報を取得するメソッド
-     * @param $space 作業場所ID
+     * @param $client 作業場所ID
      * @param $select_id 選択したID
      *
      * @var   $data 取得データ
@@ -77,7 +77,7 @@ class WorkSpaceDataBase
     }
     /**
      * 最新の作業場所を取得
-     * @param $space 作業場所ID
+     * @param $client_id 顧客ID
      *
      * @var   $id Id
      *
@@ -95,7 +95,7 @@ class WorkSpaceDataBase
 
     /**
      * 最新の作業場所IDを生成
-     * @param $space 作業場所ID
+     * @param $client_id 顧客ID
      *
      * @var   $id Id
      *
@@ -128,20 +128,20 @@ class WorkSpaceDataBase
      *
      * @return  array $data
      */
-    public static function getClick($client, $space_id)
+    public static function getClick($client, $select_id)
     {
 
         $data = DB::select('select dcsb01.space_id, name, management_personnel_id,
             post_code, prefectural_office_location, address, URL, remarks, dcsb01.created_at,
             dcsb01.updated_at, high_id from dcsb01 inner join dccmks on dcsb01.space_id = dccmks.lower_id
-            where dcsb01.space_id = ?', [$client, $space_id]);
+            where dcsb01.space_id = ?', [$client, $select_id]);
 
         return $data;
     }
 
     /**
      * 選択した作業場所の配下を取得
-     * @param $space 作業場所ID
+     * @param $client_id 顧客ID
      * @param $select_id 選択したID
      *
      * @var   $data 取得データ
@@ -164,25 +164,25 @@ class WorkSpaceDataBase
 
     /**
      * 選択した作業場所の上位IDを取得
-     * @param $space　作業場所ID
-     * @param $space_id 選択したID
+     * @param $cliet　顧客ID
+     * @param $select_id 選択したID
      *
      * @var   $high_id 取得データ
      *
      * @return  array $high_id
      */
-    public static function getHighId($client, $space_id)
+    public static function getHighId($client, $select_id)
     {
 
         $high_id = DB::select('select high_id from dcsb01 inner join dccmks on dcsb01.space_id = dccmks.lower_id
-        where dcsb01.client_id = ? and dcsb01.space_id = ?', [$client, $space_id]);
+        where dcsb01.client_id = ? and dcsb01.space_id = ?', [$client, $select_id]);
 
         return $high_id;
     }
 
     /**
      * 検索
-     * @param $space 作業場所ID
+     * @param $client 顧客ID
      * @param $search 検索文字
      *
      * @var   $data 取得データ
@@ -208,8 +208,10 @@ class WorkSpaceDataBase
 
     /**
      * 登録
+     * @param $client_id 顧客ID
      * @param $sapce_id 作業場所ID
      * @param $name 作業場所名称
+     * @param $managment_personnel_id 管理者ID
      * @param $post_code 郵便番号
      * @param $prefectural_office_location 都道府県
      * @param $address 市区町村
@@ -242,9 +244,10 @@ class WorkSpaceDataBase
 
     /**
      * 複製
-     * @param $space_id 作業場所ID
+     * @param $client_id 顧客ID
+     * @param $sapce_id 作業場所ID
      * @param $name 作業場所名称
-     * @param $management_personnel_id 管理者ID
+     * @param $managment_personnel_id 管理者ID
      * @param $post_code 郵便番号
      * @param $prefectural_office_location 都道府県
      * @param $address 市区町村
@@ -276,7 +279,7 @@ class WorkSpaceDataBase
 
     /**
      * 最上位作業場所データの取得
-     * @param $client 顧客ID
+     * @param $client_id 顧客ID
      *
      * @var   $data 取得データ
      *
@@ -290,6 +293,15 @@ class WorkSpaceDataBase
         return $data;
     }
 
+    /**
+     * 選択部署が最上位部署かどうかの判別
+     * @param $client 顧客ID
+     * @param $high_id 上位ID
+     *
+     * @var   $data 取得データ
+     *
+     * @return  array $data
+     */
     public static function getClickTop($client, $high_id)
     {
 
@@ -300,13 +312,15 @@ class WorkSpaceDataBase
 
     /**
      * 更新
-     * @param $name　作業場所名称
+     * @param $client_id 顧客ID
+     * @param $sapce_id 作業場所ID
+     * @param $name 作業場所名称
+     * @param $managment_personnel_id 管理者ID
      * @param $post_code 郵便番号
      * @param $prefectural_office_location 都道府県
      * @param $address 市区町村
      * @param $URL アドレス
      * @param $remarks 備考
-     * @param $space_id 作業場所ID
      *
      */
 
@@ -330,7 +344,8 @@ class WorkSpaceDataBase
 
     /**
      * 削除
-     * @param $space_id 作業場所ID
+     * @param $client_id 作業場所ID
+     * @param $lower_id 下位ID
      *
      */
     public static function delete($client_id, $lower_id)
@@ -342,5 +357,68 @@ class WorkSpaceDataBase
                 [$client_id, $lower_id]
             );
         }
+    }
+
+    /**
+     * 上位IDの取得
+     * @param $client_id 顧客ID
+     * @param $select_id 選択ID
+     *
+     * @var   $id 取得id
+     *
+     * @return  array $id
+     */
+    public static function getHigh($client_id, $select_id)
+    {
+
+        $id = DB::select('SELECT high_id FROM `dccmks` WHERE client_id = ? and lower_id = ?;', [$client_id, $select_id]);
+
+        return $id;
+    }
+
+    /**
+     * 検索した作業場所データを取得するメソッド
+     * @param $client 顧客ID
+     * @param $select_id 選択したID
+     *
+     * @var   $data 取得データ
+     *
+     * @return  array $data
+     */
+    public static function getSearchList($client_id, $select_id, $search)
+    {
+
+        $data = DB::select('SELECT sb1.client_id,sb1.space_id,sb1.name,sb1.management_personnel_id,
+            sb1.post_code,sb1.prefectural_office_location, sb1.address,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
+            AS high_name,high_id,dcji01.name AS management_name FROM dcsb01 as sb1
+            left join dccmks on sb1.space_id = dccmks.lower_id
+            left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id
+            left join dcji01 on sb1.management_personnel_id = dcji01.personnel_id
+            where sb1.client_id = ? and dccmks.high_id = ? and sb1.name like ? order by sb1.space_id', [$client_id, $select_id, '%' . $search . '%']);
+
+        return $data;
+    }
+
+    /**
+     * 作業場所概要画面で検索した作業場所データを取得するメソッド
+     * @param $client 顧客ID
+     * @param $select_id 選択したID
+     *
+     * @var   $data 取得データ
+     *
+     * @return  array $data
+     */
+    public static function getSearchTop($client_id, $search)
+    {
+
+        $data = DB::select('SELECT sb1.client_id,sb1.space_id,sb1.name,sb1.management_personnel_id,
+            sb1.post_code,sb1.prefectural_office_location, sb1.address,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
+            AS high_name,high_id,dcji01.name AS management_name FROM dcsb01 as sb1
+            left join dccmks on sb1.space_id = dccmks.lower_id
+            left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id
+            left join dcji01 on sb1.management_personnel_id = dcji01.personnel_id
+            where sb1.client_id = ? and sb1.name like ? order by sb1.space_id', [$client_id, '%' . $search . '%']);
+
+        return $data;
     }
 }

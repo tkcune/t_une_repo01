@@ -1,3 +1,42 @@
+/** 
+ * ページネーションのページ遷移時の状態を引き継ぐメソッド
+ * 
+ * @var string element 名前の要素
+ * @var string title 名前箇所のtitle属性の内容
+ * @var string session ページ遷移前のtitle属性の内容
+ */
+ window.addEventListener('pageshow',()=>{
+
+  // 開いたページの番号が記載された要素を取得
+  var element = document.getElementById("id_number");
+
+  //  開いたページの番号が記載された要素のtitle属性を取得
+  var title = element.title;
+
+  var session = window.sessionStorage.getItem(['page_id']);
+
+  //ページ遷移前とページ遷移後の番号が同じかどうかの判断
+  if(title == session){
+
+    //チェックボックスの状態の判断
+    if(localStorage.getItem('check') == "undefined") {
+      document.getElementById("check").checked = false;
+      console.log(localStorage.getItem('check'));
+    }else if(localStorage.getItem('check') == "on"){
+      deleteOn3();
+      document.getElementById("check").checked = true;
+    }else{
+
+    }
+  }
+  //チェック状態のリセット
+  localStorage.removeItem('check');
+
+  //セッションの削除
+  window.sessionStorage.removeItem(['page_id']);
+
+});
+
 /**
  * 掲示板詳細の削除のON・OFF切替メソッド
  * @var int count 掲示板一覧テーブルの行数

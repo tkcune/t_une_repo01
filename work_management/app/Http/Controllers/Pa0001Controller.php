@@ -508,8 +508,8 @@ class Pa0001Controller extends Controller
             return view('pvbs01.pvbs01',compact('department_max','department_details','personnel_max','personnel_details',
             'department_data','count_department','count_personnel','personnel_data'));
         }else{
-            return view('pvbs01.pvbs02',compact('top_department','top_responsible','department_max','departments','personnel_max','names',
-            'department_data','responsible_lists','department_high','personnel_high','top_management','count_department','count_personnel','personnel_data'));
+            return view('pvbs01.pvbs02',compact('department_details', 'department_max','personnel_max', 'personnel_details',
+            'department_data', 'count_department','count_personnel','personnel_data'));
         }
     }
 

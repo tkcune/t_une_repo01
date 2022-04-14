@@ -477,6 +477,7 @@ class Psji01Controller extends Controller
             return view('pacm01.pacm01',compact('count_department','count_personnel','click_department_data','department_data','personnel_data','select_id','department_max',
             'departments','personnel_max','names','system_management_lists'));
         }else{
+            //@var DepartmentDetailsObject 変数の名前合わせ
             $click_data = $department_details_object;
             return view('pacm01.pacm02',compact('click_data', 'pagination_object', 'department_details_object',
             'system_management_lists', 'click_id', 'select_id', 'personnel_data'));

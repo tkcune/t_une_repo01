@@ -166,8 +166,11 @@ class Pa0001Controller extends Controller
             return view('pacm01.pacm01',compact('department_max','departments','personnel_max','names','system_management_lists',
             'count_department','department_data','count_personnel','personnel_data','click_department_data','select_id'));
         }else{
+            //@var string クリックしたid
             $click_id = NULL;
+            //@var DepartmentDetailsObject 部署の詳細表示オブジェクト
             $click_data = $department_details_object;
+            //@var string 選択した表示する詳細画面のid
             $select_id = "bs00000001";
             return view('pacm01.pacm02',compact('click_data', 'pagination_object', 'department_details_object',
             'system_management_lists', 'click_id', 'select_id', 'personnel_data'));
@@ -441,8 +444,11 @@ class Pa0001Controller extends Controller
                 'department_data','personnel_max','names','click_personnel_data',));
             }else{
                 //詳細画面オブジェクトの設定
+                //@var PersonnelDetailsObject 人事詳細表示オブジェクト
                 $personnel_details_object = new PersonnelDetailsObject();
+                //データをセットする
                 $personnel_details_object->setPersonnelObject($click_personnel_data);
+                //@var PersonnelDetailsObject 変数の名前合わせ
                 $click_data = $personnel_details_object;
                 return view('pacm01.pacm02',compact('personnel_details_object', 'click_data', 'pagination_object', 
                 'select_id','system_management_lists',));
@@ -671,6 +677,7 @@ class Pa0001Controller extends Controller
                 return view('pacm01.pacm01',compact('department_max','departments','personnel_max','names','system_management_lists',
                 'count_department','department_data','count_personnel','personnel_data','click_department_data','select_id'));
             }else{
+                //@var DepartmentDetailsObject 変数の名前合わせ
                 $click_data = $department_details_object;
                 return view('pacm01.pacm02',compact('click_data', 'pagination_object', 'department_details_object',
                 'system_management_lists', 'select_id', 'personnel_data'));
@@ -757,6 +764,7 @@ class Pa0001Controller extends Controller
                 return view('pacm01.pacm01',compact('count_department','department_data','personnel_data','select_id','department_max','departments','personnel_max',
                 'names','count_personnel','click_personnel_data','system_management_lists'));
             }else{
+                //@var PersonnelDetailsObject 変数の名前合わせ
                 $click_data = $personnel_details_object;
                 return view('pacm01.pacm02',compact('personnel_details_object', 'click_data', 'pagination_object', 
                 'select_id','system_management_lists',));
@@ -896,6 +904,7 @@ class Pa0001Controller extends Controller
             return view('pacm01.pacm01',compact('count_department','count_personnel','click_department_data','department_data','personnel_data','select_id','department_max',
             'departments','personnel_max','names','system_management_lists'));
         }else{
+            //@var DepartmentDetailsObject 引数の名前合わせ
             $click_data = $department_details_object;
             return view('pacm01.pacm02',compact('click_data', 'pagination_object', 'department_details_object',
             'system_management_lists', 'select_id', 'personnel_data'));

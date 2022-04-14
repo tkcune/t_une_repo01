@@ -1,24 +1,24 @@
 import { findMobile } from './ptcmrd';
 
 //var HIerarchyBarクラス パンくずリストクラス
-let HierarchyBar = {};
+let hierarchyBar = {};
 
-if(findMobile.device_name !== 'pc'){
+if(findMobile.deviceName !== 'pc'){
 
-HierarchyBar = ((bar_info) => {
+hierarchyBar = ((barInfo) => {
     //@var object 作業管理システムのデータ階層
     let bar = {};
     //@var dom パンくずリストのdom
-    let bar_element = null;
+    let barElement = null;
     if(document.getElementById('panlist')){
-        bar_element = document.getElementById('panlist');
+        barElement = document.getElementById('panlist');
     }
     //@var string 次の表示リスト
     let next = '';
     
     //パンくずリストのオブジェクトデータの作成
     let createBarinfo = function createBarinfo(){
-      bar_info.forEach(block => {
+      barInfo.forEach(block => {
         block.forEach(info => {
           //@var string 親要素の値
           let key = Object.keys(info)[0];
@@ -47,20 +47,20 @@ HierarchyBar = ((bar_info) => {
   
     //パンくずリストのdom作成
     //@param array パンくずリストに表示する要素の配列
-    let createBar = function createBar(barinfo){
-      barinfo.forEach(info => {
+    let createBar = function createBar(barInfo){
+      barInfo.forEach(info => {
         createBarElement(info, bar[info]);
       });
     }
     //リストの1つのdomを作成する
     //@param string info 表示する要素の情報
     //@param array barinfo infoの子要素
-    let createBarElement = function createBarElement(info, barinfo){
+    let createBarElement = function createBarElement(info, barInfo){
       //タイトルの作成
-      bar_element.appendChild(createTitleElement(info));
+      barElement.appendChild(createTitleElement(info));
       //子要素があれば、次の選択の要素を作成する
-      if(barinfo){
-        bar_element.appendChild(createNextElement(barinfo));
+      if(barInfo){
+        barElement.appendChild(createNextElement(barInfo));
       }
     }
   
@@ -75,7 +75,7 @@ HierarchyBar = ((bar_info) => {
       //表示するタイトルを代入する
       if(info !== '作業管理システム'){
         titleDiv.innerText = info.split('.')[1];
-        titleDiv.addEventListener('click', {info: info, handleEvent: page_move});
+        titleDiv.addEventListener('click', {info: info, handleEvent: pageMove});
       }else{
         titleDiv.innerText = '作業管理システム';
       }
@@ -119,7 +119,7 @@ HierarchyBar = ((bar_info) => {
             li.classList.add('projection_bar');
         }
         //移動のクリック処理
-        li.addEventListener('click', {info: info, handleEvent: page_move});
+        li.addEventListener('click', {info: info, handleEvent: pageMove});
         //pc確認のためのポインター
         li.style = 'cursor: pointer;';
         ul.appendChild(li);
@@ -130,7 +130,7 @@ HierarchyBar = ((bar_info) => {
     }
 
     //ページ移動
-    let page_move = function(){
+    let pageMove = function(){
       //次の要素を保存する
       next = this.info;
       let id = this.info.split('.')[0];
@@ -220,18 +220,18 @@ HierarchyBar = ((bar_info) => {
   //次の要素を取得する
   next = localStorage.getItem('next');
   //@var string パス
-  let pathname = document.location.pathname;
-  if(pathname === '/'){
+  let pathName = document.location.pathname;
+  if(pathName === '/'){
     next = 'bs00000001.部署A';
-  }else if(pathname.split('/')[1] === 'show'){
+  }else if(pathName.split('/')[1] === 'show'){
     //@var string パスの最後のid
-    let next_id = pathname.split('/')[3];
-    bar_info.forEach(block => {
+    let nextId = pathName.split('/')[3];
+    barInfo.forEach(block => {
       block.forEach(info => {
-        if(Object.keys(info)[0].split('.')[0] === next_id){
+        if(Object.keys(info)[0].split('.')[0] === nextId){
           next = Object.keys(info)[0];
         }
-        if(Object.values(info)[0].split('.')[0] === next_id){
+        if(Object.values(info)[0].split('.')[0] === nextId){
           next = Object.values(info)[0];
         }
       })
@@ -247,4 +247,4 @@ HierarchyBar = ((bar_info) => {
   createBar(chain.reverse());
   })(treeChain);
 }
-  export {HierarchyBar}
+  export {hierarchyBar}

@@ -3,47 +3,47 @@ import { findMobile } from './ptcmrd';
 //@var object ツールチップのクラス
 let customToolTip = {};
 
-if(findMobile.device_name !== 'pc'){
+if(findMobile.deviceName !== 'pc'){
     customToolTip = (() => {
         //<custom-tooltip></custom-tooltip>の宣言
         class CustomToolTip extends HTMLElement {
             //ツールチップのdom生成
             constructor() {
                 super();
-                this._updateRendering();
+                this.updateRendering();
             }
             //domの生成と描画
-            _updateRendering() {
+            updateRendering() {
                 //@var dom ？マーク
-                let span = this._create_select();
+                let span = this.createSelect();
                 //custom-tooltipタグに追加する
                 this.appendChild(span);
                 //ツールチップの表示の基準とする
                 this.style.position = 'relative';
                 //@var dom ツールチップのdom
-                let tooltip_span = this._create_tooltip();
-                tooltip_span = this.appendChild(tooltip_span);
+                let tooltipSpan = this.createTooltip();
+                tooltipSpan = this.appendChild(tooltipSpan);
                 //ツールチップの表示が画面よりはみ出ていたら、修正する
-                this._change_position(span, tooltip_span);
+                this.changePosition(span, tooltipSpan);
                 //？マークのクリック処理
                 span.addEventListener('click', () => {
                     //非表示なら表示
-                    if(tooltip_span.style.visibility === 'hidden'){
-                        tooltip_span.style.visibility = 'visible';
+                    if(tooltipSpan.style.visibility === 'hidden'){
+                        tooltipSpan.style.visibility = 'visible';
                     }
                 });
                 //表示したツールチップを非表示にする
                 function clearToolTip(){
-                    if(this.tooltip_span.style.visibility === 'visible'){
-                        this.tooltip_span.style.visibility = 'hidden';
+                    if(this.tooltipSpan.style.visibility === 'visible'){
+                        this.tooltipSpan.style.visibility = 'hidden';
                     }
                 }
                 //？マーク以外をクリックしたら、ツールチップを非表示にする
-                window.addEventListener('click', {tooltip_span: tooltip_span, handleEvent: clearToolTip}, true);
+                window.addEventListener('click', {tooltipSpan: tooltipSpan, handleEvent: clearToolTip}, true);
             }
             //？マークの生成
             //@return dom ？マーク
-            _create_select(){
+            createSelect(){
                 //@var dom ？マーク
                 let span = document.createElement('span');
                 span.innerText = '?';
@@ -54,48 +54,48 @@ if(findMobile.device_name !== 'pc'){
             }
             //ツールチップのdomの生成
             //@var dom ツールチップのdom
-            _create_tooltip(){
+            createTooltip(){
                 //@var dom ツールチップのdom
-                let tooltip_span = document.createElement('span');
-                tooltip_span.style.position = 'absolute';
-                tooltip_span.style.width = '10rem';
-                tooltip_span.style.top = '1rem';
-                tooltip_span.style.left = '1rem';
+                let tooltipSpan = document.createElement('span');
+                tooltipSpan.style.position = 'absolute';
+                tooltipSpan.style.width = '10rem';
+                tooltipSpan.style.top = '1rem';
+                tooltipSpan.style.left = '1rem';
                 //改行を実現する
-                tooltip_span.style.whiteSpace = 'pre-line !important';
-                tooltip_span.style.backgroundColor = 'white';
-                tooltip_span.style.visibility = 'hidden';
-                tooltip_span.style.zIndex = '500';
-                tooltip_span.style.border = '1px solid';
-                tooltip_span.style.fontWeight = 'bold';
-                tooltip_span.innerText = this.getAttribute('title');
+                tooltipSpan.style.whiteSpace = 'pre-line !important';
+                tooltipSpan.style.backgroundColor = 'white';
+                tooltipSpan.style.visibility = 'hidden';
+                tooltipSpan.style.zIndex = '500';
+                tooltipSpan.style.border = '1px solid';
+                tooltipSpan.style.fontWeight = 'bold';
+                tooltipSpan.innerText = this.getAttribute('title');
                 if(this.getAttribute('title').length >= 100){
-                    tooltip_span.style.width = '20rem';
+                    tooltipSpan.style.width = '20rem';
                 }
-                return tooltip_span;
+                return tooltipSpan;
             }
             //ツールチップが画面からはみ出していたら、位置を変更する
             //@param dom span ？マーク
             //@param dom tooltip_span ツールチップのdom
             //@return dom ツールチップのdom
-            _change_position(span, tooltip_span){
+            changePosition(span, tooltipSpan){
                 //@var int spanの表示位置
                 let px = window.pageXOffset + span.getBoundingClientRect().left;
                 //@vat int 画面の長さ と spanとツールチップの長さの差
-                let diff_width = document.body.clientWidth - (px + tooltip_span.clientWidth);
+                let diffWidth = document.body.clientWidth - (px + tooltipSpan.clientWidth);
                 //横にはみ出していたら、横にずらす
-                if(diff_width < 0){
-                    tooltip_span.style.left = (diff_width - 8) + 'px';
+                if(diffWidth < 0){
+                    tooltipSpan.style.left = (diffWidth - 8) + 'px';
                 }
                 //@var int spanの表示位置
                 let py = window.pageYOffset + span.getBoundingClientRect().top;
                 //@var int 画面の高さ と spanとツールチップの高さの差
-                let diff_hight = document.body.clientHeight - (py + tooltip_span.clientHeight);
+                let diffHight = document.body.clientHeight - (py + tooltipSpan.clientHeight);
                 //縦にはみ出していたら、下げる
-                if(diff_hight < 0){
-                    tooltip_span.style.top = (-tooltip_span.clientHeight - 8) + 'px';
+                if(diffHight < 0){
+                    tooltipSpan.style.top = (-tooltipSpan.clientHeight - 8) + 'px';
                 }
-                return tooltip_span;
+                return tooltipSpan;
             }
         }
         //custom-tooltipを使えるように設定する

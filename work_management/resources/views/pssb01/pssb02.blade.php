@@ -20,9 +20,11 @@
 @section('content')
 <div class="col border border-primary" style="padding:10px;">
     <div class="row">
-        <form action="{{ route('pssb01.update',$click_space_data[0]->space_id) }}" method="post">
+        <form action="{{ route('pssb01.update',$space_details[0]->space_id) }}" method="post">
             @csrf
             @method('patch')
+            <input type="hidden" id="space_id" name="space_id" value="{{$space_details[0]->space_id}}">
+            <input type="hidden" name="client_id" value="{{ session('client_id') }}">
             @if(substr($click_id,0,2) == "ta")
             <div class="details-area border border-dark bg-info" style="padding:10px;" id="parent">
             @else
@@ -34,25 +36,25 @@
                     </div>
                     <div class="col-4" style="margin-right:-10px">
                         <p id="palent">
-                            <span data-toggle="tooltip" id="id_number" title="番号:{{$click_space_data[0]->space_id}}">
-                            名称：<input type="text" name="name" value="{{$click_space_data[0]->name}}" data-toggle="tooltip" title="">
+                        <span data-toggle="tooltip" id="id_number" title="番号:{{$space_details[0]->space_id}}">
+                            名称：<input type="text" name="name" value="{{$space_details[0]->name}}" data-toggle="tooltip" title="">
                         </p>
                     </div>
 
                     <div class="col-3">
-                        @if(isset($click_space_data[0]->high_id))
-                        <p>上位：<a href="{{ route('pssb01.show',[session('client_id'),$click_space_data[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$click_space_data[0]->high_name}}</a></p>
+                        @if(isset($space_details[0]->high_id))
+                        <p>上位：<a href="{{ route('pssb01.show',[session('client_id'),$space_details[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$space_details[0]->high_name}}</a></p>
                         @endif
                     </div>
                     <div>
 
                     <div class="row">
                     <div class="col-4">
-                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$click_space_data[0]->management_personnel_id}}" style="width:100px;"
+                        <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$space_details[0]->management_personnel_id}}" style="width:100px;"
                         data-toggle="tooltip" title="" readonly></p>
                     </div>
                     <div class="col-3" style="padding:0px">
-                        <p>管理者名：{{$click_space_data[0]->management_name}}</p>
+                        <p>管理者名：{{$space_details[0]->management_name}}</p>
                     </div>
                     <div class="col" style="padding:0px">
                         <p>管理者検索：
@@ -69,24 +71,24 @@
 
                         <div class="row margin-reset">
                             <div class="col-4">
-                                <p>郵便番号：<input type="text" name="postcode" size="10" value="{{$click_space_data[0]->post_code}}" maxlength="8" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
+                                <p>郵便番号：<input type="text" name="postcode" size="10" value="{{$space_details[0]->post_code}}" maxlength="8" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
                             </div>
                             <div class="col" style="padding:0px">
                                 住所:
-                                <input type="text" name="prefectural" value="{{$click_space_data[0]->prefectural_office_location}}" size="10" title="ここに都道府県名が入ります。">
-                                <input type="text" name="address" value="{{$click_space_data[0]->address}}" size="30" title="ここに市区町村名が入ります。">
+                                <input type="text" name="prefectural" value="{{$space_details[0]->prefectural_office_location}}" size="10" title="ここに都道府県名が入ります。">
+                                <input type="text" name="address" value="{{$space_details[0]->address}}" size="30" title="ここに市区町村名が入ります。">
                                 </p>
                             </div>
                             <div class="row margin-reset">
                                 <div class="col">
-                                    <p>URL：<input type="text" name="URL" value="{{$click_space_data[0]->URL}}" size="81" title="ここに作業場所の地図のURLを入力します。">
+                                    <p>URL：<input type="text" name="URL" value="{{$space_details[0]->URL}}" size="81" title="ここに作業場所の地図のURLを入力します。">
                                         <!-- 作業場所のマップURL、値がNULLならグーグルマップが表示される -->
-                                        @if(($click_space_data[0]->URL) === NULL)z
+                                        @if(($space_details[0]->URL) === NULL)
                                         <button class="main_button_style" type="button" id="remarks_change_display" onclick="window.open('https://www.google.com/maps/','_blank')" data-toggle="tooltip" title="クリックにより、地図を開きます">
                                             <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.tizu')}}" alt="地図">
                                         </button>
                                         @else
-                                        <button class="main_button_style" type="button" id="remarks_change_display" onclick="window.open('{{$click_space_data[0]->URL}}','_blank')" data-toggle="tooltip" title="クリックにより、地図を開きます">
+                                        <button class="main_button_style" type="button" id="remarks_change_display" onclick="window.open('{{$space_details[0]->URL}}','_blank')" data-toggle="tooltip" title="クリックにより、地図を開きます">
                                             <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.tizu')}}" alt="地図">
                                         </button>
                                         @endif
@@ -98,19 +100,19 @@
                         </div>
                     </div>
 
-                    <input type="hidden" id="remarks" name="remarks" value="">
+                    <input type="hidden" id="remarks" name="remarks" value="{{ $space_details[0]->remarks }}">
 
                     <div class="row margin-reset" id="remarks-field" style="display:none"">
                         <div>
                             備考
                         </div>
                         <div>
-                            <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;"></textarea>
+                            <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;">{{ $space_details[0]->remarks }}</textarea>
                         </div>
                     </div>
 
                     <div class="row" id="little-information-field" style="display:none">
-                    <p>登録日:{{$click_space_data[0]->created_at}} 修正日:{{$click_space_data[0]->updated_at}}</p>
+                    <p>登録日:{{$space_details[0]->created_at}} 修正日:{{$space_details[0]->updated_at}}</p>
                     </div>
 
                     <div class="row margin-reset">
@@ -118,21 +120,21 @@
                             <div style="display:inline-flex">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" id="updateOn" data-toggle="tooltip" title="クリックにより、登録、更新を確定します"
                             style="opacity: 0.3;" disabled>
-        </form>
+                            </form>
                             <form action="{{ route('pssb01.create') }}" method="get">
                             @csrf
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規" onclick="submit();"
                             data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
-                            <input type="hidden" id="high_new" name="high" value="{{ $click_space_data[0]->space_id }}">
+                            <input type="hidden" id="high_new" name="high" value="{{ $space_details[0]->space_id }}">
                             </form>
 
                             @if(substr($click_id,0,2) == "ta")
-                            <form action="{{ route('pssb01.destroy',$click_id)}}" method="post">
+                            <form action="{{ route('ptcm01.delete',[session('client_id'),$click_id])}}" method="post">
                             @else
-                            <form action="{{ route('pssb01.destroy',[session('client_id'),$click_space_data[0]->space_id])}}" method="post">
+                            <form action="{{ route('pssb01.destroy',[session('client_id'),$space_details[0]->space_id])}}" method="post">
                             @endif
                             @csrf
-                            @method('delete')
+                            @method('post')
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.delete')}}" alt="削除" onclick="submit();" id="delete" data-toggle="tooltip"
                             title="削除有効化をチェックした状態でのクリックにより、詳細領域のデータを下位ツリーのデータを含めて削除します"  disabled>
                             </form>
@@ -140,7 +142,7 @@
                             @if(substr($click_id,0,2) == "ta")
                             <form action="{{ route('pa0001.clipboard',$click_id)}}" method="get">
                             @else
-                            <form action="{{ route('pa0001.clipboard',$click_space_data[0]->space_id)}}" method="get">
+                            <form action="{{ route('pa0001.clipboard',$space_details[0]->space_id)}}" method="get">
                             @endif
                             @csrf
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写" onclick="submit();" id="copyTarget"
@@ -160,7 +162,7 @@
                             @if(substr($click_id,0,2) == "ta")
                             <form action="{{ route('pssb01.show',[session('client_id'),$click_id])}}" method="get">
                             @else
-                            <form action="{{ route('pssb01.show',[session('client_id'),$click_space_data[0]->space_id])}}" method="get">
+                            <form action="{{ route('pssb01.show',[session('client_id'),$space_details[0]->space_id])}}" method="get">
                             @endif
                                 <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.road')}}" alt="再表示" onclick="submit();" id="open_tree" data-toggle="tooltip" title="ツリーを再表示します">
                             </form>
@@ -169,7 +171,7 @@
                                 <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}} alt="開く" >
                             </button>
 
-                            <input type="checkbox" id="check" onclick="deleteOn4()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                            <input type="checkbox" id="check" onclick="deleteOn5()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                             <font size="-2" color="red">削除有効化</font>
 
                             <input type="checkbox" id="check2" onclick="updateOn()" data-toggle="tooltip" title="チェックを入れることで更新ボタンがクリックできるようになります（権限がある場合）">
@@ -189,17 +191,17 @@
                     <div class="col-4" style="display:inline-flex">
                         <p>配下場所</p>
                         <form action="{{ route('pssb01.create') }}" method="get">
-                            <input type="hidden" id="high" name="high" value="{{$click_space_data[0]->space_id}}">
+                            <input type="hidden" id="high" name="high" value="{{$space_details[0]->space_id}}">
                             <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                                 <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                             </button>
                         </form>
 
                         <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
-                        @if(isset($click_space_data))
-                            <input type="hidden" id="high_move" name="high_id" value="{{$click_space_data[0]->space_id}}">
+                        @if(isset($space_details))
+                            <input type="hidden" id="high_move" name="high_id" value="{{$space_details[0]->space_id}}">
                         @else
-                            <input type="hidden" id="high_move" name="high_id" value="{{$click_space_data[0]->space_id}}">
+                            <input type="hidden" id="high_move" name="high_id" value="{{$space_details[0]->space_id}}">
                         @endif
                         <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}">
                         @csrf
@@ -214,7 +216,7 @@
                             @method('post')
                             <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                             <input type="hidden" id="copy" name="copy_id" value="{{session('clipboard_id')}}">
-                            <input type="hidden" id="high_insert" name="high_id" value="{{$click_space_data[0]->space_id}}">
+                            <input type="hidden" id="high_insert" name="high_id" value="{{$space_details[0]->space_id}}">
                             <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
                                 <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入">
                             </button>
@@ -225,7 +227,7 @@
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" id="high_projection" name="high_id" value="{{$click_space_data[0]->space_id}}">
+                        <input type="hidden" id="high_projection" name="high_id" value="{{$space_details[0]->space_id}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
                         </button>
@@ -239,47 +241,47 @@
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
                                 @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$click_space_data[0]->space_id,'count'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$space_details[0]->space_id,'count'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 @else
-                                    <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$click_space_data[0]->space_id,'count'=>1]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$space_details[0]->space_id,'count'=>1]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 @endif
                                 </li>
                                 <li class="page-item">
                                 @if(!empty($_POST['search']))
-                                <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$click_space_data[0]->space_id,'count'=>$count_space-1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$space_details[0]->space_id,'count'=>$count_space-1,'search'=>$_POST['search']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
                                 @else
-                                    <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$click_space_data[0]->space_id,'count'=>$count_space-1]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$space_details[0]->space_id,'count'=>$count_space-1]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
                                 @endif
                                 </li>
 
-                                {{$count_space}}/{{$space_max}}&nbsp;&nbsp;{{count($click_space_data)}}件
+                                {{$count_space}}/{{$space_max}}&nbsp;&nbsp;{{count($space_details)}}件
 
                                 <li class="page-item">
                                 @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$click_space_data[0]->space_id,'count'=>$count_space+1,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$space_details[0]->space_id,'count'=>$count_space+1,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 @else
-                                    <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$click_space_data[0]->space_id,'count'=>$count_space+1]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$space_details[0]->space_id,'count'=>$count_space+1]) }}" aria-label="Next">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 @endif
                                 </li>
                                 <li class="page-item">
                                 @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$click_space_data[0]->space_id,'count'=>$space_max,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$space_details[0]->space_id,'count'=>$space_max,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 @else
-                                    <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$click_space_data[0]->space_id,'count'=>$space_max]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$space_details[0]->space_id,'count'=>$space_max]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 @endif
@@ -292,7 +294,7 @@
                     {{-- 検索機能　--}}
                     <div class="col-4" style="display:inline-flex">
                         <p>検索</p>
-                        <form action="{{ route('pssb01.search',[session('client_id'),$click_space_data[0]->space_id]) }}" method="post">
+                        <form action="{{ route('pssb01.search',[session('client_id'),$space_details[0]->space_id]) }}" method="post">
                         @csrf
                         @method('post')
                         @if(!empty($_POST['search']))
@@ -336,8 +338,7 @@
                                 </tbody>
                             </table>
                         </div>
-
-         </div>
+                     </div>
                 </div>
     </div>
 </div>

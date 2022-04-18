@@ -17,7 +17,7 @@
                     </div>
 
                     <div class="col-4" style="margin-right:-10px">
-                        <p id="palent">名称：<input type="text" name="name" data-toggle="tooltip" value="" title="作業場所の名称を入力します"></p>
+                        <p id="palent">名称：<input type="text" name="name" data-toggle="tooltip" value="{{ old('name') }}" title="作業場所の名称を入力します"></p>
                     </div>
 
                     <div class="row">
@@ -29,62 +29,62 @@
                         </div>
                         <div class="col" style="padding:0px">
                             <p>管理者検索：
-                        <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32"
-                        data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
-                        <datalist id="keywords">
-                        @foreach($system_management_lists as $system_management_list)
-                            <option value="{{$system_management_list->name}}" label="{{$system_management_list->personnel_id}}"></option>
-                        @endforeach
-                        </datalist>
-                        </p>
+                                <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32" data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
+                                <datalist id="keywords">
+                                    @foreach($system_management_lists as $system_management_list)
+                                    <option value="{{$system_management_list->name}}" label="{{$system_management_list->personnel_id}}"></option>
+                                    @endforeach
+                                </datalist>
+                            </p>
                         </div>
+                    </div>
+
+                    <div class="row margin-reset">
+                        <div class="col-4">
+                            <p>郵便番号：<input type="text" name="postcode" size="10" value="{{ old('postcode') }}" maxlength="8" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
+                        </div>
+                        <div class="col" style="padding:0px">
+                            住所:
+                            <input type="text" name="prefectural" value="{{ old('prefectural') }}" size="10" title="ここに都道府県名が入ります。">
+                            <input type="text" name="address" value="{{ old('address') }}" size="30" title="ここに市区町村名が入ります。">
+                            </p>
                         </div>
 
                         <div class="row margin-reset">
-                            <div class="col-4">
-                                <p>郵便番号：<input type="text" name="postcode" size="10" value="" maxlength="8" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
-                            </div>
-                            <div class="col" style="padding:0px">
-                                住所:
-                                <input type="text" name="prefectural" value="" size="10" title="ここに都道府県名が入ります。">
-                                <input type="text" name="address" value="" size="30" title="ここに市区町村名が入ります。">
+                            <div class="col">
+                                <p>URL：<input type="text" name="URL" value="{{ old('URL') }}" size="81" title="ここに作業場所の地図のURLを入力します。">
+                                    <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
+                                        <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉">
+                                    </button>
                                 </p>
                             </div>
-
-                            <div class="row margin-reset">
-                                <div class="col">
-                                    <p>URL：<input type="text" name="URL" value="" size="81" title="ここに作業場所の地図のURLを入力します。">
-                                    <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
-                                        <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
-                                    </button></p>
-                                </div>
                         </div>
 
-                <input type="hidden" id="remarks" name="remarks" value="">
+                        <input type="hidden" id="remarks" name="remarks" value="{{ old('remarks') }}">
 
-                <div class="row margin-reset" id="remarks-field" style="display:none"">
-                    <div>
-                        備考
-                    </div>
-                    <div>
-                        <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;"></textarea>
-                    </div>
-                </div>
-
-                <div class="row" id="little-information-field" style="display:none;">
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <div style="display:inline-flex">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                    <div class="row margin-reset" id="remarks-field" style="display:none"">
+                        <div>
+                         備考
                         </div>
-                        <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
-                            <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く" >
-                        </button>
+                        <div>
+                            <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row" id="little-information-field" style="display:none;">
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div style="display:inline-flex">
+                                <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ok')}}" alt="確定" onclick="submit();" data-toggle="tooltip" title="クリックにより、登録、更新を確定します">
+                            </div>
+                            <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+                                <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く">
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
         </form>
     </div>
 </div>

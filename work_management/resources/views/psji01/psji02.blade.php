@@ -3,8 +3,8 @@
     
 @section('content')
 <div class="col border border-primary" style="padding:10px;">
-    <div class="row">
-            <form action="{{ route('psji01.store') }}" method="post">
+    <div class="row m-0">
+            <form action="{{ route('psji01.store') }}" method="post" class="p-0">
             @csrf
             @method('post')
             {{-- hiddenのvalueはダミーデータ --}}

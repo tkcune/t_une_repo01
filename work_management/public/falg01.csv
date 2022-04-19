@@ -781,3 +781,32 @@
 "2022/04/18 02/12/01",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
 "2022/04/18 02/12/07",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
 "2022/04/18 02/12/15",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/16/43",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/16/51",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/16/58",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/17/03",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/17/08",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/17/14",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/17/26",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/17/26",er,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Controllers\Pssb01Controller.php:205",エラーです。エラーID【9001】
+"2022/04/19 10/17/26",sy,aa00000001,august@roma.com,00,"App\Libraries\php\Service\DatabaseException","SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'URL' at row 1 (SQL: insert into dcsb01
+            (client_id,space_id,name,management_personnel_id, post_code,prefectural_office_location,address,URL,remarks)
+             value (aa00000001,sb00000005,sample6,ji00000001,1000000,東京都,千代田区,https://www.google.com/maps?q=%E5%B2%90%E9%98%9C%E5%B8%821-1&um=1&ie=UTF-8&sa=X&ved=2ahUKEwjgjsmIv5L3AhWVAogKHd2eAcQQ_AUoAnoECAEQBA%E5%B2%90%E9%98%9C%E5%B8%821-1&um=1&ie=UTF-8&sa=X&ved=2ahUKEwjgjsmIv5L3AhWVAogKHd2eAcQQ_AUoAnoECAEQBA%E5%B2%90%E9%98%9C%E5%B8%821-1&um=1&ie=UTF-8&sa=X&ved=2ahUKEwjgjsmIv5L3AhWVAogKHd2eAcQQ_AUoAnoECAEQBA%E5%B2%90%E9%98%9C%E5%B8%821-1&um=1&ie=UTF-8&sa=X&ved=2ahUKEwjgjsmIv5L3AhWVAogKHd2eAcQQ_AUoAnoECAEQBA%E5%B2%90%E9%98%9C%E5%B8%821-1&um=1&ie=UTF-8&sa=X&ved=2ahUKEwjgjsmIv5L3AhWVAogKHd2eAcQQ_AUoAnoECAEQBA%E5%B2%90%E9%98%9C%E5%B8%821-1&um=1&ie=UTF-8&sa=X&ved=2ahUKEwjgjsmIv5L3AhWVAogKHd2eAcQQ_AUoAnoECAEQBA,?))"
+"2022/04/19 10/17/28",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/17/47",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/17/59",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/18/00",er,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Requests\WorkSpaceRequest.php:73",URLの文字数は255文字までです。
+"2022/04/19 10/18/01",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/18/09",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/18/10",er,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Requests\WorkSpaceRequest.php:65",有効なURLではありません
+"2022/04/19 10/18/11",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/18/23",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/18/23",er,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Requests\WorkSpaceRequest.php:57",英数字、ひらがな、カタカナ、漢字で入力してください
+"2022/04/19 10/18/25",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/18/30",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/18/36",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/18/44",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/18/46",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/19/27",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/04/19 10/19/28",ok,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Controllers\Pssb01Controller.php:569",変更しました
+"2022/04/19 10/19/29",si,kk00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始

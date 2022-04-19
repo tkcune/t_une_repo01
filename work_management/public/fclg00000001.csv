@@ -16,3 +16,8 @@
 "2022/04/18 01/03/34",ok,august@roma.com,cm,挿入しました
 "2022/04/18 01/06/43",ok,august@roma.com,cm,変更しました
 "2022/04/18 01/06/57",ok,august@roma.com,cm,変更しました
+"2022/04/19 10/17/26",er,august@roma.com,cm,エラーです。エラーID【9001】
+"2022/04/19 10/18/00",er,august@roma.com,cm,URLの文字数は255文字までです。
+"2022/04/19 10/18/10",er,august@roma.com,cm,有効なURLではありません
+"2022/04/19 10/18/23",er,august@roma.com,cm,英数字、ひらがな、カタカナ、漢字で入力してください
+"2022/04/19 10/19/28",ok,august@roma.com,cm,変更しました

@@ -14,6 +14,7 @@ use App\Libraries\php\Service\Message;
 use App\Libraries\php\Service\Pagination;
 use App\Libraries\php\Service\ZeroPadding;
 use Illuminate\Http\Request;
+use App\Http\Requests\WorkSpaceRequest;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
@@ -150,7 +151,7 @@ class Pssb01Controller extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(WorkSpaceRequest $request)
     {
         //リクエストの取得
         $client_id = session('client_id');
@@ -519,7 +520,7 @@ class Pssb01Controller extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(WorkSpaceRequest $request)
     {
         //リクエストの取得
         $client_id = session('client_id');

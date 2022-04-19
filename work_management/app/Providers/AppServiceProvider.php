@@ -18,16 +18,16 @@ class AppServiceProvider extends ServiceProvider
         //ログクラスを登録する
         app()->bind('OutputLogClass', function($app){
             //@var string クライアントのid、リクエストになければ、仮の値
-            $client_id = $app->request->input('client_id', 'kk00000001');
+            $client_id = $app->request->input('client_id', 'aa00000001');
             //クライアントIDが10文字であるか調べる。
             if(mb_strlen($client_id) == 10){
                 //先頭2文字がアルファベットで、残り八ケタが数字出なければ、仮の値
                 if(!preg_match("/^[a-zA-Z]{2}[0-9]{8}$/", $client_id)){
-                    $client_id = 'kk00000001';
+                    $client_id = 'aa00000001';
                 }
             }else{
                 //十文字でなければ、仮の値
-                $client_id = 'kk00000001';
+                $client_id = 'aa00000001';
             }
 
             //@var string ユーザーのメールアドレス

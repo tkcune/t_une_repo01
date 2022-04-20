@@ -295,16 +295,16 @@ TreeAction.node = class Node {
 
     if(this.node.id === 'sslg'){
       //ログ確認の場合
-      window.location = 'http://localhost:8000/pslg';
+      window.location =  document.location.origin + '/pslg';
     }else if(this.node.id === 'ssnw'){
-      window.location = 'http://localhost:8000/psnw01';
+      window.location = document.location.origin + '/psnw01';
     }else if(this.node.id.substr(0, 2) === 'ji' || this.node.id.substr(0, 2) === 'bs'){
       //@var string Laravelのセッションid
       let clientId = document.getElementById('hidden_client_id').value;
       //@var string ノードのid
       let nodeId = this.node.id;
       //移動命令
-      window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
+      window.location = document.location.origin + `/show/${clientId}/${nodeId}`;
     }else if(this.node.id.substr(0, 2) === 'kb'){
       //@var string Laravelのセッションid
       let clientId = document.getElementById('hidden_client_id').value;
@@ -312,10 +312,10 @@ TreeAction.node = class Node {
       let nodeId = this.node.id;
       if(nodeId === 'kb'){
         //移動命令
-        window.location = `http://localhost:8000/pskb/`;
+        window.location = document.location.origin + `/pskb/`;
       }else{
         //移動命令
-        window.location = `http://localhost:8000/pskb/show/${clientId}/${nodeId}`;
+        window.location = document.location.origin + `/pskb/show/${clientId}/${nodeId}`;
       }
     }else if(this.node.id.substr(0, 2) === 'sb'){
       //@var string Laravelのセッションid
@@ -324,10 +324,10 @@ TreeAction.node = class Node {
       let nodeId = this.node.id;
       if(nodeId === 'sb'){
         //移動命令
-        window.location = `http://localhost:8000/pssb01/`;
+        window.location = document.location.origin + `/pssb01/`;
       }else{
         //移動命令
-        window.location = `http://localhost:8000/pssb01/show/${clientId}/${nodeId}`;
+        window.location = document.location.origin + `/pssb01/show/${clientId}/${nodeId}`;
       }
     }else if(this.node.id.substr(0, 2) === 'ta'){
       //@var string Laravelのセッションid
@@ -338,10 +338,10 @@ TreeAction.node = class Node {
       let projectionId = this.node.fromLink[0];
       //作業場所の場合
       if(projectionId.substr(0, 2) === 'sb'){
-        window.location = `http://localhost:8000/pssb01/show/${clientId}/${nodeId}`;
+        window.location = document.location.origin + `/pssb01/show/${clientId}/${nodeId}`;
       }else{
         //移動命令
-        window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
+        window.location = document.location.origin + `/show/${clientId}/${nodeId}`;
       }
     }
   }

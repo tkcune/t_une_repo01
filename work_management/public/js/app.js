@@ -2620,16 +2620,16 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.deviceName === 'pc') {
 
         if (this.node.id === 'sslg') {
           //ログ確認の場合
-          window.location = 'http://localhost:8000/pslg';
+          window.location = document.location.origin + '/pslg';
         } else if (this.node.id === 'ssnw') {
-          window.location = 'http://localhost:8000/psnw01';
+          window.location = document.location.origin + '/psnw01';
         } else if (this.node.id.substr(0, 2) === 'ji' || this.node.id.substr(0, 2) === 'bs') {
           //@var string Laravelのセッションid
           var clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
 
           var nodeId = this.node.id; //移動命令
 
-          window.location = "http://localhost:8000/show/".concat(clientId, "/").concat(nodeId);
+          window.location = document.location.origin + "/show/".concat(clientId, "/").concat(nodeId);
         } else if (this.node.id.substr(0, 2) === 'kb') {
           //@var string Laravelのセッションid
           var _clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
@@ -2638,10 +2638,10 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.deviceName === 'pc') {
 
           if (_nodeId === 'kb') {
             //移動命令
-            window.location = "http://localhost:8000/pskb/";
+            window.location = document.location.origin + "/pskb/";
           } else {
             //移動命令
-            window.location = "http://localhost:8000/pskb/show/".concat(_clientId, "/").concat(_nodeId);
+            window.location = document.location.origin + "/pskb/show/".concat(_clientId, "/").concat(_nodeId);
           }
         } else if (this.node.id.substr(0, 2) === 'sb') {
           //@var string Laravelのセッションid
@@ -2651,10 +2651,10 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.deviceName === 'pc') {
 
           if (_nodeId2 === 'sb') {
             //移動命令
-            window.location = "http://localhost:8000/pssb01/";
+            window.location = document.location.origin + "/pssb01/";
           } else {
             //移動命令
-            window.location = "http://localhost:8000/pssb01/show/".concat(_clientId2, "/").concat(_nodeId2);
+            window.location = document.location.origin + "/pssb01/show/".concat(_clientId2, "/").concat(_nodeId2);
           }
         } else if (this.node.id.substr(0, 2) === 'ta') {
           //@var string Laravelのセッションid
@@ -2665,10 +2665,10 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.deviceName === 'pc') {
           var projectionId = this.node.fromLink[0]; //作業場所の場合
 
           if (projectionId.substr(0, 2) === 'sb') {
-            window.location = "http://localhost:8000/pssb01/show/".concat(_clientId3, "/").concat(_nodeId3);
+            window.location = document.location.origin + "/pssb01/show/".concat(_clientId3, "/").concat(_nodeId3);
           } else {
             //移動命令
-            window.location = "http://localhost:8000/show/".concat(_clientId3, "/").concat(_nodeId3);
+            window.location = document.location.origin + "/show/".concat(_clientId3, "/").concat(_nodeId3);
           }
         }
       } //選択したノードを太字にする

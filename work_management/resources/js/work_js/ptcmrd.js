@@ -45,11 +45,11 @@ findMobile = (() => {
     let device = localStorage.getItem('device');
     localStorage.setItem('device', deviceName);
     if(device === null && device === undefined && (deviceName === 'smartphone' || deviceName === 'tablet')){
-        window.location = 'http://localhost:8000/pa0001/responsible/set';
+        window.location = document.location.origin + '/pa0001/responsible/set';
     }else if(device === 'pc' && (deviceName === 'smartphone' || deviceName === 'tablet')){
-        window.location = 'http://localhost:8000/pa0001/responsible/set';
+        window.location = document.location.origin + '/pa0001/responsible/set';
     }else if((device === 'smartphone' || device === 'tablet') && deviceName === 'pc'){
-        window.location = 'http://localhost:8000/pa0001/responsible/reset';
+        window.location = document.location.origin + '/pa0001/responsible/reset';
     }
     return {
         deviceName: deviceName

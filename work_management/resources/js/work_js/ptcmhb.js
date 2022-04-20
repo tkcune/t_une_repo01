@@ -137,16 +137,16 @@ hierarchyBar = ((barInfo) => {
 
       if(id === 'sslg'){
         //ログ確認の場合
-        window.location = 'http://localhost:8000/pslg';
+        window.location = document.location.origin + '/pslg';
       }else if(id === 'ssnw'){
-        window.location = 'http://localhost:8000/psnw01';
+        window.location = document.location.origin + '/psnw01';
       }else if(id.substr(0, 2) === 'ji' || id.substr(0, 2) === 'bs'){
         //@var string Laravelのセッションid
         let clientId = document.getElementById('hidden_client_id').value;
         //@var string ノードのid
         let nodeId = id;
         //移動命令
-        window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
+        window.location = document.location.origin + `/show/${clientId}/${nodeId}`;
       }else if(id.substr(0, 2) === 'kb'){
         //@var string Laravelのセッションid
         let clientId = document.getElementById('hidden_client_id').value;
@@ -154,10 +154,10 @@ hierarchyBar = ((barInfo) => {
         let nodeId = id;
         if(nodeId === 'kb'){
           //移動命令
-          window.location = `http://localhost:8000/pskb/`;
+          window.location = document.location.origin + `/pskb/`;
         }else{
           //移動命令
-          window.location = `http://localhost:8000/pskb/show/${clientId}/${nodeId}`;
+          window.location = document.location.origin + `/pskb/show/${clientId}/${nodeId}`;
         }
       }else if(id.substr(0, 2) === 'sb'){
         //@var string Laravelのセッションid
@@ -166,10 +166,10 @@ hierarchyBar = ((barInfo) => {
         let nodeId = id;
         if(nodeId === 'sb'){
           //移動命令
-          window.location = `http://localhost:8000/pssb01/`;
+          window.location = document.location.origin + `/pssb01/`;
         }else{
           //移動命令
-          window.location = `http://localhost:8000/pssb01/show/${clientId}/${nodeId}`;
+          window.location = document.location.origin + `/pssb01/show/${clientId}/${nodeId}`;
         }
       }else if(id.substr(0, 2) === 'ta'){
         //@var string Laravelのセッションid
@@ -177,7 +177,7 @@ hierarchyBar = ((barInfo) => {
         //@var string ノードのid
         let nodeId = id;
         //移動命令
-        window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
+        window.location = document.location.origin + `/show/${clientId}/${nodeId}`;
       }else if(id.substr(0, 2) === 'ss'){
         //@var string Laravelのセッションid
         let clientId = document.getElementById('hidden_client_id').value;
@@ -186,13 +186,13 @@ hierarchyBar = ((barInfo) => {
         //システム設計への移動は、ログ画面に移動する
         if(nodeId === 'ss'){
           //移動命令
-          window.location = `http://localhost:8000/pslg/`;
+          window.location = document.location.origin + `/pslg/`;
         }else if(nodeId === 'ssnw'){
           //移動命令
-          window.location = `http://localhost:8000/psnw01/`;
+          window.location = document.location.origin + `/psnw01/`;
         }else if(nodeId === 'sslg'){
           //移動命令
-          window.location = `http://localhost:8000/pslg/`;
+          window.location = document.location.origin + `/pslg/`;
         }
       }
     }

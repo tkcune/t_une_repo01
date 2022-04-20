@@ -291,6 +291,7 @@ TreeAction.node = class Node {
       //本来のノードクラスまでツリーを開く
       selectNode.openBottomUpTree();
     }
+    // alert(this.node.id);
 
     if(this.node.id === 'sslg'){
       //ログ確認の場合
@@ -338,9 +339,10 @@ TreeAction.node = class Node {
       //作業場所の場合
       if(projectionId.substr(0, 2) === 'sb'){
         window.location = `http://localhost:8000/pssb01/show/${clientId}/${nodeId}`;
+      }else{
+        //移動命令
+        window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
       }
-      //移動命令
-      window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
     }
   }
 

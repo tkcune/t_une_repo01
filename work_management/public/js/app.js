@@ -2615,7 +2615,8 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.deviceName === 'pc') {
           var selectNode = this.node.prototype.chainparser.searchNodeId(id, this.node.prototype.tree); //本来のノードクラスまでツリーを開く
 
           selectNode.openBottomUpTree();
-        }
+        } // alert(this.node.id);
+
 
         if (this.node.id === 'sslg') {
           //ログ確認の場合
@@ -2665,10 +2666,10 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.deviceName === 'pc') {
 
           if (projectionId.substr(0, 2) === 'sb') {
             window.location = "http://localhost:8000/pssb01/show/".concat(_clientId3, "/").concat(_nodeId3);
-          } //移動命令
-
-
-          window.location = "http://localhost:8000/show/".concat(_clientId3, "/").concat(_nodeId3);
+          } else {
+            //移動命令
+            window.location = "http://localhost:8000/show/".concat(_clientId3, "/").concat(_nodeId3);
+          }
         }
       } //選択したノードを太字にする
 

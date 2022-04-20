@@ -5,9 +5,11 @@ let hierarchyBar = {};
 
 if(findMobile.deviceName !== 'pc'){
 
-hierarchyBar = ((barInfo) => {
+hierarchyBar = ((barInfo, projectionChain) => {
     //@var object 作業管理システムのデータ階層
     let bar = {};
+    //@var object 投影のid
+    let projectionInfo = {};
     //@var dom パンくずリストのdom
     let barElement = null;
     if(document.getElementById('panlist')){
@@ -44,6 +46,12 @@ hierarchyBar = ((barInfo) => {
         });
       });
     };
+
+    let createProjectionInfo = function createProjectionInfo(){
+      projectionChain.forEach(info => {
+        projectionInfo[Object.keys(info)[0]] = Object.values(info)[0];
+      });
+    }
   
     //パンくずリストのdom作成
     //@param array パンくずリストに表示する要素の配列
@@ -176,8 +184,15 @@ hierarchyBar = ((barInfo) => {
         let clientId = document.getElementById('hidden_client_id').value;
         //@var string ノードのid
         let nodeId = id;
-        //移動命令
-        window.location = document.location.origin + `/show/${clientId}/${nodeId}`;
+        //@var string 投影元のid
+        let projectionId = projectionInfo[nodeId];
+        //作業場所の場合
+        if(projectionId.substr(0, 2) === 'sb'){
+          window.location = document.location.origin + `/pssb01/show/${clientId}/${nodeId}`;
+        }else{
+          //移動命令
+          window.location = document.location.origin + `/show/${clientId}/${nodeId}`;
+        }
       }else if(id.substr(0, 2) === 'ss'){
         //@var string Laravelのセッションid
         let clientId = document.getElementById('hidden_client_id').value;
@@ -217,6 +232,8 @@ hierarchyBar = ((barInfo) => {
   
   //変数barにパンくずリスト階層のオブジェクトデータを作成、代入する
   createBarinfo();
+  //投影データの作成
+  createProjectionInfo();
   //次の要素を取得する
   next = localStorage.getItem('next');
   //@var string パス
@@ -245,6 +262,6 @@ hierarchyBar = ((barInfo) => {
   createChainBar(next);
   //パンくずリストのdom作成
   createBar(chain.reverse());
-  })(treeChain);
+  })(treeChain, projectionChain);
 }
   export {hierarchyBar}

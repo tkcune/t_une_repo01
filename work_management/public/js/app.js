@@ -1996,9 +1996,11 @@ __webpack_require__.r(__webpack_exports__);
 var hierarchyBar = {};
 
 if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.deviceName !== 'pc') {
-  hierarchyBar = function (barInfo) {
+  hierarchyBar = function (barInfo, projectionChain) {
     //@var object 作業管理システムのデータ階層
-    var bar = {}; //@var dom パンくずリストのdom
+    var bar = {}; //@var object 投影のid
+
+    var projectionInfo = {}; //@var dom パンくずリストのdom
 
     var barElement = null;
 
@@ -2037,6 +2039,12 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.deviceName !== 'pc') {
             bar[key] = [value];
           }
         });
+      });
+    };
+
+    var createProjectionInfo = function createProjectionInfo() {
+      projectionChain.forEach(function (info) {
+        projectionInfo[Object.keys(info)[0]] = Object.values(info)[0];
       });
     }; //パンくずリストのdom作成
     //@param array パンくずリストに表示する要素の配列
@@ -2184,9 +2192,16 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.deviceName !== 'pc') {
         //@var string Laravelのセッションid
         var _clientId3 = document.getElementById('hidden_client_id').value; //@var string ノードのid
 
-        var _nodeId3 = id; //移動命令
+        var _nodeId3 = id; //@var string 投影元のid
 
-        window.location = document.location.origin + "/show/".concat(_clientId3, "/").concat(_nodeId3);
+        var projectionId = projectionInfo[_nodeId3]; //作業場所の場合
+
+        if (projectionId.substr(0, 2) === 'sb') {
+          window.location = document.location.origin + "/pssb01/show/".concat(_clientId3, "/").concat(_nodeId3);
+        } else {
+          //移動命令
+          window.location = document.location.origin + "/show/".concat(_clientId3, "/").concat(_nodeId3);
+        }
       } else if (id.substr(0, 2) === 'ss') {
         //@var string Laravelのセッションid
         var _clientId4 = document.getElementById('hidden_client_id').value; //@var string ノードのid
@@ -2226,7 +2241,9 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.deviceName !== 'pc') {
       localStorage.setItem('next', next);
     }); //変数barにパンくずリスト階層のオブジェクトデータを作成、代入する
 
-    createBarinfo(); //次の要素を取得する
+    createBarinfo(); //投影データの作成
+
+    createProjectionInfo(); //次の要素を取得する
 
     next = localStorage.getItem('next'); //@var string パス
 
@@ -2259,7 +2276,7 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_0__.findMobile.deviceName !== 'pc') {
     createChainBar(next); //パンくずリストのdom作成
 
     createBar(chain.reverse());
-  }(treeChain);
+  }(treeChain, projectionChain);
 }
 
 

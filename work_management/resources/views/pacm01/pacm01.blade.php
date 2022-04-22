@@ -443,7 +443,11 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
+                                @if($departments['count'] == 0)
+                                0/0&nbsp;&nbsp;0件
+                                @else
                                 {{$count_department}}/{{$departments['max']}}&nbsp;&nbsp;{{$departments['count']}}件
+                                @endif
                                 <li class="page-item">
     @if($count_department<$departments['max'])
                                     <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']]) }}" aria-label="Next">
@@ -477,7 +481,11 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
+                                @if($departments['count'] == 0)
+                                0/0&nbsp;&nbsp;0件
+                                @else
                                 {{$count_department}}/{{$departments['max']}}&nbsp;&nbsp;{{$departments['count']}}件
+                                @endif
                                 <li class="page-item">
     @if($count_department<$departments['max'])
                                     <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']]) }}" aria-label="Next">
@@ -511,8 +519,11 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                
+                                @if($departments['count'] == 0)
+                                0/0&nbsp;&nbsp;0件
+                                @else
                                 {{$count_department}}/{{$departments['max']}}&nbsp;&nbsp;{{$departments['count']}}件
+                                @endif
                                 <li class="page-item">
     @if($count_department<$departments['max'])
                                     <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Next">

@@ -62,8 +62,8 @@
             <p style="text-align:center; cursor: hand; cursor:pointer; background:#99CCFF; border:solid 1px;">↓</p>
         </div>
     
-        <div class="personnel-area" style="padding-top:5px">
-                <div class="row">
+        <div class="board-area" id = "list">
+                <div class="row" style="padding-top:5px">
                     {{-- ツリー操作機能　--}}
                     <div class="col-4" style="display:inline-flex">
                         <p>一覧画面</p>
@@ -205,6 +205,10 @@
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
                         </button>
                         </form>
+                    </div>
+
+                    <div class="col" style = '' onclick="listOn()">
+                        <p style="cursor: hand; cursor:pointer;">✕</p>
                     </div>
                     {{-- 検索機能ここまで　--}}
                 </div>

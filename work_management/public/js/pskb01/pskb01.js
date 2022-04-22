@@ -72,6 +72,5 @@
   
       //checkの状態をストレージに保存
       localStorage.setItem('check', check);
-
-    }    
+    } 
 }

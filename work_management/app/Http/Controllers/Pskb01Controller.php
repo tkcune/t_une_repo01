@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Facades\OutputLog;
+use App\Http\Requests\BoardRequest;
 use App\Libraries\php\Domain\PersonnelDataBase;
 use App\Libraries\php\Domain\BoardDataBase;
 use App\Libraries\php\Domain\ProjectionDataBase;
@@ -84,7 +85,7 @@ class Pskb01Controller extends Controller
     /**
      * 掲示板登録
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\BoardRequest  $request
      * 
      * @var $client_id　顧客ID
      * @var $name 名称
@@ -99,7 +100,7 @@ class Pskb01Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BoardRequest $request)
     {
         $client_id = session('client_id');
         $name = $request->name;
@@ -252,7 +253,7 @@ class Pskb01Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$board_id)
+    public function update(BoardRequest $request,$board_id)
     {
         //リクエストの取得
         $client_id = session('client_id');

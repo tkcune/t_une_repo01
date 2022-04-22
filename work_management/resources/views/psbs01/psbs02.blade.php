@@ -4,7 +4,7 @@
     
 @section('content')
 <div class="col border border-primary" style="padding:10px;">
-    <div class="row">
+    <div class="row m-0">
             <form action="{{ route('psbs01.store') }}" method="post">
             @csrf
             @method('post')

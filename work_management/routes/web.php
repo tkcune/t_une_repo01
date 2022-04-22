@@ -69,6 +69,7 @@ Route::prefix('psji01')->group(function () {
     Route::patch('/mail/send', [Psji01Controller::class, 'mailSend'])->name('psji01.send');
     Route::get('/{id}/{id2}', [Psji01Controller::class, 'search'])->name('psji01.search_get');
     Route::post('/{id}/{id2}', [Psji01Controller::class, 'search'])->name('psji01.search');
+    Route::post('pssb01/{id}/{id2}', [Psji01Controller::class, 'search'])->name('psji01.pssb01.search');
     Route::post('/jidestroy/{id}/{id2}', [Psji01Controller::class, 'destroy'])->name('psji01.destroy');
 });
 
@@ -116,9 +117,7 @@ Route::prefix('pssb01')->group(function () {
     Route::get('/', [Pssb01Controller::class, 'index'])->name('pssb01.index');
     Route::post('/sbcopy', [Pssb01Controller::class, 'copy'])->name('pssb01.copy');
     Route::get('/show/{id}/{id2}', [Pssb01Controller::class, 'show'])->name('pssb01.show');
-    Route::post('/update', [Pssb01Controller::class, 'update'])->name('pssb01.update');
     Route::get('/{id}/{id2}', [Pssb01Controller::class, 'search']);
     Route::post('/{id}/{id2}', [Pssb01Controller::class, 'search'])->name('pssb01.search');
     Route::post('/delete/{id}/{id2}', [Pssb01Controller::class, 'destroy'])->name('pssb01.destroy');
 });
-

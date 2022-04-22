@@ -191,7 +191,7 @@ class DccmksSeeder extends Seeder
         DB::insert(
             'insert into dccmks (client_id, lower_id, high_id, created_at, updated_at)
             VALUE (?, ?, ?, ?, ?)',
-            ['aa00000001', 'sb00000004', 'sb00000003', NULL, NULL]
+            ['aa00000001', 'sb00000004', 'sb00000002', NULL, NULL]
         );
 
     }

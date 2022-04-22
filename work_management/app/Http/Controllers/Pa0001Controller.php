@@ -144,8 +144,11 @@ class Pa0001Controller extends Controller
             return view('pacm01.pacm01',compact('personnel_data','system_management_lists','click_department_data','select_id',
             'count_department','count_personnel','departments','names'));
         }else{
+            //@var string クリックしたid
             $click_id = NULL;
+            //@var DepartmentDetailsObject 部署の詳細表示オブジェクト
             $click_data = $department_details_object;
+            //@var string 選択した表示する詳細画面のid
             $select_id = "bs00000001";
             return view('pacm01.pacm02',compact('click_data','pagination_object', 'department_details_object',
             'system_management_lists', 'click_id', 'select_id', 'personnel_data'));
@@ -217,8 +220,8 @@ class Pa0001Controller extends Controller
     {
         //
     }
-
-    /**
+    
+    /*
      * 選択した部署のIDを複写するメソッド
      * 
      * @param $id 選択したID

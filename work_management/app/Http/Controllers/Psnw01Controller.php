@@ -59,10 +59,9 @@ class Psnw01Controller extends Controller
     //POP,IMAP方式でメールを受信する
     //@param Request $request
     public function receive(Request $request){
-        
         //@var array 受信したメール
         $mail = NetworkClient::get_latest_mail(
-            session('name', ''), session('password', ''), session('recieving_server', ''), session('recieving_port_number', ''), session('recieving_server_way')
+            session('name', ''), session('password', ''), session('recieving_server', ''), session('recieving_port_number', ''), session('recieving_server_way', '')
         );
         
         return redirect()->route('psnw01.index')->withInput(array_merge($request->all(), array('mail' => $mail)));

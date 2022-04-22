@@ -1,24 +1,26 @@
 import { findMobile } from './ptcmrd';
 
 //var HIerarchyBarクラス パンくずリストクラス
-let HierarchyBar = {};
+let hierarchyBar = {};
 
-if(findMobile.device_name !== 'pc'){
+if(findMobile.deviceName !== 'pc'){
 
-HierarchyBar = ((bar_info) => {
+hierarchyBar = ((barInfo, projectionChain) => {
     //@var object 作業管理システムのデータ階層
     let bar = {};
+    //@var object 投影のid
+    let projectionInfo = {};
     //@var dom パンくずリストのdom
-    let bar_element = null;
+    let barElement = null;
     if(document.getElementById('panlist')){
-        bar_element = document.getElementById('panlist');
+        barElement = document.getElementById('panlist');
     }
     //@var string 次の表示リスト
     let next = '';
     
     //パンくずリストのオブジェクトデータの作成
     let createBarinfo = function createBarinfo(){
-      bar_info.forEach(block => {
+      barInfo.forEach(block => {
         block.forEach(info => {
           //@var string 親要素の値
           let key = Object.keys(info)[0];
@@ -44,23 +46,29 @@ HierarchyBar = ((bar_info) => {
         });
       });
     };
+
+    let createProjectionInfo = function createProjectionInfo(){
+      projectionChain.forEach(info => {
+        projectionInfo[Object.keys(info)[0]] = Object.values(info)[0];
+      });
+    }
   
     //パンくずリストのdom作成
     //@param array パンくずリストに表示する要素の配列
-    let createBar = function createBar(barinfo){
-      barinfo.forEach(info => {
+    let createBar = function createBar(barInfo){
+      barInfo.forEach(info => {
         createBarElement(info, bar[info]);
       });
     }
     //リストの1つのdomを作成する
     //@param string info 表示する要素の情報
     //@param array barinfo infoの子要素
-    let createBarElement = function createBarElement(info, barinfo){
+    let createBarElement = function createBarElement(info, barInfo){
       //タイトルの作成
-      bar_element.appendChild(createTitleElement(info));
+      barElement.appendChild(createTitleElement(info));
       //子要素があれば、次の選択の要素を作成する
-      if(barinfo){
-        bar_element.appendChild(createNextElement(barinfo));
+      if(barInfo){
+        barElement.appendChild(createNextElement(barInfo));
       }
     }
   
@@ -75,7 +83,7 @@ HierarchyBar = ((bar_info) => {
       //表示するタイトルを代入する
       if(info !== '作業管理システム'){
         titleDiv.innerText = info.split('.')[1];
-        titleDiv.addEventListener('click', {info: info, handleEvent: page_move});
+        titleDiv.addEventListener('click', {info: info, handleEvent: pageMove});
       }else{
         titleDiv.innerText = '作業管理システム';
       }
@@ -119,7 +127,7 @@ HierarchyBar = ((bar_info) => {
             li.classList.add('projection_bar');
         }
         //移動のクリック処理
-        li.addEventListener('click', {info: info, handleEvent: page_move});
+        li.addEventListener('click', {info: info, handleEvent: pageMove});
         //pc確認のためのポインター
         li.style = 'cursor: pointer;';
         ul.appendChild(li);
@@ -130,23 +138,23 @@ HierarchyBar = ((bar_info) => {
     }
 
     //ページ移動
-    let page_move = function(){
+    let pageMove = function(){
       //次の要素を保存する
       next = this.info;
       let id = this.info.split('.')[0];
 
       if(id === 'sslg'){
         //ログ確認の場合
-        window.location = 'http://localhost:8000/pslg';
+        window.location = document.location.origin + '/pslg';
       }else if(id === 'ssnw'){
-        window.location = 'http://localhost:8000/psnw01';
+        window.location = document.location.origin + '/psnw01';
       }else if(id.substr(0, 2) === 'ji' || id.substr(0, 2) === 'bs'){
         //@var string Laravelのセッションid
         let clientId = document.getElementById('hidden_client_id').value;
         //@var string ノードのid
         let nodeId = id;
         //移動命令
-        window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
+        window.location = document.location.origin + `/show/${clientId}/${nodeId}`;
       }else if(id.substr(0, 2) === 'kb'){
         //@var string Laravelのセッションid
         let clientId = document.getElementById('hidden_client_id').value;
@@ -154,10 +162,10 @@ HierarchyBar = ((bar_info) => {
         let nodeId = id;
         if(nodeId === 'kb'){
           //移動命令
-          window.location = `http://localhost:8000/pskb/`;
+          window.location = document.location.origin + `/pskb/`;
         }else{
           //移動命令
-          window.location = `http://localhost:8000/pskb/show/${clientId}/${nodeId}`;
+          window.location = document.location.origin + `/pskb/show/${clientId}/${nodeId}`;
         }
       }else if(id.substr(0, 2) === 'sb'){
         //@var string Laravelのセッションid
@@ -166,18 +174,25 @@ HierarchyBar = ((bar_info) => {
         let nodeId = id;
         if(nodeId === 'sb'){
           //移動命令
-          window.location = `http://localhost:8000/pssb01/`;
+          window.location = document.location.origin + `/pssb01/`;
         }else{
           //移動命令
-          window.location = `http://localhost:8000/pssb01/show/${clientId}/${nodeId}`;
+          window.location = document.location.origin + `/pssb01/show/${clientId}/${nodeId}`;
         }
       }else if(id.substr(0, 2) === 'ta'){
         //@var string Laravelのセッションid
         let clientId = document.getElementById('hidden_client_id').value;
         //@var string ノードのid
         let nodeId = id;
-        //移動命令
-        window.location = `http://localhost:8000/show/${clientId}/${nodeId}`;
+        //@var string 投影元のid
+        let projectionId = projectionInfo[nodeId];
+        //作業場所の場合
+        if(projectionId.substr(0, 2) === 'sb'){
+          window.location = document.location.origin + `/pssb01/show/${clientId}/${nodeId}`;
+        }else{
+          //移動命令
+          window.location = document.location.origin + `/show/${clientId}/${nodeId}`;
+        }
       }else if(id.substr(0, 2) === 'ss'){
         //@var string Laravelのセッションid
         let clientId = document.getElementById('hidden_client_id').value;
@@ -186,13 +201,13 @@ HierarchyBar = ((bar_info) => {
         //システム設計への移動は、ログ画面に移動する
         if(nodeId === 'ss'){
           //移動命令
-          window.location = `http://localhost:8000/pslg/`;
+          window.location = document.location.origin + `/pslg/`;
         }else if(nodeId === 'ssnw'){
           //移動命令
-          window.location = `http://localhost:8000/psnw01/`;
+          window.location = document.location.origin + `/psnw01/`;
         }else if(nodeId === 'sslg'){
           //移動命令
-          window.location = `http://localhost:8000/pslg/`;
+          window.location = document.location.origin + `/pslg/`;
         }
       }
     }
@@ -217,21 +232,23 @@ HierarchyBar = ((bar_info) => {
   
   //変数barにパンくずリスト階層のオブジェクトデータを作成、代入する
   createBarinfo();
+  //投影データの作成
+  createProjectionInfo();
   //次の要素を取得する
   next = localStorage.getItem('next');
   //@var string パス
-  let pathname = document.location.pathname;
-  if(pathname === '/'){
+  let pathName = document.location.pathname;
+  if(pathName === '/'){
     next = 'bs00000001.部署A';
-  }else if(pathname.split('/')[1] === 'show'){
+  }else if(pathName.split('/')[1] === 'show'){
     //@var string パスの最後のid
-    let next_id = pathname.split('/')[3];
-    bar_info.forEach(block => {
+    let nextId = pathName.split('/')[3];
+    barInfo.forEach(block => {
       block.forEach(info => {
-        if(Object.keys(info)[0].split('.')[0] === next_id){
+        if(Object.keys(info)[0].split('.')[0] === nextId){
           next = Object.keys(info)[0];
         }
-        if(Object.values(info)[0].split('.')[0] === next_id){
+        if(Object.values(info)[0].split('.')[0] === nextId){
           next = Object.values(info)[0];
         }
       })
@@ -245,6 +262,6 @@ HierarchyBar = ((bar_info) => {
   createChainBar(next);
   //パンくずリストのdom作成
   createBar(chain.reverse());
-  })(treeChain);
+  })(treeChain, projectionChain);
 }
-  export {HierarchyBar}
+  export {hierarchyBar}

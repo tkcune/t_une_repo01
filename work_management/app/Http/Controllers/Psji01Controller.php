@@ -407,7 +407,12 @@ class Psji01Controller extends Controller
             OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
             $message = Message::get_message_handle('mhcmwn0001',[0=>'']);
             session(['message'=>$message[0],'handle_message'=>$message[3]]);
-            return redirect()->route('plbs01.show',[$client_id,$select_id]);
+
+            if($select_id == "bs00000000"){
+                return redirect()->route('pa0001.top');
+            }else{
+                return redirect()->route('plbs01.show',[$client_id,$select_id]);
+            }
         }
         
         //詳細画面部署のデータを取得
@@ -442,12 +447,22 @@ class Psji01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         //部署詳細オブジェクトの設定
-        $department_details_object = new DepartmentDetailsObject();
-        $department_details_object->setDepartmentObject($click_department_data);
+        if(!$select_id == "bs00000000"){
+            $department_details_object = new DepartmentDetailsObject();
+            $department_details_object->setDepartmentObject($click_department_data);
+        }
 
         if(session('device') != 'mobile'){
-            return view('pacm01.pacm01',compact('count_department','count_personnel','click_department_data','personnel_data','select_id',
-            'departments','names','system_management_lists'));
+            //トップ画面かの判別
+            if($select_id == "bs00000000"){
+                $department_details = $departments;
+                $personnel_details = $names;
+                return view('pvbs01.pvbs01',compact('department_details','personnel_details',
+                'count_department','count_personnel'));
+            }else{
+                return view('pacm01.pacm01',compact('count_department','count_personnel','click_department_data','personnel_data','select_id',
+                'departments','names','system_management_lists'));
+            }
         }else{
             //@var DepartmentDetailsObject 変数の名前合わせ
             $click_data = $department_details_object;

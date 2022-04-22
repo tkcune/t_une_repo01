@@ -35,7 +35,11 @@
 
             //一覧の人員データの取得
             $personnel_db = new PersonnelDataBase();
-            $personnel_data = $personnel_db->search($client_id,$select_id,$search);
+            if($select_id == 'bs00000000'){
+                $personnel_data = $personnel_db->searchTop($client_id,$search);
+            }else{
+                $personnel_data = $personnel_db->search($client_id,$select_id,$search);
+            }
 
             //一覧の投影人員データの取得
             $projection_db = new ProjectionDataBase();

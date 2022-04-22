@@ -37,7 +37,11 @@
 
             //一覧の部署データの検索取得
             $department_db = new DepartmentDataBase();
-            $department_data = $department_db->search($client_id,$select_id,$search);
+            if($select_id == 'bs00000000'){
+                $department_data = $department_db->searchTop($client_id,$search);
+            }else{
+                $department_data = $department_db->search($client_id,$select_id,$search);
+            }
 
             //一覧の投影部署データの取得
             $projection_db = new ProjectionDataBase();

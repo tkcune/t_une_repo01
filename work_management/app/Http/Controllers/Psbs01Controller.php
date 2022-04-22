@@ -661,7 +661,12 @@ class Psbs01Controller extends Controller
                 OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
                 $message = Message::get_message_handle('mhcmwn0001',[0=>'']);
                 session(['message'=>$message[0],'handle_message'=>$message[3]]);
-                return redirect()->route('plbs01.show',[$client_id,$select_id]);
+
+                if($select_id == "bs00000000"){
+                    return redirect()->route('pa0001.top');
+                }else{
+                    return redirect()->route('plbs01.show',[$client_id,$select_id]);
+                }
             }
 
             //部署詳細データの取得
@@ -707,16 +712,25 @@ class Psbs01Controller extends Controller
             $operation_check->check($click_department_data,$select_code);
 
             //詳細画面オブジェクトの設定
-            $department_details_object = new DepartmentDetailsObject();
-            $department_details_object->setDepartmentObject($click_department_data);
+            if(!$select_id == "bs00000000"){
+                $department_details_object = new DepartmentDetailsObject();
+                $department_details_object->setDepartmentObject($click_department_data);
+            }
 
             //ページネーションオブジェクト設定
             $pagination_object = new PaginationObject();
             $pagination_object->set_pagination($departments, $count_department, $names, $count_personnel);
 
             if(session('device') != 'mobile'){
-                return view('pacm01.pacm01',compact('departments','names','system_management_lists',
-                'count_department','count_personnel','personnel_data','click_department_data','select_id'));
+                if($select_id == "bs00000000"){
+                    $department_details = $departments;
+                    $personnel_details = $names;
+                    return view('pvbs01.pvbs01',compact('department_details','personnel_details',
+                    'count_department','count_personnel'));
+                }else{
+                    return view('pacm01.pacm01',compact('departments','names','system_management_lists',
+                    'count_department','count_personnel','personnel_data','click_department_data','select_id'));
+                }
             }else{
                 //@var DepartmentDetailsObject 変数の名前合わせ
                 $click_data = $department_details_object;

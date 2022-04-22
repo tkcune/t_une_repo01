@@ -41,7 +41,7 @@
 
                     <div class="row margin-reset">
                         <div class="col-4">
-                            <p>郵便番号：<input type="text" name="postcode" size="10" value="{{ old('postcode') }}" maxlength="8" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
+                            <p>郵便番号：<input type="text" name="postcode" size="10" value="{{ old('postcode') }}" maxlength="8" title="郵便番号はハイフン不要です。郵便番号を元に住所が自動入力されます。" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
                         </div>
                         <div class="col" style="padding:0px">
                             住所:

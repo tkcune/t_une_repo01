@@ -45,10 +45,6 @@ Route::prefix('pa0001')->group(function () {
     Route::get('/log', [Pa0001Controller::class, 'log_redirct'])->name('pa0001.log');
     Route::get('/errormsg', [Pa0001Controller::class, 'errormsg'])->name('pa0001.errormsg');
     Route::get('/count', [Pa0001Controller::class, 'count'])->name('pa0001.count');
-    Route::get('/count/narrowdown', [Pa0001Controller::class, 'countNarrowDown'])->name('pa0001.count_narrowdown');
-    Route::get('/count/top', [Pa0001Controller::class, 'countTop'])->name('pa0001.count_top');
-    Route::get('/count/department', [Pa0001Controller::class, 'countSearchDepartment'])->name('pa0001.count_search_department');
-    Route::get('/count/personnel', [Pa0001Controller::class, 'countSearchPersonnel'])->name('pa0001.count_search_personnel');
     Route::get('/clipboard/{id}', [Pa0001Controller::class, 'clipboard'])->name('pa0001.clipboard');
     Route::get('/deleteclipboard', [Pa0001Controller::class, 'deleteclipboard'])->name('pa0001.deleteclipboard');
     Route::get('/redirect', [Pa0001Controller::class, 'redirect'])->name('pa0001.redirect');
@@ -60,7 +56,7 @@ Route::prefix('pa0001')->group(function () {
 //Psbs01Controllerに関するルーティング
 Route::prefix('psbs01')->group(function () {
     Route::post('/bscopy', [Psbs01Controller::class, 'copy'])->name('psbs01.copy');
-    Route::get('/{id}/{id2}', [Psji01Controller::class, 'search']);
+    Route::get('/{id}/{id2}', [Psbs01Controller::class, 'search'])->name('psbs01.search_get');
     Route::post('/{id}/{id2}', [Psbs01Controller::class, 'search'])->name('psbs01.search');
     Route::patch('/update', [Psbs01Controller::class, 'update'])->name('psbs01.update');
     Route::patch('/high/{id}', [Psbs01Controller::class, 'hierarchyUpdate'])->name('psbs01.hierarchyUpdate');
@@ -71,7 +67,7 @@ Route::prefix('psbs01')->group(function () {
 Route::prefix('psji01')->group(function () {
     Route::post('/jicopy', [Psji01Controller::class, 'copy'])->name('psji01.copy');
     Route::patch('/mail/send', [Psji01Controller::class, 'mailSend'])->name('psji01.send');
-    Route::get('/{id}/{id2}', [Psji01Controller::class, 'search']);
+    Route::get('/{id}/{id2}', [Psji01Controller::class, 'search'])->name('psji01.search_get');
     Route::post('/{id}/{id2}', [Psji01Controller::class, 'search'])->name('psji01.search');
     Route::post('/jidestroy/{id}/{id2}', [Psji01Controller::class, 'destroy'])->name('psji01.destroy');
 });

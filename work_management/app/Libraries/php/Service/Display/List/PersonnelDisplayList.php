@@ -1,0 +1,48 @@
+<?php
+
+    namespace App\Libraries\php\Service\Display\List;
+
+    use App\Libraries\php\Domain\PersonnelDataBase;
+    use App\Libraries\php\Domain\ProjectionDataBase;
+
+    /**
+     * 部署詳細画面の人員一覧表示クラス
+     */
+
+    class PersonnelDisplayList extends AbstractDisplayList{
+
+        public static function get($client_id,$select_id){
+
+            //一覧の人員データの取得
+            $personnel_db = new PersonnelDataBase();
+
+            if($select_id == 'bs00000000'){
+                $personnel_data = $personnel_db->getList($client_id);
+            }else{
+                $personnel_data = $personnel_db->getSelectList($client_id,$select_id);
+            }
+            //一覧の投影人員データの取得
+            $projection_db = new ProjectionDataBase();
+            $projection_personnel = $projection_db->getPersonnelList($client_id,$select_id);
+
+            //投影データを一覧人員に追加
+            $personnel_data = array_merge($personnel_data,$projection_personnel);
+
+            return $personnel_data;
+        }
+
+        public static function search($client_id,$select_id,$search){
+
+            //一覧の人員データの取得
+            $personnel_db = new PersonnelDataBase();
+            $personnel_data = $personnel_db->search($client_id,$select_id,$search);
+
+            //一覧の投影人員データの取得
+            $projection_db = new ProjectionDataBase();
+            $projection_personnel = $projection_db->getPersonnelSearch($client_id,$select_id,$search);
+
+            $personnel_data = array_merge($personnel_data,$projection_personnel);
+
+            return $personnel_data;
+        }
+    }

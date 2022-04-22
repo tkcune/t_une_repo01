@@ -126,37 +126,61 @@
                                 
                                 <li class="page-item">
                                 @if(!empty($_POST['search']))
+                                    @if($count_board <= 1)
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),'kb00000000','count'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                    @else
                                     <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),'kb00000000','count'=>$count_board-1,'search'=>$_POST['search']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
+                                    @endif
                                 @else
+                                    @if($count_board <= 1)
                                     <a class="page-link" href="{{ route('pskb01.index',['count'=>$count_board-1]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
+                                    @else
+                                    <a class="page-link" href="{{ route('pskb01.index',['count'=>$count_board-1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                    @endif
                                 @endif
                                 </li>
 
-                                {{$count_board}}/{{$board_max}}&nbsp;&nbsp;{{count($board_data)}}件
+                                {{$count_board}}/{{$board_lists['max']}}&nbsp;&nbsp;{{$board_lists['count']}}件
 
                                 <li class="page-item">
                                 @if(!empty($_POST['search']))
+                                    @if($count_board < $board_lists['max'])
                                     <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),'kb00000000','count'=>$count_board+1,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
+                                    @else
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),'kb00000000','count'=>$board_lists['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                    @endif
                                 @else
+                                    @if($count_board < $board_lists['max'])
                                     <a class="page-link" href="{{ route('pskb01.index',['count'=>$count_board+1]) }}" aria-label="Next">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
+                                    @else
+                                    <a class="page-link" href="{{ route('pskb01.index',['count'=>$board_lists['max']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                    @endif
                                 @endif
                                 </li>
 
+                                <li class="page-item">
                                 @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),'kb00000000','count'=>$board_max,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),'kb00000000','count'=>$board_lists['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 @else
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ route('pskb01.index',['count'=>$board_max]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pskb01.index',['count'=>$board_lists['max']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 @endif
@@ -199,15 +223,15 @@
                                     <th width="170">操作</th>
                                 </thead>
                                 <tbody>
-                                @foreach($board_lists as $board_list)
+                                @foreach($board_lists['data'] as $board_list['data'])
                                     <tr>
-                                    <td width="100">{{$board_list->board_id}}</td>
-                                    <td width="140"><a href="{{ route('pskb01.show',[session('client_id'),$board_list->board_id])}}" data-toggle="tooltip" title="">{{$board_list->name}}</a></td>
+                                    <td width="100">{{$board_list['data']->board_id}}</td>
+                                    <td width="140"><a href="{{ route('pskb01.show',[session('client_id'),$board_list['data']->board_id])}}" data-toggle="tooltip" title="">{{$board_list['data']->name}}</a></td>
                                     
-                                    <td width="140">@if(isset($board_list->high_id))<a href="{{ route('pskb01.show',[session('client_id'),$board_list->high_id])}}" data-toggle="tooltip" title="">{{$board_list->high_name}}</a>@endif</td>
+                                    <td width="140">@if(isset($board_list['data']->high_id))<a href="{{ route('pskb01.show',[session('client_id'),$board_list['data']->high_id])}}" data-toggle="tooltip" title="">{{$board_list['data']->high_name}}</a>@endif</td>
                         
-                                    <td width="150">{{$board_list->created_at}}
-                                    <td width="120"><a href="{{ route('plbs01.show',[session('client_id'),$board_list->management_personnel_id])}}" data-toggle="tooltip" title="">{{$board_list->management_name}}</a></td>
+                                    <td width="150">{{$board_list['data']->created_at}}
+                                    <td width="120"><a href="{{ route('plbs01.show',[session('client_id'),$board_list['data']->management_personnel_id])}}" data-toggle="tooltip" title="">{{$board_list['data']->management_name}}</a></td>
                                     <td width="170">【<a href="#">複写</a>】
                                     【<p id="kb_list_delete{{$loop->index}}" name="kb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
                                     <form id="delete{{$loop->index}}" action="#" method="post" style="display: none;">

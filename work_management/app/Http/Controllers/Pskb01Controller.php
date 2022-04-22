@@ -17,6 +17,8 @@ use App\Http\Controllers\PtcmtrController;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\View;
 
+use App\Libraries\php\Service\Display\List\BoardDisplayList;
+
 class Pskb01Controller extends Controller
 {
     /**
@@ -26,11 +28,7 @@ class Pskb01Controller extends Controller
      * @var  int $count_board ページ番号
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
-     * @var  App\Libraries\php\Domain\BoardDataBase $board_db
-     * @var  array $board_data 掲示板一覧データ
-     * @var  App\Libraries\php\Service\Pagination $pagination
-     * @var  int $board_max ページネーションの最大値
-     * @var  array $board_lists ページネーション掲示板一覧データ
+     * @var  array $board_lists 掲示板一覧データ
      * 
      * @return \Illuminate\Http\Response
      */
@@ -38,35 +36,28 @@ class Pskb01Controller extends Controller
     {
         //ログインしている顧客IDの取得
         $client_id = session('client_id');
+        $select_id = 'kb00000000';
+
         if(isset($_GET['count'])){
             $count_board = $_GET['count'];
         }else{
             $count_board = Config::get('startcount.count');
         }
 
+        //一覧データの取得
+        $board = new BoardDisplayList();
+        $board_lists = $board->display($client_id,$select_id,$count_board);
+
+        //ページネーションが最大値を超えていないかの判断
+        if($count_board > $board_lists['max']){
+            $count_board = $board_lists['max'];
+        }
+
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        //一覧に記載する掲示板データの取得
-        $board_db = new BoardDataBase();
-        $board_data = $board_db->getAll($client_id);
-
-        //基本ページネーション設定
-        $pagination = new Pagination();
-        $board_max = $pagination->pageMax($board_data,count($board_data));
-
-        //ページネーションの最大値・最小値チェック
-        if($count_board<Config::get('startcount.count')){
-            $count_board = Config::get('startcount.count');
-        }
-        if($count_board>$board_max){
-            $count_board = $board_max;
-        }
-
-        $board_lists = $pagination->pagination($board_data,count($board_data),$count_board);
-
-        return view('pvkb01.pvkb01',compact('board_lists','board_data','board_max','count_board'));
+        return view('pvkb01.pvkb01',compact('board_lists','count_board'));
     }
 
     /**
@@ -209,22 +200,6 @@ class Pskb01Controller extends Controller
         $board_db = new BoardDataBase();
         $board_details = $board_db->get($client_id,$select_id);
 
-        //一覧に記載する掲示板データの取得
-        $board_data = $board_db->getList($client_id,$select_id);
-
-        //一覧の投影部署データの取得
-        try{
-            $projection_db = new ProjectionDataBase();
-            $projection_board = $projection_db->getBoardList($client_id,$select_id);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('pa0001.errormsg');
-        }
-
-        //投影データを一覧に追加
-        $board_data = array_merge($board_data,$projection_board);
-
         //システム管理者のリストを取得
         try{
             $personnel_db = new PersonnelDataBase();
@@ -235,22 +210,17 @@ class Pskb01Controller extends Controller
             return redirect()->route('pa0001.errormsg');
         }
 
-        //基本ページネーション設定
-        $pagination = new Pagination();
-        $board_max = $pagination->pageMax($board_data,count($board_data));
+        //一覧データの取得
+        $board = new BoardDisplayList();
+        $board_lists = $board->display($client_id,$select_id,$count_board);
 
-        //ページネーションの最大値・最小値チェック
-        if($count_board<Config::get('startcount.count')){
-            $count_board = Config::get('startcount.count');
+        //ページネーションが最大値を超えていないかの判断
+        if($count_board > $board_lists['max']){
+            $count_board = $board_lists['max'];
         }
-        if($count_board>$board_max){
-            $count_board = $board_max;
-        }
-
-        $board_lists = $pagination->pagination($board_data,count($board_data),$count_board);
 
         return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists',
-        'board_data','board_max','count_board'));
+        'count_board'));
     }
 
     /**
@@ -601,33 +571,12 @@ class Pskb01Controller extends Controller
         $board_db = new BoardDataBase();
         $board_details = $board_db->get($client_id,$select_id);
 
-        //一覧に記載する掲示板データの取得
-        try{
-            if($select_id == 'kb00000000'){
-                $board_data = $board_db->getSearchTop($client_id,$request->search);
-            }else{
-                $board_data = $board_db->getSearchList($client_id,$select_id,$request->search);
-            }
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('pa0001.errormsg');
-        }
+        //一覧データの取得
+        $board = new BoardDisplayList();
+        $board_lists = $board->display($client_id,$select_id,$count_board,$request->search);
 
-        //一覧の投影部署データの取得
-        try{
-            $projection_db = new ProjectionDataBase();
-            $projection_board = $projection_db->getBoardList($client_id,$select_id);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('pa0001.errormsg');
-        }
-
-        //投影データを一覧に追加
-        $board_data = array_merge($board_data,$projection_board);
-
-        if(empty($board_data)){
+        //検索結果が0件の場合の分岐
+        if(empty($board_lists)){
             OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
             $message = Message::get_message_handle('mhcmwn0001',[0=>'']);
             session(['message'=>$message[0],'handle_message'=>$message[3]]);
@@ -647,27 +596,19 @@ class Pskb01Controller extends Controller
             return redirect()->route('pa0001.errormsg');
         }
 
-        //基本ページネーション設定
-        $pagination = new Pagination();
-        $board_max = $pagination->pageMax($board_data,count($board_data));
-
-        if($count_board<Config::get('startcount.count')){
-            $count_board = Config::get('startcount.count');
-        }
-        if($count_board>$board_max){
-            $count_board = $board_max;
-        }
-        
-        $board_lists = $pagination->pagination($board_data,count($board_data),$count_board);
-
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
+        //ページネーションが最大値を超えていないかの判断
+        if($count_board > $board_lists['max']){
+            $count_board = $board_lists['max'];
+        }
+
         if($select_id == 'kb00000000'){
-            return view('pvkb01.pvkb01',compact('board_lists','board_data','board_max','count_board'));
+            return view('pvkb01.pvkb01',compact('board_lists','count_board'));
         }
         return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists',
-        'board_data','board_max','count_board'));
+        'count_board'));
     }
 }

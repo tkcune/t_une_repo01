@@ -27,15 +27,13 @@
         //@var  array $names ページネーション後の人員データ
         public function set_pagination($department_data, $count_department, $personnel_data, $count_personnel){
 
-            $pagination = new Pagination();
-
             $this->count_department = $count_department;
             $this->count_personnel = $count_personnel;
-            $this->total_department = count($department_data);
-            $this->total_personnel = count($personnel_data);
-            $this->department_max = $pagination->pageMax($department_data,count($department_data));
-            $this->departments = $pagination->pagination($department_data,count($department_data),$count_department);
-            $this->personnel_max = $pagination->pageMax($personnel_data,count($personnel_data));
-            $this->names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+            $this->total_department = $department_data['count'];
+            $this->total_personnel = $personnel_data['count'];
+            $this->department_max = $department_data['max'];
+            $this->departments = $department_data['data'];
+            $this->personnel_max = $personnel_data['max'];
+            $this->names = $personnel_data['data'];
         }
     }

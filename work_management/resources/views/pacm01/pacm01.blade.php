@@ -430,31 +430,31 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']])}}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_department == 1)
-                                <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']])}}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']])}}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']])}}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                {{$count_department}}/{{$department_max}}&nbsp;&nbsp;{{count($department_data)}}件
+                                {{$count_department}}/{{$departments['max']}}&nbsp;&nbsp;{{$departments['count']}}件
                                 <li class="page-item">
-    @if($count_department<$department_max)
-                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+    @if($count_department<$departments['max'])
+                                    <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$departments['max'],'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$departments['max'],'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -464,31 +464,31 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']])}}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_department == 1)
-                                <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']])}}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']])}}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']])}}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                {{$count_department}}/{{$department_max}}&nbsp;&nbsp;{{count($department_data)}}件
+                                {{$count_department}}/{{$departments['max']}}&nbsp;&nbsp;{{$departments['count']}}件
                                 <li class="page-item">
-    @if($count_department<$department_max)
-                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+    @if($count_department<$departments['max'])
+                                    <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$departments['max'],'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$departments['max'],'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -498,32 +498,32 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('plbs01.show',['department_page'=>1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_department == 1)
-                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$count_department-1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
                                 
-                                {{$count_department}}/{{$department_max}}&nbsp;&nbsp;{{count($department_data)}}件
+                                {{$count_department}}/{{$departments['max']}}&nbsp;&nbsp;{{$departments['count']}}件
                                 <li class="page-item">
-    @if($count_department<$department_max)
-                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+    @if($count_department<$departments['max'])
+                                    <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$count_department+1,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$departments['max'],'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$department_max,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('index',['department_page'=>$departments['max'],'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -537,9 +537,9 @@
                     <div class="col-4" style="display:inline-flex; padding-top:15px">
                         <p>部署</p>
                         @if(session('click_code') == "bs")
-                            <form action="{{ route('psbs01.search',[session('client_id'),$click_department_data[0]->department_id])}}" method="post">
+                            <form action="{{ route('psbs01.search',[session('client_id'),$click_id])}}" method="post">
                         @else
-                        <form action="{{ route('psbs01.search',[session('client_id'),$click_personnel_data[0]->personnel_id])}}" method="post">
+                            <form action="{{ route('psbs01.search',[session('client_id'),$click_id])}}" method="post">
                         @endif
                         @csrf
                         @method('post')
@@ -574,17 +574,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($departments as $department)
+                                @foreach($departments['data'] as $department['data'])
                                     <tr>
-                                    <td width="100">{{$department->department_id}}</td>
-                                @if($department->operation_start_date > \Carbon\Carbon::today()->format('Y-m-d') || (!(null == $department->operation_end_date) && \Carbon\Carbon::today()->format('Y-m-d') > $department->operation_end_date))
-                                    <td width="160"><s><a href="{{ route('plbs01.show',[session('client_id'),$department->department_id])}}" data-toggle="tooltip" title="運用中ではありません">{{$department->name}}</a></s></td>
+                                    <td width="100">{{$department['data']->department_id}}</td>
+                                @if($department['data']->operation_start_date > \Carbon\Carbon::today()->format('Y-m-d') || (!(null == $department['data']->operation_end_date) && \Carbon\Carbon::today()->format('Y-m-d') > $department['data']->operation_end_date))
+                                    <td width="160"><s><a href="{{ route('plbs01.show',[session('client_id'),$department['data']->department_id])}}" data-toggle="tooltip" title="運用中ではありません">{{$department['data']->name}}</a></s></td>
                                 @else
-                                    <td width="160"><a href="{{ route('plbs01.show',[session('client_id'),$department->department_id])}}" data-toggle="tooltip" title="クリックにより、当該部署に遷移します">{{$department->name}}</a></td>
+                                    <td width="160"><a href="{{ route('plbs01.show',[session('client_id'),$department['data']->department_id])}}" data-toggle="tooltip" title="クリックにより、当該部署に遷移します">{{$department['data']->name}}</a></td>
                                 @endif
-                                    <td width="160">@if(!(empty($department->high_id)))<a href="{{ route('plbs01.show',[session('client_id'),$department->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$department->high_name}}</a>@endif</td>
+                                    <td width="160">@if(!(empty($department['data']->high_id)))<a href="{{ route('plbs01.show',[session('client_id'),$department['data']->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$department['data']->high_name}}</a>@endif</td>
                                     <td width="90">
-                                @switch($department->status)
+                                @switch($department['data']->status)
                                     @case(10)
                                     開設提案
                                     @break
@@ -605,11 +605,11 @@
                                     @break
                                 @endswitch
                                     </td>
-                                    <td width="120"><a href="{{ route('plbs01.show',[session('client_id'),$department->responsible_person_id])}}" data-toggle="tooltip" title="クリックにより、責任者の人員詳細に遷移します">{{$department->responsible_name}}</a></td>
+                                    <td width="120"><a href="{{ route('plbs01.show',[session('client_id'),$department['data']->responsible_person_id])}}" data-toggle="tooltip" title="クリックにより、責任者の人員詳細に遷移します">{{$department['data']->responsible_name}}</a></td>
                                     <td width="190">
-                                    【<a href="{{ route('pa0001.clipboard',$department->department_id)}}">複写</a>】
+                                    【<a href="{{ route('pa0001.clipboard',$department['data']->department_id)}}">複写</a>】
                                     【<p id="bs_list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('bs_delete{{$loop->index}}').submit();">削除</p>】
-                                    <form id="bs_delete{{$loop->index}}" action="{{ route('psbs01.delete',[session('client_id'),$department->department_id])}}" method="post" style="display: none;">
+                                    <form id="bs_delete{{$loop->index}}" action="{{ route('psbs01.delete',[session('client_id'),$department['data']->department_id])}}" method="post" style="display: none;">
                                     @csrf
                                     </form>
                                     </td>
@@ -675,35 +675,35 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_personnel == 1)
-                                <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                @if($personnel_max == 0)
+                                @if($names['count'] == 0)
                                 0/0&nbsp;&nbsp;0件
                                 @else
-                                {{$count_personnel}}/{{$personnel_max}}&nbsp;&nbsp;{{count($personnel_data)}}件
+                                {{$count_personnel}}/{{$names['max']}}&nbsp;&nbsp;{{$names['count']}}件
                                 @endif
                                 <li class="page-item">
-    @if($count_personnel<$personnel_max)
-                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+    @if($count_personnel<$names['max'])
+                                    <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$count_department,'personnel_page'=>$names['max'],'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_search_department',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('psbs01.search_get',['department_page'=>$count_department,'personnel_page'=>$names['max'],'id'=>session('client_id'),'id2'=>$click_id,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -713,35 +713,35 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_personnel == 1)
-                                <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                @if($personnel_max == 0)
+                                @if($names['count'] == 0)
                                 0/0&nbsp;&nbsp;0件
                                 @else
-                                {{$count_personnel}}/{{$personnel_max}}&nbsp;&nbsp;{{count($personnel_data)}}件
+                                {{$count_personnel}}/{{$names['max']}}&nbsp;&nbsp;{{$names['count']}}件
                                 @endif
                                 <li class="page-item">
-    @if($count_personnel<$personnel_max)
-                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+    @if($count_personnel<$names['max'])
+                                    <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']]) }}" aria-label="Next">
     @else
-                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$count_department,'personnel_page'=>$names['max'],'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']]) }}" aria-label="Next">
     @endif
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_search_personnel',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id,'search'=>$_POST['search2']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('psji01.search_get',['department_page'=>$count_department,'personnel_page'=>$names['max'],'id'=>session('client_id'),'id2'=>$click_id,'search2'=>$_POST['search2']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -751,35 +751,35 @@
                         <nav aria-label="Page navigation example">
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$count_department,'personnel_page'=>1,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
     @if($count_personnel == 1)
-                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$count_department,'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Previous">
     @else
-                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Previous">
+                                <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Previous">
     @endif
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                @if($personnel_max == 0)
+                                @if($names['max'] == 0)
                                 0/0&nbsp;&nbsp;0件
                                 @else
-                                {{$count_personnel}}/{{$personnel_max}}&nbsp;&nbsp;{{count($personnel_data)}}件
+                                {{$count_personnel}}/{{$names['max']}}&nbsp;&nbsp;{{$names['count']}}件
                                 @endif
                                 <li class="page-item">
-    @if($count_personnel<$personnel_max)
-                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+    @if($count_personnel<$names['max'])
+                                <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Next">
     @else
-                                <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$count_department,'personnel_page'=>$names['max'],'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Next">
     @endif
                                     <span aria-hidden="true">&gt;</span>
                                 </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('pa0001.count_narrowdown',['department_page'=>$count_department,'personnel_page'=>$personnel_max,'id'=>session('client_id'),'id2'=>$select_id]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$count_department,'personnel_page'=>$names['max'],'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -802,9 +802,9 @@
                                     <span aria-hidden="true">&lt;</span>
                                 </a>
                                 </li>
-                                {{$count_personnel}}/{{$personnel_max}}&nbsp;&nbsp;{{count($personnel_data)}}件
+                                {{$count_personnel}}/{{$names['max']}}&nbsp;&nbsp;{{$names['count']}}件
                                 <li class="page-item">
-    @if($count_personnel<$personnel_max)
+    @if($count_personnel<$names['max'])
                                     <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1]) }}" aria-label="Next">
     @else
                                     <a class="page-link" href="{{ route('pa0001.count',['department_page'=>$count_department,'personnel_page'=>$personnel_max]) }}" aria-label="Next">
@@ -827,9 +827,9 @@
                     <div class="col-4" style="display:inline-flex">
                         <p>氏名</p>
                         @if(session('click_code') == "bs")
-                            <form action="{{ route('psji01.search',[session('client_id'),$click_department_data[0]->department_id])}}" method="post">
+                            <form action="{{ route('psji01.search',[session('client_id'),$click_id])}}" method="post">
                         @else
-                        <form action="{{ route('psji01.search',[session('client_id'),$click_personnel_data[0]->personnel_id])}}" method="post">
+                            <form action="{{ route('psji01.search',[session('client_id'),$click_id])}}" method="post">
                         @endif
                         @csrf
                         @method('post')
@@ -863,17 +863,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($names as $name)
+                                @foreach($names['data'] as $name['data'])
                                     <tr>
-                                    <td width="100">{{ $name->personnel_id}}</td>
-                                    @if($name->operation_start_date > \Carbon\Carbon::today()->format('Y-m-d') || (!(null == $name->operation_end_date) && \Carbon\Carbon::today()->format('Y-m-d') > $name->operation_end_date))
-                                    <td width="100"><s><a href="{{ route('plbs01.show',[session('client_id'),$name->personnel_id])}}" data-toggle="tooltip" title="運用中ではありません">{{$name->name}}</a> </s> </td>
+                                    <td width="100">{{ $name['data']->personnel_id}}</td>
+                                    @if($name['data']->operation_start_date > \Carbon\Carbon::today()->format('Y-m-d') || (!(null == $name['data']->operation_end_date) && \Carbon\Carbon::today()->format('Y-m-d') > $name['data']->operation_end_date))
+                                    <td width="100"><s><a href="{{ route('plbs01.show',[session('client_id'),$name['data']->personnel_id])}}" data-toggle="tooltip" title="運用中ではありません">{{$name['data']->name}}</a> </s> </td>
                                     @else
-                                    <td width="100"><a href="{{ route('plbs01.show',[session('client_id'),$name->personnel_id])}}" data-toggle="tooltip" title="クリックにより、当該人員に遷移します">{{$name->name}}</a></td>
+                                    <td width="100"><a href="{{ route('plbs01.show',[session('client_id'),$name['data']->personnel_id])}}" data-toggle="tooltip" title="クリックにより、当該人員に遷移します">{{$name['data']->name}}</a></td>
                                     @endif 
-                                    <td width="130"><a href="{{ route('plbs01.show',[session('client_id'),$name->high_id])}}" data-toggle="tooltip" title="クリックにより、所属部署に遷移します">{{$name->high_name}}</a>
+                                    <td width="130"><a href="{{ route('plbs01.show',[session('client_id'),$name['data']->high_id])}}" data-toggle="tooltip" title="クリックにより、所属部署に遷移します">{{$name['data']->high_name}}</a>
                                     <td width="80">
-                                    @switch($name->status)
+                                    @switch($name['data']->status)
                                         @case(10)
                                         応募
                                         @break
@@ -895,11 +895,11 @@
                                     @endswitch
                                     </td>
                                     <td width="60">aaa02</td>
-                                    <td width="100">{{$name->password_update_day}}</td>
+                                    <td width="100">{{$name['data']->password_update_day}}</td>
                                     <td width="80">---------</td>
-                                    <td width="160">【<a href="{{ route('pa0001.clipboard',$name->personnel_id)}}">複写</a>】
+                                    <td width="160">【<a href="{{ route('pa0001.clipboard',$name['data']->personnel_id)}}">複写</a>】
                                     【<p id="list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
-                                    <form id="delete{{$loop->index}}" action="{{ route('psji01.destroy',[session('client_id'),$name->personnel_id])}}" method="post" style="display: none;">
+                                    <form id="delete{{$loop->index}}" action="{{ route('psji01.destroy',[session('client_id'),$name['data']->personnel_id])}}" method="post" style="display: none;">
                                     @csrf
                                     </form>
                                     </td>

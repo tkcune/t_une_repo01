@@ -380,7 +380,7 @@ class Psbs01Controller extends Controller
         }
 
         //日付チェック
-        if($start_day>$finish_day){
+        if($start_day>$finish_day && !$finish_day == null){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0008','01');
             $message = Message::get_message_handle('mhcmer0008',[0=>'']);
             session(['message'=>$message[0],'handle_message'=>$message[3]]);

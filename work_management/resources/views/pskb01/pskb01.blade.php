@@ -72,12 +72,12 @@
                         <div class="col">
                             <p>状態:
                             <select name="status" data-toggle="tooltip" title="人員の状態を選択します">
-                            <option value="10" @if($board_details[0]->status == "10") selected @endif>応募</option>
-                            <option value="11" @if($board_details[0]->status == "11") selected @endif>審査</option>
-                            <option value="12" @if($board_details[0]->status == "12") selected @endif>入社待</option>
-                            <option value="13" @if($board_details[0]->status == "13") selected @endif>在職</option>
-                            <option value="14" @if($board_details[0]->status == "14") selected @endif>休職</option>
-                            <option value="18" @if($board_details[0]->status == "18") selected @endif>退職</option>
+                            <option value="10" @if($board_details[0]->status == "10") selected @endif>議題提出</option>
+                            <option value="11" @if($board_details[0]->status == "11") selected @endif>議題化検討</option>
+                            <option value="12" @if($board_details[0]->status == "12") selected @endif>検討開始待</option>
+                            <option value="13" @if($board_details[0]->status == "13") selected @endif>検討中</option>
+                            <option value="14" @if($board_details[0]->status == "14") selected @endif>検討保留</option>
+                            <option value="18" @if($board_details[0]->status == "18") selected @endif>検討終了</option>
                             </select>
 
                             <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">

@@ -80,6 +80,20 @@
                             <option value="18" @if($board_details[0]->status == "18") selected @endif>検討終了</option>
                             </select>
 
+                            <input type="text" id="" name="" maxlength="10" value="" style="width:150px;"
+                            data-toggle="tooltip" title="">
+
+                            <button class="" type="button" id="remarks_change_display" onclick="" data-toggle="tooltip">
+                               追加
+                            </button>
+
+                            <input type="text" id="" name="" maxlength="10" value="" style="width:300px;"
+                            data-toggle="tooltip" title="" >
+
+                            <button class="" type="button" id="remarks_change_display" onclick="" data-toggle="tooltip">
+                                追加
+                            </button>
+
                             <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                                 <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
                             </button>

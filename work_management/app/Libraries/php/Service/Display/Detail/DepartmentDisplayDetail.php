@@ -15,11 +15,14 @@
         /**
          * ディスプレイ表示メソッド
          * 
-         * @var $client_id 顧客ID
-         * @var $select_id 選択ID
+         * @param $client_id 顧客ID
+         * @param $select_id 選択ID
          * 
+         * @var App\Libraries\php\Domain\DepartmentDataBase $department_db
          * @var $department_data 詳細画面データ
+         * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
          * @var $personnel_data 所属人員データ
+         * @var App\Libraries\php\Service\OperationCheck $operation_check
          * 
          * @return [$department_data,$personnel_data]
          */

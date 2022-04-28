@@ -3,7 +3,6 @@
     namespace App\Libraries\php\Service\Display\Detail;
 
     use App\Libraries\php\Domain\PersonnelDataBase;
-    use App\Libraries\php\Domain\ProjectionDataBase;
 
     /**
      * 詳細表示の抽象クラス
@@ -14,10 +13,14 @@
         /**
          * ディスプレイ表示メソッド
          * 
-         * @var $client_id 顧客ID
-         * @var $select_id 選択ID
+         * @param $client_id 顧客ID
+         * @param $select_id 選択ID
          * 
-         * @var $data 取得したデータ
+         * @var array $data 取得したデータ
+         * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+         * @var array $system_management_lists 管理者リスト
+         * 
+         * @return array ['data' => $data,'system_management_lists'=> $system_management_lists]
          * 
          */
         public static function display($client_id,$select_id){

@@ -3,7 +3,6 @@
     namespace App\Libraries\php\Service\Display\Detail;
 
     use App\Libraries\php\Domain\BoardDataBase;
-    use App\Libraries\php\Service\OperationCheck;
 
     /**
      * 掲示板詳細表示クラス
@@ -14,13 +13,13 @@
         /**
          * ディスプレイ表示メソッド
          * 
-         * @var $client_id 顧客ID
-         * @var $select_id 選択ID
+         * @param $client_id 顧客ID
+         * @param $select_id 選択ID
          * 
-         * @var $board_db 
+         * @var App\Libraries\php\Domain\BoardDataBase $board_db 
          * @var $board_details 掲示板詳細データ
          * 
-         * @return [$department_data,$personnel_data]
+         * @return $board_details
          */
         public static function get($client_id,$select_id){
 

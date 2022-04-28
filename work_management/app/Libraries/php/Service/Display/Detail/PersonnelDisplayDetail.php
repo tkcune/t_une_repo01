@@ -2,7 +2,6 @@
 
     namespace App\Libraries\php\Service\Display\Detail;
 
-    use App\Libraries\php\Domain\DepartmentDataBase;
     use App\Libraries\php\Domain\PersonnelDataBase;
     use App\Libraries\php\Service\OperationCheck;
 
@@ -15,12 +14,14 @@
         /**
          * ディスプレイ表示メソッド
          * 
-         * @var $client_id 顧客ID
-         * @var $select_id 選択ID
-         * 
+         * @param $client_id 顧客ID
+         * @param $select_id 選択ID
+         *  
+         * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db 
          * @var $personnel_data 詳細人員データ
+         * @var App\Libraries\php\Service\OperationCheck $operation_check
          * 
-         * @return $personnel_data]
+         * @return $click_personnel_data
          */
         public static function get($client_id,$select_id){
 

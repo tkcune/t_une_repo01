@@ -386,7 +386,7 @@ class Pskb01Controller extends Controller
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
-            return redirect()->route('index');
+            return redirect()->route('pskb.index');
         }
 
         //ログ処理
@@ -459,7 +459,7 @@ class Pskb01Controller extends Controller
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
-                return redirect()->route('index');
+                return redirect()->route('pskb.index');
             }
 
             try{
@@ -480,7 +480,7 @@ class Pskb01Controller extends Controller
                 DB::rollBack();
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
-                return redirect()->route('index');
+                return redirect()->route('pskb.index');
             }
             //ログ処理
             OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
@@ -497,7 +497,7 @@ class Pskb01Controller extends Controller
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
-                return redirect()->route('index');
+                return redirect()->route('pskb.index');
             }
             $id_num = substr($id[0]->board_id,3);
             $number = str_pad($id_num, 8, '0', STR_PAD_LEFT);
@@ -509,7 +509,7 @@ class Pskb01Controller extends Controller
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
-                return redirect()->route('index');
+                return redirect()->route('pskb.index');
             }
 
             //ログ処理

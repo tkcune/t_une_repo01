@@ -165,11 +165,13 @@ class Pskb01Controller extends Controller
      * @var App\Http\Controllers\PtcmtrController $tree
      * @var array $tree_data ツリーデータ
      * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
-     * @var array $projection_code 投影元のデータコード
+     * @var  string $select_code 選択したIDのコード
+     * @var  array $projection_code 投影元のデータコード
+     * @var  string  $click_id  クリックしたID
      * @var App\Libraries\php\Service\Display\Detail\BoardDisplayDetail $board_display
      * @var array $board_details 掲示板詳細データ
+     * @var App\Libraries\php\Service\Display\List\BoardDisplayList $board
      * @var array $board_lists 掲示板一覧データ
-     * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
      * @var $system_management_lists システム管理者リスト
      * 
      * @return \Illuminate\Http\Response
@@ -526,14 +528,15 @@ class Pskb01Controller extends Controller
      * @param  int  $select_id 選択ID
      * 
      * @var int $count_board ページ番号
+     * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var  string $select_code 選択したIDのコード
+     * @var  array $projection_code 投影元のデータコード
+     * @var  string  $click_id  クリックしたID
      * @var App\Libraries\php\Service\Display\Detail\BoardDisplayDetail $board_display
      * @var array $board_details 掲示板詳細データ
-     * @var array $board_lists 掲示板一覧データ
-     * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
-     * @var array $projection_board 掲示板投影データ
-     * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
      * @var $system_management_lists システム管理者リスト
-     * @var  App\Libraries\php\Service\Pagination $pagination
+     * @var App\Libraries\php\Service\Display\List\BoardDisplayList $board
+     * @var array $projection_board 掲示板投影データ
      * @var  int $board_max ページネーションの最大値
      * @var  array $board_lists ページネーション掲示板一覧データ
      * 

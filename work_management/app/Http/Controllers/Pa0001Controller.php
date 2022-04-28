@@ -27,11 +27,11 @@ class Pa0001Controller extends Controller
     /**
      * ディスプレイ表示
      *
-     * @var  string  $client_id 顧客ID　9/27現在　ダミーデータ
+     * @var  string  $client_id 顧客ID　21/9/27現在　ダミーデータ
      * @var  string  $select_id 選択ID　
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
-     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
+     * @var  App\Libraries\php\Service\Display\Detail\DepartmentDisplayDetail $department_display_detail
      * @var  string $click_id 選択ID
      * @var  array $click_department_data 詳細部署データ
      * @var  array $personnel_data 人員データ
@@ -40,6 +40,7 @@ class Pa0001Controller extends Controller
      * @var  $departments 一覧部署データ
      * @var  App\Libraries\php\Service\Display\List\PersonnelDisplayList $personnel_display_list
      * @var  $names 一覧人員データ
+     * @var  $department_details_object 詳細画面オブジェクト
      * @var  $pagination_object ページネーションオブジェクト
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ

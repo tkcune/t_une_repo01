@@ -349,10 +349,13 @@ class Psji01Controller extends Controller
      * @var  int $count_department 部署ページネーションのページ数
      * @var  int $count_personnel 人員ページネーションのページ数
      * @var  App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var  string $select_code 選択したIDのコード
+     * @var  array $projection_code 投影元のデータコード
      * @var  string  $click_id  クリックしたID
      * @var  App\Libraries\php\Service\Display\Detail\DepartmentDisplayDetail $department_display_detail
      * @var  App\Libraries\php\Service\Display\List\DepartmentDisplayList $department_display_list
      * @var  App\Libraries\php\Service\Display\List\PersonnelDisplayList $personnel_display_list
+     * @var  array detali_data 詳細データ
      * @var  array $click_department_data 部署データ
      * @var  array $personnel_data 人員データ
      * @var  array $system_management_lists システム管理者リスト

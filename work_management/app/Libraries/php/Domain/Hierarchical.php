@@ -8,6 +8,8 @@
     use App\Libraries\php\Service\ZeroPadding;
     use App\Libraries\php\Service\DatabaseException;
     use App\Libraries\php\Domain\ProjectionDataBase;
+    use Illuminate\Support\Arr;
+use PhpParser\Node\Stmt\TryCatch;
 
     /**
      * 階層構造に関係する機能クラス
@@ -422,7 +424,381 @@
                         $high = $department_id;
                         $this->subordinateCopy($copy_id,$client_id,$high,$number,$number2);
                     }
+                }
+            }
+        }
+
+        public static function copy($client_id, $copy_id, $high_id){
+            try{
+                DB::beginTransaction();
+                $code_number = substr($copy_id, 0, 2);
+                
+                if($code_number == "ji"){
+                    //複製前の最新の人員番号を取得
+                    try{
+                        $personnel_db = new PersonnelDataBase();
+                        $personnel_number = $personnel_db->getId($client_id)[0]->personnel_id;
+                    }catch(\Exception $e){
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
+                    DB::statement('CREATE TEMPORARY TABLE tmp_dcji01 LIKE dcji01;');
+                    DB::statement('INSERT INTO tmp_dcji01 SELECT * FROM dcji01 
+                    WHERE client_id = ? and personnel_id = ?',[$client_id, $copy_id]);
+                    //登録する番号を作成
+                    $padding = new ZeroPadding();
+                    $personnel_number = $padding->padding($personnel_number);
+                    $personnel_id = $personnel_number;
+
+                    DB::statement('UPDATE tmp_dcji01 
+                    set personnel_id = ?   
+                    where personnel_id = ?',
+                    [$personnel_id, $copy_id]);
+
+                    DB::insert('insert into dccmks
+                    (client_id,lower_id,high_id)
+                    VALUE (?,?,?)',
+                    [$client_id, $personnel_id, $high_id]);
+                    DB::statement('INSERT INTO dcji01 SELECT * FROM tmp_dcji01;');
+                }else if($code_number == "bs"){
+                    //複製前の最新の人員番号を取得
+                    try{
+                        $personnel_db = new PersonnelDataBase();
+                        $personnel_number = $personnel_db->getId($client_id)[0]->personnel_id;
+                    }catch(\Exception $e){
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
+                    //複製前の最新の部署番号を取得
+                    try{
+                        $department_db = new DepartmentDataBase();
+                        $department_number = $department_db->getId($client_id)[0]->department_id;
+                    }catch(\Exception $e){
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
+                    static::subordinateBsCopy($client_id, $copy_id, $high_id, $department_number, $personnel_number);
+                }else if($code_number == "sb"){
+                    $db_name = "dbsb01";
+                    $id_name = "space_id";
+                    //複製前の最新の作業場所番号を取得
+                    try{
+                        $space_db = new WorkSpaceDataBase();
+                        $space_id = $space_db->getId($client_id)[0]->space_id;
+                    } catch (\Exception $e) {
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
+                        DatabaseException::common($e);
+                        return redirect()->route('pssb01.index');
+                    }
+                    static::subCopy($client_id, $copy_id, $high_id, $space_id, $db_name, $id_name);
+                }else if($code_number == "kb"){
+                    $db_name = "dbkb01";
+                    $id_name = "board_id";
+                    //複製前の最新の掲示板番号を取得
+                    try{
+                        $board_db = new BoardDataBase();
+                        $board_id = $board_db->getId($client_id)[0]->board_id;
+                    }catch(\Exception $e){
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                        DatabaseException::common($e);
+                        return redirect()->route('pskb01.index');
+                    }
+                    static::subCopy($client_id, $copy_id, $high_id, $board_id, $db_name, $id_name);
+                }
+
+                DB::commit();
+            }catch(\Exception $e){
+                //ロールバック
+                DB::rollBack();
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return static::redirectIndex(substr($copy_id, 0, 2));
+            }
+        }
+
+        public static function subCopy($client_id, $copy_id, $high_id, $number, $db_name, $id_name){
+            $id_num = substr($number,3);
+            $id_number = str_pad($id_num, 8, '0', STR_PAD_LEFT);
+            $lists = [];
+            $lists[] = static::hierarchy_instance($high_id, $copy_id);
+
+            DB::statement('CREATE TEMPORARY TABLE tmp_'.$db_name.' LIKE '.$db_name.';');
+            
+            DB::statement('INSERT INTO tmp_'.$db_name.' SELECT * FROM '.$db_name.' 
+            WHERE client_id = ? and '.$id_name.' = ?',[$client_id, $copy_id]);
+            //登録する番号を作成
+            $number = ZeroPadding::padding($number);
+            $increment_id = $number;
+
+            DB::statement('UPDATE tmp_'.$db_name.' 
+            set '.$id_name.' = ?   
+            where '.$id_name.' = ?',
+            [$increment_id, $copy_id]);
+
+            DB::insert('insert into dccmks
+            (client_id,lower_id,high_id)
+            VALUE (?,?,?)',
+            [$client_id, $increment_id, $lists[0]->high_id]);
+            $lists[0]->high_id = $increment_id;
+            while($lists){
+                $list = array_shift($lists);
+                $copy_id = $list->lower_id;
+                //複製開始前の状態で、複製するデータに直下配下があるかどうかの確認
+                try{
+                    $dccmks_lists = static::hierarchy_select($client_id, $copy_id, $id_number, substr($copy_id, 0, 2));
+                    $dccmks_copy = [];
+                    foreach($dccmks_lists as $bs_list){
+                        $dccmks_copy[] = clone $bs_list;
+                    }
+                    $dccmks_count = count($dccmks_lists);
+                }catch(\Exception $e){
+                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                    DatabaseException::common($e);
+                    return static::redirectIndex(substr($copy_id, 0, 2));
+                }
+
+                if($dccmks_count > 0){
+                    //複製するデータの取得
+                    static::temporary_insert($client_id, $dccmks_lists, $dccmks_count, $db_name, $id_name);
+                    $insert_dccmks = [];
+                    for($i = 0; $i < $dccmks_count; $i++){
+                        //登録する番号を作成
+                        $padding = new ZeroPadding();
+                        $number = $padding->padding($number);
+                        $increment_id = $number;
+                        $dccmks_lists[$i]->high_id = $copy_id;
+                        $dccmks_lists[$i]->lower_id = $increment_id;
+                        $dccmks_copy[$i]->high_id = $increment_id;
+                        $insert_dccmks[] = $client_id;
+                        $insert_dccmks[] = $increment_id;
+                        $insert_dccmks[] = $list->high_id;
+                    }
+                    //データベースに部署情報を登録
+                    static::temporary_update($dccmks_lists, $dccmks_copy, $dccmks_count, $db_name, $id_name);
+                        
+                    //階層情報を挿入する
+                    static::hierarchy_insert($insert_dccmks, $dccmks_count);
+
+                    $lists = array_merge($lists, $dccmks_copy);
+                }
+            }
+            DB::statement('INSERT INTO '.$db_name.' SELECT * FROM tmp_'.$db_name.';');
+            return 0;
+        }
+
+        public static function subordinateBsCopy($client_id, $copy_id, $high, $number, $number2){
+            $id_num = substr($number, 3);
+            $id2_num = substr($number2, 3);
+            $bs_number = str_pad($id_num, 8, '0', STR_PAD_LEFT);
+            $ji_number = str_pad($id2_num, 8, '0', STR_PAD_LEFT);
+            $lists = [];
+            $lists[] = static::hierarchy_instance($high, $copy_id);
+            DB::statement('CREATE TEMPORARY TABLE tmp_dcbs01 LIKE dcbs01;');
+            DB::statement('CREATE TEMPORARY TABLE tmp_dcji01 LIKE dcji01;');
+            //
+            DB::statement('INSERT INTO tmp_dcbs01 SELECT * FROM dcbs01 
+            WHERE client_id = ? and department_id = ?',[$client_id, $copy_id]);
+            //登録する番号を作成
+            $number = ZeroPadding::padding($number);
+            $department_id = $number;
+
+            DB::statement('UPDATE tmp_dcbs01 
+            set department_id = ?   
+            where department_id = ?',
+            [$department_id, $copy_id]);
+
+            DB::insert('insert into dccmks
+            (client_id,lower_id,high_id)
+            VALUE (?,?,?)',
+            [$client_id, $department_id, $lists[0]->high_id]);
+            $lists[0]->high_id = $department_id;
+            
+            while($lists){
+                $list = array_shift($lists);
+                $copy_id = $list->lower_id;
+                //複製開始前の状態で、複製するデータに直下配下があるかどうかの確認
+                try{
+                    $bs_dccmks_lists = static::hierarchy_select($client_id, $copy_id, $bs_number, 'bs');
+                    $bs_dccmks_copy = [];
+                    foreach($bs_dccmks_lists as $bs_list){
+                        $bs_dccmks_copy[] = clone $bs_list;
+                    }
+                    $bs_dccmks_count = count($bs_dccmks_lists);
+                    
+                    $ji_dccmks_lists = static::hierarchy_select($client_id, $copy_id, $ji_number, 'ji');
+                    $ji_dccmks_copy = [];
+                    foreach($ji_dccmks_lists as $ji_list){
+                        $ji_dccmks_copy[] = clone $ji_list;
+                    }
+                    $ji_dccmks_count = count($ji_dccmks_lists);
+                }catch(\Exception $e){
+                    OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                    DatabaseException::common($e);
+                    return redirect()->route('index');
+                }
+
+                if($bs_dccmks_count > 0){
+                    //複製するデータの取得
+                    static::temporary_insert($client_id, $bs_dccmks_lists, $bs_dccmks_count, 'dcbs01', 'department_id');
+                    //データベースに部署情報を登録
+                    try{
+                        $insert_dccmks = [];
+                        for($i = 0; $i < $bs_dccmks_count; $i++){
+                            //登録する番号を作成
+                            $number = ZeroPadding::padding($number);
+                            $department_id = $number;
+                            $bs_dccmks_lists[$i]->high_id = $copy_id;
+                            $bs_dccmks_lists[$i]->lower_id = $department_id;
+                            $bs_dccmks_copy[$i]->high_id = $department_id;
+                            $insert_dccmks[] = $client_id;
+                            $insert_dccmks[] = $department_id;
+                            $insert_dccmks[] = $list->high_id;
+                        }
+                    
+                        static::temporary_update($bs_dccmks_lists, $bs_dccmks_copy, $bs_dccmks_count, 'dcbs01', 'department_id');
+
+                        //階層情報を挿入する
+                        static::hierarchy_insert($insert_dccmks, $bs_dccmks_count);
+                    }catch(\Exception $e){
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
+
+                    $lists = array_merge($lists, $bs_dccmks_copy);
+                }
+                
+                if($ji_dccmks_count > 0){
+
+                    $date = new Date();
+
+                    static::temporary_insert($client_id, $ji_dccmks_lists, $ji_dccmks_count, 'dcji01', 'personnel_id');
+            
+                    //データベースに登録
+                    try{
+                        $insert_dccmks = [];
+                        for($i = 0; $i < $ji_dccmks_count; $i++){
+                            //登録する番号を作成
+                            $number2 = ZeroPadding::padding($number2);
+                            $personnel_id = $number2;
+                            $ji_dccmks_lists[$i]->high_id = $copy_id;
+                            $ji_dccmks_lists[$i]->lower_id = $personnel_id;
+                            $insert_dccmks[] = $client_id;
+                            $insert_dccmks[] = $personnel_id;
+                            $insert_dccmks[] = $list->high_id;
+                        }
+                        
+                        DB::statement('UPDATE tmp_dcji01 
+                        set personnel_id = ELT(
+                            FIELD(personnel_id,?'.str_repeat(',?', $ji_dccmks_count - 1).')
+                            ,?'.str_repeat(',?', $ji_dccmks_count - 1).'
+                        ),
+                        password_update_day = ?, 
+                        management_personnel_id = personnel_id 
+                        where personnel_id in (?'.str_repeat(',?', $ji_dccmks_count - 1).')',
+                            array_merge(
+                                Arr::pluck($ji_dccmks_copy, 'lower_id'),
+                                array_merge(
+                                    Arr::pluck($ji_dccmks_lists, 'lower_id'),
+                                    array_merge(
+                                        [$date->today()],
+                                        Arr::pluck($ji_dccmks_copy, 'lower_id')
+                                    )
+                                )
+                            )
+                        );
+                        static::hierarchy_insert($insert_dccmks, $ji_dccmks_count);
+                    }catch(\Exception $e){
+                        OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                        DatabaseException::common($e);
+                        return redirect()->route('index');
+                    }
+                }
+            }
+            DB::statement('INSERT INTO dcbs01 SELECT * FROM tmp_dcbs01;');
+            DB::statement('INSERT INTO dcji01 SELECT * FROM tmp_dcji01;');
+            return 0;
+        }
+
+        public static function temporary_insert($client_id, $dccmks_lists, $dccmks_count, $db_name, $id_name){
+            //複製するデータの取得
+            try{
+                $start = microtime(true);
+                DB::statement('INSERT INTO tmp_'.$db_name.' SELECT * FROM '.$db_name.' 
+                WHERE client_id = ? and '.$id_name.' in (?'.str_repeat(',?', $dccmks_count - 1).')',
+                array_merge([$client_id], Arr::pluck($dccmks_lists, 'lower_id')));
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return static::redirectIndex(substr($dccmks_lists[0]->lower_id, 0, 2));
+            }
+        }
+
+        public static function temporary_update($dccmks_lists, $dccmks_copy, $dccmks_count, $db_name, $id_name){
+            try {
+                DB::statement('UPDATE tmp_'.$db_name.' 
+                            set '.$id_name.' = ELT(
+                                FIELD('.$id_name.', ?'.str_repeat(',?', $dccmks_count - 1).')
+                                ,?'.str_repeat(',?', $dccmks_count - 1).'
+                            )
+                            where '.$id_name.' in (?'.str_repeat(',?', $dccmks_count - 1).')',
+                            array_merge(
+                                Arr::pluck($dccmks_copy, 'lower_id'),
+                                array_merge(
+                                    Arr::pluck($dccmks_lists, 'lower_id'),
+                                    Arr::pluck($dccmks_copy, 'lower_id')
+                                )
+                            )
+                        );
+            } catch (\Exception $e) {
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return static::redirectIndex(substr($dccmks_lists[0]->lower_id, 0, 2));
+            }
+        }
+
+        public static function hierarchy_instance($high_id, $copy_id){
+            return ((
+                new class {
+                    public $high_id;
+                    public $lower_id;
+                    public function set($high_id, $lower_id){
+                        $this->high_id = $high_id;
+                        $this->lower_id = $lower_id;
+                        return $this;
+                    }
+                }
+            )->set($high_id, $copy_id));
+        }
+        public static function hierarchy_insert($insert_dccmks, $dccmks_count){
+            try{
+                //階層情報を挿入する
+                DB::insert('insert into dccmks
+                (client_id,lower_id,high_id)
+                VALUE (?,?,?)'.str_repeat(',(?,?,?)', $dccmks_count - 1),
+            $insert_dccmks);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return static::redirectIndex(substr($insert_dccmks[0][1], 0 ,2));
+            }
+        }
+
+        public static function hierarchy_select($client_id, $copy_id, $number, $code){
+            return DB::select('select client_id, lower_id, high_id from dccmks where client_id = ? and substring(lower_id, 1, 2) = "'.$code.'" and substring(lower_id, 3, 10) <= ? and high_id = ?',
+            [$client_id, $number, $copy_id]);
+        }
+
+        public static function redirectIndex($code_number){
+            if($code_number == "bs" || $code_number == "ji"){
+                return redirect()->route('index');
+            }else if($code_number == "sb"){
+                return redirect()->route('pssb01.index');
+            }else if($code_number == "kb"){
+                return redirect()->route('pskb01.index');
             }
         }
     }
-}

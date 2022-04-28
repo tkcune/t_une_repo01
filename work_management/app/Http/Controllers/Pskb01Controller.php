@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\View;
 
 use App\Libraries\php\Service\Display\List\BoardDisplayList;
+use App\Libraries\php\Service\Display\Detail\BoardDisplayDetail;
 
 class Pskb01Controller extends Controller
 {
@@ -161,11 +162,11 @@ class Pskb01Controller extends Controller
      * @param  int  $client_id 顧客ID
      * @param  int  $select_id 選択ID
      * 
-     * @var  App\Http\Controllers\PtcmtrController $tree
-     * @var  array $tree_data ツリーデータ
-     * @var  App\Libraries\php\Domain\ProjectionDataBase $projection_db
-     * @var  array $projection_code 投影元のデータコード
-     * @var App\Libraries\php\Domain\BoardDataBase $board_db
+     * @var App\Http\Controllers\PtcmtrController $tree
+     * @var array $tree_data ツリーデータ
+     * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var array $projection_code 投影元のデータコード
+     * @var App\Libraries\php\Service\Display\Detail\BoardDisplayDetail $board_display
      * @var array $board_details 掲示板詳細データ
      * @var array $board_lists 掲示板一覧データ
      * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
@@ -198,13 +199,11 @@ class Pskb01Controller extends Controller
         }
 
         //詳細に記載する掲示板データの取得
-        $board_db = new BoardDataBase();
-        $board_details = $board_db->get($client_id,$select_id);
-
-        //システム管理者のリストを取得
         try{
-            $personnel_db = new PersonnelDataBase();
-            $system_management_lists = $personnel_db->getSystemManagement($client_id);
+            $board_display = new BoardDisplayDetail();
+            $board_data = $board_display->display($client_id,$select_id);
+            $board_details = $board_data['data'];
+            $system_management_lists = $board_data['system_management_lists'];
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -526,8 +525,8 @@ class Pskb01Controller extends Controller
      * @param  int  $client_id 顧客ID
      * @param  int  $select_id 選択ID
      * 
-     * @var  int $count_board ページ番号
-     * @var App\Libraries\php\Domain\BoardDataBase $board_db
+     * @var int $count_board ページ番号
+     * @var App\Libraries\php\Service\Display\Detail\BoardDisplayDetail $board_display
      * @var array $board_details 掲示板詳細データ
      * @var array $board_lists 掲示板一覧データ
      * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
@@ -569,12 +568,26 @@ class Pskb01Controller extends Controller
         }
 
         //詳細に記載する掲示板データの取得
-        $board_db = new BoardDataBase();
-        $board_details = $board_db->get($client_id,$select_id);
+        try{
+            $board_display = new BoardDisplayDetail();
+            $board_data = $board_display->display($client_id,$select_id);
+            $board_details = $board_data['data'];
+            $system_management_lists = $board_data['system_management_lists'];
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('pa0001.errormsg');
+        }
 
         //一覧データの取得
-        $board = new BoardDisplayList();
-        $board_lists = $board->display($client_id,$select_id,$count_board,$request->search);
+        try{
+            $board = new BoardDisplayList();
+            $board_lists = $board->display($client_id,$select_id,$count_board,$request->search);
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('pa0001.errormsg');
+        }
 
         //検索結果が0件の場合の分岐
         if(empty($board_lists)){
@@ -585,16 +598,6 @@ class Pskb01Controller extends Controller
                 return redirect()->route('pskb01.index');
             }
             return redirect()->route('pskb01.show',[$client_id,$select_id]);
-        }
-
-        //システム管理者のリストを取得
-        try{
-            $personnel_db = new PersonnelDataBase();
-            $system_management_lists = $personnel_db->getSystemManagement($client_id);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('pa0001.errormsg');
         }
 
         //ツリーデータの取得

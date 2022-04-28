@@ -3,30 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Facades\OutputLog;
-use App\Models\Date;
 use App\Http\Controllers\PtcmtrController;
-use App\Libraries\php\Domain\DepartmentDataBase;
-use App\Libraries\php\Domain\PersonnelDataBase;
-use App\Libraries\php\Domain\ProjectionDataBase;
-use App\Libraries\php\Domain\Hierarchical;
-use App\Libraries\php\Logic\ResponsiblePerson;
 use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
-use App\Libraries\php\Service\NumberCheck;
-use App\Libraries\php\Service\OperationCheck;
-use App\Libraries\php\Service\Pagination;
 use App\Libraries\php\Service\PaginationObject;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request;
-
 use App\Libraries\php\Service\DepartmentDetailsObject;
 use App\Libraries\php\Service\PersonnelDetailsObject;
-
 use App\Libraries\php\Service\Display\List\DepartmentDisplayList;
 use App\Libraries\php\Service\Display\List\PersonnelDisplayList;
-
+use App\Libraries\php\Service\Display\Detail\DepartmentDisplayDetail;
 
 
 /**
@@ -43,7 +32,7 @@ class Pa0001Controller extends Controller
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
      * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
-     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var  string $click_id 選択ID
      * @var  array $click_department_data 詳細部署データ
      * @var  array $personnel_data 人員データ
      * @var  array $system_management_lists システム管理者リスト
@@ -74,35 +63,14 @@ class Pa0001Controller extends Controller
         //ログイン機能が完成次第、そちらで取得可能な為、このセッション取得を削除する。
         session(['client_id'=>$client_id]);
 
-        $select_code = substr($select_id,0,2);
-
-        $click_id = $select_id;
-        View::share('click_id', $click_id);
-
-        $department_db = new DepartmentDataBase();
-        $personnel_db = new PersonnelDataBase();
-
         //詳細画面のデータ取得
         try{
-            $click_department_data = $department_db->get($client_id,$select_id);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('pa0001.errormsg');
-        }
-
-        //所属人員データの取得
-        try{
-            $personnel_data = $personnel_db->getSelectList($client_id,$select_id);
-        }catch(\Exception $e){
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-            DatabaseException::common($e);
-            return redirect()->route('pa0001.errormsg');
-        }
-
-        //システム管理者のリストを取得
-        try{
-            $system_management_lists = $personnel_db->getSystemManagement($client_id);
+            $department_display_detail = new DepartmentDisplayDetail();
+            $detail_data = $department_display_detail->display($client_id,$select_id);
+            $click_id = $select_id;
+            $click_department_data = $detail_data['data'][0];
+            $personnel_data = $detail_data['data'][1];
+            $system_management_lists = $detail_data['system_management_lists'];
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -128,21 +96,17 @@ class Pa0001Controller extends Controller
         //クリックコードの保存
         session(['click_code'=>'bs']);
 
-        //運用状況の確認
-        $operation_check = new OperationCheck();
-        $operation_check->check($click_department_data,$select_code);
-
         //詳細画面オブジェクトの設定
         $department_details_object = new DepartmentDetailsObject();
-        $department_details_object->setDepartmentObject($click_department_data);
+        $department_details_object->setDepartmentObject($detail_data['data'][0]);
 
         //ページネーションオブジェクト設定
         $pagination_object = new PaginationObject();
         $pagination_object->set_pagination($departments, $count_department, $names, $count_personnel);
 
         if(session('device') != 'mobile'){
-            return view('pacm01.pacm01',compact('personnel_data','system_management_lists','click_department_data','select_id',
-            'count_department','count_personnel','departments','names'));
+            return view('pacm01.pacm01',compact('select_id','click_department_data','system_management_lists','personnel_data',
+            'count_department','count_personnel','departments','names','click_id'));
         }else{
             //@var string クリックしたid
             $click_id = NULL;

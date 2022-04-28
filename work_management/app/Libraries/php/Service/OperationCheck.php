@@ -14,17 +14,21 @@ use App\Models\Date;
     /**
      * 運用状況が適切かどうかを判定するメソッド
      * @param $data 判別する部署、及び人員データ
+     * @param $data 判別するID
      * 
      * @var   App\Models\Date $date 日付クラス
      * @var   $today 今日の日付
      * @var   $message_code 稼働中の場合のエラーメッセージコード
      * @var   $message_code2 廃止の場合のエラーメッセージコード
      */
-    public static function check($datas,$code){
+    public static function check($datas,$id){
 
         //日付クラスの取得
         $date = new Date();
         $today = Carbon::parse($date->today())->format('Y-m-d');
+
+        //該当エラーメッセージの判別
+        $code = substr($id,0,2);
 
         if($code == 'bs'){
             $message_code = 'mhbswn0001';

@@ -14,8 +14,6 @@ use App\Libraries\php\Logic\JudgmentHierarchy;
 use App\Libraries\php\Logic\ResponsiblePerson;
 use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
-use App\Libraries\php\Service\OperationCheck;
-use App\Libraries\php\Service\Pagination;
 use App\Libraries\php\Service\PaginationObject;
 use App\Libraries\php\Service\ZeroPadding;
 use Illuminate\Http\Request;
@@ -25,6 +23,12 @@ use Illuminate\Support\Facades\View;
 
 use App\Libraries\php\Service\DepartmentDetailsObject;
 use App\Libraries\php\Service\PersonnelDetailsObject;
+
+use App\Libraries\php\Service\Display\List\DepartmentDisplayList;
+use App\Libraries\php\Service\Display\List\PersonnelDisplayList;
+use App\Libraries\php\Service\Display\List\PersonnelDetailsList;
+use App\Libraries\php\Service\Display\Detail\DepartmentDisplayDetail;
+use App\Libraries\php\Service\Display\Detail\PersonnelDisplayDetail;
 
 /**
  * 部署データを操作するコントローラー
@@ -148,21 +152,21 @@ class Psbs01Controller extends Controller
      * 
      * @var　int $count_department 部署ページネーションのページ数
      * @var　int $count_personnel  人員ページネーションのページ数
-     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
-     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var  string $click_id 選択したID
      * @var  App\Libraries\php\Domain\ProjectionDataBase $projection_db
      * @var  string $select_code 選択したIDのコード
      * @var  array $projection_code 投影元のデータコード
-     * @var  array $department_data 部署データ
-     * @var  array $projection_department 投影された部署データ
+     * @var  App\Libraries\php\Service\Display\Detail\DepartmentDisplayDetail $department_display_detail
+     * @var  array $detail_data 詳細データ
+     * @var  array $click_department_data 部署データ
      * @var  array $personnel_data 人員データ
-     * @var  array $projection_personnel 投影された人員データ
      * @var  array $system_management_lists システム管理者リスト
-     * @var  App\Libraries\php\Service\Pagination $pagination
-     * @var  int $department_max 部署データページネーションの最大値
-     * @var  array $departments ページネーション後の部署データ
-     * @var  int $personnel_max 人員データページネーションの最大値
-     * @var  array $names ページネーション後の人員データ
+     * @var  array App\Libraries\php\Service\Display\List\DepartmentDisplayList $department_display_list
+     * @var  array App\Libraries\php\Service\Display\List\PersonnelDisplayList $personnel_display_list
+     * @var  App\Libraries\php\Service\Display\Detail\PersonnelDisplayDetail $personnel_display_detail
+     * @var  App\Libraries\php\Service\Display\List\PersonnelDetailsList $list
+     * @var  array $departments 一覧部署データ
+     * @var  array $names 一覧人員データ
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
      * 
@@ -179,92 +183,56 @@ class Psbs01Controller extends Controller
             return redirect()->route('pa0001.top');
         }
         
-        $count_department = Config::get('startcount.count');
-        $count_personnel = Config::get('startcount.count');
-
-        $department_db = new DepartmentDataBase();
-        $personnel_db = new PersonnelDataBase();
-        $projection_db = new ProjectionDataBase();
+        if(isset($_GET['department_page'])){
+            $count_department = $_GET['department_page'];
+            $count_personnel = $_GET['personnel_page'];
+        }else{
+            $count_department = Config::get('startcount.count');
+            $count_personnel = Config::get('startcount.count');
+        }
 
         $select_code = substr($select_id,0,2);
         $click_id = $select_id;
-        View::share('click_id', $click_id);
 
         if($select_code == "ta"){
-            //選択部署が投影だった場合は対応するIDを取得 
+            //選択IDが投影だった場合は対応するIDを取得 
+            $projection_db = new ProjectionDataBase();
             $projection_code = $projection_db->getId($select_id);
             $select_id = $projection_code[0]->projection_source_id;
             $select_code = substr($projection_code[0]->projection_source_id,0,2);
         }
         
-        //部署詳細画面のロジック
+        //画面分岐
         if($select_code == "bs"){
+            //部署詳細画面のロジック
+
             //詳細画面のデータ取得
             try{
-                $click_department_data = $department_db->get($client_id,$select_id);
+                $department_display_detail = new DepartmentDisplayDetail();
+                $detail_data = $department_display_detail->display($client_id,$select_id);
+                $click_department_data = $detail_data['data'][0];
+                $personnel_data = $detail_data['data'][1];
+                $system_management_lists = $detail_data['system_management_lists'];
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
                 return redirect()->route('pa0001.errormsg');
             }
 
-            //一覧の部署データの取得
+            //一覧画面のデータ取得
             try{
-                $department_data = $department_db->getSelectList($client_id,$select_id);
+                $department_display_list = new DepartmentDisplayList();
+                $departments = $department_display_list->display($client_id,$select_id,$count_department);
+                $personnel_display_list = new PersonnelDisplayList();
+                $names = $personnel_display_list->display($client_id,$select_id,$count_personnel);
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
                 return redirect()->route('pa0001.errormsg');
             }
-
-            //一覧の投影部署データの取得
-            try{
-                $projection_department = $projection_db->getDepartmentList($client_id,$select_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            //投影データを一覧部署に追加
-            $department_data = array_merge($department_data,$projection_department);
-
-            //一覧の人員データの取得
-            try{
-                $personnel_data = $personnel_db->getSelectList($client_id,$select_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            //一覧の投影人員データの取得
-            try{
-                $projection_personnel = $projection_db->getPersonnelList($client_id,$select_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            //投影データを一覧人員に追加
-            $personnel_data = array_merge($personnel_data,$projection_personnel);
-
-            //システム管理者のリストを取得
-            try{
-                $system_management_lists = $personnel_db->getSystemManagement($client_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            //基本ページネーション設定
-            $pagination = new Pagination();
-            $department_max = $pagination->pageMax($department_data,count($department_data));
-            $departments = $pagination->pagination($department_data,count($department_data),$count_department);
-            $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
-            $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
+            //部署詳細オブジェクトの設定
+            $department_details_object = new DepartmentDetailsObject();
+            $department_details_object->setDepartmentObject($click_department_data);
 
             //ツリーデータの取得
             $tree = new PtcmtrController();
@@ -272,21 +240,9 @@ class Psbs01Controller extends Controller
 
             session(['click_code'=>$select_code]);
 
-            //運用状況の確認
-            $operation_check = new OperationCheck();
-            $operation_check->check($click_department_data,$select_code);
-
-            //部署詳細オブジェクトの設定
-            $department_details_object = new DepartmentDetailsObject();
-            $department_details_object->setDepartmentObject($click_department_data);
-
-            //ページネーションオブジェクト設定
-            $pagination_object = new PaginationObject();
-            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
-
             if(session('device') != 'mobile'){
-                return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel','department_max','system_management_lists',
-                'departments','personnel_max','names','department_data','client_id','select_id','personnel_data'));
+                return view('pacm01.pacm01',compact('click_department_data','count_department','count_personnel','system_management_lists',
+                'departments','names','click_id','select_id','personnel_data'));
             }else{
                 //@var DepartmentDetailsObject 変数の名前合わせ
                 $click_data = $department_details_object;
@@ -298,68 +254,32 @@ class Psbs01Controller extends Controller
 
             //詳細画面人員のデータを取得
             try{
-                $personnel_db = new PersonnelDataBase();
-                $click_personnel_data = $personnel_db->get($client_id,$select_id);
+                $personnel_display_detail = new PersonnelDisplayDetail();
+                $detail_data = $personnel_display_detail->display($client_id,$select_id);
+                $click_personnel_data = $detail_data['data'];
+                $system_management_lists = $detail_data['system_management_lists'];
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
                 return redirect()->route('index');
             }
 
-            //一覧の部署データの取得
+            //一覧画面のデータ取得
             try{
-                $department_data = $department_db->getDepartmentList($client_id,$select_id);
+                $list = new PersonnelDetailsList();
+                $departments = $list->display($client_id,$select_id,$count_department);
+                $names = ['data'=> [],'count' =>0 ,'max' => 0];
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
                 return redirect()->route('pa0001.errormsg');
             }
 
-            //一覧の投影部署データの取得
-            try{
-                $projection_department = $projection_db->getDepartmentList($client_id,$select_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            //投影データを一覧部署に追加
-            $department_data = array_merge($department_data,$projection_department);
-
-            //一覧の人員データの取得
-            try{
-                $personnel_data = $personnel_db->getSelectList($client_id,$select_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            //システム管理者のリストを取得
-            try{
-                $system_management_lists = $personnel_db->getSystemManagement($client_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            //基本ページネーション設定
-            $pagination = new Pagination();
-            $department_max = $pagination->pageMax($department_data,count($department_data));
-            $departments = $pagination->pagination($department_data,count($department_data),$count_department);
-            $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
-            $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
-
+            //ツリーデータ取得
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
 
             session(['click_code'=>$select_code]);
-
-            //運用状況の確認
-            $operation_check = new OperationCheck();
-            $operation_check->check($click_personnel_data,$select_code);
 
             //詳細画面オブジェクトの設定
             $personnel_details_object = new PersonnelDetailsObject();
@@ -367,11 +287,11 @@ class Psbs01Controller extends Controller
 
             //ページネーションオブジェクト設定
             $pagination_object = new PaginationObject();
-            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
+            $pagination_object->set_pagination($departments, $count_department, $names, $count_personnel);
 
             if(session('device') != 'mobile'){
-                return view('pacm01.pacm01',compact('count_department','count_personnel','department_max','departments','personnel_max','names',
-                'client_id','select_id','click_personnel_data','department_data','system_management_lists'));
+                return view('pacm01.pacm01',compact('count_department','count_personnel','departments',
+                'click_id','select_id','click_personnel_data','system_management_lists'));
             }else{
                 //@var PersonnelDetailsObject 変数の名前合わせ
                 $click_data = $personnel_details_object;
@@ -440,12 +360,11 @@ class Psbs01Controller extends Controller
         }
         
         if($management_personnel_id == null){
-
             return redirect()->route('index');
         }
 
         //日付チェック
-        if($start_day>$finish_day){
+        if($start_day>$finish_day && !$finish_day == null){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0008','01');
             $message = Message::get_message_handle('mhcmer0008',[0=>'']);
             session(['message'=>$message[0],'handle_message'=>$message[3]]);
@@ -664,19 +583,21 @@ class Psbs01Controller extends Controller
      * 
      * @var  string  $client_id 顧客ID
      * @var  string  $select_id  選択ID
-     * @var  string  $click 選択したID
-     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
-     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var  string  $click_id 選択したID
+     * @var  App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var  string $select_code 選択したIDのコード
+     * @var  array $projection_code 投影元のデータコード
+     * @var  App\Libraries\php\Service\Display\Detail\DepartmentDisplayDetail $department_display_detail
      * @var  int $count_department 部署ページネーションのページ数
      * @var  int $count_personnel 人員ページネーションのページ数
-     * @var  array $department_data 部署データ
+     * @var  array $detail_data 詳細データ
+     * @var  array $click_department_data 選択部署データ
      * @var  array $personnel_data 人員データ
      * @var  array $system_management_lists システム管理者リスト
-     * @var  App\Libraries\php\Service\Pagination $pagination
-     * @var  int $department_max 部署データページネーションの最大値
-     * @var  array $departments ページネーション後の部署データ
-     * @var  int $personnel_max 人員データページネーションの最大値
-     * @var  array $names ページネーション後の人員データ
+     * @var  array App\Libraries\php\Service\Display\List\DepartmentDisplayList $department_display_list
+     * @var  array App\Libraries\php\Service\Display\List\PersonnelDisplayList $personnel_display_list
+     * @var  array $departments 一覧部署データ
+     * @var  array $names 一覧人員データ
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
      * 
@@ -687,21 +608,25 @@ class Psbs01Controller extends Controller
         $client_id = $id;
         $select_id = $id2;
 
-        $count_department = Config::get('startcount.count');
-        $count_personnel = Config::get('startcount.count');
+        if(isset($_GET['search'])){
+            $_POST['search'] = $_GET['search'];
+        }
 
-        $department_db = new DepartmentDataBase();
-        $personnel_db = new PersonnelDataBase();
+        if(isset($_GET['department_page'])){
+            $count_department = $_GET['department_page'];
+            $count_personnel = $_GET['personnel_page'];
+        }else{
+            $count_department = Config::get('startcount.count');
+            $count_personnel = Config::get('startcount.count');
+        }
+
         $projection_db = new ProjectionDataBase();
 
         $click_id = $select_id;
-        View::share('click_id', $click_id);
-
-        //詳細画面のデータ表示
         $select_code = substr($select_id,0,2);
 
         if($select_code == "ta"){
-            //選択部署がtaだった場合は対応するIDを取得
+            //選択IDがtaだった場合は対応するIDを取得
             $projection_code = $projection_db->getId($select_id);
             $select_id = $projection_code[0]->projection_source_id;
             $select_code = substr($projection_code[0]->projection_source_id,0,2);
@@ -710,85 +635,41 @@ class Psbs01Controller extends Controller
         if($select_code == "bs"){
             //部署詳細画面のロジック
 
-            //一覧の部署データの検索取得
+            //詳細画面のデータ取得
             try{
-                $department_data = $department_db->search($client_id,$select_id,$request->search);
+                $department_display_detail = new DepartmentDisplayDetail();
+                $detail_data = $department_display_detail->display($client_id,$select_id);
+                $click_department_data = $detail_data['data'][0];
+                $personnel_data = $detail_data['data'][1];
+                $system_management_lists = $detail_data['system_management_lists'];
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
                 return redirect()->route('pa0001.errormsg');
             }
+           
+            //一覧画面のデータ取得
+            $department_display_list = new DepartmentDisplayList();
+            $departments = $department_display_list->display($client_id,$select_id,$count_department,$request->search);
+            $personnel_display_list = new PersonnelDisplayList();
+            $names = $personnel_display_list->display($client_id,$select_id,$count_personnel);
 
-            //一覧の投影部署データの取得
-            try{
-                $projection_department = $projection_db->getDepartmentSearch($client_id,$select_id,$request->search);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            //投影データを一覧部署に追加
-            $department_data = array_merge($department_data,$projection_department);
-
-            //一覧の人員データの取得
-            try{
-                $personnel_data = $personnel_db->getSelectList($client_id,$select_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            //一覧の投影人員データの取得
-            try{
-                $projection_personnel = $projection_db->getPersonnelList($client_id,$select_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            //投影データを一覧人員に追加
-            $personnel_data = array_merge($personnel_data,$projection_personnel);
-
-            //システム管理者のリストを取得
-            try{
-                $system_management_lists = $personnel_db->getSystemManagement($client_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            if(empty($department_data)){
+            if(empty($departments['data'])){
                 //ログ処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
                 $message = Message::get_message_handle('mhcmwn0001',[0=>'']);
                 session(['message'=>$message[0],'handle_message'=>$message[3]]);
-                return redirect()->route('plbs01.show',[$client_id,$select_id]);
-            }
 
-            //部署詳細データの取得
-            try{
-                $click_department_data = $department_db->get($client_id,$select_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
+                if($select_id == "bs00000000"){
+                    return redirect()->route('pa0001.top');
+                }else{
+                    return redirect()->route('plbs01.show',[$client_id,$click_id]);
+                }
             }
-
-            //基本ページネーション設定
-            $pagination = new Pagination();
-            $department_max = $pagination->pageMax($department_data,count($department_data));
-            $departments = $pagination->pagination($department_data,count($department_data),$count_department);
-            $personnel_max= $pagination->pageMax($personnel_data,count($personnel_data));
-            $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
             //ページネーションオブジェクト設定
             $pagination_object = new PaginationObject();
-            //ページネーションオブジェクトをセットする
-            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
+            $pagination_object->set_pagination($departments, $count_department, $names, $count_personnel);
 
             //ツリーデータの取得
             $tree = new PtcmtrController();
@@ -797,17 +678,26 @@ class Psbs01Controller extends Controller
             //クリックコードの保存
             session(['click_code'=>'bs']);
 
-            //運用状況の確認
-            $operation_check = new OperationCheck();
-            $operation_check->check($click_department_data,$select_code);
-
             //詳細画面オブジェクトの設定
-            $department_details_object = new DepartmentDetailsObject();
-            $department_details_object->setDepartmentObject($click_department_data);
+            if(!$select_id == "bs00000000"){
+                $department_details_object = new DepartmentDetailsObject();
+                $department_details_object->setDepartmentObject($click_department_data);
+            }
+
+            //ページネーションオブジェクト設定
+            $pagination_object = new PaginationObject();
+            $pagination_object->set_pagination($departments, $count_department, $names, $count_personnel);
 
             if(session('device') != 'mobile'){
-                return view('pacm01.pacm01',compact('department_max','departments','personnel_max','names','system_management_lists',
-                'count_department','department_data','count_personnel','personnel_data','click_department_data','select_id'));
+                if($select_id == "bs00000000"){
+                    $department_details = $departments;
+                    $personnel_details = $names;
+                    return view('pvbs01.pvbs01',compact('department_details','personnel_details',
+                    'count_department','count_personnel','click_id'));
+                }else{
+                    return view('pacm01.pacm01',compact('departments','names','system_management_lists',
+                    'count_department','count_personnel','personnel_data','click_department_data','select_id','click_id'));
+                }
             }else{
                 //@var DepartmentDetailsObject 変数の名前合わせ
                 $click_data = $department_details_object;
@@ -817,72 +707,53 @@ class Psbs01Controller extends Controller
         
         }else{
             //人員詳細画面のロジック
-            //一覧の部署データの検索取得
-            try{
-                $department_data = $department_db->searchDetailPersonnel($client_id,$select_id,$request->search);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
-            //一覧の人員データの取得
-            try{
-                $personnel_data = $personnel_db->getSelectList($client_id,$select_id);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('pa0001.errormsg');
-            }
-
+            
             //詳細画面人員のデータを取得
             try{
-                $personnel_db = new PersonnelDataBase();
-                $click_personnel_data = $personnel_db->get($client_id,$select_id);
+                $personnel_display_detail = new PersonnelDisplayDetail();
+                $detail_data = $personnel_display_detail->display($client_id,$select_id);
+                $click_personnel_data = $detail_data['data'];
+                $system_management_lists = $detail_data['system_management_lists'];
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
                 DatabaseException::common($e);
                 return redirect()->route('index');
             }
 
-            //システム管理者のリストを取得
+            //一覧の部署データの検索取得
             try{
-                $system_management_lists = $personnel_db->getSystemManagement($client_id);
+                $personnel_details_list = new PersonnelDetailsList();
+                $departments = $personnel_details_list->display($client_id,$select_id,$count_department,$request->search);
+                $names = ['data'=> [],'count' =>0 ,'max' => 0];
             }catch(\Exception $e){
                 OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
                 DatabaseException::common($e);
                 return redirect()->route('pa0001.errormsg');
             }
 
-            if(empty($department_data)){
+            //検索結果が0件の場合戻る
+            if(empty($departments['data'])){
                 //ログ処理
                 OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
                 $message = Message::get_message_handle('mhcmwn0001',[0=>'']);
                 session(['message'=>$message[0],'handle_message'=>$message[3]]);
                 return redirect()->route('plbs01.show',[$client_id,$select_id]);
             }
-    
-            //基本ページネーション設定
-            $pagination = new Pagination();
-            $department_max = $pagination->pageMax($department_data,count($department_data));
-            $departments = $pagination->pagination($department_data,count($department_data),$count_department);
-            $personnel_max = $pagination->pageMax($personnel_data,count($personnel_data));
-            $names = $pagination->pagination($personnel_data,count($personnel_data),$count_personnel);
 
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
-
-            //ページネーションオブジェクト設定
-            $pagination_object = new PaginationObject();
-            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
             //詳細画面オブジェクトの設定
             $personnel_details_object = new PersonnelDetailsObject();
             $personnel_details_object->setPersonnelObject($click_personnel_data);
 
+            //ページネーションオブジェクト設定
+            $pagination_object = new PaginationObject();
+            $pagination_object->set_pagination($departments, $count_department, $names, $count_personnel);
+
             if(session('device') != 'mobile'){
-                return view('pacm01.pacm01',compact('count_department','department_data','personnel_data','select_id','department_max','departments','personnel_max',
-                'names','count_personnel','click_personnel_data','system_management_lists'));
+                return view('pacm01.pacm01',compact('count_department','select_id','departments',
+                'count_personnel','click_personnel_data','system_management_lists','click_id'));
             }else{
                 //@var PersonnelDetailsObject 変数の名前合わせ
                 $click_data = $personnel_details_object;

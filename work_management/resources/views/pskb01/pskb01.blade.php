@@ -72,13 +72,27 @@
                         <div class="col">
                             <p>状態:
                             <select name="status" data-toggle="tooltip" title="人員の状態を選択します">
-                            <option value="10" @if($board_details[0]->status == "10") selected @endif>応募</option>
-                            <option value="11" @if($board_details[0]->status == "11") selected @endif>審査</option>
-                            <option value="12" @if($board_details[0]->status == "12") selected @endif>入社待</option>
-                            <option value="13" @if($board_details[0]->status == "13") selected @endif>在職</option>
-                            <option value="14" @if($board_details[0]->status == "14") selected @endif>休職</option>
-                            <option value="18" @if($board_details[0]->status == "18") selected @endif>退職</option>
+                            <option value="10" @if($board_details[0]->status == "10") selected @endif>議題提出</option>
+                            <option value="11" @if($board_details[0]->status == "11") selected @endif>議題化検討</option>
+                            <option value="12" @if($board_details[0]->status == "12") selected @endif>検討開始待</option>
+                            <option value="13" @if($board_details[0]->status == "13") selected @endif>検討中</option>
+                            <option value="14" @if($board_details[0]->status == "14") selected @endif>検討保留</option>
+                            <option value="18" @if($board_details[0]->status == "18") selected @endif>検討終了</option>
                             </select>
+
+                            <input type="text" id="" name="" maxlength="10" value="" style="width:150px;"
+                            data-toggle="tooltip" title="">
+
+                            <button class="" type="button" id="remarks_change_display" onclick="" data-toggle="tooltip">
+                               追加
+                            </button>
+
+                            <input type="text" id="" name="" maxlength="10" value="" style="width:300px;"
+                            data-toggle="tooltip" title="" >
+
+                            <button class="" type="button" id="remarks_change_display" onclick="" data-toggle="tooltip">
+                                追加
+                            </button>
 
                             <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                                 <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
@@ -169,10 +183,14 @@
                     </div>
             </div>
         </div>
-    </div> 
+    </div>
+
+    <div id="list-open-button" style="display:none;" onclick="listOn()">
+        <p style="text-align:center; cursor: hand; cursor:pointer; background:#99CCFF; border:solid 1px;">↓</p>
+    </div>
     
-    <div class="personnel-area" style="padding-top:5px">
-                <div class="row">
+    <div class="board-area" id= "list">
+                <div class="row" style="padding-top:5px">
                     {{-- ツリー操作機能　--}}
                     <div class="col-4" style="display:inline-flex">
                         <p>一覧画面</p>
@@ -223,45 +241,69 @@
                             <ul class="pagination pagination-sm">
                                 <li class="page-item">
                                 @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$board_details[0]->board_id,'count'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 @else
-                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$board_details[0]->board_id,'count'=>1]) }}" aria-label="Previous">
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>1]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 @endif
                                 </li>
                                 <li class="page-item">
                                 @if(!empty($_POST['search']))
-                                <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$board_details[0]->board_id,'count'=>$count_board-1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                    @if($count_board <= 1)
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
-                                @else
-                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$board_details[0]->board_id,'count'=>$count_board-1]) }}" aria-label="Previous">
+                                    @else
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>$count_board-1,'search'=>$_POST['search']]) }}" aria-label="Previous">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
-                                @endif
-                                </li>
-                                {{$count_board}}/{{$board_max}}&nbsp;&nbsp;{{count($board_data)}}件
-                                <li class="page-item">
-                                @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$board_details[0]->board_id,'count'=>$count_board+1,'search'=>$_POST['search']]) }}" aria-label="Next">
-                                        <span aria-hidden="true">&gt;</span>
-                                    </a>
+                                    @endif
                                 @else
-                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$board_details[0]->board_id,'count'=>$count_board+1]) }}" aria-label="Next">
+                                    @if($count_board <= 1)
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                    @else
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>$count_board-1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                    @endif
+                                @endif
+                                </li>
+                                {{$count_board}}/{{$board_lists['max']}}&nbsp;&nbsp;{{$board_lists['count']}}件
+                                <li class="page-item">
+                                @if(!empty($_POST['search']))
+                                    @if($count_board < $board_lists['max'])
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>$count_board+1,'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
+                                    @else
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>$board_lists['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                    @endif
+                                @else
+                                    @if($count_board < $board_lists['max'])
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>$count_board+1]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                    @else
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>$board_lists['max']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                    @endif
                                 @endif
                                 </li>
                                 <li class="page-item">
                                 @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$board_details[0]->board_id,'count'=>$board_max,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>$board_lists['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 @else
-                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$board_details[0]->board_id,'count'=>$board_max]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>$board_lists['max']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 @endif
@@ -287,6 +329,10 @@
                         </button>
                         </form>
                     </div>
+
+                    <div class="col" style = '' onclick="listOn()">
+                        <p style="cursor: hand; cursor:pointer;">✕</p>
+                    </div>
                     {{-- 検索機能ここまで　--}}
                 </div>
                 
@@ -304,15 +350,15 @@
                                     <th width="190">操作</th>
                                 </thead>
                                 <tbody>
-                                @foreach($board_lists as $board_list)
+                                @foreach($board_lists['data'] as $board_list['data'])
                                     <tr>
-                                    <td width="100">{{$board_list->board_id}}</td>
-                                    <td width="140"><a href="{{ route('pskb01.show',[session('client_id'),$board_list->board_id])}}" data-toggle="tooltip" title="">{{$board_list->name}}</a></td>
+                                    <td width="100">{{$board_list['data']->board_id}}</td>
+                                    <td width="140"><a href="{{ route('pskb01.show',[session('client_id'),$board_list['data']->board_id])}}" data-toggle="tooltip" title="">{{$board_list['data']->name}}</a></td>
                                     
-                                    <td width="140"><a @if(isset($board_list->high_id))<a href="{{ route('pskb01.show',[session('client_id'),$board_list->high_id])}}" data-toggle="tooltip" title="">{{$board_list->high_name}}</a>@endif</td>
+                                    <td width="140"><a @if(isset($board_list['data']->high_id))<a href="{{ route('pskb01.show',[session('client_id'),$board_list['data']->high_id])}}" data-toggle="tooltip" title="">{{$board_list['data']->high_name}}</a>@endif</td>
                         
-                                    <td width="150">{{$board_list->created_at}}
-                                    <td width="120"><a href="{{ route('plbs01.show',[session('client_id'),$board_list->management_personnel_id])}}" data-toggle="tooltip" title="">{{$board_list->management_name}}</a></td>
+                                    <td width="150">{{$board_list['data']->created_at}}
+                                    <td width="120"><a href="{{ route('plbs01.show',[session('client_id'),$board_list['data']->management_personnel_id])}}" data-toggle="tooltip" title="">{{$board_list['data']->management_name}}</a></td>
                                     <td width="170">【<a href="#">複写</a>】
                                     【<p id="kb_list_delete{{$loop->index}}" name="kb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
                                     <form id="delete{{$loop->index}}" action="#" method="post" style="display: none;">

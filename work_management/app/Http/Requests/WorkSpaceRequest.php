@@ -46,7 +46,6 @@ class WorkSpaceRequest extends FormRequest
             'postcode.required' => '郵便番号を入力してください',
             'prefectural.required' => '都道府県を入力してください',
             'address.required' => '市区町村を入力してください',
-            'URL.active_url' => '有効なURLではありません',
             'URL.max' => 'URLの文字数は255文字までです'
         ];
     }
@@ -56,14 +55,6 @@ class WorkSpaceRequest extends FormRequest
         if ($validator->errors()->first('name') == "英数字、ひらがな、カタカナ、漢字で入力してください") {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0012', '01');
             $message = Message::get_message_handle('mhcmer0012', [0 => '']);
-            session(['message' => $message[0], 'handle_message' => $message[3]]);
-            // リダイレクト先
-            throw new HttpResponseException(
-                back()->withInput($this->input)->withErrors($validator)
-            );
-        } elseif ($validator->errors()->first('URL') == "有効なURLではありません") {
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0014', '01');
-            $message = Message::get_message_handle('mhcmer0014', [0 => '']);
             session(['message' => $message[0], 'handle_message' => $message[3]]);
             // リダイレクト先
             throw new HttpResponseException(

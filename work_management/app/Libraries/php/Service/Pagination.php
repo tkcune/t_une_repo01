@@ -41,11 +41,9 @@
          * @param int $start_no 取得を始める配列の番号
          * @param array $disp_data 表示するデータ
          * 
-         * return array $disp_data
+         * @return array $disp_data
          */
         public static function pagination(array $array,int $array_num,int $page_num){
-        
-
             // 配列の何番目から取得すればよいか
             $start_no = ($page_num -1) * self::MAX;
 

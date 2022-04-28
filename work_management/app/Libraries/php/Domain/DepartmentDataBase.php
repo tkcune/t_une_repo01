@@ -269,6 +269,35 @@
         }
 
         /**
+         * トップ画面部署データの検索
+         * @param $client 顧客ID
+         * @param $search 検索文字
+         * 
+         * @var   $data 取得データ
+         * @var   $date App\Models\Date
+         * 
+         * @return  array $data
+         */
+        public static function searchTop($client,$search){
+
+            $data = DB::select('SELECT bs1.client_id,bs1.department_id,bs1.responsible_person_id,bs1.name,bs1.status,bs1.management_personnel_id,bs1.operation_start_date,
+            bs1.operation_end_date,bs1.remarks,bs1.created_at,bs1.updated_at,bs2.name AS high_name,high_id,ji1.name AS management_name,ji2.name AS responsible_name
+            FROM dcbs01 AS bs1
+            left join dccmks on bs1.department_id = dccmks.lower_id 
+            left join dcbs01 as bs2 on dccmks.high_id = bs2.department_id
+            left join dcji01 as ji1 on bs1.management_personnel_id = ji1.personnel_id
+            inner join dcji01 as ji2 on ji1.management_personnel_id = ji2.personnel_id
+            where bs1.client_id = ? and bs1.name like ? order by bs1.department_id',
+            [$client,'%'.$search.'%']);
+            
+            //登録日・修正日のフォーマットを変換
+            $date = new Date();
+            $date->formatDate($data);
+
+            return $data;
+        }
+
+        /**
          * 人員詳細画面による部署データの検索
          * @param $client 顧客ID
          * @param $search 検索文字

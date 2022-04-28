@@ -11,6 +11,17 @@
 
     class BoardDisplayList extends AbstractDisplayList{
 
+        /**
+         * @param $client_id 顧客ID
+         * @param $select_id 選択ID
+         * 
+         * @var App\Libraries\php\Domain\BoardDataBase $board_db
+         * @var $board_data 一覧データ
+         * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
+         * @var $projection_board 一覧投影データ
+         * 
+         * @return $board_data
+         */
         public static function get($client_id,$select_id){
 
             //一覧に記載する掲示板データの取得
@@ -34,6 +45,18 @@
             return $board_data;
         }
 
+        /**
+         * @param $client_id 顧客ID
+         * @param $select_id 選択ID
+         * @param $search 検索語
+         * 
+         * @var App\Libraries\php\Domain\BoardDataBase $board_db
+         * @var $board_data 一覧データ
+         * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
+         * @var $projection_board 一覧投影データ
+         * 
+         * @return $board_data
+         */
         public static function search($client_id,$select_id,$search){
 
             $board_db = new BoardDataBase();

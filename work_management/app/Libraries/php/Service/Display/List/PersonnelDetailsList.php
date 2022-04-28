@@ -11,6 +11,17 @@
 
     class PersonnelDetailsList extends AbstractDisplayList{
 
+        /**
+         * @param $client_id 顧客ID
+         * @param $select_id 選択ID
+         * 
+         * @var App\Libraries\php\Domain\DepartmentDataBase $department_db
+         * @var $department_data 一覧データ
+         * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
+         * @var $projection_department 一覧投影データ
+         * 
+         * @return $department_data
+         */
         public static function get($client_id,$select_id){
 
             //一覧の部署データの取得
@@ -27,6 +38,18 @@
             return $department_data;
         }
 
+        /**
+         * @param $client_id 顧客ID
+         * @param $select_id 選択ID
+         * @param $search 検索語
+         * 
+         * @var App\Libraries\php\Domain\DepartmentDataBase $department_db
+         * @var $department_data 一覧データ
+         * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
+         * @var $projection_department 一覧投影データ
+         * 
+         * @return $department_data
+         */
         public static function search($client_id,$select_id,$search){
 
             try{

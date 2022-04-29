@@ -17,12 +17,16 @@
                     </div>
 
                     <div class="col-4" style="margin-right:-10px">
-                        <p id="palent">名称：<input type="text" name="name" data-toggle="tooltip" value="{{ old('name') }}" title="作業場所の名称を入力します"></p>
+                        <p id="palent">名称<span class="kome">*</span>：<input type="text" name="name" data-toggle="tooltip" value="{{ old('name') }}" title="作業場所の名称を入力します"></p>
+                    </div>
+
+                    <div class="col-3 hissu">
+                        <span class="kome">*</span>は必須入力項目です
                     </div>
 
                     <div class="row">
                         <div class="col-4">
-                            <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="ji00000001" style="width:100px;" data-toggle="tooltip" title="作業場所情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます" readonly></p>
+                            <p>管理者番号<span class="kome">*</span>：<input type="text" id="management_number" name="management_number" maxlength="10" value="ji00000001" style="width:100px;" data-toggle="tooltip" title="作業場所情報を修正、抹消できる管理者を変更する場合、ここを修正します 管理者自身とシステム管理者だけが修正できます" readonly></p>
                         </div>
                         <div class="col-3" style="padding:0px">
                             <p>管理者名：</p>
@@ -41,10 +45,10 @@
 
                     <div class="row margin-reset">
                         <div class="col-4">
-                            <p>郵便番号：<input type="text" name="postcode" size="10" value="{{ old('postcode') }}" maxlength="8" title="郵便番号はハイフン不要です。郵便番号を元に住所が自動入力されます。" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
+                            <p>郵便番号<span class="kome">*</span>：<input type="text" name="postcode" size="10" value="{{ old('postcode') }}" maxlength="8" title="郵便番号はハイフン不要です。郵便番号を元に住所が自動入力されます。" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
                         </div>
                         <div class="col" style="padding:0px">
-                            住所:
+                            住所<span class="kome">*</span>:
                             <input type="text" name="prefectural" value="{{ old('prefectural') }}" size="10" title="ここに都道府県名が入ります。">
                             <input type="text" name="address" value="{{ old('address') }}" size="30" title="ここに市区町村名が入ります。">
                             </p>

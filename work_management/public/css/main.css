@@ -89,3 +89,12 @@ td {
 .sorter-false {
     background-image: none;
 }
+
+.hissu {
+    position:absolute; right:2%;
+}
+
+.kome {
+    color:red;
+    font-size: 20px;
+}

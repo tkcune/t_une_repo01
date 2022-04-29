@@ -19,6 +19,11 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 
+use App\Libraries\php\Service\Display\List\SpaceDisplayList;
+use App\Libraries\php\Service\Display\List\DepartmentDisplayList;
+use App\Libraries\php\Service\Display\List\PersonnelDisplayList;
+
+
 /**
  * 作業場所データを操作するコントローラー
  */
@@ -52,49 +57,59 @@ class Pssb01Controller extends Controller
     public function index()
     {
         //ログインしている顧客IDの取得
-        $client_id = session('client_id');
+        $client_id = "aa00000001";
+        //select_idはbsにしないとpersonnelとdepartmentの情報が取れない
+        $select_id = "bs00000000";
+
+        //ログイン機能が完成次第、そちらで取得可能なため、このセッション取得を削除する。
+        session(['client_id' => $client_id]);
 
         //ツリーデータの取得
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        //全体の部署データの取得
-        $department_db = new DepartmentDataBase();
-        $department_data = $department_db->getList($client_id);
+        if (isset($_GET['count'])) {
+            $count_department = $_GET['count'];
+            $count_personnel = $_GET['count'];
+            $count_space = $_GET['count'];
+        } else {
+            $count_department = Config::get('startcount.count');
+            $count_personnel = Config::get('startcount.count');
+            $count_space = Config::get('startcount.count');
+        }
 
-        //全体の人員データの取得
-        $personnel_db = new PersonnelDataBase();
-        $personnel_data = $personnel_db->getList($client_id);
+        //一覧画面のデータ取得
+        try {
+            $department_display_list = new DepartmentDisplayList();
+            $department_details = $department_display_list->display($client_id, $select_id, $count_department);
 
-        //一覧に記載する作業場所データの取得
-        $space_db = new WorkSpaceDataBase();
-        $space_data = $space_db->getList($client_id);
+            $personnel_display_list = new PersonnelDisplayList();
+            $personnel_details = $personnel_display_list->display($client_id, $select_id, $count_personnel);
 
-        //基本ページネーション設定
-        $pagination = new Pagination();
-        $count_department = Config::get('startcount.count');
-        $count_personnel = Config::get('startcount.count');
-        $count_space = Config::get('startcount.count');
-        $department_max = $pagination->pageMax($department_data, count($department_data));
-        $departments = $pagination->pagination($department_data, count($department_data), $count_department);
-        $personnel_max = $pagination->pageMax($personnel_data, count($personnel_data));
-        $names = $pagination->pagination($personnel_data, count($personnel_data), $count_personnel);
-        $space_max = $pagination->pageMax($space_data, count($space_data));
-        $spaces = $pagination->pagination($space_data, count($space_data), $count_space);
+            $space_display_list = new SpaceDisplayList();
+            $space_details = $space_display_list->display($client_id, $select_id, $count_space);
+        } catch (\Exception $e) {
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
+            DatabaseException::common($e);
+            return redirect()->route('pa0001.errormsg');
+        }
+
+        //ページネーションが最大値を超えていないかの判断
+        if ($count_personnel > $personnel_details['max']) {
+            $count_personnel = $personnel_details['max'];
+        }
+
+        if ($count_space > $space_details['max']) {
+            $count_space = $space_details['max'];
+        }
 
         return view('pvsb01.pvsb01', compact(
-            'department_max',
-            'departments',
-            'personnel_max',
-            'names',
-            'space_max',
-            'spaces',
-            'department_data',
-            'personnel_data',
-            'space_data',
             'count_department',
             'count_personnel',
             'count_space',
+            'department_details',
+            'personnel_details',
+            'space_details'
         ));
     }
 
@@ -200,6 +215,7 @@ class Pssb01Controller extends Controller
 
             DB::commit();
 
+
             return redirect()->route('pssb01.show', [$client_id, $high]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -246,13 +262,13 @@ class Pssb01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
+        View::share('click_id', $select_id);
+
         //インスタンス化
         $space_db = new WorkSpaceDataBase();
         $department_db = new DepartmentDataBase();
         $personnel_db = new PersonnelDataBase();
         $projection_db = new ProjectionDataBase();
-
-        View::share('click_id', $select_id);
 
         if (substr($select_id, 0, 2) == "ta") {
             //選択部署が投影だった場合は対応するIDを取得
@@ -261,53 +277,25 @@ class Pssb01Controller extends Controller
         }
 
         //詳細に記載する作業場所データの取得
-        $space_details = $space_db->get($client_id, $select_id);
-
-        //一覧に記載する作業場所データの取得
-        $space_data = $space_db->getSelectList($client_id, $select_id);
-
-        //一覧の投影作業場所データの取得
-        try {
-            $projection_space = $projection_db->getSpaceList($client_id, $select_id);
-        } catch (\Exception $e) {
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
-            DatabaseException::common($e);
-            return redirect()->route('pa0001.errormsg');
-        }
-
-        //投影データを一覧に追加
-        $space_data = array_merge($space_data, $projection_space);
+        $space_data = $space_db->get($client_id, $select_id);
 
         //システム管理者のリストを取得
-        try {
-            $system_management_lists = $personnel_db->getSystemManagement($client_id);
-        } catch (\Exception $e) {
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
-            DatabaseException::common($e);
-            return redirect()->route('pa0001.errormsg');
-        }
+        $system_management_lists = $personnel_db->getSystemManagement($client_id);
 
-        //ページネーション設定
-        $pagination = new Pagination();
-        $space_max = $pagination->pageMax($space_data, count($space_data));
+        //一覧画面のデータ取得
+        $space_display_list = new SpaceDisplayList();
+        $space_details = $space_display_list->display($client_id, $select_id, $count_space);
 
-        //ページネーションの最大値・最小値チェック
-        if ($count_space < Config::get('startcount.count')) {
-            $count_space = Config::get('startcount.count');
+        //ページネーションが最大値を超えていないかの判断
+        if ($count_space > $space_details['max']) {
+            $count_space = $space_details['max'];
         }
-        if ($count_space > $space_max) {
-            $count_space = $space_max;
-        }
-
-        $spaces = $pagination->pagination($space_data, count($space_data), $count_space);
 
         return view('pssb01.pssb02', compact(
-            'space_details',
             'space_data',
             'system_management_lists',
             'count_space',
-            'space_max',
-            'spaces',
+            'space_details',
         ));
     }
 
@@ -368,8 +356,10 @@ class Pssb01Controller extends Controller
 
         //インスタンス化
         $space_db = new WorkSpaceDataBase();
-        $department_db = new DepartmentDataBase();
+        $space_display_list = new SpaceDisplayList();
         $personnel_db = new PersonnelDataBase();
+        $personnel_display_list = new PersonnelDisplayList();
+        $department_db = new DepartmentDataBase();
         $projection_db = new ProjectionDataBase();
 
         $select_code = substr($select_id, 0, 2);
@@ -383,35 +373,13 @@ class Pssb01Controller extends Controller
         }
 
         //詳細に記載する作業場所データの取得
-        $space_details = $space_db->get($client_id, $select_id);
+        $space_data = $space_db->get($client_id, $select_id);
 
-        //一覧に記載する作業場所データの取得
-        try {
-            if ($select_id == 'sb00000000') {
-                $space_data = $space_db->getSearchTop($client_id, $request->search);
-            } else {
-                $space_data = $space_db->getSearchList($client_id, $select_id, $request->search);
-            }
-        } catch (\Exception $e) {
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
-            DatabaseException::common($e);
-            return redirect()->route('pa0001.errormsg');
-        }
-
-        //一覧の投影作業場所データの取得
-        try {
-            $projection_space = $projection_db->getSpaceList($client_id, $select_id);
-        } catch (\Exception $e) {
-            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
-            DatabaseException::common($e);
-            return redirect()->route('pa0001.errormsg');
-        }
-
-        //投影データを一覧に追加
-        $space_data = array_merge($space_data, $projection_space);
+        //一覧データの取得
+        $space_details = $space_display_list->display($client_id, $select_id, $count_space, $request->search);
 
         //検索結果が0件なら戻る
-        if (empty($space_data)) {
+        if (empty($space_details['data'])) {
             OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
             $message = Message::get_message_handle('mhcmwn0001', [0 => '']);
             session(['message' => $message[0], 'handle_message' => $message[3]]);
@@ -421,35 +389,29 @@ class Pssb01Controller extends Controller
             return redirect()->route('pssb01.show', [$client_id, $select_id]);
         }
 
-        //概要画面での人員検索表示に必要な内容
+        //概要画面：人員検索表示を行うのに必要な内容
         try {
             if ($select_id == 'sb00000000') {
-                //一覧に記載する人員データの取得
-                $personnel_data = $personnel_db->getSearchTop($client_id, $request->search2);
-                //一覧の投影人員データの取得
-                $projection_personnel = $projection_db->getPersonnelSearch($client_id, $select_id, $request->search2);
-                //投影データを一覧人員に追加
-                $personnel_data = array_merge($personnel_data, $projection_personnel);
-                //検索結果が0件なら戻る
-                if (empty($personnel_data)) {
-                    OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
-                    $message = Message::get_message_handle('mhcmwn0001', [0 => '']);
-                    session(['message' => $message[0], 'handle_message' => $message[3]]);
-                    return redirect()->route('plbs01.show', [$client_id, $select_id]);
+
+                //ページネーションの番号チェック
+                if (isset($_GET['count'])) {
+                    $count_personnel = $_GET['count'];
+                } else {
+                    $count_personnel = Config::get('startcount.count');
                 }
-                //ページネーション
-                $pagination = new Pagination();
-                $count_personnel = Config::get('startcount.count');
-                $count_department = Config::get('startcount.count');
-                $personnel_max = $pagination->pageMax($personnel_data, count($personnel_data));
-                $names = $pagination->pagination($personnel_data, count($personnel_data), $count_personnel);
-                $department_data = $department_db->getList($client_id);
-                $departments = $pagination->pagination($department_data, count($department_data), $count_department);
+
+                //一覧に記載する人員データの取得
+                $personnel_details = $personnel_display_list->display($client_id, $select_id, $count_personnel, $request->search2);
+
+                //ページネーションが最大値を超えていないかの判断
+                if ($count_personnel > $personnel_details['max']) {
+                    $count_personnel = $personnel_details['max'];
+                }
             }
         } catch (\Exception $e) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
             DatabaseException::common($e);
-            echo "エラー：" . $e->getMessage();
+            return redirect()->route('pa0001.errormsg');
         }
 
         //システム管理者のリストを取得
@@ -461,31 +423,17 @@ class Pssb01Controller extends Controller
             return redirect()->route('pa0001.errormsg');
         }
 
-        //基本ページネーション設定
-        $pagination = new Pagination();
-        $space_max = $pagination->pageMax($space_data, count($space_data));
-        $spaces = $pagination->pagination($space_data, count($space_data), $count_space);
-
-        if ($count_space < Config::get('startcount.count')) {
-            $count_space = Config::get('startcount.count');
-        }
-        if ($count_space > $space_max) {
-            $count_space = $space_max;
+        //ページネーションが最大値を超えていないかの判断
+        if ($count_space > $space_details['max']) {
+            $count_space = $space_details['max'];
         }
 
         if ($select_id == 'sb00000000') {
             return view('pvsb01.pvsb01', compact(
-                'space_data',
-                'space_max',
+                'space_details',
                 'count_space',
-                'spaces',
-                'department_data',
-                'count_department',
-                'departments',
-                'personnel_data',
-                'count_personnel',
-                'personnel_max',
-                'names',
+                'personnel_details',
+                'count_personnel'
             ));
         }
 
@@ -493,9 +441,7 @@ class Pssb01Controller extends Controller
             'space_details',
             'space_data',
             'system_management_lists',
-            'count_space',
-            'space_max',
-            'spaces',
+            'count_space'
         ));
     }
 
@@ -523,7 +469,7 @@ class Pssb01Controller extends Controller
     public function update(WorkSpaceRequest $request)
     {
         //リクエストの取得
-        $client_id = session('client_id');
+        $client_id = $request->client_id;
         $space_id = $request->space_id;
         $name = $request->name;
         $management_number = $request->management_number;
@@ -702,9 +648,12 @@ class Pssb01Controller extends Controller
     public function copy(Request $request)
     {
         //リクエストの取得
-        $client_id = session('client_id');
+        $client_id = $request->client_id;
         $copy_id = $request->copy_id;
         $high = $request->high_id;
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
 
         if ($request->copy_id == null) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0009', '01');
@@ -790,5 +739,91 @@ class Pssb01Controller extends Controller
             session(['message' => $message[0]]);
             return back();
         }
+    }
+
+    /**
+     * 投影データの登録
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @var string $client_id　顧客ID
+     * @var string $high_id 上位ID
+     * @var array $code 投影元IDの配列
+     * @var string $projection_source_id　投影元ID
+     * @var string $projection_id　作成する投影ID
+     * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
+     * @var App\Libraries\php\Domain\Hierarchical $hierarchical
+     * @var string $message ログメッセージ
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function projection(Request $request)
+    {
+        $client_id = $request->client_id;
+        $high = $request->high_id;
+        $projection_source_id = $request->projection_source_id;
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
+
+        //複写番号が空白の場合はエラーメッセージを表示
+        if ($request->projection_source_id == null) {
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009', '01');
+            $message = Message::get_message_handle('mhcmer0009', [0 => '']);
+            session(['message' => $message[0], 'handle_message' => $message[3]]);
+            return redirect()->route('index');
+        }
+
+        //送信元が投影だった場合は投影元のIDに変換
+        if (substr($projection_source_id, 0, 2) == "ta") {
+            try {
+                $projection_db = new ProjectionDataBase();
+                $code = $projection_db->getId($projection_source_id);
+            } catch (\Exception $e) {
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
+            $projection_source_id = $code[0]->projection_source_id;
+        }
+        //最新の投影番号を生成
+        try {
+            $projection_db = new ProjectionDataBase();
+            $projection_id = $projection_db->getNewId($client_id);
+        } catch (\Exception $e) {
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+
+        try {
+            //トランザクション
+            DB::beginTransaction();
+
+            //データベースに投影情報を登録
+            $projection_db = new ProjectionDataBase();
+            $projection_db->insert($client_id, $projection_id, $projection_source_id);
+
+            //データベースに階層情報を登録
+            $hierarchical = new Hierarchical();
+            $hierarchical->insert($client_id, $projection_id, $high);
+
+            DB::commit();
+        } catch (\Exception $e) {
+
+            //ロールバック
+            DB::rollBack();
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
+            return redirect()->route('index');
+        }
+
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0010');
+        $message = Message::get_message('mhcmok0010', [0 => '']);
+        session(['message' => $message[0]]);
+        PtcmtrController::open_node($projection_id);
+
+        return redirect()->route('pssb01.show', [$client_id, $high]);
     }
 }

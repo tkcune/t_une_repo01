@@ -33,24 +33,18 @@ class Pssb01Controller extends Controller
      * 作業場所トップ画面
      *
      * @var  string $client_id 顧客ID
+     * @var  string $select_id 選択ID
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
-     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
-     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
-     * @var  App\Libraries\php\Domain\WorkSpaceDataBase $space_db
-     * @var  array $department_data 部署一覧データ
-     * @var  array $personnel_data 人員一覧データ
-     * @var  array $space_data 作業場所一覧データ
-     * @var  App\Libraries\php\Service\Pagination $pagination
      * @var int $count_department 部署のページ番号
      * @var int $count_personnel　人員のページ番号
      * @var int $count_space　作業場所のページ番号
-     * @var  int $department_max 部署データページネーションの最大値
-     * @var  array $departments 一覧に表示する部署データ
-     * @var  int $personnel_max 人員データページネーションの最大値
-     * @var  array $names 一覧に表示する人員データ
-     * @var  int $space_max 作業場所データページネーションの最大値
-     * @var  array $spaces 一覧に表示する作業場所データ
+     * @var App\Libraries\php\Service\Display\List\DepartmentDisplayList $department_display_list
+     * @var App\Libraries\php\Service\Display\List\PersonnelDisplayList $personnel_display_list
+     * @var App\Libraries\php\Service\Display\List\SpaceDisplayList $space_display_list
+     * @var array $department_details 一覧に表示する部署データ
+     * @var array $personnel_details 一覧に表示する人員データ
+     * @var array $space_details 一覧に表示する作業場所データ
      *
      * @return \Illuminate\Http\Response
      */
@@ -214,7 +208,6 @@ class Pssb01Controller extends Controller
             $hierarchical->insert($client_id, $space_id, $high);
 
             DB::commit();
-
 
             return redirect()->route('pssb01.show', [$client_id, $high]);
         } catch (\Exception $e) {

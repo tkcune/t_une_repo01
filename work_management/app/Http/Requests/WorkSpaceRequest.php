@@ -38,16 +38,16 @@ class WorkSpaceRequest extends FormRequest
                 'postcode' => ['required', new PostRule],
                 'prefectural' =>  'required',
                 'address' => 'required',
-                'URL' => ['active_url', 'nullable', 'max:255'],
+                'URL' => ['url', 'nullable', 'max:255'],
             ];
         } else {
             // 登録画面のバリデーション
             return [
-                'name' => ['required', new JapaneseAndAlphaNumRule],
+                'name' => ['required', new JapaneseAndAlphaNumRule, 'max:32'],
                 'postcode' => ['required', new PostRule],
-                'prefectural' =>  ['required', new JapaneseAndAlphaNumRule],
-                'address' => ['required', new JapaneseAndAlphaNumRule],
-                'URL' => ['active_url', 'nullable', 'max:255'],
+                'prefectural' =>  ['required', new JapaneseAndAlphaNumRule, 'max:5'],
+                'address' => ['required', new JapaneseAndAlphaNumRule, 'max:32'],
+                'URL' => ['url', 'nullable', 'max:255'],
             ];
         }
     }
@@ -56,10 +56,11 @@ class WorkSpaceRequest extends FormRequest
     {
         return [
             'name.required' => '作業場所名を入力してください',
+            'name.max' => '32文字以内で入力してください',
             'postcode.required' => '郵便番号を入力してください',
             'prefectural.required' => '都道府県は5文字以内で入力してください',
             'address.required' => '市区町村を入力してください',
-            'URL.active_url' => '有効なURLではないか、URLの文字数が255文字を超えています',
+            'URL.url' => '有効なURLではないか、URLの文字数が255文字を超えています',
             'URL.max' => '有効なURLではないか、URLの文字数が255文字を超えています',
         ];
     }

@@ -17,7 +17,7 @@
                     </div>
 
                     <div class="col-4" style="margin-right:-10px">
-                        <p id="palent">名称<span class="kome">*</span>：<input type="text" name="name" data-toggle="tooltip" value="{{ old('name') }}" title="作業場所の名称を入力します"></p>
+                        <p id="palent">名称<span class="kome">*</span>：<input type="text" name="name" data-toggle="tooltip"  placeholder="作業場所名" value="{{ old('name') }}" title="作業場所の名称を32文字以内で入力します"></p>
                     </div>
 
                     <div class="col-3 hissu">
@@ -33,7 +33,7 @@
                         </div>
                         <div class="col" style="padding:0px">
                             <p>管理者検索：
-                                <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32" data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
+                                <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32" placeholder="管理者名を選択" data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                                 <datalist id="keywords">
                                     @foreach($system_management_lists as $system_management_list)
                                     <option value="{{$system_management_list->name}}" label="{{$system_management_list->personnel_id}}"></option>
@@ -45,18 +45,18 @@
 
                     <div class="row margin-reset">
                         <div class="col-4">
-                            <p>郵便番号<span class="kome">*</span>：<input type="text" name="postcode" size="10" value="{{ old('postcode') }}" maxlength="8" title="郵便番号はハイフン不要です。郵便番号を元に住所が自動入力されます。" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
+                            <p>郵便番号<span class="kome">*</span>：<input type="text" name="postcode" size="10" value="{{ old('postcode') }}" maxlength="8"  placeholder="0123456" title="郵便番号はハイフン不要です。郵便番号を元に住所が自動入力されます。" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
                         </div>
                         <div class="col" style="padding:0px">
                             住所<span class="kome">*</span>:
-                            <input type="text" name="prefectural" value="{{ old('prefectural') }}" size="10" title="ここに都道府県名が入ります。">
-                            <input type="text" name="address" value="{{ old('address') }}" size="30" title="ここに市区町村名が入ります。">
+                            <input type="text" name="prefectural" value="{{ old('prefectural') }}" size="10"  placeholder="都道府県" title="ここに都道府県名が入ります。">
+                            <input type="text" name="address" value="{{ old('address') }}" size="30" placeholder="市区町村以降" title="ここに市区町村名が入ります。">
                             </p>
                         </div>
 
                         <div class="row margin-reset">
                             <div class="col">
-                                <p>URL：<input type="text" name="URL" value="{{ old('URL') }}" size="81" title="ここに作業場所の地図のURLを入力します。">
+                                <p>URL：<input type="text" name="URL" value="{{ old('URL') }}" size="81"  placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
                                     <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                                         <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉">
                                     </button>
@@ -71,7 +71,7 @@
                          備考
                         </div>
                         <div>
-                            <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;"></textarea>
+                            <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" placeholder="備考欄は任意で入力します。" style="width:800px; height: 60px;"></textarea>
                         </div>
                     </div>
 

@@ -39,7 +39,7 @@
                         <div class="col-4" style="margin-right:-10px">
                             <p id="palent">
                                 <span data-toggle="tooltip" id="id_number" title="番号:{{$space_data[0]->space_id}}">
-                                    名称：<input type="text" name="name" value="{{$space_data[0]->name}}" data-toggle="tooltip" title="">
+                                    名称：<input type="text" name="name" value="{{$space_data[0]->name}}" placeholder="作業場所名" data-toggle="tooltip" title="">
                             </p>
                         </div>
 
@@ -58,7 +58,7 @@
                             </div>
                             <div class="col" style="padding:0px">
                                 <p>管理者検索：
-                                    <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32" data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
+                                    <input type="search" id="search-list" list="keywords" style="width:150px;" autocomplete="on" maxlength="32" placeholder="管理者名を選択" data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                                     <datalist id="keywords">
                                         @foreach($system_management_lists as $system_management_list)
                                         <option value="{{$system_management_list->name}}" label="{{$system_management_list->personnel_id}}"></option>
@@ -70,17 +70,17 @@
 
                         <div class="row margin-reset">
                             <div class="col-4">
-                                <p>郵便番号：<input type="text" name="postcode" size="10" value="{{$space_data[0]->post_code}}" maxlength="8" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
+                                <p>郵便番号：<input type="text" name="postcode" size="10" value="{{$space_data[0]->post_code}}" maxlength="8" title="郵便番号はハイフン不要の7桁で入力してください。"  onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');" placeholder="0123456">
                             </div>
                             <div class="col" style="padding:0px">
                                 住所:
-                                <input type="text" name="prefectural" value="{{$space_data[0]->prefectural_office_location}}" size="10" title="ここに都道府県名が入ります。">
-                                <input type="text" name="address" value="{{$space_data[0]->address}}" size="30" title="ここに市区町村名が入ります。">
+                                <input type="text" name="prefectural" value="{{$space_data[0]->prefectural_office_location}}" size="10" placeholder="都道府県" title="ここに都道府県名が入ります。">
+                                <input type="text" name="address" value="{{$space_data[0]->address}}" size="30"  placeholder="市区町村以降" title="ここに市区町村名が入ります。">
                                 </p>
                             </div>
                             <div class="row margin-reset">
                                 <div class="col">
-                                    <p>URL：<input type="text" name="URL" value="{{$space_data[0]->URL}}" size="81" title="ここに作業場所の地図のURLを入力します。">
+                                    <p>URL：<input type="text" name="URL" value="{{$space_data[0]->URL}}" size="81" placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
                                         {{-- 作業場所のマップURL、値がNULLならグーグルマップが表示される --}}
                                         @if(($space_data[0]->URL) === NULL)
                                         <button class="main_button_style" type="button" id="remarks_change_display" onclick="window.open('https://www.google.com/maps/','_blank')" data-toggle="tooltip" title="クリックにより、地図を開きます">
@@ -106,7 +106,7 @@
                                 備考
                             </div>
                             <div>
-                                <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" style="width:800px; height: 60px;">{{ $space_data[0]->remarks }}</textarea>
+                                <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" placeholder="備考欄は任意で入力します。" style="width:800px; height: 60px;">{{ $space_data[0]->remarks }}</textarea>
                             </div>
                         </div>
 
@@ -306,9 +306,9 @@
                 @csrf
                 @method('post')
                 @if(!empty($_POST['search']))
-                <input type="text" name="search" class="top" maxlength="32" value="{{ $_POST['search'] }}">
+                <input type="text" name="search" class="top" maxlength="32" placeholder="作業場所名を入力します" value="{{ $_POST['search'] }}">
                 @else
-                <input type="text" name="search" class="top" maxlength="32">
+                <input type="text" name="search" class="top" maxlength="32" placeholder="作業場所名を入力します">
                 @endif
                 <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
                     <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">

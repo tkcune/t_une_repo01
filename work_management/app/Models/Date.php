@@ -29,6 +29,21 @@ use Carbon\Carbon;
      return $today;
     }
 
+    /** 
+     * 3か月後パスワード更新日を判定するメソッド
+     * @param   $today 更新予定の日付
+     * 
+     * @return　$today
+    */
+    public function password() {
+
+        $dt = now();
+
+        $today = $dt->addMonth(3)->format("Y-m-d H:i:s");
+   
+        return $today;
+       }
+
     /**
      * 登録日と更新日の日付のフォーマットを変換するメソッド
      * @param array $datas DBデータ 

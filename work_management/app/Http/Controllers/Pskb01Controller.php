@@ -8,7 +8,9 @@ use App\Facades\OutputLog;
 use App\Http\Requests\BoardRequest;
 use App\Libraries\php\Domain\PersonnelDataBase;
 use App\Libraries\php\Domain\BoardDataBase;
+use App\Libraries\php\Domain\IncidentalDataBase;
 use App\Libraries\php\Domain\ProjectionDataBase;
+use App\Libraries\php\Domain\FileDataBase;
 use App\Libraries\php\Domain\Hierarchical;
 use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
@@ -19,6 +21,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\View;
 
 use App\Libraries\php\Service\Display\List\BoardDisplayList;
+use App\Libraries\php\Service\Display\List\IncidentalDisplayList;
 use App\Libraries\php\Service\Display\Detail\BoardDisplayDetail;
 
 class Pskb01Controller extends Controller
@@ -101,7 +104,7 @@ class Pskb01Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(BoardRequest $request)
+    public function store(Request $request)
     {
         $client_id = session('client_id');
         $name = $request->name;
@@ -109,11 +112,12 @@ class Pskb01Controller extends Controller
         $management_personnel_id = $request->management_number;
         $high = $request->high;
         $remarks = $request->remarks;
+        $file = $request->file('file_name');
 
         // 重複クリック対策
-        $request->session()->regenerateToken();
+        //$request->session()->regenerateToken();
 
-        //顧客IDに対応した最新の部署IDを取得
+        //顧客IDに対応した最新のIDを取得
         try{
             $board_db = new BoardDataBase();
             $id = $board_db->getId($client_id);
@@ -141,6 +145,12 @@ class Pskb01Controller extends Controller
             //データベースに階層情報を登録
             $hierarchical = new Hierarchical();
             $hierarchical->insert($client_id,$board_id,$high);
+
+            //添付ファイルがある場合は登録
+            if (!is_null($file)) {
+                $file_db = new FileDataBase();
+                $file_db->insert($client_id,$file,$board_id);
+            }
 
             DB::commit();
 
@@ -216,12 +226,16 @@ class Pskb01Controller extends Controller
         $board = new BoardDisplayList();
         $board_lists = $board->display($client_id,$select_id,$count_board);
 
+        //付帯データの取得
+        $incidental = new IncidentalDisplayList();
+        $incidental_lists = $incidental->display($client_id,$select_id,$count_board);
+
         //ページネーションが最大値を超えていないかの判断
         if($count_board > $board_lists['max']){
             $count_board = $board_lists['max'];
         }
 
-        return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists',
+        return view('pskb01.pskb01',compact('board_details','board_lists','incidental_lists','system_management_lists',
         'count_board'));
     }
 

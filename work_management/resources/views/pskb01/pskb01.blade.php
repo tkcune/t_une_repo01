@@ -15,12 +15,22 @@
         });
     });
     </script>
+
+    <script>
+    $(document).ready(function() {
+        $('#ft-table').tablesorter({
+            headers: {
+               5: { sorter: false }
+            }
+        });
+    });
+    </script>
 @endsection
     
 @section('content')
     <div class="col border border-primary" style="padding:10px;">
         <div class="row">
-            <form action="{{ route('pskb01.update',$board_details[0]->board_id) }}" method="post">
+            <form action="{{ route('pskb01.update',$board_details[0]->board_id) }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('patch')
             @if(substr($click_id,0,2) == "ta")
@@ -80,19 +90,11 @@
                             <option value="18" @if($board_details[0]->status == "18") selected @endif>検討終了</option>
                             </select>
 
-                            <input type="text" id="" name="" maxlength="10" value="" style="width:150px;"
-                            data-toggle="tooltip" title="">
-
-                            <button class="" type="button" id="remarks_change_display" onclick="" data-toggle="tooltip">
-                               追加
-                            </button>
-
-                            <input type="text" id="" name="" maxlength="10" value="" style="width:300px;"
-                            data-toggle="tooltip" title="" >
-
-                            <button class="" type="button" id="remarks_change_display" onclick="" data-toggle="tooltip">
-                                追加
-                            </button>
+                            参照ファイル
+                            <input type="file" name="file_name" value="" style="width:254px;" data-toggle="tooltip" title="ファイルをアップロード" >
+                            URL
+                            <input type="text" id="url" name="url" maxlength="10" value="" style="width:200px;"
+                            data-toggle="tooltip" title="URLを送信">
 
                             <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                                 <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
@@ -360,6 +362,183 @@
                                     <td width="150">{{$board_list['data']->created_at}}
                                     <td width="120"><a href="{{ route('plbs01.show',[session('client_id'),$board_list['data']->management_personnel_id])}}" data-toggle="tooltip" title="">{{$board_list['data']->management_name}}</a></td>
                                     <td width="170">【<a href="#">複写</a>】
+                                    【<p id="kb_list_delete{{$loop->index}}" name="kb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
+                                    <form id="delete{{$loop->index}}" action="#" method="post" style="display: none;">
+                                    @csrf
+                                    </form>
+                                    </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+    </div>
+
+    <div class="incidental-area" id= "list">
+                <div class="row" style="padding-top:5px">
+                    {{-- ツリー操作機能　--}}
+                    <div class="col-4" style="display:inline-flex">
+                        <p>付帯定義</p>
+                        <form action="{{ route('pskb01.create') }}" method="get">
+                        <input type="hidden" id="kb_high_new" name="high" value="{{$board_details[0]->board_id}}">
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
+                        </button>
+                        </form>
+
+                        <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
+                        @csrf
+                        @method('patch')
+                        <input type="hidden" id="high_move" name="high_id" value="{{$board_details[0]->board_id}}">
+                        <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}"> 
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動">
+                        </button>
+                        </form>
+
+                        <form action="{{ route('pskb01.copy') }}" method="post">
+                        @csrf
+                        @method('post')
+                        <input type="hidden" name="client_id" value="{{ session('client_id') }}">
+                        <input type="hidden" id="copy" name="copy_id" value="{{session('clipboard_id')}}">
+                        <input type="hidden" id="high_insert" name="high_id" value="{{$board_details[0]->board_id}}">
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入">
+                        </button>
+                        </form>
+
+                        <form action="{{ route('ptcm01.store') }}" method="post">
+                        @csrf
+                        @method('post')
+                        <input type="hidden" name="client_id" value="{{ session('client_id') }}">
+                        <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
+                        <input type="hidden" id="high_projection" name="high_id" value="{{$board_details[0]->board_id}}">
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
+                        </button>
+                        </form>
+                    </div>
+                    {{-- ツリー操作機能ここまで　--}}
+
+                    {{-- ページネーション--}}
+                    <div class="col-3">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-sm">
+                                <li class="page-item">
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                @endif
+                                </li>
+                                <li class="page-item">
+                                @if(!empty($_POST['search']))
+                                    @if($count_board <= 1)
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                    @else
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>$count_board-1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                    @endif
+                                @else
+                                    @if($count_board <= 1)
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                    @else
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>$count_board-1]) }}" aria-label="Previous">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                    @endif
+                                @endif
+                                </li>
+                                {{$count_board}}/{{$board_lists['max']}}&nbsp;&nbsp;{{$board_lists['count']}}件
+                                <li class="page-item">
+                                @if(!empty($_POST['search']))
+                                    @if($count_board < $board_lists['max'])
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>$count_board+1,'search'=>$_POST['search']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                    @else
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>$board_lists['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                    @endif
+                                @else
+                                    @if($count_board < $board_lists['max'])
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>$count_board+1]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                    @else
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>$board_lists['max']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                    @endif
+                                @endif
+                                </li>
+                                <li class="page-item">
+                                @if(!empty($_POST['search']))
+                                    <a class="page-link" href="{{ route('pskb01.search',[session('client_id'),$click_id,'count'=>$board_lists['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                @else
+                                    <a class="page-link" href="{{ route('pskb01.show',[session('client_id'),$click_id,'count'=>$board_lists['max']]) }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                @endif
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    {{-- ページネーションここまで --}}
+
+                    {{-- 検索機能　--}}
+                    <div class="col-4" style="display:inline-flex">
+                        <p>検索</p>
+                        <form action="{{ route('pskb01.search',[session('client_id'),$board_details[0]->board_id]) }}" method="post">
+                        @csrf
+                        @method('post')
+                        @if(!empty($_POST['search']))
+                            <input type="text" name="search" class="top" maxlength="32" value="{{ $_POST['search'] }}">
+                        @else
+                            <input type="text" name="search" class="top" maxlength="32">
+                        @endif
+                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
+                        </button>
+                        </form>
+                    </div>
+
+                    <div class="col" style = '' onclick="listOn()">
+                        <p style="cursor: hand; cursor:pointer;">✕</p>
+                    </div>
+                    {{-- 検索機能ここまで　--}}
+                </div>
+                
+                <div class="row margin-reset">
+                    <div class="col">
+                        <div class="border border-dark">
+                            <table id="ft-table" class="ft-table table_sticky table table-striped" style="margin-bottom:0px;margin-top:0px;">
+                                <thead>
+                                <tr>
+                                    <th width="100">番号</th>
+                                    <th width="360">付帯定義</th>
+                                    <th width="360">操作</th>
+                                </thead>
+                                <tbody>
+                                @foreach($board_lists['data'] as $board_list['data'])
+                                    <tr>
+                                    <td width="100">{{$board_list['data']->board_id}}</td>
+                                    <td width="360"><a href="{{ route('pskb01.show',[session('client_id'),$board_list['data']->board_id])}}" data-toggle="tooltip" title="">{{$board_list['data']->name}}</a></td>                                  
+                                    <td width="360">【<a href="#">複写</a>】
                                     【<p id="kb_list_delete{{$loop->index}}" name="kb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
                                     <form id="delete{{$loop->index}}" action="#" method="post" style="display: none;">
                                     @csrf

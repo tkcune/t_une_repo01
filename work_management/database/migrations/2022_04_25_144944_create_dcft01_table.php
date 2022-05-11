@@ -17,6 +17,8 @@ class CreateDcft01Table extends Migration
             $table->primary(['client_id', 'incidental_id']);
             $table->string('client_id','10');
             $table->string('incidental_id','10');
+            $table->string('data_id','10');
+            $table->tinyInteger('data_type');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
         });

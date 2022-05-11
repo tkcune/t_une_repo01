@@ -9,6 +9,7 @@ use App\Libraries\php\Service\Message;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Rules\JapaneseAndAlphaNumRule;
+use App\Rules\PostRule;
 
 class WorkSpaceRequest extends FormRequest
 {
@@ -28,31 +29,49 @@ class WorkSpaceRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(Request $request)
     {
-        return [
-            'name' => ['required', new JapaneseAndAlphaNumRule],
-            'postcode' => 'required',
-            'prefectural' => 'required',
-            'address' => 'required',
-            'URL' => 'active_url|max:255',
-        ];
+        if (isset($request->space_id)) {
+            return [
+                // 編集画面のバリデーション
+                'name' => 'required',
+                'postcode' => ['required', new PostRule],
+                'prefectural' =>  'required',
+                'address' => 'required',
+                'URL' => ['url', 'nullable', 'max:255'],
+            ];
+        } else {
+            // 登録画面のバリデーション
+            return [
+                'name' => ['required', new JapaneseAndAlphaNumRule, 'max:32'],
+                'postcode' => ['required', new PostRule],
+                'prefectural' =>  ['required', new JapaneseAndAlphaNumRule, 'max:5'],
+                'address' => ['required', new JapaneseAndAlphaNumRule, 'max:32'],
+                'URL' => ['url', 'nullable', 'max:255'],
+            ];
+        }
     }
 
     public function messages()
     {
         return [
             'name.required' => '作業場所名を入力してください',
+            'name.max' => '32文字以内で入力してください',
             'postcode.required' => '郵便番号を入力してください',
-            'prefectural.required' => '都道府県を入力してください',
+            'prefectural.required' => '都道府県は5文字以内で入力してください',
             'address.required' => '市区町村を入力してください',
-            'URL.max' => 'URLの文字数は255文字までです'
+            'URL.url' => '有効なURLではないか、URLの文字数が255文字を超えています',
+            'URL.max' => '有効なURLではないか、URLの文字数が255文字を超えています',
         ];
     }
 
     protected function failedValidation(Validator $validator)
     {
-        if ($validator->errors()->first('name') == "英数字、ひらがな、カタカナ、漢字で入力してください") {
+        if (
+            $validator->errors()->first('name') == "英数字、ひらがな、カタカナ、漢字で入力してください"
+            or $validator->errors()->first('prefectural') == "英数字、ひらがな、カタカナ、漢字で入力してください"
+            or $validator->errors()->first('address') == "英数字、ひらがな、カタカナ、漢字で入力してください"
+        ) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0012', '01');
             $message = Message::get_message_handle('mhcmer0012', [0 => '']);
             session(['message' => $message[0], 'handle_message' => $message[3]]);
@@ -60,7 +79,19 @@ class WorkSpaceRequest extends FormRequest
             throw new HttpResponseException(
                 back()->withInput($this->input)->withErrors($validator)
             );
-        } elseif ($validator->errors()->first('URL') == "URLの文字数は255文字までです") {
+        } elseif (
+            $validator->errors()->first('postcode') == "郵便番号はハイフン不要、7桁で入力してください"
+        ) {
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0014', '01');
+            $message = Message::get_message_handle('mhcmer0014', [0 => '']);
+            session(['message' => $message[0], 'handle_message' => $message[3]]);
+            // リダイレクト先
+            throw new HttpResponseException(
+                back()->withInput($this->input)->withErrors($validator)
+            );
+        } elseif (
+            $validator->errors()->first('URL') == "有効なURLではないか、URLの文字数が255文字を超えています"
+        ) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0015', '01');
             $message = Message::get_message_handle('mhcmer0015', [0 => '']);
             session(['message' => $message[0], 'handle_message' => $message[3]]);

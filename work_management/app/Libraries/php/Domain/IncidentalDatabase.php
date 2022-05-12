@@ -26,13 +26,12 @@
          */
         public static function getList($client_id,$select_id){
 
-            $data = DB::select('SELECT kb1.client_id,kb1.board_id,kb1.name,kb1.status,kb1.management_personnel_id,
-                    kb1.remarks,kb1.created_at,kb1.updated_at,kb2.name AS high_name,high_id,dcji01.name AS management_name FROM dckb01 as kb1
-                    left join dccmks on kb1.board_id = dccmks.lower_id 
-                    left join dckb01 as kb2 on dccmks.high_id = kb2.board_id
-                    left join dcji01 on kb1.management_personnel_id = dcji01.personnel_id
-                    where kb1.client_id = ? and kb1.board_id = ? order by kb1.board_id',[$client_id,$select_id]);
-
+            $data = DB::select('SELECT ft1.client_id ,ft1.incidental_id,ft1.data_id ,fi1.name,fi1.path AS file_path,ur1.path AS url_path FROM dckb01 AS kb1
+                    INNER JOIN dccmks AS ks1 ON ks1.high_id = kb1.board_id
+                    INNER JOIN dcft01 AS ft1 ON ks1.lower_id = ft1.incidental_id
+                    LEFT JOIN dcfi01 AS fi1 ON ft1.data_id = fi1.file_id AND ft1.data_type = 1
+                    LEFT JOIN dcur01 AS ur1 ON ft1.data_id = ur1.url_id AND ft1.data_type = 2
+                    WHERE kb1.client_id = ? AND kb1.board_id = ? ORDER BY ft1.incidental_id;',[$client_id,$select_id]);
             return $data;
         }
 

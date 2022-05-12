@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Facades\OutputLog;
 use App\Http\Requests\BoardRequest;
@@ -115,7 +116,7 @@ class Pskb01Controller extends Controller
         $file = $request->file('file_name');
 
         // 重複クリック対策
-        //$request->session()->regenerateToken();
+        $request->session()->regenerateToken();
 
         //顧客IDに対応した最新のIDを取得
         try{
@@ -157,6 +158,7 @@ class Pskb01Controller extends Controller
             return redirect()->route('pskb01.show',[$client_id,$high]);
 
         }catch(\Exception $e){
+            dd($e);
             DB::rollBack();
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
@@ -193,8 +195,10 @@ class Pskb01Controller extends Controller
 
         if(isset($_GET['count'])){
             $count_board = $_GET['count'];
+            $count_incidental = $_GET['count'];
         }else{
             $count_board = Config::get('startcount.count');
+            $count_incidental = Config::get('startcount.count');
         }
 
         //ツリーデータの取得
@@ -236,7 +240,7 @@ class Pskb01Controller extends Controller
         }
 
         return view('pskb01.pskb01',compact('board_details','board_lists','incidental_lists','system_management_lists',
-        'count_board'));
+        'count_board','count_incidental'));
     }
 
     /**
@@ -631,5 +635,26 @@ class Pskb01Controller extends Controller
         }
         return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists',
         'count_board'));
+    }
+
+    /**
+     * ファイルダウンロード
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function download($id,$select_id)
+    {
+        $file_db = new FileDatabase();
+        $file = $file_db->path($id,$select_id);
+
+        $file_path = $file[0]->path;
+        $file_name = $file[0]->name;
+
+        $headers = ['Content-Type' => 'application/pdf'];
+
+        return Storage::disk('local')->download($file_path);
+
+        
     }
 }

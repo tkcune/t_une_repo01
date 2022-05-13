@@ -56,7 +56,7 @@
 
                         <div class="row margin-reset">
                             <div class="col">
-                                <p>URL：<input type="text" name="URL" value="{{ old('URL') }}" size="81"  placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
+                                <p>URL：<input type="url" name="URL" value="{{ old('URL') }}" size="81"  placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
                                     <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                                         <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉">
                                     </button>

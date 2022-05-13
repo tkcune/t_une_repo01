@@ -25,7 +25,7 @@ class JapaneseAndAlphaNumRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        return preg_match('/^[ぁ-んァ-ヶーa-zA-Z0-9一-龠０-９]+$/u', $value); //追記
+        return preg_match('/^[ぁ-んァ-ヶーa-zA-Z0-9一-龠０-９-]+$/u', $value); //住所の「-」が通るように「-」を追記
     }
 
     /**

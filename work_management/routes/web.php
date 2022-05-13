@@ -120,5 +120,6 @@ Route::prefix('pssb01')->group(function () {
     Route::get('/{id}/{id2}', [Pssb01Controller::class, 'search']);
     Route::post('/{id}/{id2}', [Pssb01Controller::class, 'search'])->name('pssb01.search');
     Route::post('/delete/{id}/{id2}', [Pssb01Controller::class, 'destroy'])->name('pssb01.destroy');
+    Route::patch('/high/{id}', [Pssb01Controller::class, 'hierarchyUpdate'])->name('pssb01.hierarchyUpdate');
     Route::post('/sbpro', [Pssb01Controller::class, 'projection'])->name('pssb01.projection');
 });

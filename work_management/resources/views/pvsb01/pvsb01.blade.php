@@ -72,7 +72,7 @@
                 <div class="col-4" style="display:inline-flex; padding-top:15px;">
                     <p>配下場所</p>
                     <form action="{{ route('pssb01.create') }}" method="get">
-                        <input type="hidden" id="high_new" name="high" value="sb00000001">
+                        <input type="hidden" id="high_new" name="high" value="{{$space_details['data'][0]->space_id}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                         </button>
@@ -81,7 +81,7 @@
                     <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
                         @csrf
                         @method('patch')
-                        <input type="hidden" id="high_move" name="high_id" value="">
+                        <input type="hidden" id="high_move" name="high_id" value="{{$space_details['data'][0]->space_id}}">
                         <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動" disabled style="opacity:0.3">
@@ -93,7 +93,7 @@
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         <input type="hidden" id="copy" name="copy_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" id="high_insert" name="high_id" value="sb00000000">
+                        <input type="hidden" id="high_insert" name="high_id" value="{{$space_details['data'][0]->space_id}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入" disabled style="opacity:0.3">
                         </button>
@@ -104,7 +104,7 @@
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" id="high_projection" name="high_id" value="sb00000000">
+                        <input type="hidden" id="high_projection" name="high_id" value="{{$space_details['data'][0]->space_id}}">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影" disabled style="opacity:0.3">
                         </button>
@@ -201,9 +201,9 @@
                         @csrf
                         @method('post')
                         @if(!empty($_POST['search']))
-                        <input type="text" name="search" class="top" maxlength="32" placeholder="作業場所名を入力します" value="{{ $_POST['search'] }}">
+                        <input type="text" name="search" class="top" maxlength="32" placeholder="作業場所検索" value="{{ $_POST['search'] }}">
                         @else
-                        <input type="text" name="search" class="top" maxlength="32"  placeholder="作業場所名を入力します">
+                        <input type="text" name="search" class="top" maxlength="32"  placeholder="作業場所検索">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
@@ -237,8 +237,8 @@
                                     <td><a href="{{ route('pssb01.show',[session('client_id'),$space['data']->space_id])}}" data-toggle="tooltip" title="クリックにより、当該作業場所に遷移します">{{$space['data']->name}}</a></td>
                                     <td>@if(isset($space['data']->high_id))<a href="{{ route('pssb01.show',[session('client_id'),$space['data']->high_id])}}" data-toggle="tooltip" title="">{{$space['data']->high_name}}</a>@endif</td>
                                     <td>【<a href="{{ route('pa0001.clipboard',$space['data']->space_id)}}">複写</a>】
-                                        【<p id="sb_list_delete{{$loop->index}}" name="sb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
-                                        <form id="delete{{$loop->index}}" action="{{ route('pssb01.destroy',[session('client_id'),$space['data']->space_id])}}" method="post" style="display: none;">
+                                        【<p id="sb_list_delete{{$loop->index}}" name="sb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('sb_delete{{$loop->index}}').submit();">削除</p>】
+                                        <form id="sb_delete{{$loop->index}}" action="{{ route('pssb01.destroy',[session('client_id'),$space['data']->space_id])}}" method="post" style="display: none;">
                                             @csrf
                                         </form>
                                     </td>
@@ -259,7 +259,7 @@
                     {{-- ツリー操作機能　--}}
                     <p>所属人員</p>
                     <form action="{{ route('psji01.index') }}" method="get">
-                        <input type="hidden" id="ji_high_new" name="high" value="ji00000001">
+                        <input type="hidden" id="ji_high_new" name="high" value="bs00000001">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                         </button>
@@ -291,7 +291,7 @@
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" id="high_projection" name="high_id" value="ji00000000">
+                        <input type="hidden" id="high_projection" name="high_id" value="ji0000000">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影" disabled style="opacity:0.3">
                         </button>
@@ -388,9 +388,9 @@
                         @csrf
                         @method('post')
                         @if(!empty($_POST['search2']))
-                        <input type="text" name="search2" class="top" maxlength="32"  placeholder="人員名を入力します" value="{{ $_POST['search2'] }}">
+                        <input type="text" name="search2" class="top" maxlength="32"  placeholder="人員検索" value="{{ $_POST['search2'] }}">
                         @else
-                        <input type="text" name="search2" class="top" maxlength="32" placeholder="人員名を入力します">
+                        <input type="text" name="search2" class="top" maxlength="32" placeholder="人員検索">
                         @endif
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
@@ -452,7 +452,7 @@
                                         <td width="100">{{$name['data']->password_update_day}}</td>
                                         <td width="80">---------</td>
                                         <td width="162">【<a href="{{ route('pa0001.clipboard',$name['data']->personnel_id)}}">複写</a>】
-                                            【<p id="list_delete{{$loop->index}}" name="sb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
+                                            【<p id="list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
                                             <form id="delete{{$loop->index}}" action="{{ route('psji01.destroy',[session('client_id'),$name['data']->personnel_id])}}" method="post" style="display: none;">
                                                 @csrf
                                             </form>

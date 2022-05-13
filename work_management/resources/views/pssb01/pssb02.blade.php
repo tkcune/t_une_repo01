@@ -80,7 +80,7 @@
                             </div>
                             <div class="row margin-reset">
                                 <div class="col">
-                                    <p>URL：<input type="text" name="URL" value="{{$space_data[0]->URL}}" size="81" placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
+                                    <p>URL：<input type="url" name="URL" value="{{$space_data[0]->URL}}" size="81" placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
                                         {{-- 作業場所のマップURL、値がNULLならグーグルマップが表示される --}}
                                         @if(($space_data[0]->URL) === NULL)
                                         <button class="main_button_style" type="button" id="remarks_change_display" onclick="window.open('https://www.google.com/maps/','_blank')" data-toggle="tooltip" title="クリックにより、地図を開きます">
@@ -196,7 +196,7 @@
                 </button>
             </form>
 
-            <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
+            <form action="{{ route('pssb01.hierarchyUpdate',[session('client_id')]) }}" method="post">
                 @csrf
                 @method('patch')
                 <input type="hidden" id="high_move" name="high_id" value="{{$space_data[0]->space_id}}">
@@ -306,9 +306,9 @@
                 @csrf
                 @method('post')
                 @if(!empty($_POST['search']))
-                <input type="text" name="search" class="top" maxlength="32" placeholder="作業場所名を入力します" value="{{ $_POST['search'] }}">
+                <input type="text" name="search" class="top" maxlength="32" placeholder="作業場所検索" value="{{ $_POST['search'] }}">
                 @else
-                <input type="text" name="search" class="top" maxlength="32" placeholder="作業場所名を入力します">
+                <input type="text" name="search" class="top" maxlength="32" placeholder="作業場所検索">
                 @endif
                 <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
                     <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Facades\OutputLog;
 use App\Http\Controllers\PtcmtrController;
+use App\Libraries\php\Logic\JudgmentHierarchy;
 use App\Libraries\php\Domain\DepartmentDataBase;
 use App\Libraries\php\Domain\PersonnelDataBase;
 use App\Libraries\php\Domain\ProjectionDataBase;
@@ -11,7 +12,6 @@ use App\Libraries\php\Domain\WorkSpaceDataBase;
 use App\Libraries\php\Domain\Hierarchical;
 use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
-use App\Libraries\php\Service\Pagination;
 use App\Libraries\php\Service\ZeroPadding;
 use Illuminate\Http\Request;
 use App\Http\Requests\WorkSpaceRequest;
@@ -96,6 +96,8 @@ class Pssb01Controller extends Controller
         if ($count_space > $space_details['max']) {
             $count_space = $space_details['max'];
         }
+
+        // dd($space_details['data']);
 
         return view('pvsb01.pvsb01', compact(
             'count_department',
@@ -227,16 +229,14 @@ class Pssb01Controller extends Controller
      * @var App\Http\Controllers\PtcmtrController $tree
      * @var array $tree_data ツリーデータ
      * @var App\Libraries\php\Domain\WorkSpaceDataBase $space_db
-     * @var array $space_details 作業場所詳細データ
-     * @var array $space_data 作業場所一覧データ
+     * @var array $space_data 作業場所詳細データ
      * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
      * @var $system_management_lists システム管理者リスト
+     * @var App\Libraries\php\Service\Display\List\SpaceDisplayList $space_display_list
+     * @var array $space_details 一覧に表示する作業場所データ
      * @var  App\Libraries\php\Domain\ProjectionDataBase $projection_db
      * @var array  $projection_space 一覧の投影作業場所データ
-     * @var  App\Libraries\php\Service\Pagination $pagination
      * @var int $count_space　作業場所のページ番号
-     * @var  int $space_max 作業場所データページネーションの最大値
-     * @var  array $spaces 一覧に表示する作業場所データ
      *
      * @return \Illuminate\Http\Response
      */
@@ -259,7 +259,6 @@ class Pssb01Controller extends Controller
 
         //インスタンス化
         $space_db = new WorkSpaceDataBase();
-        $department_db = new DepartmentDataBase();
         $personnel_db = new PersonnelDataBase();
         $projection_db = new ProjectionDataBase();
 
@@ -300,25 +299,21 @@ class Pssb01Controller extends Controller
      *
      * @var App\Http\Controllers\PtcmtrController $tree
      * @var array $tree_data ツリーデータ
-     * @var  App\Libraries\php\Domain\DepartmentDataBase $department_db
-     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var int $count_space　作業場所のページ番号
      * @var  App\Libraries\php\Domain\WorkSpaceDataBase $space_db
-     * @var array $space_details 作業場所詳細データ
      * @var array $space_data 作業場所一覧データ
      * @var array  $projection_space 一覧の投影作業場所データ
      * @var $system_management_lists システム管理者リスト
      * @var $personnel_data 人員一覧データ
      * @var projection_personnel 一覧の投影人員データ
-     * @var  App\Libraries\php\Service\Pagination $pagination
-     * @var int $count_department 部署のページ番号
      * @var int $count_personnel　人員のページ番号
-     * @var int $count_space　作業場所のページ番号
-     * @var  int $department_max 部署データページネーションの最大値
-     * @var  array $departments 一覧に表示する部署データ
-     * @var  int $personnel_max 人員データページネーションの最大値
-     * @var  array $names 一覧に表示する人員データ
-     * @var  int $space_max 作業場所データページネーションの最大値
-     * @var  array $spaces 一覧に表示する作業場所データ
+     * @var App\Libraries\php\Service\Display\List\SpaceDisplayList $space_display_list
+     * @var array $space_details 一覧に表示する作業場所データ
+     * @var int $count_personnel　人員情報のページ番号
+     * @var App\Libraries\php\Service\Display\List\PersonnelDisplayList $personnel_display_list
+     * @var array $personnel_details 一覧に表示する人員データ
+     * @var  App\Libraries\php\Domain\PersonnelDataBase $personnel_db
+     * @var  array $system_managment_lists システム管理者リスト
      *
      * @return \Illuminate\Http\Response
      */
@@ -396,6 +391,16 @@ class Pssb01Controller extends Controller
                 //一覧に記載する人員データの取得
                 $personnel_details = $personnel_display_list->display($client_id, $select_id, $count_personnel, $request->search2);
 
+                //検索結果が0件なら戻る
+                if (empty($personnel_details['data'])) {
+                    OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
+                    $message = Message::get_message_handle('mhcmwn0001', [0 => '']);
+                    session(['message' => $message[0], 'handle_message' => $message[3]]);
+                    if ($select_id == 'sb00000000') {
+                        return redirect()->route('pssb01.index');
+                    }
+                    return redirect()->route('pssb01.show', [$client_id, $select_id]);
+                }
                 //ページネーションが最大値を超えていないかの判断
                 if ($count_personnel > $personnel_details['max']) {
                     $count_personnel = $personnel_details['max'];
@@ -732,6 +737,74 @@ class Pssb01Controller extends Controller
             session(['message' => $message[0]]);
             return back();
         }
+    }
+
+    /** 作業場所の移動
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param string $id 送信されたID
+     *
+     * @var string $client_id 顧客ID
+     * @var string $high_id 上位ID
+     * @var string $lower_id 下位ID
+     * @var string $message メッセージ
+     * @var \App\Libraries\php\Logic\JudgmentHierarchy $judgment_hierarchy
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function hierarchyUpdate(Request $request, $id)
+    {
+        //リクエストの取得
+        $client_id = $id;
+        $high_id = $request->high_id;
+        $lower_id = $request->lower_id;
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
+
+        //複写番号が空白の場合エラーメッセージを表示
+        if ($request->lower_id == null) {
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0009', '01');
+            $message = Message::get_message_handle('mhcmer0009', [0 => '']);
+            session(['message' => $message[0], 'handle_message' => $message[3]]);
+            return redirect()->route('pssb01.index');
+        }
+
+        //無限ループの回避の判断
+        try {
+            $judgment_hierarchy = new JudgmentHierarchy();
+            $move_flag = $judgment_hierarchy->judgmentHierarchy($client_id, $high_id, $lower_id);
+        } catch (\Exception $e) {
+            //エラー及びログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
+            DatabaseException::common($e);
+            return redirect()->route('pssb01.index');
+        }
+        if ($move_flag == false) {
+            //ログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0011', '01');
+            $message = Message::get_message_handle('mhcmer0011', [0 => '']);
+            session(['message' => $message[0], 'handle_message' => $message[3]]);
+            return back();
+        }
+
+        //データベース更新
+        try {
+            $hierarchical = new Hierarchical();
+            $hierarchical->update($high_id, $client_id, $lower_id);
+        } catch (\Exception $e) {
+            //エラー及びログ処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
+            DatabaseException::common($e);
+            return redirect()->route('pssb01.index');
+        }
+        //移動処理終了後に、クリップボードの削除
+        session()->forget('clipboard_id');
+        //ログ処理
+        OutputLog::message_log(__FUNCTION__, 'mhcmok0008');
+        $message = Message::get_message('mhcmok0008', [0 => '']);
+        session(['message' => $message[0]]);
+        return back();
     }
 
     /**

@@ -108,6 +108,7 @@ Route::prefix('pskb')->group(function () {
     Route::get('/', [Pskb01Controller::class, 'index'])->name('pskb01.index');
     Route::post('/kbcopy', [Pskb01Controller::class, 'copy'])->name('pskb01.copy');
     Route::get('/show/{id}/{id2}', [Pskb01Controller::class, 'show'])->name('pskb01.show');
+    Route::get('/download/{id}/{id2}', [Pskb01Controller::class, 'download'])->name('pskb01.download');
     Route::get('/{id}/{id2}', [Pskb01Controller::class, 'search']);
     Route::post('/{id}/{id2}', [Pskb01Controller::class, 'search'])->name('pskb01.search');
 });

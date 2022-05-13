@@ -4,7 +4,7 @@
 @section('content')
     <div class="col border border-primary" style="padding:10px;">
         <div class="row">
-            <form action="{{ route('pskb01.store') }}" method="post">
+            <form action="{{ route('pskb01.store') }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('post')
 
@@ -60,6 +60,12 @@
                         <option value="14" @if(old("status") == 14) selected @endif>休職</option>
                         <option value="18" @if(old("status") == 18) selected @endif>退職</option>
                         </select>
+
+                        参照ファイル
+                        <input type="file" name="file_name" value="" style="width:254px;" data-toggle="tooltip" title="ファイルをアップロード" >
+                        URL
+                        <input type="text" id="url" name="url" maxlength="10" value="" style="width:200px;"
+                        data-toggle="tooltip" title="URLを送信">
 
                         <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                             <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >

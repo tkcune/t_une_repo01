@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Facades\OutputLog;
 use App\Http\Requests\BoardRequest;
 use App\Libraries\php\Domain\PersonnelDataBase;
 use App\Libraries\php\Domain\BoardDataBase;
+use App\Libraries\php\Domain\IncidentalDataBase;
 use App\Libraries\php\Domain\ProjectionDataBase;
+use App\Libraries\php\Domain\FileDataBase;
 use App\Libraries\php\Domain\Hierarchical;
 use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
@@ -19,6 +22,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\View;
 
 use App\Libraries\php\Service\Display\List\BoardDisplayList;
+use App\Libraries\php\Service\Display\List\IncidentalDisplayList;
 use App\Libraries\php\Service\Display\Detail\BoardDisplayDetail;
 
 class Pskb01Controller extends Controller
@@ -101,7 +105,7 @@ class Pskb01Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(BoardRequest $request)
+    public function store(Request $request)
     {
         $client_id = session('client_id');
         $name = $request->name;
@@ -109,11 +113,12 @@ class Pskb01Controller extends Controller
         $management_personnel_id = $request->management_number;
         $high = $request->high;
         $remarks = $request->remarks;
+        $file = $request->file('file_name');
 
         // 重複クリック対策
         $request->session()->regenerateToken();
 
-        //顧客IDに対応した最新の部署IDを取得
+        //顧客IDに対応した最新のIDを取得
         try{
             $board_db = new BoardDataBase();
             $id = $board_db->getId($client_id);
@@ -142,11 +147,18 @@ class Pskb01Controller extends Controller
             $hierarchical = new Hierarchical();
             $hierarchical->insert($client_id,$board_id,$high);
 
+            //添付ファイルがある場合は登録
+            if (!is_null($file)) {
+                $file_db = new FileDataBase();
+                $file_db->insert($client_id,$file,$board_id);
+            }
+
             DB::commit();
 
             return redirect()->route('pskb01.show',[$client_id,$high]);
 
         }catch(\Exception $e){
+            dd($e);
             DB::rollBack();
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
@@ -183,8 +195,10 @@ class Pskb01Controller extends Controller
 
         if(isset($_GET['count'])){
             $count_board = $_GET['count'];
+            $count_incidental = $_GET['count'];
         }else{
             $count_board = Config::get('startcount.count');
+            $count_incidental = Config::get('startcount.count');
         }
 
         //ツリーデータの取得
@@ -216,13 +230,17 @@ class Pskb01Controller extends Controller
         $board = new BoardDisplayList();
         $board_lists = $board->display($client_id,$select_id,$count_board);
 
+        //付帯データの取得
+        $incidental = new IncidentalDisplayList();
+        $incidental_lists = $incidental->display($client_id,$select_id,$count_board);
+
         //ページネーションが最大値を超えていないかの判断
         if($count_board > $board_lists['max']){
             $count_board = $board_lists['max'];
         }
 
-        return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists',
-        'count_board'));
+        return view('pskb01.pskb01',compact('board_details','board_lists','incidental_lists','system_management_lists',
+        'count_board','count_incidental'));
     }
 
     /**
@@ -617,5 +635,26 @@ class Pskb01Controller extends Controller
         }
         return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists',
         'count_board'));
+    }
+
+    /**
+     * ファイルダウンロード
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function download($id,$select_id)
+    {
+        $file_db = new FileDatabase();
+        $file = $file_db->path($id,$select_id);
+
+        $file_path = $file[0]->path;
+        $file_name = $file[0]->name;
+
+        $headers = ['Content-Type' => 'application/pdf'];
+
+        return Storage::disk('local')->download($file_path);
+
+        
     }
 }

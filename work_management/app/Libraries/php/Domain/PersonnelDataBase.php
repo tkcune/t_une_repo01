@@ -384,7 +384,7 @@ class PersonnelDataBase
                 $name,
                 $email,
                 $password,
-                $date->today(),
+                $date->password(),
                 $status,
                 $personnel_id,
                 $login_authority,
@@ -486,9 +486,11 @@ class PersonnelDataBase
                 [$name, $status, $mail, $management_number, $login_authority, $system_management, $start_day, $finish_day, $remarks, $client_id, $personnel_id]
             );
         } else {
+            $date = new Date();
+            
             DB::update(
-                'update dcji01 set name = ?,status = ?,email = ?,password = ?,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and personnel_id = ?',
-                [$name, $status, $mail, $password, $management_number, $login_authority, $system_management, $start_day, $finish_day, $remarks, $client_id, $personnel_id]
+                'update dcji01 set name = ?,status = ?,email = ?,password = ?,password_update_day = ? ,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and personnel_id = ?',
+                [$name, $status, $mail, $password, $date->password(),$management_number, $login_authority, $system_management, $start_day, $finish_day, $remarks, $client_id, $personnel_id]
             );
         }
     }

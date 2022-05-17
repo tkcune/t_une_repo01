@@ -62,11 +62,11 @@ class Pssb01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        if (isset($_GET['count'])) {
-            $count_department = $_GET['count'];
-            $count_personnel = $_GET['count'];
-            $count_space = $_GET['count'];
-        } else {
+        if(isset($_GET['space_page'])){
+            $count_department = $_GET['space_page'];
+            $count_personnel = $_GET['personnel_page'];
+            $count_space = $_GET['space_page'];
+        }else{
             $count_department = Config::get('startcount.count');
             $count_personnel = Config::get('startcount.count');
             $count_space = Config::get('startcount.count');
@@ -327,8 +327,8 @@ class Pssb01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         //ページネーションの番号チェック
-        if (isset($_GET['count'])) {
-            $count_space = $_GET['count'];
+        if (isset($_GET['space_count'])) {
+            $count_space = $_GET['space_page'];
         } else {
             $count_space = Config::get('startcount.count');
         }
@@ -382,8 +382,8 @@ class Pssb01Controller extends Controller
             if ($select_id == 'sb00000000') {
 
                 //ページネーションの番号チェック
-                if (isset($_GET['count'])) {
-                    $count_personnel = $_GET['count'];
+                if (isset($_GET['personnel_page'])) {
+                    $count_personnel = $_GET['personnel_page'];
                 } else {
                     $count_personnel = Config::get('startcount.count');
                 }

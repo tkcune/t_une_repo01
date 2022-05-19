@@ -908,7 +908,6 @@ use PhpParser\Node\Stmt\TryCatch;
         //@param int $dccmks_count 階層データの数
         public static function hierarchy_insert($insert_dccmks, $dccmks_count){
             try{
-                throw new Exception();
                 //階層情報を挿入する
                 DB::insert('insert into dccmks
                 (client_id,lower_id,high_id)

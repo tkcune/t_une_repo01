@@ -13,7 +13,7 @@
             <input type="hidden" id="department_id" name="department_id" value="{{$department_details_object->department_id}}">
             <input type="hidden" name="client_id" value="{{ session('client_id') }}">
 
-            @if(isset($click_id) &&substr($click_id,0,2) == "ta")
+            @if(isset($select_id) &&substr($select_id,0,2) == "ta")
             <div class="details-area border border-dark bg-info" style="padding:10px;" id="parent">
             @else
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
@@ -145,7 +145,7 @@
                     style="opacity: 0.3;" disabled>
     </form>
                     {{-- 操作ボタン --}}
-                    @include('pscm01.pscm02', ['click_id' => $click_id, 'click_department_data' => $department_details_object])
+                    @include('pscm01.pscm02', ['click_id' => $select_id, 'click_department_data' => $department_details_object])
                     {{-- 削除有効化、更新有効化 --}}
                     @include('pscm01.pscm01')
                     </div>
@@ -161,7 +161,7 @@
             <input type="hidden" id="personnel_id" name="personnel_id" value="{{$personnel_details_object->personnel_id}}">
             <input type="hidden" name="client_id" value="{{ session('client_id') }}">
 
-            @if(substr($click_id,0,2) == "ta")
+            @if(substr($select_id,0,2) == "ta")
             <div class="details-area border border-dark bg-info" style="padding:10px;" id="parent">
             @else
             <div class="details-area border border-dark bg-warning" style="padding:10px;" id="parent">
@@ -282,7 +282,7 @@
                         id="updateOn" data-toggle="tooltip" title="クリックにより、登録、更新を確定します" style="opacity: 0.3;" disabled>
     </form>
                         {{-- 操作ボタン --}}
-                        @include('pscm01.pscm03', ['click_personnel_data' => $personnel_details_object, 'click_id' => $click_id])
+                        @include('pscm01.pscm03', ['click_personnel_data' => $personnel_details_object, 'click_id' => $select_id])
                         {{-- 削除有効化,更新有効化 --}}
                         @include('pscm01.pscm01')
                         </div>

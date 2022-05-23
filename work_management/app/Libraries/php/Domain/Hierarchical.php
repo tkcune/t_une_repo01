@@ -273,40 +273,23 @@ use PhpParser\Node\Stmt\TryCatch;
         public function subordinateCopy($copy_id,$client_id,$high,$number,$number2){
 
             //複製するデータの取得
-            try{
                 $copy_department = DB::select('select * from dcbs01 where client_id = ? 
                 and department_id = ?',[$client_id,$copy_id]);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('index');
-            }
+  
             //複製開始前の状態で、複製するデータに直下配下があるかどうかの確認
-            try{
                 $lists = DB::select('select * from dccmks where client_id = ? and substring(lower_id, 1, 2) = "bs" and substring(lower_id, 3, 10) <= ? and high_id = ? 
                 or client_id = ? and substring(lower_id, 1, 2) = "ji" and substring(lower_id, 3, 10) <= ? and high_id = ?',[$client_id,$number,$copy_id,$client_id,$number2,$copy_id]);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('index');
-            }
+
 
             //顧客IDに対応した最新の部署IDを取得
-            try{
                 $id = DB::select('select department_id from dcbs01 where client_id = ? 
                 order by department_id desc limit 1',[$client_id]);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('index');
-            }
 
             //登録する番号を作成
             $padding = new ZeroPadding();
             $department_id = $padding->padding($id[0]->department_id);
 
             //データベースに部署情報を登録
-            try{
                 DB::insert('insert into dcbs01
                 (client_id,
                 department_id,
@@ -327,23 +310,12 @@ use PhpParser\Node\Stmt\TryCatch;
                 $copy_department[0]->operation_start_date,
                 $copy_department[0]->operation_end_date,
                 $copy_department[0]->remarks]);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('index');
-            }
 
             //データベースに階層情報を登録
-            try{
                 DB::insert('insert into dccmks
                 (client_id,lower_id,high_id)
                 VALUE (?,?,?)',
                 [$client_id,$department_id,$high]);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('index');
-            }
 
             if(isset($lists)){
                 foreach($lists as $list){
@@ -353,73 +325,49 @@ use PhpParser\Node\Stmt\TryCatch;
 
                         $date = new Date();
 
-                        try{
-                            $copy_personnel = DB::select('select * from dcji01 where client_id = ? 
-                            and personnel_id = ?',[$client_id,$list->lower_id]);
-                        }catch(\Exception $e){
-                            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                            DatabaseException::common($e);
-                            return redirect()->route('index');
-                        }
+                        $copy_personnel = DB::select('select * from dcji01 where client_id = ? 
+                        and personnel_id = ?',[$client_id,$list->lower_id]);
             
                         //顧客IDに対応した最新の人員IDを取得
-                        try{
-                            $id = DB::select('select personnel_id from dcji01 where client_id = ? 
-                            order by personnel_id desc limit 1',[$client_id]);
-                        }catch(\Exception $e){
-                            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                            DatabaseException::common($e);
-                            return redirect()->route('index');
-                        }
+                        $id = DB::select('select personnel_id from dcji01 where client_id = ? 
+                        order by personnel_id desc limit 1',[$client_id]);
             
                         //登録する番号を作成
                         $padding = new ZeroPadding();
                         $personnel_id = $padding->padding($id[0]->personnel_id);
             
                         //データベースに登録
-                        try{
-                            DB::insert('insert into dcji01
-                            (client_id,
-                            personnel_id,
-                            name,
-                            email,
-                            password,
-                            password_update_day,
-                            status,
-                            management_personnel_id,
-                            login_authority,
-                            system_management,
-                            operation_start_date,
-                            operation_end_date)
-                            VALUE (?,?,?,?,?,?,?,?,?,?,?,?)',
-                            [$client_id,
-                            $personnel_id,
-                            $copy_personnel[0]->name,
-                            $copy_personnel[0]->email,
-                            $copy_personnel[0]->password,
-                            $date->today(),
-                            $copy_personnel[0]->status,
-                            $personnel_id,
-                            $copy_personnel[0]->login_authority,
-                            $copy_personnel[0]->system_management,
-                            $copy_personnel[0]->operation_start_date,
-                            $copy_personnel[0]->operation_end_date]);
-                        }catch(\Exception $e){
-                            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                            DatabaseException::common($e);
-                            return redirect()->route('index');
-                        }
+                        DB::insert('insert into dcji01
+                        (client_id,
+                        personnel_id,
+                        name,
+                        email,
+                        password,
+                        password_update_day,
+                        status,
+                        management_personnel_id,
+                        login_authority,
+                        system_management,
+                        operation_start_date,
+                        operation_end_date)
+                        VALUE (?,?,?,?,?,?,?,?,?,?,?,?)',
+                        [$client_id,
+                        $personnel_id,
+                        $copy_personnel[0]->name,
+                        $copy_personnel[0]->email,
+                        $copy_personnel[0]->password,
+                        $date->today(),
+                        $copy_personnel[0]->status,
+                        $personnel_id,
+                        $copy_personnel[0]->login_authority,
+                        $copy_personnel[0]->system_management,
+                        $copy_personnel[0]->operation_start_date,
+                        $copy_personnel[0]->operation_end_date]);
                         //データベースに階層情報を登録
-                        try{
-                            DB::insert('insert into dccmks
-                            (client_id,lower_id,high_id)
-                            VALUE (?,?,?)',
-                            [$client_id,$personnel_id,$department_id]);
-                        }catch(\Exception $e){
-                            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                            DatabaseException::common($e);
-                            return redirect()->route('index');
-                        }
+                        DB::insert('insert into dccmks
+                        (client_id,lower_id,high_id)
+                        VALUE (?,?,?)',
+                        [$client_id,$personnel_id,$department_id]);
                     }elseif($code == "bs"){
                         $copy_id = $list->lower_id;
                         $high = $department_id;

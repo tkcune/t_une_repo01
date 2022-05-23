@@ -872,8 +872,15 @@ class Psbs01Controller extends Controller
             $id2_num = substr($id2[0]->personnel_id,3);
             $number = str_pad($id_num, 8, '0', STR_PAD_LEFT);
             $number2 = str_pad($id2_num, 8, '0', STR_PAD_LEFT);
-            $hierarchical = new Hierarchical();
-            $hierarchical->subordinateCopy($copy_id,$client_id,$high,$number,$number2);
+
+            try{
+                $hierarchical = new Hierarchical();
+                $hierarchical->subordinateCopy($copy_id,$client_id,$high,$number,$number2);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('index');
+            }
 
             //ログ処理
             OutputLog::message_log(__FUNCTION__, 'mhcmok0009');

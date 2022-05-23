@@ -12,6 +12,7 @@ use App\Libraries\php\Domain\BoardDataBase;
 use App\Libraries\php\Domain\IncidentalDataBase;
 use App\Libraries\php\Domain\ProjectionDataBase;
 use App\Libraries\php\Domain\FileDataBase;
+use App\Libraries\php\Domain\UrlDataBase;
 use App\Libraries\php\Domain\Hierarchical;
 use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
@@ -113,7 +114,8 @@ class Pskb01Controller extends Controller
         $management_personnel_id = $request->management_number;
         $high = $request->high;
         $remarks = $request->remarks;
-        $file = $request->file('file_name');
+        $files = $request->file('file_name');
+        $urls = explode(",",$request->url);
 
         // 重複クリック対策
         $request->session()->regenerateToken();
@@ -148,9 +150,19 @@ class Pskb01Controller extends Controller
             $hierarchical->insert($client_id,$board_id,$high);
 
             //添付ファイルがある場合は登録
-            if (!is_null($file)) {
-                $file_db = new FileDataBase();
-                $file_db->insert($client_id,$file,$board_id);
+            if (!is_null($files)) {
+                foreach($files as $file){
+                    $file_db = new FileDataBase();
+                    $file_db->insert($client_id,$file,$board_id);
+                }
+            }
+
+            //添付urlがある場合は登録
+            if (!is_null($urls)) {
+                foreach($urls as $url){
+                    $url_db = new UrlDataBase();
+                    $url_db->insert($client_id,$url,$board_id);
+                }
             }
 
             DB::commit();

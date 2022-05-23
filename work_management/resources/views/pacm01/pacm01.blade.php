@@ -534,7 +534,7 @@
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ route('index',['department_page'=>$departments['max'],'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('plbs01.show',['department_page'=>$departments['max'],'personnel_page'=>$count_personnel,'id'=>session('client_id'),'id2'=>$click_id]) }}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>

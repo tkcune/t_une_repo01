@@ -150,7 +150,7 @@ class ProjectionDataBase
                     left join dccmks AS ks1 on ta1.projection_id = ks1.lower_id
                     left join dcbs01 AS bs1 on ks1.high_id = bs1.department_id
                     left join dcji01 AS ji2 on ji1.management_personnel_id = ji2.personnel_id
-                    where ji1.client_id = ? and high_id = ? and ji1.name like ? order by ji1.personnel_id',
+                    where ji1.client_id = ? and ks1.high_id = ? and ji1.name like ? order by ji1.personnel_id',
             [$client, $select_id, '%' . $search . '%']
         );
 

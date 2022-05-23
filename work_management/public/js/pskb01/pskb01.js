@@ -73,4 +73,19 @@
       //checkの状態をストレージに保存
       localStorage.setItem('check', check);
     } 
+  }
+
+  /**
+ * 掲示板詳細の付帯定義反映
+ * @var int count 掲示板一覧テーブルの行数
+ * @var int id 掲示板一覧対象のID
+ * @var string check チェックボタンの状態
+ */
+ function reflection(id,id2) {
+
+  console.log(id);
+  console.log(id2);
+  
+  document.getElementById("url_id").defaultValue = id;
+  document.getElementById("url").value = id2;
 }

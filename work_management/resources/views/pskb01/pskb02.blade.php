@@ -62,17 +62,25 @@
                         </select>
 
                         参照ファイル
-                        <input type="file" name="file_name" value="" style="width:254px;" data-toggle="tooltip" title="ファイルをアップロード" >
-                        URL
-                        <input type="text" id="url" name="url" maxlength="10" value="" style="width:200px;"
-                        data-toggle="tooltip" title="URLを送信">
+                        <input type="file" id="file" name="file_name[]" multiple style="width:254px;" data-toggle="tooltip" title="ファイルをアップロード">
 
                         <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                             <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
                         </button>
+
                         </p>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col">
+                    <p>URL
+                        <input type="text" id="url" name="url" value="" style="width:760px;"
+                        data-toggle="tooltip" title="URLを送信">
+                    </p>
+                    </div>
+                </div>
+                    
 
                     <input type="hidden" id="remarks" name="remarks" value="">
 

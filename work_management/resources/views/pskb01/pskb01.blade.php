@@ -92,13 +92,20 @@
 
                             参照ファイル
                             <input type="file" name="file_name" value="" style="width:254px;" data-toggle="tooltip" title="ファイルをアップロード" >
-                            URL
-                            <input type="text" id="url" name="url" maxlength="10" value="" style="width:200px;"
-                            data-toggle="tooltip" title="URLを送信">
 
                             <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                                 <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
                             </button>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <input type="hidden" id="url_id" name="url_id" value="">
+                            <p>URL
+                            <input type="text" id="url" name="url" value="" style="width:760px;"
+                            data-toggle="tooltip" title="URLを追加">
                             </p>
                         </div>
                     </div>
@@ -536,13 +543,13 @@
                                 <tbody>
                                 @foreach($incidental_lists['data'] as $incidental_list['data'])
                                     <tr>
-                                    <td width="100">{{$incidental_list['data']->incidental_id}}</td>
+                                    <td id="incidental_id{{$loop->index}}" width="100">{{$incidental_list['data']->incidental_id}}</td>
                                     @if(substr($incidental_list['data']->data_id,0,2) == "fi")
-                                    <td width="360"><a href="{{route('pskb01.download',[session('client_id'),$incidental_list['data']->data_id])}}" data-toggle="tooltip" title="">{{$incidental_list['data']->name}}</a></td> 
+                                    <td width="360"><a href="{{route('pskb01.download',[session('client_id'),$incidental_list['data']->data_id])}}" data-toggle="tooltip" title="" id="incidental_name{{$loop->index}}">{{$incidental_list['data']->name}}</a></td> 
                                     @else
-                                    <td width="360"><a href="{{$incidental_list['data']->url_path}}" data-toggle="tooltip" title="">{{$incidental_list['data']->url_path}}</a></td>
+                                    <td id="incidental_name{{$loop->index}}" width="360"><a href="{{$incidental_list['data']->url_path}}" data-toggle="tooltip" title="">{{$incidental_list['data']->url_path}}</a></td>
                                     @endif
-                                    <td width="360">【<a href="#">複写</a>】
+                                    <td width="360">【<a href="#" onclick="(function(){var val = document.getElementById('incidental_id{{$loop->index}}').innerHTML;var val2 = document.getElementById('incidental_name{{$loop->index}}').textContent;reflection(val,val2);})();">反映</a>】【<a href="#">複写</a>】
                                     【<p id="kb_list_delete{{$loop->index}}" name="kb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
                                     <form id="delete{{$loop->index}}" action="#" method="post" style="display: none;">
                                     @csrf

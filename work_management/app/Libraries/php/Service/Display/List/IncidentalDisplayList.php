@@ -5,7 +5,7 @@
     use App\Libraries\php\Domain\IncidentalDataBase;
 
     /**
-     * 掲示板の一覧表示クラス
+     * 付帯情報の一覧表示クラス
      */
 
     class IncidentalDisplayList extends AbstractDisplayList{

@@ -234,6 +234,10 @@ class Psbs01Controller extends Controller
             $department_details_object = new DepartmentDetailsObject();
             $department_details_object->setDepartmentObject($click_department_data);
 
+            //ページネーションオブジェクト設定
+            $pagination_object = new PaginationObject();
+            $pagination_object->set_pagination($departments, $count_department, $names, $count_personnel);
+
             //ツリーデータの取得
             $tree = new PtcmtrController();
             $tree_data = $tree->set_view_treedata();
@@ -873,14 +877,9 @@ class Psbs01Controller extends Controller
             $number = str_pad($id_num, 8, '0', STR_PAD_LEFT);
             $number2 = str_pad($id2_num, 8, '0', STR_PAD_LEFT);
 
-            try{
-                $hierarchical = new Hierarchical();
-                $hierarchical->subordinateCopy($copy_id,$client_id,$high,$number,$number2);
-            }catch(\Exception $e){
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
-                DatabaseException::common($e);
-                return redirect()->route('index');
-            }
+            $hierarchical = new Hierarchical();
+            $hierarchical->copy($client_id, $copy_id, $high);
+            // $hierarchical->subordinateCopy($copy_id,$client_id,$high,$number,$number2);
 
             //ログ処理
             OutputLog::message_log(__FUNCTION__, 'mhcmok0009');

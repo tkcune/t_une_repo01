@@ -1,3 +1,4 @@
+<!-- blade分割前 -->
 @extends('pc0001.pc0001')
 
 @section('js')

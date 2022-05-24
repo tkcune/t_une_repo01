@@ -37,7 +37,7 @@ class WorkSpaceDataBase
 
     /**
      * 全ての作業場所データを取得するメソッド
-     * @param $client 顧客ID
+     * @param $client_id 顧客ID
      *
      * @var   $data 取得データ
      *
@@ -162,12 +162,12 @@ class WorkSpaceDataBase
     }
 
     /**
-     * 掲示板を複製するメソッド
+     * 作業場所を複製するメソッド
      *
      * @param $copy_id 複製ID
-     * @param $client 顧客ID
+     * @param $client_id 顧客ID
      * @param $high 上位ID
-     * @param $number 複製直前の最新の部署ID
+     * @param $number 複製直前の最新の作業場所ID
      *
      */
     public function copy($copy_id, $client_id, $high, $number)
@@ -209,7 +209,7 @@ class WorkSpaceDataBase
         $padding = new ZeroPadding();
         $space_id = $padding->padding($id[0]->space_id);
 
-        //データベースに掲示板情報を登録
+        //データベースに作業場所情報を登録
         try {
             DB::insert(
                 'insert into dcsb01 (client_id,space_id,name, management_personnel_id,post_code,prefectural_office_location,address,URL,remarks)
@@ -260,7 +260,7 @@ class WorkSpaceDataBase
      * @param $client_id 顧客ID
      * @param $sapce_id 作業場所ID
      * @param $name 作業場所名称
-     * @param $managment_personnel_id 管理者ID
+     * @param $managment_number 管理者ID
      * @param $post_code 郵便番号
      * @param $prefectural_office_location 都道府県
      * @param $address 市区町村
@@ -296,8 +296,9 @@ class WorkSpaceDataBase
 
     /**
      * 検索した作業場所データを取得するメソッド
-     * @param $client 顧客ID
+     * @param $client_id 顧客ID
      * @param $select_id 選択したID
+     * @param $search 検索文字
      *
      * @var   $data 取得データ
      *
@@ -319,8 +320,8 @@ class WorkSpaceDataBase
 
     /**
      * 作業場所概要画面で検索した作業場所データを取得するメソッド
-     * @param $client 顧客ID
-     * @param $select_id 選択したID
+     * @param $client_id 顧客ID
+     * @param $search 検索文字
      *
      * @var   $data 取得データ
      *

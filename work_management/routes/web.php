@@ -118,9 +118,10 @@ Route::prefix('pssb01')->group(function () {
     Route::get('/', [Pssb01Controller::class, 'index'])->name('pssb01.index');
     Route::post('/sbcopy', [Pssb01Controller::class, 'copy'])->name('pssb01.copy');
     Route::get('/show/{id}/{id2}', [Pssb01Controller::class, 'show'])->name('pssb01.show');
-    Route::get('/{id}/{id2}', [Pssb01Controller::class, 'search']);
+    Route::get('/{id}/{id2}', [Pssb01Controller::class, 'search'])->name('pssb01.search_get');
     Route::post('/{id}/{id2}', [Pssb01Controller::class, 'search'])->name('pssb01.search');
     Route::post('/delete/{id}/{id2}', [Pssb01Controller::class, 'destroy'])->name('pssb01.destroy');
     Route::patch('/high/{id}', [Pssb01Controller::class, 'hierarchyUpdate'])->name('pssb01.hierarchyUpdate');
     Route::post('/sbpro', [Pssb01Controller::class, 'projection'])->name('pssb01.projection');
+    Route::post('/sbdel/{id}/{id2}', [Pssb01Controller::class, 'prodelete'])->name('pssb01.prodelete');
 });

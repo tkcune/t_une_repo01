@@ -13,6 +13,10 @@
     <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.road')}}" alt="再表示" onclick="submit();" data-toggle="tooltip" title="ツリーを再表示します">
 </form>
 
+<button class="main_button_style" type="button" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+    <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}} alt=" 開く">
+</button>
+
 <form>
     <custom-tooltip title="変確定します
 挿入 : 本データの下位に新しいデータを追加しま更 : 登録更新をす

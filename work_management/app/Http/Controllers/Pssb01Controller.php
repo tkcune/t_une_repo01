@@ -93,19 +93,20 @@ class Pssb01Controller extends Controller
             return redirect()->route('pa0001.errormsg');
         }
 
-        //ページネーションが最大値を超えていないかの判断
-        if ($count_personnel > $personnel_data['max']) {
-            $count_personnel = $personnel_data['max'];
-        }
+            //ページネーションが最大値を超えていないかの判断
+            if ($count_personnel > $personnel_data['max']) {
+                $count_personnel = $personnel_data['max'];
+            }
 
-        if ($count_space > $space_details['max']) {
-            $count_space = $space_details['max'];
-        }
+            if ($count_space > $space_details['max']) {
+                $count_space = $space_details['max'];
+            }
 
         //ページネーションオブジェクト設定
         $pagination_object = new PaginationObject();
         $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
         $pagination_object->space_set_pagination($space_details, $count_space);
+
 
         return view('pvsb01.pvsb01', compact(
             'count_department',
@@ -349,7 +350,7 @@ class Pssb01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         //ページネーションの番号チェック
-        if (isset($_GET['space_count'])) {
+        if (isset($_GET['space_page'])) {
             $count_space = $_GET['space_page'];
         } else {
             $count_space = Config::get('startcount.count');

@@ -66,12 +66,12 @@ class PersonnelDisplayList extends AbstractDisplayList
         }elseif(!($select_id == 'sb00000000') && substr($select_id,0,2) == "bs") {
             $personnel_data = $personnel_db->search($client_id, $select_id, $search);
         }
-        
+
         //作業場所用：人員データの取得
         if ($select_id == 'sb00000000' && !empty($_POST['search2'])) {
             $search = $_POST['search2'];
             $personnel_data = $personnel_db->getSearchTop($client_id, $search);
-        }elseif(!($select_id == 'sb00000000') && substr($select_id,0,2) == "sb") {
+        }elseif(($select_id == 'sb00000000') && substr($select_id,0,2) == "sb") {
             $personnel_data = $personnel_db->getList($client_id);
         }
 

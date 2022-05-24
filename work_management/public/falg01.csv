@@ -950,3 +950,24 @@
 "2022/05/17 01/16/39",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
 "2022/05/17 01/16/40",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
 "2022/05/17 01/16/43",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/18/40",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/18/47",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/18/51",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/18/53",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/18/56",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/19/30",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/19/36",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/19/39",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/19/40",er,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Controllers\Pssb01Controller.php:435",エラーです。エラーID【01】
+"2022/05/23 01/19/40",sy,aa00000001,august@roma.com,00,"App\Libraries\php\Service\DatabaseException","Undefined variable $personnel_data"
+"2022/05/23 01/19/40",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/19/48",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/19/48",er,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Controllers\Pssb01Controller.php:435",エラーです。エラーID【01】
+"2022/05/23 01/19/48",sy,aa00000001,august@roma.com,00,"App\Libraries\php\Service\DatabaseException","Undefined variable $personnel_data"
+"2022/05/23 01/19/49",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/19/51",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/19/54",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/19/54",wn,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Controllers\Pssb01Controller.php:393",該当する情報がありません。
+"2022/05/23 01/19/54",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/19/56",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始
+"2022/05/23 01/19/59",si,aa00000001,august@roma.com,cm,"C:\Users\r_yokoyama\Desktop\LaravelApp\sagyokanri\work_management\app\Http\Middleware\StartWorkManegement.php:22",処理開始

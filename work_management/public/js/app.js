@@ -2687,6 +2687,8 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.deviceName === 'pc') {
             //移動命令
             window.location = document.location.origin + "/show/".concat(_clientId3, "/").concat(_nodeId3);
           }
+        } else if (this.node.id.substr(0, 2) === "lo") {
+          window.location = document.location.origin + '/logout';
         }
       } //選択したノードを太字にする
 

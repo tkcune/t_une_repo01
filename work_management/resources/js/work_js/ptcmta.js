@@ -343,6 +343,8 @@ TreeAction.node = class Node {
         //移動命令
         window.location = document.location.origin + `/show/${clientId}/${nodeId}`;
       }
+    }else if(this.node.id.substr(0, 2) === "lo"){
+      window.location = document.location.origin + '/logout';
     }
   }
 

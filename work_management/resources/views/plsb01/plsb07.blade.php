@@ -61,11 +61,11 @@
                 <ul class="pagination pagination-sm">
                     <li class="page-item">
                         @if(!empty($_POST['search']))
-                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>1,'personnel_page'=>$count_personnel,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$count_space,'personnel_page'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                         @elseif(!empty($_POST['search2']))
-                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>1,'personnel_page'=>$count_personnel,'search2'=>$_POST['search2']]) }}" aria-label="Previous">
+                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$count_space,'personnel_page'=>1,'search2'=>$_POST['search2']]) }}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                         @else

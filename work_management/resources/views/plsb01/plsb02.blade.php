@@ -62,11 +62,11 @@
                     <ul class="pagination pagination-sm">
                         <li class="page-item">
                             @if(!empty($_POST['search']))
-                            <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$space_data[0]->space_id,'space_page'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                            <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$click_id,'space_page'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                             @else
-                            <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$space_data[0]->space_id,'space_page'=>1]) }}" aria-label="Previous">
+                            <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$click_id,'space_page'=>1]) }}" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                             @endif
@@ -98,20 +98,21 @@
 
                         <li class="page-item">
                             @if(!empty($_POST['search']))
-                            @if($count_space < $space_details['max']) <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$space_data[0]->space_id,'space_page'=>$count_space+1,'search'=>$_POST['search']]) }}" aria-label="Next">
+                            @if($count_space < $space_details['max']) <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$click_id,'space_page'=>$count_space+1,'search'=>$_POST['search']]) }}" aria-label="Next">
                                 <span aria-hidden="true">&gt;</span>
                                 </a>
                                 @else
-                                <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$space_data[0]->space_id,'space_page'=>$space_details['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
+                                <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$click_id,'space_page'=>$space_details['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
                                     <span aria-hidden="true">&gt;</span>
                                 </a>
                                 @endif
                                 @else
-                                @if($count_space < $space_details['max']) <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$space_data[0]->space_id,'space_page'=>$count_space+1]) }}" aria-label="Next">
+                                @if($count_space < $space_details['max'])
+                                <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$click_id,'space_page'=>$count_space+1]) }}" aria-label="Next">
                                     <span aria-hidden="true">&gt;</span>
                                     </a>
                                     @else
-                                    <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$space_data[0]->space_id,'space_page'=>$space_details['max']]) }}" aria-label="Next">
+                                    <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$click_id,'space_page'=>$space_details['max']]) }}" aria-label="Next">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                     @endif
@@ -120,11 +121,11 @@
 
                         <li class="page-item">
                             @if(!empty($_POST['search']))
-                            <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$space_data[0]->space_id,'space_page'=>$space_details['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
+                            <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),$click_id,'space_page'=>$space_details['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                             @else
-                            <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$space_data[0]->space_id,'space_page'=>$space_details['max']]) }}" aria-label="Next">
+                            <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$click_id,'space_page'=>$space_details['max']]) }}" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                             @endif

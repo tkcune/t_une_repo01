@@ -63,4 +63,20 @@
             $hierarchical->insert($client_id,$incidental_id,$board_id);
 
         }
+
+        /**
+         * 更新
+         * @param $client 顧客ID
+         * @param $file 顧客ID
+         * 
+         * @var   $data 取得データ
+         * 
+         * @return  array $data
+         */
+        public static function update($client_id,$url,$id){
+
+            DB::update('UPDATE dcur01 SET path = ? WHERE client_id = ? AND url_id = ?'
+            ,[$url,$client_id,$id]);
+
+        }
     }

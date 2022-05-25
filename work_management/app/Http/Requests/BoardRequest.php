@@ -33,7 +33,6 @@ class BoardRequest extends FormRequest
         return [
             'name' =>['required',new JapaneseAndAlphaNumRule],
             'status'=>['required',new StatusRule],
-            'responsible_person_id'=>['required',new PersonnelRule],
             'management_number'=>'required',
         ];
     }

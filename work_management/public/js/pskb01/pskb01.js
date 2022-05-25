@@ -86,6 +86,11 @@
   console.log(id);
   console.log(id2);
   
-  document.getElementById("url_id").defaultValue = id;
-  document.getElementById("url").value = id2;
+  if(id2.substring(0,4) == "http"){
+    document.getElementById("url_id").defaultValue = id;
+    document.getElementById("url").value = id2;
+  }else{
+    document.getElementById("file_id").defaultValue = id;
+    document.getElementById("file_name").value = id2;
+  }
 }

@@ -115,7 +115,7 @@ class Pskb01Controller extends Controller
         $high = $request->high;
         $remarks = $request->remarks;
         $files = $request->file('file_name');
-        $urls = explode(",",$request->url);
+        $url = $request->url;
 
         // 重複クリック対策
         $request->session()->regenerateToken();
@@ -158,11 +158,9 @@ class Pskb01Controller extends Controller
             }
 
             //添付urlがある場合は登録
-            if (!is_null($urls)) {
-                foreach($urls as $url){
-                    $url_db = new UrlDataBase();
-                    $url_db->insert($client_id,$url,$board_id);
-                }
+            if (!is_null($url)) {
+                $url_db = new UrlDataBase();
+                $url_db->insert($client_id,$url,$board_id);
             }
 
             DB::commit();
@@ -170,7 +168,6 @@ class Pskb01Controller extends Controller
             return redirect()->route('pskb01.show',[$client_id,$high]);
 
         }catch(\Exception $e){
-            dd($e);
             DB::rollBack();
 
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
@@ -668,5 +665,44 @@ class Pskb01Controller extends Controller
         return Storage::disk('local')->download($file_path);
 
         
+    }
+
+    /**
+     * 掲示板登録
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function urlup(Request $request,$client_id,$select_id)
+    {
+        $client_id = session('client_id');
+        $url_id = $request->url_id;
+        $url = $request->url;
+        
+
+        // 重複クリック対策
+        $request->session()->regenerateToken();
+
+        try{
+
+            //更新するIDを取得
+            $id = DB::select('select data_id from dcft01 where client_id = ? 
+            and incidental_id = ?',[$client_id,$url_id]);
+
+            $url_db = new UrlDataBase();
+            $url_db->update($client_id,$url,$id[0]->data_id);
+
+            return redirect()->route('pskb01.show',[$client_id,$select_id]);
+
+        }catch(\Exception $e){
+            DB::rollBack();
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('pskb01.index');
+        }
+
     }
 }

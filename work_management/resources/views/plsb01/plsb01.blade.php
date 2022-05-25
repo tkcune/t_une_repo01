@@ -15,8 +15,8 @@
                 <td width="300"><a href="{{ route('pssb01.show',[session('client_id'),$space->space_id])}}" data-toggle="tooltip" title="">{{$space->name}}</a></td>
                 <td width="300"><a @if(isset($space->high_id))<a href="{{ route('pssb01.show',[session('client_id'),$space->high_id])}}" data-toggle="tooltip" title="">{{$space->high_name}}</a>@endif</td>
                 <td width="300">【<a href="{{ route('pa0001.clipboard',$space->space_id)}}">複写</a>】
-                    【<p id="sb_list_delete{{$loop->index}}" name="sb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
-                    <form id="delete{{$loop->index}}" action="{{ route('pssb01.destroy',[session('client_id'),$space->space_id])}}" method="post" style="display: none;">
+                    【<p id="sb_list_delete{{$loop->index}}" name="sb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('sb_delete{{$loop->index}}').submit();">削除</p>】
+                    <form id="sb_delete{{$loop->index}}" action="{{ route('pssb01.destroy',[session('client_id'),$space->space_id])}}" method="post" style="display: none;">
                         @csrf
                     </form>
                 </td>

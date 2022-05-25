@@ -1,3 +1,4 @@
+<!-- 詳細画面下部用　新規作成・移動・挿入・投影・ペジネ・検索 -->
 <div class="kabu-area" style="padding-top:5px">
     <div class="row">
         {{-- 概要画面 下部用操作機能　--}}

@@ -80,7 +80,7 @@ class PersonnelDataBase
 
     /**
      * 一覧の人員データの取得
-     * @param $client 顧客ID
+     * @param $client_id 顧客ID
      *
      * @var   $data 取得データ
      * @var   $date App\Models\Date;
@@ -297,7 +297,7 @@ class PersonnelDataBase
      *
      * @return  array $data
      */
-    public static function searchTop($client,$search)
+    public static function searchTop($client, $search)
     {
 
         $data = DB::select('SELECT ji1.client_id,ji1.personnel_id,ji1.name,ji1.email,ji1.password,ji1.password_update_day,
@@ -307,7 +307,7 @@ class PersonnelDataBase
             left join dccmks on ji1.personnel_id = dccmks.lower_id
             left join dcbs01 on dccmks.high_id = dcbs01.department_id
             left join dcji01 AS ji2 on ji1.management_personnel_id = ji2.personnel_id
-            where ji1.client_id = ? and ji1.name like ? order by ji1.personnel_id', [$client,'%' . $search . '%']);
+            where ji1.client_id = ? and ji1.name like ? order by ji1.personnel_id', [$client, '%' . $search . '%']);
 
         //登録日・修正日のフォーマットを変換
         $date = new Date();
@@ -318,8 +318,9 @@ class PersonnelDataBase
 
     /**
      * 作業場所概要画面で検索した人員データを取得するメソッド
-     * @param $client 顧客ID
+     * @param $client_id 顧客ID
      * @param $select_id 選択したID
+     * @param $search2 検索文字
      *
      * @var   $data 取得データ
      *
@@ -487,10 +488,10 @@ class PersonnelDataBase
             );
         } else {
             $date = new Date();
-            
+
             DB::update(
                 'update dcji01 set name = ?,status = ?,email = ?,password = ?,password_update_day = ? ,management_personnel_id = ?,login_authority = ?,system_management = ?,operation_start_date = ?,operation_end_date = ?,remarks = ? where client_id = ? and personnel_id = ?',
-                [$name, $status, $mail, $password, $date->password(),$management_number, $login_authority, $system_management, $start_day, $finish_day, $remarks, $client_id, $personnel_id]
+                [$name, $status, $mail, $password, $date->password(), $management_number, $login_authority, $system_management, $start_day, $finish_day, $remarks, $client_id, $personnel_id]
             );
         }
     }

@@ -93,14 +93,14 @@ class Pssb01Controller extends Controller
             return redirect()->route('pa0001.errormsg');
         }
 
-            //ページネーションが最大値を超えていないかの判断
-            if ($count_personnel > $personnel_data['max']) {
-                $count_personnel = $personnel_data['max'];
-            }
+        //ページネーションが最大値を超えていないかの判断
+        if ($count_personnel > $personnel_data['max']) {
+            $count_personnel = $personnel_data['max'];
+        }
 
-            if ($count_space > $space_details['max']) {
-                $count_space = $space_details['max'];
-            }
+        if ($count_space > $space_details['max']) {
+            $count_space = $space_details['max'];
+        }
 
         //ページネーションオブジェクト設定
         $pagination_object = new PaginationObject();
@@ -361,10 +361,6 @@ class Pssb01Controller extends Controller
             $_POST['search'] = $_GET['search'];
         }
 
-        if (isset($_GET['search'])) {
-            $_POST['search2'] = $_GET['search'];
-        }
-
         //インスタンス化
         $space_db = new WorkSpaceDataBase();
         $space_display_list = new SpaceDisplayList();
@@ -420,6 +416,11 @@ class Pssb01Controller extends Controller
 
         if ($select_id == 'sb00000000') {
 
+            if (isset($_GET['search2'])) {
+                $_POST['search2'] = $_GET['search2'];
+            }
+
+
             //概要画面：下記内容は人員検索表示を行うのに必要な内容
             if (isset($_GET['personnel_page'])) {
                 $count_department = $_GET['space_page'];
@@ -434,21 +435,26 @@ class Pssb01Controller extends Controller
             $department_data = $department_display_list->display($client_id, $select_id, $count_department);
 
             //検索結果が0件なら戻る
+            if (empty($space_details['data'])) {
+                OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
+                $message = Message::get_message_handle('mhcmwn0001', [0 => '']);
+                session(['message' => $message[0], 'handle_message' => $message[3]]);
+            };
+
+            //検索結果が0件なら戻る
             if (empty($personnel_data['data'])) {
                 OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
                 $message = Message::get_message_handle('mhcmwn0001', [0 => '']);
                 session(['message' => $message[0], 'handle_message' => $message[3]]);
-                if ($select_id == 'sb00000000') {
-                    return redirect()->route('pssb01.index');
-                }
-                return redirect()->route('pssb01.show', [$client_id, $select_id]);
-            }
+            };
 
             //ページネーションが最大値を超えていないかの判断
             if ($count_personnel > $personnel_data['max']) {
                 $count_personnel = $personnel_data['max'];
             }
 
+            //一覧データの取得
+            $space_details = $space_display_list->display($client_id, $select_id, $count_space, $request->search);
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
             return view('pvsb01.pvsb01', compact(

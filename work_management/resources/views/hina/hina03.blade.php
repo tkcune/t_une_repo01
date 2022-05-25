@@ -33,7 +33,7 @@
             <div class="row">
                 <div>
                     {{-- 操作画面 --}}
-                    @include('hina.parts.parts02')
+                    @include('hina.parts.parts07')
                     <!-- ページネーションオブジェクトをコントローラーで設定し変数を受け渡す -->
                 </div>
 
@@ -53,7 +53,7 @@
             <div class="row">
                 <div>
                     {{-- 操作画面 --}}
-                    @include('hina.parts.parts07')
+                    @include('hina.parts.parts08')
                     <!-- ページネーションオブジェクトをコントローラーで設定し変数を受け渡す -->
                 </div>
 

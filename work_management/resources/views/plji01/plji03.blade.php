@@ -1,3 +1,4 @@
+<!-- 人員一覧のblade -->
 <div class="border border-dark">
     <table id="ji-table" class="ji-table table_sticky table table-striped" style=" margin-bottom:0px;margin-top:0px;">
         <thead>

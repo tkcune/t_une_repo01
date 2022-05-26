@@ -357,10 +357,10 @@ class Psbs01Controller extends Controller
             $personnel_db = new PersonnelDataBase();
             $management_personnel_id = $personnel_db->getData($client_id,$management_number);
         }catch(\Exception $e){
-                //エラー処理
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                DatabaseException::common($e);
-                return redirect()->route('index');
+            //エラー処理
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
+            DatabaseException::common($e);
+            return redirect()->route('index');
         }
         
         if($management_personnel_id == null){

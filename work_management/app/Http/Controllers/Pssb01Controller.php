@@ -147,7 +147,13 @@ class Pssb01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pssb01.pssb01', compact('system_management_lists'));
+        if (route('pssb01.index')) {
+            // 概要
+            return view('pvsb01.pvsb01', compact('system_management_lists'));
+        } else {
+            // 詳細
+            return view('pssb01.pssb01', compact('system_management_lists'));
+        };
     }
 
     /**

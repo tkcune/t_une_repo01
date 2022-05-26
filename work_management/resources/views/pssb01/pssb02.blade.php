@@ -54,7 +54,7 @@
                                 <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$space_data[0]->management_personnel_id}}" style="width:100px;" data-toggle="tooltip" title="" readonly></p>
                             </div>
                             <div class="col-3" style="padding:0px">
-                                <p>管理者名：{{$space_data[0]->management_name}}</p>
+                                <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$space_data[0]->management_personnel_id])}}">{{$space_data[0]->management_name}}</a></p>
                             </div>
                             <div class="col" style="padding:0px">
                                 <p>管理者検索：

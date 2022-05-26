@@ -141,9 +141,9 @@
                  @csrf
                  @method('post')
                  @if(!empty($_POST['search2']))
-                 <input type="text" name="search2" class="top" maxlength="32" placeholder="人員検索" value="{{ $_POST['search2'] }}">
+                 <input type="search" name="search2" class="top" maxlength="32" placeholder="人員検索" value="{{ $_POST['search2'] }}">
                  @else
-                 <input type="text" name="search2" class="top" maxlength="32" placeholder="人員検索">
+                 <input type="search" name="search2" class="top" maxlength="32" placeholder="人員検索">
                  @endif
                  <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
                      <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">

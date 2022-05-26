@@ -27,9 +27,9 @@ class CreateDcsb01Table extends Migration
                 ->comment('管理者人員番号');
             $table->unsignedInteger('post_code')->index()
                 ->comment('郵便番号');
-            $table->string('prefectural_office_location', '5')
+            $table->string('address1', '32')
                 ->comment('都道府県');
-            $table->string('address', '32')
+            $table->string('address2', '32')
                 ->comment('市区町村');
             $table->string('URL', '256')->nullable()
                 ->comment('地図URL');

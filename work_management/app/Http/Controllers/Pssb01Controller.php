@@ -107,7 +107,6 @@ class Pssb01Controller extends Controller
         $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
         $pagination_object->space_set_pagination($space_details, $count_space);
 
-
         return view('pvsb01.pvsb01', compact(
             'count_department',
             'count_personnel',
@@ -148,7 +147,13 @@ class Pssb01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        return view('pssb01.pssb01', compact('system_management_lists'));
+        if (route('pssb01.index')) {
+            // 概要
+            return view('pvsb01.pvsb01', compact('system_management_lists'));
+        } else {
+            // 詳細
+            return view('pssb01.pssb01', compact('system_management_lists'));
+        };
     }
 
     /**
@@ -160,8 +165,8 @@ class Pssb01Controller extends Controller
      * @var string $name 作業場所名称
      * @var string $management_pesonnel_id 管理者ID
      * @var string $post_code 郵便番号
-     * @var string $prefectural_office_location　都道府県
-     * @var string $address 市区町村
+     * @var string $address1　都道府県
+     * @var string $address2 市区町村
      * @var string $URL 地図URL
      * @var string $high 上位ID
      * @var string $remarks 備考
@@ -179,8 +184,8 @@ class Pssb01Controller extends Controller
         $name = $request->name;
         $management_personnel_id = $request->management_number;
         $post_code = $request->postcode;
-        $prefectural_office_location = $request->prefectural;
-        $address = $request->address;
+        $address1 = $request->address1;
+        $address2 = $request->address2;
         $URL = $request->URL;
         $high = $request->high;
         $remarks = $request->remarks;
@@ -209,8 +214,8 @@ class Pssb01Controller extends Controller
                 $name,
                 $management_personnel_id,
                 $post_code,
-                $prefectural_office_location,
-                $address,
+                $address1,
+                $address2,
                 $URL,
                 $remarks,
             );
@@ -491,8 +496,8 @@ class Pssb01Controller extends Controller
      * @var $name 作業場所名称
      * @var $management_personnel_id 管理者人員ID
      * @var $post_code 郵便番号
-     * @var $prefectural_office_location　都道府県
-     * @var $address 市区町村
+     * @var $address1　都道府県
+     * @var $address2 市区町村
      * @var $URL 地図URL
      * @var $remarks 備考
      * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db
@@ -509,8 +514,8 @@ class Pssb01Controller extends Controller
         $name = $request->name;
         $management_number = $request->management_number;
         $post_code = $request->postcode;
-        $prefectural_office_location = $request->prefectural;
-        $address = $request->address;
+        $address1 = $request->address1;
+        $address2 = $request->address2;
         $URL = $request->URL;
         $remarks = $request->remarks;
 
@@ -534,8 +539,8 @@ class Pssb01Controller extends Controller
                 $name,
                 $management_number,
                 $post_code,
-                $prefectural_office_location,
-                $address,
+                $address1,
+                $address2,
                 $URL,
                 $remarks,
             );

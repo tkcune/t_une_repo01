@@ -34,14 +34,18 @@
                 <div>
                     {{-- 操作画面 --}}
                     @include('hina.parts.parts07')
-                    <!-- ページネーションオブジェクトをコントローラーで設定し変数を受け渡す -->
+                    <!-- 概要画面を表示するメソッド上で、ページネーションオブジェクト機能クラスをインスタンス化し、コントローラーで設定し変数を受け渡す
+                        （参照例：Pa0001ControllerやPssb01Controllerの、indexメソッドの、「ページネーションオブジェクト設定」のコメント部分）、
+                        もしくは、views/pvsb01/pvsb01.blade.phpの記載方法 -->
                 </div>
 
                 <div class="row margin-reset">
                     <div class="col">
                         {{-- 一覧画面 --}}
                         @include('hina.parts.parts06')
-                        <!-- ページネーションオブジェクトをコントローラーで設定し変数を受け渡す -->
+                        <!-- 概要画面を表示するメソッド上で、ページネーションオブジェクト機能クラスをインスタンス化し、コントローラーで設定し変数を受け渡す
+                        （参照例：Pa0001ControllerやPssb01Controllerの、indexメソッドの、「ページネーションオブジェクト設定」のコメント部分）、
+                        もしくは、views/pvsb01/pvsb01.blade.phpの記載方法 -->
                     </div>
                 </div>
             </div>
@@ -54,14 +58,18 @@
                 <div>
                     {{-- 操作画面 --}}
                     @include('hina.parts.parts08')
-                    <!-- ページネーションオブジェクトをコントローラーで設定し変数を受け渡す -->
+                    <!-- 概要画面を表示するメソッド上で、ページネーションオブジェクト機能クラスをインスタンス化し、コントローラーで設定し変数を受け渡す
+                        （参照例：Pa0001ControllerやPssb01Controllerの、indexメソッドの、「ページネーションオブジェクト設定」のコメント部分）、
+                        もしくは、views/pvsb01/pvsb01.blade.phpの記載方法 -->
                 </div>
 
                 <div class="row margin-reset">
                     <div class="col">
                         {{-- 一覧画面 --}}
                         @include('hina.parts.parts01')
-                        <!-- ページネーションオブジェクトをコントローラーで設定し変数を受け渡す -->
+                        <!-- 概要画面を表示するメソッド上で、ページネーションオブジェクト機能クラスをインスタンス化し、コントローラーで設定し変数を受け渡す
+                        （参照例：Pa0001ControllerやPssb01Controllerの、indexメソッドの、「ページネーションオブジェクト設定」のコメント部分）、
+                        もしくは、views/pvsb01/pvsb01.blade.phpの記載方法 -->
                     </div>
                 </div>
             </div>

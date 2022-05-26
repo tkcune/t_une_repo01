@@ -2,7 +2,9 @@
 <div class="list-area" id="list">
     <div class="space-area" style="padding-top:5px">
         <div class="row">
-            {{-- 作業場所 ツリー操作機能　--}}
+            {{-- 作業場所詳細画面 ツリー操作機能　--}}
+
+            {{-- 作業場所新規登録ボタン --}}
             <div class="col-4" style="display:inline-flex">
                 <p>配下場所</p>
                 <form action="{{ route('pssb01.create') }}" method="get">
@@ -135,16 +137,16 @@
                     @csrf
                     @method('post')
                     @if(!empty($_POST['search']))
-                    <input type="text" name="search" class="top" maxlength="32" placeholder="作業場所検索" value="{{ $_POST['search'] }}">
+                    <input type="search" name="search" class="top" maxlength="32" placeholder="作業場所検索" value="{{ $_POST['search'] }}">
                     @else
-                    <input type="text" name="search" class="top" maxlength="32" placeholder="作業場所検索">
+                    <input type="search" name="search" class="top" maxlength="32" placeholder="作業場所検索">
                     @endif
                     <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
                         <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
                     </button>
                 </form>
             </div>
-            
+
             <div class="col" onclick="listOn()">
                 <p style="cursor: hand; cursor:pointer;">✕</p>
             </div>

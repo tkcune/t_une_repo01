@@ -1,8 +1,10 @@
 <!-- 概要画面上部用　新規作成・移動・挿入・投影・ペジネ・検索 -->
 <div class="list-area" id="list">
-    <div class="space-area" style="padding-top:5px">
+    <div class="ue-area" style="padding-top:5px">
         <div class="row">
-        {{-- 概要画面 上部用操作機能　--}}
+            {{-- 概要画面上部用 ツリー操作機能　--}}
+
+            {{-- 新規登録ボタン --}}
             <div class="col-4" style="display:inline-flex">
                 <p>名称</p>
                 <form action="" method="get">
@@ -46,13 +48,6 @@
                         <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
                     </button>
                 </form>
-
-                <form>
-                    <custom-tooltip title="新規: 新規登録する詳細画面に遷移します
-                        移動: クリップボードにコピーした情報を一覧に移動します。移動元は抹消されます
-                        挿入: クリップボードにコピーした情報を一覧に挿入します。移動元は消えません
-                        投影: クリップボードにコピーした情報を、一覧にショートカットして投影します。移動元は消えません"></custom-tooltip>
-                </form>
             </div>
             {{-- ツリー操作機能ここまで　--}}
 
@@ -65,17 +60,21 @@
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
+
                         <li class="page-item">
                             <a class="page-link" href="#" aria-label="Previous">
                                 <span aria-hidden="true">&lt;</span>
                             </a>
                         </li>
+
                         0/0&nbsp;&nbsp;0件
+
                         <li class="page-item">
                             <a class="page-link" href="#" aria-label="Next">
                                 <span aria-hidden="true">&gt;</span>
                             </a>
                         </li>
+
                         <li class="page-item">
                             <a class="page-link" href="#" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>

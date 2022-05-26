@@ -13,8 +13,7 @@
             <div class="details-area border border-dark bg-info" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4" style="margin-top:-5px; margin-right:-12px">
-                        <h2>作業場所登録・詳細
-                        </h2>
+                        <h2>作業場所登録・概要</h2>
                     </div>
 
                     <div class="col-4" style="margin-right:-10px">

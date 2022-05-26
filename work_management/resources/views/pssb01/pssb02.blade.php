@@ -54,7 +54,7 @@
                                 <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$space_data[0]->management_personnel_id}}" style="width:100px;" data-toggle="tooltip" title="" readonly></p>
                             </div>
                             <div class="col-3" style="padding:0px">
-                                <p>管理者名：{{$space_data[0]->management_name}}</p>
+                                <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$space_data[0]->management_personnel_id])}}">{{$space_data[0]->management_name}}</a></p>
                             </div>
                             <div class="col" style="padding:0px">
                                 <p>管理者検索：
@@ -70,12 +70,12 @@
 
                         <div class="row margin-reset">
                             <div class="col-4">
-                                <p>郵便番号：<input type="text" name="postcode" size="10" value="{{$space_data[0]->post_code}}" maxlength="8" title="郵便番号はハイフン不要の7桁で入力してください。" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');" placeholder="0123456">
+                                <p>郵便番号：<input type="text" name="postcode" size="10" value="{{$space_data[0]->post_code}}" maxlength="8" title="郵便番号はハイフン不要の7桁で入力してください。" onKeyUp="AjaxZip3.zip2addr(this,'','address1','address2');" placeholder="0123456">
                             </div>
                             <div class="col" style="padding:0px">
                                 住所:
-                                <input type="text" name="prefectural" value="{{$space_data[0]->prefectural_office_location}}" size="10" placeholder="都道府県" title="ここに都道府県名が入ります。">
-                                <input type="text" name="address" value="{{$space_data[0]->address}}" size="30" placeholder="市区町村以降" title="ここに市区町村名が入ります。">
+                                <input type="text" name="address1" value="{{$space_data[0]->address1}}" size="10" placeholder="都道府県" title="ここに都道府県名が入ります。">
+                                <input type="text" name="address2" value="{{$space_data[0]->address2}}" size="30" placeholder="市区町村以降" title="ここに市区町村名が入ります。">
                                 </p>
                             </div>
                             <div class="row margin-reset">

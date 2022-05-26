@@ -32,6 +32,7 @@
                     LEFT JOIN dcfi01 AS fi1 ON ft1.data_id = fi1.file_id AND ft1.data_type = 1
                     LEFT JOIN dcur01 AS ur1 ON ft1.data_id = ur1.url_id AND ft1.data_type = 2
                     WHERE kb1.client_id = ? AND kb1.board_id = ? ORDER BY ft1.incidental_id;',[$client_id,$select_id]);
+                    
             return $data;
         }
 
@@ -68,9 +69,9 @@
          * 
          */
 
-        public static function delete($client_id,$board_id){
+        public static function delete($client_id,$incidental_id){
 
-            DB::delete('delete from dckb01 where client_id = ? and board_id = ?',[$client_id,$board_id]);
+            DB::delete('delete from dcft01 where client_id = ? and incidental_id = ?',[$client_id,$incidental_id]);
         }
 
         /**

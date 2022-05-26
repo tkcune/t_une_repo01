@@ -8,7 +8,7 @@
             <form action="{{ route('psbs01.store') }}" method="post">
             @csrf
             @method('post')
-            {{-- hiddenのvalueはダミーデータ　--}}
+            {{-- hiddenのvalueはダミーデータ --}}
 
             <input type="hidden" name="client_id" value="{{ session('client_id') }}">
 

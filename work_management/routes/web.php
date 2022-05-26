@@ -109,8 +109,10 @@ Route::prefix('pskb')->group(function () {
     Route::post('/kbcopy', [Pskb01Controller::class, 'copy'])->name('pskb01.copy');
     Route::get('/show/{id}/{id2}', [Pskb01Controller::class, 'show'])->name('pskb01.show');
     Route::get('/download/{id}/{id2}', [Pskb01Controller::class, 'download'])->name('pskb01.download');
-    Route::patch('/file/{id}/{id2}', [Pskb01Controller::class, 'fileup'])->name('pskb01.fileup');
-    Route::patch('/url/{id}/{id2}', [Pskb01Controller::class, 'urlup'])->name('pskb01.urlup');
+    Route::patch('/file/{id}/{id2}', [Pskb01Controller::class, 'fileUpload'])->name('pskb01.fileUpload');
+    Route::patch('/url/{id}/{id2}', [Pskb01Controller::class, 'urlUp'])->name('pskb01.urlup');
+    Route::post('/file/delete/{id}/{id2}/{id3}', [Pskb01Controller::class,'fileDelete'])->name('pskb01.fileDelete');
+    Route::post('/url/delete/{id}/{id2}/{id3}', [Pskb01Controller::class,'urlDelete'])->name('pskb01.urlDelete');
     Route::get('/{id}/{id2}', [Pskb01Controller::class, 'search']);
     Route::post('/{id}/{id2}', [Pskb01Controller::class, 'search'])->name('pskb01.search');
 });

@@ -92,8 +92,8 @@
 
                             参照ファイル
                             <input type="hidden" id="file_id" name="file_id" value="">
-                            <input type="file" name="file_name" id="file_name" value="" style="width:254px;" data-toggle="tooltip" title="ファイルをアップロード" >
-                            <button formaction="{{ route('pskb01.fileup',[session('client_id'),$board_details[0]->board_id])}}" formmethod="post">更新</button>
+                            <input type="file" name="file_name[]" id="file_name" multiple value="" style="width:254px;" data-toggle="tooltip" title="ファイルをアップロード" >
+                            <button formaction="{{ route('pskb01.fileUpload',[session('client_id'),$board_details[0]->board_id])}}" formmethod="post">追加</button>
 
                             <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                                 <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
@@ -201,7 +201,7 @@
         <p style="text-align:center; cursor: hand; cursor:pointer; background:#99CCFF; border:solid 1px;">↓</p>
     </div>
     
-    <div class="board-area" id= "list">
+    <div class="list-area" id= "list">
                 <div class="row" style="padding-top:5px">
                     {{-- ツリー操作機能　--}}
                     <div class="col-4" style="display:inline-flex">
@@ -384,9 +384,7 @@
                         </div>
                     </div>
                 </div>
-    </div>
 
-    <div class="incidental-area" id= "list">
                 <div class="row" style="padding-top:5px">
                     {{-- ツリー操作機能　--}}
                     <div class="col-4" style="display:inline-flex">
@@ -527,9 +525,6 @@
                         </form>
                     </div>
 
-                    <div class="col" style = '' onclick="listOn()">
-                        <p style="cursor: hand; cursor:pointer;">✕</p>
-                    </div>
                     {{-- 検索機能ここまで　--}}
                 </div>
                 
@@ -552,9 +547,13 @@
                                     @else
                                     <td id="incidental_name{{$loop->index}}" width="360"><a href="{{$incidental_list['data']->url_path}}" data-toggle="tooltip" title="">{{$incidental_list['data']->url_path}}</a></td>
                                     @endif
-                                    <td width="360">【<a href="#" onclick="(function(){var val = document.getElementById('incidental_id{{$loop->index}}').innerHTML;var val2 = document.getElementById('incidental_name{{$loop->index}}').textContent;reflection(val,val2);})();">反映</a>】【<a href="#">複写</a>】
-                                    【<p id="kb_list_delete{{$loop->index}}" name="kb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
-                                    <form id="delete{{$loop->index}}" action="#" method="post" style="display: none;">
+                                    <td width="360">@if(substr($incidental_list['data']->data_id,0,2) == "ur")【<a href="#" onclick="(function(){var val = document.getElementById('incidental_id{{$loop->index}}').innerHTML;var val2 = document.getElementById('incidental_name{{$loop->index}}').textContent;reflection(val,val2);})();">反映</a>】@endif【<a href="#">複写</a>】
+                                    【<p id="ft_list_delete{{$loop->index}}" name="kb_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
+                                    @if(substr($incidental_list['data']->data_id,0,2) == "ur")
+                                    <form id="delete{{$loop->index}}" action="{{route('pskb01.urlDelete',[session('client_id'),$incidental_list['data']->data_id,$incidental_list['data']->incidental_id])}}" method="post" style="display: none;">
+                                    @else
+                                    <form id="delete{{$loop->index}}" action="{{route('pskb01.fileDelete',[session('client_id'),$incidental_list['data']->data_id,$incidental_list['data']->incidental_id])}}" method="post" style="display: none;">
+                                    @endif
                                     @csrf
                                     </form>
                                     </td>

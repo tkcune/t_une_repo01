@@ -78,9 +78,41 @@
          */
         public static function path($client_id,$select_id){
 
-            $path = DB::select('SELECT name,path FROM dcfi01 WHERE client_id = ? AND file_id = ?'
-            ,[$client_id,$select_id]);
+            $path = DB::select('SELECT name,path FROM dcfi01 WHERE client_id = ? AND file_id = ?',
+            [$client_id,$select_id]);
 
             return $path;
+        }
+
+        /**
+         * ファイルパスを取得するメソッド
+         * @param $client 顧客ID
+         * @param $file 顧客ID
+         * 
+         * @var   $data 取得データ
+         * 
+         * @return  array $data
+         */
+        public static function getFile($client_id,$select_id){
+
+            $file = DB::select('SELECT name,path FROM dcfi01 WHERE client_id = ? AND file_id = ?',
+            [$client_id,$select_id]);
+
+            return $file;
+        }
+
+        /**
+         * ファイルを削除するメソッド
+         * @param $client 顧客ID
+         * @param $file 顧客ID
+         * 
+         * @var   $data 取得データ
+         * 
+         * @return  array $data
+         */
+        public static function deleteFile($client_id,$select_id){
+
+            $file = DB::delete('Delete FROM dcfi01 WHERE client_id = ? AND file_id = ?',
+            [$client_id,$select_id]);
         }
     }

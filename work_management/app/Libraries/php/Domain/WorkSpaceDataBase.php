@@ -25,7 +25,7 @@ class WorkSpaceDataBase
     public static function get($client_id, $select_id)
     {
         $data = DB::select('SELECT sb1.client_id,sb1.space_id,sb1.name, sb1.management_personnel_id,
-        sb1.post_code,sb1.prefectural_office_location, sb1.address,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at, sb2.name
+        sb1.post_code,sb1.address1, sb1.address2,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at, sb2.name
         AS high_name, high_id, dcji01.name AS management_name FROM dcsb01 as sb1
         left join dccmks on sb1.space_id = dccmks.lower_id
         left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id
@@ -47,7 +47,7 @@ class WorkSpaceDataBase
     {
 
         $data = DB::select('SELECT sb1.client_id,sb1.space_id,sb1.name, sb1.management_personnel_id,
-        sb1.post_code,sb1.prefectural_office_location, sb1.address,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at, sb2.name
+        sb1.post_code,sb1.address1, sb1.address2,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at, sb2.name
         AS high_name,high_id,dcji01.name AS management_name FROM dcsb01 AS sb1
         left join dccmks on sb1.space_id = dccmks.lower_id
         left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id
@@ -87,7 +87,7 @@ class WorkSpaceDataBase
 
         $data = DB::select(
             'SELECT sb1.client_id,sb1.space_id,sb1.name,sb1.management_personnel_id,
-            sb1.post_code,sb1.prefectural_office_location, sb1.address,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
+            sb1.post_code,sb1.address1, sb1.address2,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
             AS high_name,high_id,dcji01.name AS management_name FROM dcsb01 AS sb1
             left join dccmks on sb1.space_id = dccmks.lower_id
             left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id
@@ -112,7 +112,7 @@ class WorkSpaceDataBase
     {
 
         $data = DB::select('SELECT sb1.client_id,sb1.space_id,sb1.name, sb1.management_personnel_id,
-        sb1.post_code,sb1.prefectural_office_location, sb1.address,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
+        sb1.post_code,sb1.address1, sb1.address2,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
         AS high_name, high_id, dcji01.name AS management_name FROM dcsb01 as sb1
 		left join dccmks on sb1.space_id = dccmks.lower_id
         left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id
@@ -146,18 +146,18 @@ class WorkSpaceDataBase
      * @param $name 作業場所名称
      * @param $managment_personnel_id 管理者ID
      * @param $post_code 郵便番号
-     * @param $prefectural_office_location 都道府県
-     * @param $address 市区町村
+     * @param $address1 都道府県
+     * @param $address2 市区町村
      * @param $URL アドレス
      * @param $remarks 備考
      */
-    public static function insert($client_id, $space_id, $name, $management_personnel_id, $post_code, $prefectural_office_location, $address, $URL, $remarks)
+    public static function insert($client_id, $space_id, $name, $management_personnel_id, $post_code, $address1, $address2, $URL, $remarks)
     {
         DB::insert(
             'insert into dcsb01
-            (client_id,space_id,name,management_personnel_id, post_code,prefectural_office_location,address,URL,remarks)
+            (client_id,space_id,name,management_personnel_id, post_code,address1,address2,URL,remarks)
              value (?,?,?,?,?,?,?,?,?)',
-            [$client_id, $space_id, $name, $management_personnel_id, $post_code, $prefectural_office_location, $address, $URL, $remarks]
+            [$client_id, $space_id, $name, $management_personnel_id, $post_code, $address1, $address2, $URL, $remarks]
         );
     }
 
@@ -212,7 +212,7 @@ class WorkSpaceDataBase
         //データベースに作業場所情報を登録
         try {
             DB::insert(
-                'insert into dcsb01 (client_id,space_id,name, management_personnel_id,post_code,prefectural_office_location,address,URL,remarks)
+                'insert into dcsb01 (client_id,space_id,name, management_personnel_id,post_code,address1,address2,URL,remarks)
                  value (?,?,?,?,?,?,?,?,?)',
                 [
                     $client_id,
@@ -220,8 +220,8 @@ class WorkSpaceDataBase
                     $copy_space[0]->name,
                     $copy_space[0]->management_personnel_id,
                     $copy_space[0]->post_code,
-                    $copy_space[0]->prefectural_office_location,
-                    $copy_space[0]->address,
+                    $copy_space[0]->address1,
+                    $copy_space[0]->address2,
                     $copy_space[0]->URL,
                     $copy_space[0]->remarks
                 ]
@@ -262,19 +262,19 @@ class WorkSpaceDataBase
      * @param $name 作業場所名称
      * @param $managment_number 管理者ID
      * @param $post_code 郵便番号
-     * @param $prefectural_office_location 都道府県
-     * @param $address 市区町村
+     * @param $address1 都道府県
+     * @param $address2 市区町村
      * @param $URL アドレス
      * @param $remarks 備考
      *
      */
 
-    public static function update($client_id, $space_id, $name, $management_number, $post_code, $prefectural_office_location, $address, $URL, $remarks)
+    public static function update($client_id, $space_id, $name, $management_number, $post_code, $address1, $address2, $URL, $remarks)
     {
         DB::update(
-            'update dcsb01 set name = ?,management_personnel_id = ?, post_code = ?,prefectural_office_location = ?,
-            address = ? , URL = ? ,remarks = ? where client_id=? and space_id = ?',
-            [$name, $management_number, $post_code, $prefectural_office_location, $address, $URL, $remarks, $client_id, $space_id]
+            'update dcsb01 set name = ?,management_personnel_id = ?, post_code = ?,address1 = ?,
+            address2 = ? , URL = ? ,remarks = ? where client_id=? and space_id = ?',
+            [$name, $management_number, $post_code, $address1, $address2, $URL, $remarks, $client_id, $space_id]
         );
     }
 
@@ -308,7 +308,7 @@ class WorkSpaceDataBase
     {
 
         $data = DB::select('SELECT sb1.client_id,sb1.space_id,sb1.name,sb1.management_personnel_id,
-            sb1.post_code,sb1.prefectural_office_location, sb1.address,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
+            sb1.post_code,sb1.address1, sb1.address2,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
             AS high_name,high_id,dcji01.name AS management_name FROM dcsb01 as sb1
             left join dccmks on sb1.space_id = dccmks.lower_id
             left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id
@@ -331,7 +331,7 @@ class WorkSpaceDataBase
     {
 
         $data = DB::select('SELECT sb1.client_id,sb1.space_id,sb1.name,sb1.management_personnel_id,
-            sb1.post_code,sb1.prefectural_office_location, sb1.address,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
+            sb1.post_code,sb1.address1, sb1.address2,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
             AS high_name,high_id,dcji01.name AS management_name FROM dcsb01 as sb1
             left join dccmks on sb1.space_id = dccmks.lower_id
             left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id

@@ -45,12 +45,12 @@
 
                     <div class="row margin-reset">
                         <div class="col-4">
-                            <p>郵便番号<span class="kome">*</span>：<input type="text" name="postcode" size="10" value="{{ old('postcode') }}" maxlength="8"  placeholder="0123456" title="郵便番号はハイフン不要の7桁で入力してください。" onKeyUp="AjaxZip3.zip2addr(this,'','prefectural','address');">
+                            <p>郵便番号<span class="kome">*</span>：<input type="text" name="postcode" size="10" value="{{ old('postcode') }}" maxlength="8"  placeholder="0123456" title="郵便番号はハイフン不要の7桁で入力してください。" onKeyUp="AjaxZip3.zip2addr(this,'','address1','address2');">
                         </div>
                         <div class="col" style="padding:0px">
                             住所<span class="kome">*</span>:
-                            <input type="text" name="prefectural" value="{{ old('prefectural') }}" size="10"  placeholder="都道府県" title="ここに都道府県名が入ります。">
-                            <input type="text" name="address" value="{{ old('address') }}" size="30" placeholder="市区町村以降" title="ここに市区町村名が入ります。">
+                            <input type="text" name="address1" value="{{ old('address1') }}" size="10"  placeholder="都道府県" title="ここに都道府県名が入ります。">
+                            <input type="text" name="address2" value="{{ old('address2') }}" size="30" placeholder="市区町村以降" title="ここに市区町村名が入ります。">
                             </p>
                         </div>
 

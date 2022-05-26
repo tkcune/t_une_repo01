@@ -204,7 +204,7 @@ class ProjectionDataBase
 
         $data = DB::select(
             'SELECT ta1.client_id,ta1.projection_id AS space_id,sb1.name,sb1.management_personnel_id,
-                                sb1.post_code,sb1.prefectural_office_location, sb1.address,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
+                                sb1.post_code,sb1.address1, sb1.address2,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
                                 AS high_name,high_id,dcji01.name AS management_name FROM dccmta AS ta1
                                 left join dcsb01 AS sb1 on ta1.projection_source_id = sb1.space_id
                                 left join dccmks AS ks1 on ta1.projection_id = ks1.lower_id

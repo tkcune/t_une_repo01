@@ -16,8 +16,8 @@ class SpaceObject
      * @var $name 作業場所名
      * @var $management_number 管理者番号
      * @var $post_code 郵便番号
-     * @var $prefectural_office_location 都道府県
-     * @var $address 市区町村
+     * @var $address1 都道府県
+     * @var $address2 市区町村
      * @var $URL URL
      * @var $remarks 備考
      * @var $created_at 登録日
@@ -30,8 +30,8 @@ class SpaceObject
     public $name;
     public $management_number;
     public $post_code;
-    public $prefectural_office_location;
-    public $address;
+    public $address1;
+    public $address2;
     public $URL;
     public $remarks;
     public $created_at;
@@ -49,8 +49,8 @@ class SpaceObject
         $this->space_id = $space_details[0]->space_id;
         $this->management_number = $space_details[0]->management_personnel_id;
         $this->post_code = $space_details[0]->post_code;
-        $this->prefectural_office_location = $space_details[0]->prefectural_office_location;
-        $this->address = $space_details[0]->address;
+        $this->address1 = $space_details[0]->address1;
+        $this->address2 = $space_details[0]->address2;
         $this->URL = $space_details[0]->URL;
         $this->remarks = $space_details[0]->remarks;
         $this->created_at = $space_details[0]->created_at;

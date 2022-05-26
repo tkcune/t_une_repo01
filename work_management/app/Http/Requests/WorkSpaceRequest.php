@@ -35,8 +35,8 @@ class WorkSpaceRequest extends FormRequest
         return [
             'name' => ['required', new JapaneseAndAlphaNumRule, 'max:32'],
             'postcode' => ['required', new PostRule],
-            'prefectural' =>  ['required', new JapaneseAndAlphaNumRule, 'max:5'],
-            'address' => ['required', new JapaneseAndAlphaNumRule, 'max:32'],
+            'address1' =>  ['required', new JapaneseAndAlphaNumRule, 'max:32'],
+            'address2' => ['required', new JapaneseAndAlphaNumRule, 'max:32'],
             'URL' => ['url', 'nullable', 'max:255'],
         ];
     }
@@ -46,8 +46,8 @@ class WorkSpaceRequest extends FormRequest
         return [
             'name.required' => '作業場所名を入力してください',
             'name.max' => '作業場所名は32文字以内で入力してください',
-            'prefectural.max' => '都道府県は5文字以内で入力してください',
-            'address.max' => '市区町村は32文字以内で入力してください',
+            'address1.max' => '都道府県は32文字以内で入力してください',
+            'address2.max' => '市区町村は32文字以内で入力してください',
             'URL.url' => '有効なURLではありません',
             'URL.max' => 'URLの文字数が255文字を超えています。短縮してください。',
         ];
@@ -57,8 +57,8 @@ class WorkSpaceRequest extends FormRequest
     {
         if (
             $validator->errors()->first('name') == "英数字、ひらがな、カタカナ、漢字で入力してください"
-            or $validator->errors()->first('prefectural') == "英数字、ひらがな、カタカナ、漢字で入力してください"
-            or $validator->errors()->first('address') == "英数字、ひらがな、カタカナ、漢字で入力してください"
+            or $validator->errors()->first('address1') == "英数字、ひらがな、カタカナ、漢字で入力してください"
+            or $validator->errors()->first('address2') == "英数字、ひらがな、カタカナ、漢字で入力してください"
         ) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0012', '01');
             $message = Message::get_message_handle('mhcmer0012', [0 => '']);
@@ -108,7 +108,7 @@ class WorkSpaceRequest extends FormRequest
                 back()->withInput($this->input)->withErrors($validator)
             );
         } elseif (
-            $validator->errors()->first('prefectural') == "都道府県は5文字以内で入力してください"
+            $validator->errors()->first('address1') == "都道府県は32文字以内で入力してください"
         ) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0017', '01');
             $message = Message::get_message_handle('mhcmer0017', [0 => '']);
@@ -118,7 +118,7 @@ class WorkSpaceRequest extends FormRequest
                 back()->withInput($this->input)->withErrors($validator)
             );
         } elseif (
-            $validator->errors()->first('address') == "市区町村は32文字以内で入力してください"
+            $validator->errors()->first('address2') == "市区町村は32文字以内で入力してください"
         ) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0018', '01');
             $message = Message::get_message_handle('mhcmer0018', [0 => '']);

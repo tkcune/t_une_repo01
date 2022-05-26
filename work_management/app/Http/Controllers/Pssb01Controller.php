@@ -57,7 +57,7 @@ class Pssb01Controller extends Controller
     {
         //ログインしている顧客IDの取得
         $client_id = "aa00000001";
-        //select_idはbsにしないとpersonnelとdepartmentの情報が取れない
+        //select_idはbsにしないと人員・部署情報が取れない
         $select_id = "bs00000000";
 
         //ログイン機能が完成次第、そちらで取得可能なため、このセッション取得を削除する。
@@ -256,6 +256,7 @@ class Pssb01Controller extends Controller
         //ログインしている顧客IDの取得
         $client_id = session('client_id');
 
+        //ページネーションの番号チェック
         if (isset($_GET['space_page'])) {
             $count_space = $_GET['space_page'];
         } else {
@@ -414,14 +415,15 @@ class Pssb01Controller extends Controller
         $pagination_object = new PaginationObject();
         $pagination_object->space_set_pagination($space_details, $count_space);
 
+        //概要画面用
         if ($select_id == 'sb00000000') {
 
+            //検索語のチェック
             if (isset($_GET['search2'])) {
                 $_POST['search2'] = $_GET['search2'];
             }
 
-
-            //概要画面：下記内容は人員検索表示を行うのに必要な内容
+            //ページネーションの番号チェック
             if (isset($_GET['personnel_page'])) {
                 $count_department = $_GET['space_page'];
                 $count_personnel = $_GET['personnel_page'];

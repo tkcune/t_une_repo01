@@ -107,7 +107,6 @@ class Pssb01Controller extends Controller
         $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
         $pagination_object->space_set_pagination($space_details, $count_space);
 
-
         return view('pvsb01.pvsb01', compact(
             'count_department',
             'count_personnel',

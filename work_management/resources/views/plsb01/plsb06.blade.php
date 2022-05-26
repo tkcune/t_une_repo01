@@ -1,6 +1,9 @@
 <!-- 作業場所概要画面 作業場所ツリー操作機能 -->
 <div class="space-area" style="padding-top:5px">
     <div class="row">
+        {{-- 作業場所概要画面 ツリー操作機能　--}}
+
+        {{-- 作業場所新規登録ボタン --}}
         <div class="col-4" style="display:inline-flex;">
             <p>配下場所</p>
             <form action="{{ route('pssb01.create') }}" method="get">

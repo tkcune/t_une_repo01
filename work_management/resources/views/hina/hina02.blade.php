@@ -17,7 +17,7 @@
                     </div>
 
                     <div class="col-3">
-                        上位:
+                        <p>上位:：<a href="#" data-toggle="tooltip" title="クリックにより、上位部署に遷移します"></a></p>
                     </div>
                     <div>
 
@@ -32,6 +32,7 @@
                                 <p>管理者検索：
                                     <input type="search" id="search-list" list="keywords" style="width:150px;"  placeholder="管理者名を選択" autocomplete="on" maxlength="32" data-toggle="tooltip" title="入力に該当した人員の候補を一覧に表示します。表示された人員を選択した場合、その番号が管理者人員番号に表示されます。">
                                     <datalist id="keywords">
+                                    <option value="#" label="#"></option>
                                     </datalist>
                                 </p>
                             </div>
@@ -82,7 +83,8 @@
 
         {{-- 操作ボタン --}}
         @include('hina.parts.parts04')
-        <!-- 詳細画面オブジェクトをコントローラーで設定し変数を受け渡す -->
+        <!-- 詳細画面を表示するメソッド上で、詳細画面に必要な変数を渡すクラスをインスタンス化し、コントローラーで設定し変数を受け渡す
+        （参照例：Psbs01ControllerやPssb01Controllerの、showメソッドの、「部署詳細オブジェクトの設定」のコメント部分） -->
         {{-- 削除有効化,更新有効化 --}}
         @include('hina.parts.parts03')
     </div>
@@ -101,14 +103,18 @@
         <div>
             {{-- 操作画面 --}}
             @include('hina.parts.parts02')
-            <!-- ページネーションオブジェクトをコントローラーで設定し変数を受け渡す -->
+            <!-- 詳細画面を表示するメソッド上で、ページネーションオブジェクト機能クラスをインスタンス化し、コントローラーで設定し変数を受け渡す
+            （参照例：Psbs01ControllerやPssb01Controllerの、showメソッドの、「ページネーションオブジェクト設定」のコメント部分）、
+            もしくは、views/pssb01/pssb02.blade.phpの記載方法 -->
         </div>
 
         <div class="row margin-reset">
             <div class="col">
                 {{-- 一覧画面 --}}
                 @include('hina.parts.parts01')
-            <!-- ページネーションオブジェクトをコントローラーで設定し変数を受け渡す -->
+            <!-- 詳細画面を表示するメソッド上で、ページネーションオブジェクト機能クラスをインスタンス化し、コントローラーで設定し変数を受け渡す
+            （参照例：Psbs01ControllerやPssb01Controllerの、showメソッドの、「ページネーションオブジェクト設定」のコメント部分、
+            もしくは、views/pssb01/pssb02.blade.phpの記載方法 -->
             </div>
         </div>
     </div>

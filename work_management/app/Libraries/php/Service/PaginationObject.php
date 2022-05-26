@@ -5,7 +5,7 @@ namespace App\Libraries\php\Service;
 use App\Libraries\php\Service\Pagination;
 
 /**
- *部署・人員ページネーションオブジェクト機能クラス
+ *部署・人員・作業場所のページネーションオブジェクト機能クラス
  */
 
 class PaginationObject

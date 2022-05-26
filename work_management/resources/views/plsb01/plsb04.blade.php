@@ -1,5 +1,6 @@
-{{-- 作業場所 詳細画面枠内新規登録・削除・複写機能　--}}
+<!-- 作業場所 詳細画面枠内新規登録・削除・複写機能 -->
 <form action="{{ route('pssb01.create') }}" method="get">
+    <!-- 新規登録 -->
     @csrf
     <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規" onclick="submit();" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
     <input type="hidden" id="high_new" name="high" value="{{ $space_data->space_id }}">
@@ -7,6 +8,7 @@
 
 @if(substr($click_id,0,2) == "ta")
 <form action="{{ route('pssb01.prodelete',[session('client_id'),$click_id])}}" method="post">
+    <!-- 削除 -->
     @else
     <form action="{{ route('pssb01.destroy',[session('client_id'),$space_data->space_id])}}" method="post">
         @endif
@@ -17,6 +19,7 @@
 
     @if(substr($click_id,0,2) == "ta")
     <form action="{{ route('pa0001.clipboard',$click_id)}}" method="get">
+        <!-- 複写 -->
         @else
         <form action="{{ route('pa0001.clipboard',$space_data->space_id)}}" method="get">
             @endif

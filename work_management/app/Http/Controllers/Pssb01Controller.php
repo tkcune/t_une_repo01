@@ -57,7 +57,7 @@ class Pssb01Controller extends Controller
     {
         //ログインしている顧客IDの取得
         $client_id = "aa00000001";
-        //select_idはbsにしないとpersonnelとdepartmentの情報が取れない
+        //select_idはbsにしないと人員・部署情報が取れない
         $select_id = "bs00000000";
 
         //ログイン機能が完成次第、そちらで取得可能なため、このセッション取得を削除する。
@@ -93,14 +93,14 @@ class Pssb01Controller extends Controller
             return redirect()->route('pa0001.errormsg');
         }
 
-            //ページネーションが最大値を超えていないかの判断
-            if ($count_personnel > $personnel_data['max']) {
-                $count_personnel = $personnel_data['max'];
-            }
+        //ページネーションが最大値を超えていないかの判断
+        if ($count_personnel > $personnel_data['max']) {
+            $count_personnel = $personnel_data['max'];
+        }
 
-            if ($count_space > $space_details['max']) {
-                $count_space = $space_details['max'];
-            }
+        if ($count_space > $space_details['max']) {
+            $count_space = $space_details['max'];
+        }
 
         //ページネーションオブジェクト設定
         $pagination_object = new PaginationObject();
@@ -256,6 +256,7 @@ class Pssb01Controller extends Controller
         //ログインしている顧客IDの取得
         $client_id = session('client_id');
 
+        //ページネーションの番号チェック
         if (isset($_GET['space_page'])) {
             $count_space = $_GET['space_page'];
         } else {
@@ -361,10 +362,6 @@ class Pssb01Controller extends Controller
             $_POST['search'] = $_GET['search'];
         }
 
-        if (isset($_GET['search'])) {
-            $_POST['search2'] = $_GET['search'];
-        }
-
         //インスタンス化
         $space_db = new WorkSpaceDataBase();
         $space_display_list = new SpaceDisplayList();
@@ -418,9 +415,15 @@ class Pssb01Controller extends Controller
         $pagination_object = new PaginationObject();
         $pagination_object->space_set_pagination($space_details, $count_space);
 
+        //概要画面用
         if ($select_id == 'sb00000000') {
 
-            //概要画面：下記内容は人員検索表示を行うのに必要な内容
+            //検索語のチェック
+            if (isset($_GET['search2'])) {
+                $_POST['search2'] = $_GET['search2'];
+            }
+
+            //ページネーションの番号チェック
             if (isset($_GET['personnel_page'])) {
                 $count_department = $_GET['space_page'];
                 $count_personnel = $_GET['personnel_page'];
@@ -441,7 +444,6 @@ class Pssb01Controller extends Controller
                 if ($select_id == 'sb00000000') {
                     return redirect()->route('pssb01.index');
                 }
-                return redirect()->route('pssb01.show', [$client_id, $select_id]);
             }
 
             //ページネーションが最大値を超えていないかの判断
@@ -449,6 +451,8 @@ class Pssb01Controller extends Controller
                 $count_personnel = $personnel_data['max'];
             }
 
+            //一覧データの取得
+            $space_details = $space_display_list->display($client_id, $select_id, $count_space, $request->search);
             $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
 
             return view('pvsb01.pvsb01', compact(

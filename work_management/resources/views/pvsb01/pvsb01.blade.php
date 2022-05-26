@@ -98,6 +98,4 @@
         </div>
     </div>
 </div>
-<!-- 郵便番号検索は→を一旦利用 https://www.webdesign-fan.com/ajaxzip3  -->
-<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
 @endsection

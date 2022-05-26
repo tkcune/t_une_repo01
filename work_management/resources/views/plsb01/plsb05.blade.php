@@ -16,16 +16,5 @@
 </form>
 {{--ここまで--}}
 
-<form>
-    <custom-tooltip title="変確定します
-複写 : 詳細領域のデータをクリップボードに複写します
-再表示 : 再表示します">
-    </custom-tooltip>
-</form>
-
 <input type="checkbox" id="check" onclick="deleteOn4()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
 <font size="-2" color="red">削除有効化</font>
-
-<form>
-    <custom-tooltip title="削除有効化:チェックを入れることで削除ボタンがクリックできるようになります"></custom-tooltip>
-</form>

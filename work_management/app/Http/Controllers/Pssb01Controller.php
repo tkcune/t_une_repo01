@@ -435,18 +435,14 @@ class Pssb01Controller extends Controller
             $department_data = $department_display_list->display($client_id, $select_id, $count_department);
 
             //検索結果が0件なら戻る
-            if (empty($space_details['data'])) {
-                OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
-                $message = Message::get_message_handle('mhcmwn0001', [0 => '']);
-                session(['message' => $message[0], 'handle_message' => $message[3]]);
-            };
-
-            //検索結果が0件なら戻る
             if (empty($personnel_data['data'])) {
                 OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
                 $message = Message::get_message_handle('mhcmwn0001', [0 => '']);
                 session(['message' => $message[0], 'handle_message' => $message[3]]);
-            };
+                if ($select_id == 'sb00000000') {
+                    return redirect()->route('pssb01.index');
+                }
+            }
 
             //ページネーションが最大値を超えていないかの判断
             if ($count_personnel > $personnel_data['max']) {

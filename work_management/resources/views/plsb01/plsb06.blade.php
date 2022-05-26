@@ -33,7 +33,8 @@
                 </button>
             </form>
 
-            <form action="{{ route('ptcm01.store') }}" method="post">
+            {{-- 作業場所投影ボタン --}}
+            <form action="{{ route('pssb01.projection') }}" method="post">
                 @csrf
                 @method('post')
                 <input type="hidden" name="client_id" value="{{ session('client_id') }}">
@@ -42,13 +43,6 @@
                 <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
                     <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影" disabled style="opacity:0.3">
                 </button>
-            </form>
-
-            <form>
-                <custom-tooltip title="新規: 新規登録する詳細画面に遷移します
-                        移動: クリップボードにコピーした情報を一覧に移動します。移動元は抹消されます
-                        挿入: クリップボードにコピーした情報を一覧に挿入します。移動元は消えません
-                        投影: クリップボードにコピーした情報を、一覧にショートカットして投影します。移動元は消えません"></custom-tooltip>
             </form>
         </div>
         {{-- ツリー操作機能ここまで　--}}

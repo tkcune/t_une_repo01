@@ -551,8 +551,8 @@ class Pskb01Controller extends Controller
      * 検索
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $client_id 顧客ID
-     * @param  int  $select_id 選択ID
+     * @param  string  $client_id 顧客ID
+     * @param  string  $select_id 選択ID
      * 
      * @var int $count_board ページ番号
      * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
@@ -668,41 +668,176 @@ class Pskb01Controller extends Controller
     }
 
     /**
-     * 掲示板登録
+     * URL更新
      *
      * @param  \Illuminate\Http\Request  $request
      * 
      * 
      * @return \Illuminate\Http\Response
      */
-    public function urlup(Request $request,$client_id,$select_id)
+    public function urlUp(Request $request,$client_id,$select_id)
     {
         $client_id = session('client_id');
         $url_id = $request->url_id;
         $url = $request->url;
         
+        // 重複クリック対策
+        //$request->session()->regenerateToken();
+
+        if(isset($url_id)){
+            try{
+
+                //更新するIDを取得
+                $id = DB::select('select data_id from dcft01 where client_id = ? 
+                and incidental_id = ?',[$client_id,$url_id]);
+
+                $url_db = new UrlDataBase();
+                $url_db->update($client_id,$url,$id[0]->data_id);
+
+                return redirect()->route('pskb01.show',[$client_id,$select_id]);
+
+            }catch(\Exception $e){
+                DB::rollBack();
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('pskb01.index');
+            }
+        }else{
+            try{
+
+                //URLを登録
+                UrlDataBase::insert($client_id,$url,$select_id);
+
+                return redirect()->route('pskb01.show',[$client_id,$select_id]);
+
+            }catch(\Exception $e){
+                DB::rollBack();
+
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+                return redirect()->route('pskb01.index');
+            }
+        }
+
+    }
+
+
+    /**
+     * ファイルアップロード
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $client_id 顧客ID
+     * @param  string  $select_id 選択ID
+     * 
+     * @var array $files アップロード予定ファイル
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function fileUpload(Request $request,$client_id,$select_id)
+    {
+        $files = $request->file('file_name');
 
         // 重複クリック対策
         $request->session()->regenerateToken();
 
+        //添付ファイルがある場合は登録
+        if (!is_null($files)) {
+            foreach($files as $file){
+            $file_db = new FileDataBase();
+            $file_db->insert($client_id,$file,$select_id);
+            }
+        }
+
+        return redirect()->route('pskb01.show',[$client_id,$select_id]);
+
+    }
+
+    /**
+     * ファイル削除
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $client_id 顧客ID
+     * @param  string  $select_id 選択ID
+     * 
+     * @var array $files アップロード予定ファイル
+     * @var $hierarchical_db App\Libraries\php\Domain\Hierarchical
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function fileDelete(Request $request,$client_id,$select_id,$incidental_id)
+    {
+        //重複クリック対策
+        $request->session()->regenerateToken();
+
         try{
 
-            //更新するIDを取得
-            $id = DB::select('select data_id from dcft01 where client_id = ? 
-            and incidental_id = ?',[$client_id,$url_id]);
+        DB::beginTransaction();
+        //削除予定のファイルを取得
+        $file = FileDataBase::getFile($client_id,$select_id);
+        //ファイルの削除
+        Storage::delete($file[0]->path);
+        //DBから削除
+        FileDataBase::deleteFile($client_id,$select_id);
+        //付帯定義情報の削除
+        IncidentalDataBase::delete($client_id,$incidental_id);
+        //階層情報の削除
+        $hierarchical_db = new Hierarchical();
+        $hierarchical_db->delete($client_id,$incidental_id);
 
-            $url_db = new UrlDataBase();
-            $url_db->update($client_id,$url,$id[0]->data_id);
-
-            return redirect()->route('pskb01.show',[$client_id,$select_id]);
+        DB::commit();
 
         }catch(\Exception $e){
             DB::rollBack();
-
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
             return redirect()->route('pskb01.index');
         }
 
+        return back();
+
     }
+
+
+    /**
+     * URL削除
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $client_id 顧客ID
+     * @param  string  $select_id 選択ID
+     * @param  string  $incidental_id 付帯定義ID
+     * 
+     * @var  $hierarchical_db App\Libraries\php\Domain\Hierarchical
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function urlDelete(Request $request,$client_id,$select_id,$incidental_id)
+    {
+        //重複クリック対策
+        $request->session()->regenerateToken();
+
+        try{
+
+        DB::beginTransaction();
+        //DBから削除
+        UrlDataBase::delete($client_id,$select_id);
+        //付帯定義情報の削除
+        IncidentalDataBase::delete($client_id,$incidental_id);
+        //階層情報の削除
+        $hierarchical_db = new Hierarchical();
+        $hierarchical_db->delete($client_id,$incidental_id);
+
+        DB::commit();
+
+        }catch(\Exception $e){
+            DB::rollBack();
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            return redirect()->route('pskb01.index');
+        }
+
+        return back();
+
+    }
+
 }

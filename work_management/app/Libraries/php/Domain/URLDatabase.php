@@ -29,7 +29,6 @@
             $id = DB::select('select url_id from dcur01 where client_id = ? 
             order by url_id desc limit 1',[$client_id]);
 
-            
             if(empty($id)){
                 $url_id = "ur00000001";
             }else{
@@ -75,8 +74,58 @@
          */
         public static function update($client_id,$url,$id){
 
-            DB::update('UPDATE dcur01 SET path = ? WHERE client_id = ? AND url_id = ?'
-            ,[$url,$client_id,$id]);
+            DB::update('UPDATE dcur01 SET path = ? WHERE client_id = ? AND url_id = ?',
+            [$url,$client_id,$id]);
 
+        }
+
+        /**
+         * データ取得
+         * @param $client 顧客ID
+         * @param $select_id 選択ID
+         * 
+         * @var   $data 取得データ
+         * 
+         * @return  array $data
+         */
+        public static function get($client_id,$select_id){
+
+            $data = DB::select('SELECT from dcur01 WHERE client_id = ? AND url_id = ?',
+            [$client_id,$select_id]);
+
+            return $data;
+        }
+
+
+        /**
+         * URLを削除
+         * @param $client 顧客ID
+         * @param $select_id 選択ID
+         * 
+         * @return void
+         */
+        public static function delete($client_id,$select_id){
+
+            DB::delete('Delete FROM dcur01 WHERE client_id = ? AND url_id = ?',
+            [$client_id,$select_id]);
+
+            return;
+        }
+
+        /**
+         * ID取得
+         * @param $client 顧客ID
+         * @param $select_id 選択ID
+         * 
+         * @param string $id
+         * 
+         * @return $id
+         */
+        public static function getId($client_id){
+
+            $id = DB::select('select url_id from dcur01 where client_id = ? 
+            order by url_id desc limit 1',[$client_id]);
+
+            return $id ;
         }
     }

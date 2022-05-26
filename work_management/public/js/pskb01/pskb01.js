@@ -45,6 +45,7 @@
  */
  function deleteOn3() {
     var count = document.getElementById("kb-table").rows.length - 1;
+    var count2 = document.getElementById("ft-table").rows.length - 1;
   
     if (document.getElementById("delete").disabled === true) {
       // disabled属性を削除
@@ -53,6 +54,10 @@
       for (i = 0; i < count; i++) {
         var id = "kb_list_delete" + i;
         document.getElementById(id).setAttribute("style", "pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px; color:blue;");
+      }
+      for (j = 0; j < count2; j++) {
+        var id2 = "ft_list_delete" + j;
+        document.getElementById(id2).setAttribute("style", "pointer-events: auto; display:inline-block; cursor: hand; cursor:pointer; text-decoration:underline; margin:0px; color:blue;");
       }
   
       //チェック状態の取得
@@ -69,6 +74,11 @@
         var id = "kb_list_delete" + i;
         document.getElementById(id).setAttribute("style", "pointer-events: none; display:inline-block; cursor: auto; text-decoration:underline; margin:0px;");
       }
+      for (j = 0; j < count2; j++) {
+        var id2 = "ft_list_delete" + j;
+        document.getElementById(id2).setAttribute("style", "pointer-events: none; display:inline-block; cursor: auto; text-decoration:underline; margin:0px;");
+      }
+  
   
       //checkの状態をストレージに保存
       localStorage.setItem('check', check);

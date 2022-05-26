@@ -26,13 +26,15 @@
          */
         public static function getList($client_id,$select_id){
 
+            
             $data = DB::select('SELECT ft1.client_id ,ft1.incidental_id,ft1.data_id ,fi1.name,fi1.path AS file_path,ur1.path AS url_path FROM dckb01 AS kb1
                     INNER JOIN dccmks AS ks1 ON ks1.high_id = kb1.board_id
                     INNER JOIN dcft01 AS ft1 ON ks1.lower_id = ft1.incidental_id
                     LEFT JOIN dcfi01 AS fi1 ON ft1.data_id = fi1.file_id AND ft1.data_type = 1
                     LEFT JOIN dcur01 AS ur1 ON ft1.data_id = ur1.url_id AND ft1.data_type = 2
                     WHERE kb1.client_id = ? AND kb1.board_id = ? ORDER BY ft1.incidental_id;',[$client_id,$select_id]);
-                    
+
+
             return $data;
         }
 
@@ -110,7 +112,7 @@
          * @return  array $data
          */
         public static function getData($client_id,$select_id){
-
+            
             $data = DB::select('SELECT ft1.client_id ,ft1.data_id ,fi1.file_id,ur1.url_id FROM dckb01 AS kb1
                                 INNER JOIN dccmks AS ks1 ON ks1.high_id = kb1.board_id
                                 INNER JOIN dcft01 AS ft1 ON ks1.lower_id = ft1.incidental_id
@@ -119,4 +121,5 @@
                                 WHERE kb1.client_id = ? AND ft1.incidental_id = ?',[$client_id,$select_id]);
             return $data;
         }
+
     }

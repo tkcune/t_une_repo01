@@ -379,6 +379,9 @@ class Pskb01Controller extends Controller
 
                 //対応したデータの削除
                 if ($code == "kb"){
+                    //掲示板に掲載されている付帯定義情報の削除
+                    $this->deleteList($client_id,$delete_list);
+
                     $board_db->delete($client_id,$delete_list);
 
                     //削除予定の配下掲示板が元になった投影を削除
@@ -682,7 +685,7 @@ class Pskb01Controller extends Controller
         $url = $request->url;
         
         // 重複クリック対策
-        //$request->session()->regenerateToken();
+        $request->session()->regenerateToken();
 
         if(isset($url_id)){
             try{
@@ -765,27 +768,27 @@ class Pskb01Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function fileDelete(Request $request,$client_id,$select_id,$incidental_id)
+    public static function fileDelete(Request $request,$client_id,$select_id,$incidental_id)
     {
         //重複クリック対策
         $request->session()->regenerateToken();
 
         try{
 
-        DB::beginTransaction();
-        //削除予定のファイルを取得
-        $file = FileDataBase::getFile($client_id,$select_id);
-        //ファイルの削除
-        Storage::delete($file[0]->path);
-        //DBから削除
-        FileDataBase::deleteFile($client_id,$select_id);
-        //付帯定義情報の削除
-        IncidentalDataBase::delete($client_id,$incidental_id);
-        //階層情報の削除
-        $hierarchical_db = new Hierarchical();
-        $hierarchical_db->delete($client_id,$incidental_id);
+            DB::beginTransaction();
+            //削除予定のファイルを取得
+            $file = FileDataBase::getFile($client_id,$select_id);
+            //ファイルの削除
+            Storage::delete($file[0]->path);
+            //DBから削除
+            FileDataBase::deleteFile($client_id,$select_id);
+            //付帯定義情報の削除
+            IncidentalDataBase::delete($client_id,$incidental_id);
+            //階層情報の削除
+            $hierarchical_db = new Hierarchical();
+            $hierarchical_db->delete($client_id,$incidental_id);
 
-        DB::commit();
+            DB::commit();
 
         }catch(\Exception $e){
             DB::rollBack();
@@ -811,23 +814,23 @@ class Pskb01Controller extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function urlDelete(Request $request,$client_id,$select_id,$incidental_id)
+    public static function urlDelete(Request $request,$client_id,$select_id,$incidental_id)
     {
         //重複クリック対策
         $request->session()->regenerateToken();
 
         try{
 
-        DB::beginTransaction();
-        //DBから削除
-        UrlDataBase::delete($client_id,$select_id);
-        //付帯定義情報の削除
-        IncidentalDataBase::delete($client_id,$incidental_id);
-        //階層情報の削除
-        $hierarchical_db = new Hierarchical();
-        $hierarchical_db->delete($client_id,$incidental_id);
+            DB::beginTransaction();
+            //DBから削除
+            UrlDataBase::delete($client_id,$select_id);
+            //付帯定義情報の削除
+            IncidentalDataBase::delete($client_id,$incidental_id);
+            //階層情報の削除
+            $hierarchical_db = new Hierarchical();
+            $hierarchical_db->delete($client_id,$incidental_id);
 
-        DB::commit();
+            DB::commit();
 
         }catch(\Exception $e){
             DB::rollBack();
@@ -840,4 +843,46 @@ class Pskb01Controller extends Controller
 
     }
 
+    /**
+     * 掲示板が削除された際の付帯定義情報の削除
+     * @param $client 顧客ID
+     * @param $select_id 選択したID 
+     * @return  array $data
+     */
+    public function deleteList($client_id,$select_id){
+
+        //掲示板に記載されている付帯定義情報のIDを全て取得
+        $incidental_db = new IncidentalDatabase();
+        $incidental_datas = $incidental_db->getList($client_id,$select_id);
+        
+        //付帯定義IDをfi,urに分岐
+        foreach($incidental_datas as $incidental_data){
+            if(substr($incidental_data->data_id,0,2) == "fi"){
+
+                //削除予定のファイルを取得
+                $file = FileDataBase::getFile($client_id,$incidental_data->data_id);
+                //ファイルの削除
+                Storage::delete($file[0]->path);
+                //DBから削除
+                FileDataBase::deleteFile($client_id,$incidental_data->data_id);
+                //付帯定義情報の削除
+                IncidentalDataBase::delete($client_id,$incidental_data->incidental_id);
+                //階層情報の削除
+                $hierarchical_db = new Hierarchical();
+                $hierarchical_db->delete($client_id,$incidental_data->incidental_id);
+
+            }else{
+
+                UrlDataBase::delete($client_id,$incidental_data->data_id);
+                //付帯定義情報の削除
+                IncidentalDataBase::delete($client_id,$incidental_data->incidental_id);
+                //階層情報の削除
+                $hierarchical_db = new Hierarchical();
+                $hierarchical_db->delete($client_id,$incidental_data->incidental_id);
+
+            }
+        }
+
+        return;
+    }
 }

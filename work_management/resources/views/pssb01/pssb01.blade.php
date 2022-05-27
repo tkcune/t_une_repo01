@@ -13,7 +13,7 @@
             <div class="details-area border border-dark bg-info" style="padding:10px;" id="parent">
                 <div class="row">
                     <div class="col-4" style="margin-top:-5px; margin-right:-12px">
-                        <h2>作業場所登録・詳細
+                        <h2>作業場所登録
                         </h2>
                     </div>
 
@@ -46,18 +46,34 @@
 
                     <div class="row margin-reset">
                         <div class="col-4">
-                            <p>郵便番号<span class="kome">*</span>：<input type="text" name="postcode" size="10" value="{{ old('postcode') }}" maxlength="8"  placeholder="0123456" title="郵便番号はハイフン不要の7桁で入力してください。" onKeyUp="AjaxZip3.zip2addr(this,'','address1','address2');">
+                        @if(!empty($post_code))
+                            <p>郵便番号<span class="kome">*</span>：<input type="text" name="postcode" size="10" value="{{ $post_code }}" maxlength="8"  placeholder="0123456" title="郵便番号はハイフン不要の7桁で入力してください。" onKeyUp="AjaxZip3.zip2addr(this,'','address1','address2');">
+                        @else
+                        <p>郵便番号<span class="kome">*</span>：<input type="text" name="postcode" size="10" value="{{ old('post_code') }}" maxlength="8"  placeholder="0123456" title="郵便番号はハイフン不要の7桁で入力してください。" onKeyUp="AjaxZip3.zip2addr(this,'','address1','address2');">
+                        @endif
                         </div>
                         <div class="col" style="padding:0px">
                             住所<span class="kome">*</span>:
+                            @if(!empty($address1))
+                            <input type="text" name="address1" value="{{ $address1 }}" size="10"  placeholder="都道府県" title="ここに都道府県名が入ります。">
+                            @else
                             <input type="text" name="address1" value="{{ old('address1') }}" size="10"  placeholder="都道府県" title="ここに都道府県名が入ります。">
+                            @endif
+                            @if(!empty($address2))
+                            <input type="text" name="address2" value="{{ $address2 }}" size="30" placeholder="市区町村以降" title="ここに市区町村名が入ります。">
+                            @else
                             <input type="text" name="address2" value="{{ old('address2') }}" size="30" placeholder="市区町村以降" title="ここに市区町村名が入ります。">
+                            @endif
                             </p>
                         </div>
 
                         <div class="row margin-reset">
                             <div class="col">
+                            @if(!empty($URL))
+                                <p>URL：<input type="url" name="URL" value="{{ $URL }}" size="81"  placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
+                            @else
                                 <p>URL：<input type="url" name="URL" value="{{ old('URL') }}" size="81"  placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
+                            @endif
                                     <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                                         <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉">
                                     </button>

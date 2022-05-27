@@ -128,8 +128,13 @@ class Pssb01Controller extends Controller
      * @var  array $system_managment_lists システム管理者リスト
      *
      */
-    public function create()
+    public function create(Request $request)
     {
+        $post_code = $request->postcode;
+        $address1 = $request->address1;
+        $address2 = $request->address2;
+        $URL = $request->URL;
+
         //ログインしている顧客IDの取得
         $client_id = session('client_id');
 
@@ -147,13 +152,13 @@ class Pssb01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
-        if (route('pssb01.index')) {
-            // 概要
-            return view('pvsb01.pvsb01', compact('system_management_lists'));
-        } else {
-            // 詳細
-            return view('pssb01.pssb01', compact('system_management_lists'));
-        };
+        return view('pssb01.pssb01', compact(
+            'system_management_lists',
+            'post_code',
+            'address1',
+            'address2',
+            'URL'
+        ));
     }
 
     /**

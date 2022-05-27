@@ -121,6 +121,10 @@ class Pssb01Controller extends Controller
     /**
      * 作業場所新規登録画面表示
      *
+     * @var $post_code 郵便番号
+     * @var $address1　都道府県
+     * @var $address2 市区町村
+     * @var $URL 地図URL
      * @var $client_id 顧客ID
      * @var  App\Http\Controllers\PtcmtrController $tree
      * @var  array $tree_data ツリーデータ
@@ -130,6 +134,7 @@ class Pssb01Controller extends Controller
      */
     public function create(Request $request)
     {
+        //詳細画面から新規登録をするときに、受け渡す情報
         $post_code = $request->postcode;
         $address1 = $request->address1;
         $address2 = $request->address2;

@@ -1,5 +1,8 @@
 @extends('pc0001.pc0001')
 
+<!-- 郵便番号検索はいったん→を利用　https://dezanari.com/ajaxzip3/ -->
+<script src="https://ajaxzip3.github.io/ajaxzip3.js"></script>
+
 @section('content')
 <div class="col border border-primary" style="padding:10px;">
     <div class="row">
@@ -45,49 +48,50 @@
                     </div>
 
                     <div class="row margin-reset">
-                        <div class="col-4">
+                        <div class="col-4" style="padding-right:0px">
                             <p>郵便番号<span class="kome">*</span>：
                                 @if(!empty($post_code))
-                                <input type="text" name="postcode" size="10" value="{{ $post_code }}" maxlength="8" placeholder="0123456" title="郵便番号はハイフン不要の7桁で入力してください。" onKeyUp="AjaxZip3.zip2addr(this,'','address1','address2');">
+                                <input type="text" name="postcode" size="10" value="{{ $post_code }}" maxlength="8" placeholder="0123456" title="郵便番号はハイフン不要の7桁で入力してください。">
                                 @else
-                                <input type="text" name="postcode" size="10" value="{{ old('post_code') }}" maxlength="8" placeholder="0123456" title="郵便番号はハイフン不要の7桁で入力してください。" onKeyUp="AjaxZip3.zip2addr(this,'','address1','address2');">
+                                <input type="text" name="postcode" size="10" value="{{ old('post_code') }}" maxlength="8" placeholder="0123456" title="郵便番号はハイフン不要の7桁で入力してください。">
                                 @endif
-                        </div>
+                                <button type="button" title="インターネット接続時にこのボタンを押すと、郵便番号に基づいた該当の住所が反映します。" onclick="AjaxZip3.zip2addr('postcode', 'address1', 'address1', 'address1');">検索</button>
+                            </div>
 
-                        <div class="col" style="padding:0px">
+                        <div class="col" style="padding-right:0px">
                             住所<span class="kome">*</span>:
                             @if(!empty($address1))
-                            <input type="text" name="address1" value="{{ $address1 }}" size="10" placeholder="都道府県" title="ここに都道府県名が入ります。">
+                            <input type="text" name="address1" value="{{ $address1 }}" size="25" placeholder="都道府県+以降の住所" title="ここに都道府県名と以降の住所が入ります。">
                             @else
-                            <input type="text" name="address1" value="{{ old('address1') }}" size="10" placeholder="都道府県" title="ここに都道府県名が入ります。">
+                            <input type="text" name="address1" value="{{ old('address1') }}" size="25" placeholder="都道府県+以降の住所" title="ここに都道府県名と以降の住所が入ります。">
                             @endif
 
                             @if(!empty($address2))
-                            <input type="text" name="address2" value="{{ $address2 }}" size="30" placeholder="市区町村以降" title="ここに市区町村名が入ります。">
+                            <input type="text" name="address2" value="{{ $address2 }}" size="15" placeholder="番地" title="ここに番地が入ります。">
                             @else
-                            <input type="text" name="address2" value="{{ old('address2') }}" size="30" placeholder="市区町村以降" title="ここに市区町村名が入ります。">
+                            <input type="text" name="address2" value="{{ old('address2') }}" size="15" placeholder="番地" title="ここに番地が入ります。">
                             @endif
                             </p>
                         </div>
 
                         <div class="row margin-reset">
                             <div class="col">
-                                <p>URL：
+                                <p>地図URL：
                                     @if(!empty($URL))
-                                    <input type="url" name="URL" value="{{ $URL }}" size="81" placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
+                                    <input type="url" name="URL" value="{{ $URL }}" size="76" placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
                                     @else
-                                    <input type="url" name="URL" value="{{ old('URL') }}" size="81" placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
+                                    <input type="url" name="URL" value="{{ old('URL') }}" size="76" placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
                                     @endif
-                                        <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
-                                            <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉">
-                                        </button>
+                                    <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
+                                        <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉">
+                                    </button>
                                 </p>
                             </div>
                         </div>
 
                         <input type="hidden" id="remarks" name="remarks" value="{{ old('remarks') }}">
 
-                    <div class="row margin-reset" id="remarks-field" style="display:none"">
+                        <div class="row margin-reset" id="remarks-field" style="display:none"">
                         <div>
                          備考
                         </div>
@@ -113,6 +117,7 @@
         </form>
     </div>
 </div>
-<!-- 郵便番号検索は→を一旦利用 https://www.webdesign-fan.com/ajaxzip3  -->
-<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+
+
+
 @endsection

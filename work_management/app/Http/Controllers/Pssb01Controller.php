@@ -122,8 +122,8 @@ class Pssb01Controller extends Controller
      * 作業場所新規登録画面表示
      *
      * @var $post_code 郵便番号
-     * @var $address1　都道府県
-     * @var $address2 市区町村
+     * @var $address1　都道府県+以降の住所
+     * @var $address2 番地
      * @var $URL 地図URL
      * @var $client_id 顧客ID
      * @var  App\Http\Controllers\PtcmtrController $tree
@@ -175,8 +175,8 @@ class Pssb01Controller extends Controller
      * @var string $name 作業場所名称
      * @var string $management_pesonnel_id 管理者ID
      * @var string $post_code 郵便番号
-     * @var string $address1　都道府県
-     * @var string $address2 市区町村
+     * @var string $address1　都道府県+以降の住所
+     * @var string $address2 番地
      * @var string $URL 地図URL
      * @var string $high 上位ID
      * @var string $remarks 備考
@@ -235,6 +235,12 @@ class Pssb01Controller extends Controller
             $hierarchical->insert($client_id, $space_id, $high);
 
             DB::commit();
+
+            OutputLog::message_log(__FUNCTION__, 'mhcmok0001');
+
+            //メッセージの表示
+            $request->session()->put('message',Config::get('message.mhcmok0001'));
+            PtcmtrController::open_node($space_id);
 
             return redirect()->route('pssb01.show', [$client_id, $high]);
         } catch (\Exception $e) {
@@ -506,8 +512,8 @@ class Pssb01Controller extends Controller
      * @var $name 作業場所名称
      * @var $management_personnel_id 管理者人員ID
      * @var $post_code 郵便番号
-     * @var $address1　都道府県
-     * @var $address2 市区町村
+     * @var $address1　都道府県+以降の住所
+     * @var $address2 番地
      * @var $URL 地図URL
      * @var $remarks 備考
      * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db

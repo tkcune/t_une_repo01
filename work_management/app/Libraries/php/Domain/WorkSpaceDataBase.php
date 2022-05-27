@@ -146,8 +146,8 @@ class WorkSpaceDataBase
      * @param $name 作業場所名称
      * @param $managment_personnel_id 管理者ID
      * @param $post_code 郵便番号
-     * @param $address1 都道府県
-     * @param $address2 市区町村
+     * @param $address1 都道府県+以降の住所
+     * @param $address2 番地
      * @param $URL アドレス
      * @param $remarks 備考
      */
@@ -262,8 +262,8 @@ class WorkSpaceDataBase
      * @param $name 作業場所名称
      * @param $managment_number 管理者ID
      * @param $post_code 郵便番号
-     * @param $address1 都道府県
-     * @param $address2 市区町村
+     * @param $address1 都道府県+以降の住所
+     * @param $address2 番地
      * @param $URL アドレス
      * @param $remarks 備考
      *

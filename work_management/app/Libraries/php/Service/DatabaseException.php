@@ -54,4 +54,41 @@
             session(['message'=>$message[0],'handle_message'=>$message[3]]);
             
         }
+
+        /**
+         * 複写エラーメッセージ処理
+         * @param PDOException $pe PDOException
+         * @param string $file エラー元のファイル名
+         * 
+         * @var string $line エラー行
+         * @var array $message メッセージ
+         */
+        public static function PDOError($pe, $file){
+
+            $line = self::get_error_line($pe, $file);
+            //ログとヘッダーメッセージの設定
+            OutputLog::log($file, 'sy', '00', $file.'->'.$line.'行->'.$pe->getMessage());
+            $message = Message::get_message_handle('mhcmer0001',[0 => '01']);
+            session(['message'=>$message[0], 'handle_message'=>$message[3]]);
+            
+        }
+
+        /**
+         * PDOExceptionのエラー行を取得する。
+         * @param PDOException $pe PDOException
+         * @param string $file エラー元のファイル名
+         * 
+         * @var array $trace エラー情報の呼び出しのトレース行
+         * 
+         * @return string エラー行
+         */
+        private static function get_error_line($pe, $file){
+            $trace = $pe->getTrace();
+            foreach($trace as $line){
+                if($line['file'] == $file){
+                    return $line['line'];
+                }
+            }
+            return '';
+        }
     }

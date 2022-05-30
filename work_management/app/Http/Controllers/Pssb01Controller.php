@@ -719,83 +719,9 @@ class Pssb01Controller extends Controller
             return redirect()->route('pssb01.index');
         }
 
-        //投影を複製する場合
-        if (substr($copy_id, 0, 2) == "ta") {
-            try {
-                $projection_db = new ProjectionDataBase();
-                $code = $projection_db->getId($copy_id);
-            } catch (\Exception $e) {
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                DatabaseException::common($e);
-                return redirect()->route('pssb01.index');
-            }
-            $projection_source_id = $code[0]->projection_source_id;
-
-            //最新の投影番号を生成
-            try {
-                $projection_db = new ProjectionDataBase();
-                $projection_id = $projection_db->getNewId($client_id);
-            } catch (\Exception $e) {
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                DatabaseException::common($e);
-                return redirect()->route('pssb01.index');
-            }
-
-            try {
-                //トランザクション
-                DB::beginTransaction();
-
-                //データベースに投影情報を登録
-                $projection_db = new ProjectionDataBase();
-                $projection_db->insert($client_id, $projection_id, $projection_source_id);
-
-                //データベースに階層情報を登録
-                $hierarchical = new Hierarchical();
-                $hierarchical->insert($client_id, $projection_id, $high);
-
-                DB::commit();
-            } catch (\Exception $e) {
-                //ロールバック
-                DB::rollBack();
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
-                DatabaseException::common($e);
-                return redirect()->route('pssb01.index');
-            }
-            //ログ処理
-            OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
-            $message = Message::get_message('mhcmok0009', [0 => '']);
-            session(['message' => $message[0]]);
-            return back();
-        } else {
-            //複製前の最新の作業場所番号を取得
-            try {
-                $space_db = new WorkSpaceDataBase();
-                $id = $space_db->getId($client_id);
-            } catch (\Exception $e) {
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
-                DatabaseException::common($e);
-                return redirect()->route('pssb01.index');
-            }
-
-            $id_num = substr($id[0]->space_id, 3);
-            $number = str_pad($id_num, 8, '0', STR_PAD_LEFT);
-
-            //作業場所情報の複製
-            try {
-                $space_db = new WorkSpaceDataBase();
-                $space_db->copy($copy_id, $client_id, $high, $number);
-            } catch (\Exception $e) {
-                OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
-                DatabaseException::common($e);
-                return redirect()->route('pssb01.index');
-            }
-
-            //ログ処理
-            OutputLog::message_log(__FUNCTION__, 'mhcmok0009');
-            $message = Message::get_message('mhcmok0009', [0 => '']);
-            session(['message' => $message[0]]);
-            return back();
-        }
+        //複写
+        Hierarchical::copy($client_id, $copy_id, $high);
+        return back();
     }
 
     /** 作業場所の移動

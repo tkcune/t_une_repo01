@@ -67,9 +67,9 @@
                             @endif
 
                             @if(!empty($address2))
-                            <input type="text" name="address2" value="{{ $address2 }}" size="15" placeholder="番地" title="ここに番地が入ります。">
+                            <input type="text" name="address2" value="{{ $address2 }}" size="15" placeholder="番地" title="ここに番地が入ります。番地なしの場合は無番地と入力します。">
                             @else
-                            <input type="text" name="address2" value="{{ old('address2') }}" size="15" placeholder="番地" title="ここに番地が入ります。">
+                            <input type="text" name="address2" value="{{ old('address2') }}" size="15" placeholder="番地" title="ここに番地が入ります。番地なしの場合は無番地と入力します。">
                             @endif
                             </p>
                         </div>

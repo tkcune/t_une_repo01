@@ -239,7 +239,7 @@ class Pssb01Controller extends Controller
             OutputLog::message_log(__FUNCTION__, 'mhcmok0001');
 
             //メッセージの表示
-            $request->session()->put('message',Config::get('message.mhcmok0001'));
+            $request->session()->put('message', Config::get('message.mhcmok0001'));
             PtcmtrController::open_node($space_id);
 
             return redirect()->route('pssb01.show', [$client_id, $high]);
@@ -462,9 +462,7 @@ class Pssb01Controller extends Controller
                 OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
                 $message = Message::get_message_handle('mhcmwn0001', [0 => '']);
                 session(['message' => $message[0], 'handle_message' => $message[3]]);
-                if ($select_id == 'sb00000000') {
-                    return redirect()->route('pssb01.index');
-                }
+                return redirect()->route('pssb01.index');
             }
 
             //ページネーションが最大値を超えていないかの判断
@@ -692,11 +690,7 @@ class Pssb01Controller extends Controller
      * @var string $client_id 顧客ID
      * @var string $copy_id 複製するID
      * @var string $high 複製IDが所属する上位階層ID
-     * @var App\Libraries\php\Domain\ProjectionDataBase $projection_db
-     * @var string $id 複製前の最新の作業場所ID
-     * @var string $id_num 複製前の最新の作業場所IDの数字部分
-     * @var string $number 8桁に0埋めした複製前の最新の作業場所IDの数字部分
-     * @var  App\Libraries\php\Domain\WorkspaceDataBase $space_db
+
      * @var App\Libraries\php\Domain\Hierarchical $hierarchical
      * @var  string $message メッセージ
      *

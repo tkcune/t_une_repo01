@@ -78,7 +78,7 @@
                             </div>
                             <div class="col" style="padding:0px">
                                 住所:
-                                <input type="text" name="address1" value="{{$space_data[0]->address1}}" size="25" placeholder="都道府県+以降の住所" title="ここに都道府県名と以降の住所が入ります。">
+                                <input type="text" name="address1" value="{{$space_data[0]->address1}}" size="25" placeholder="都道府県+市区町村" title="ここに都道府県名と以降の住所が入ります。">
                                 <input type="text" name="address2" value="{{$space_data[0]->address2}}" size="15" placeholder="番地" title="ここに番地が入ります。">
                                 </p>
                             </div>

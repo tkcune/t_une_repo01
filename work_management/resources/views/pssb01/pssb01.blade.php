@@ -61,9 +61,9 @@
                         <div class="col" style="padding-right:0px">
                             住所<span class="kome">*</span>:
                             @if(!empty($address1))
-                            <input type="text" name="address1" value="{{ $address1 }}" size="25" placeholder="都道府県+以降の住所" title="ここに都道府県名と以降の住所が入ります。">
+                            <input type="text" name="address1" value="{{ $address1 }}" size="25" placeholder="都道府県+市区町村" title="ここに都道府県名と市区町村が入ります。">
                             @else
-                            <input type="text" name="address1" value="{{ old('address1') }}" size="25" placeholder="都道府県+以降の住所" title="ここに都道府県名と以降の住所が入ります。">
+                            <input type="text" name="address1" value="{{ old('address1') }}" size="25" placeholder="都道府県+市区町村" title="ここに都道府県名と市区町村が入ります。">
                             @endif
 
                             @if(!empty($address2))

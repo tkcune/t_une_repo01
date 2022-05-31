@@ -122,8 +122,8 @@ class Pssb01Controller extends Controller
      * 作業場所新規登録画面表示
      *
      * @var $post_code 郵便番号
-     * @var $address1　都道府県+以降の住所
-     * @var $address2 番地
+     * @var $address1　住所1
+     * @var $address2 住所2
      * @var $URL 地図URL
      * @var $client_id 顧客ID
      * @var  App\Http\Controllers\PtcmtrController $tree
@@ -175,8 +175,8 @@ class Pssb01Controller extends Controller
      * @var string $name 作業場所名称
      * @var string $management_pesonnel_id 管理者ID
      * @var string $post_code 郵便番号
-     * @var string $address1　都道府県+以降の住所
-     * @var string $address2 番地
+     * @var string $address1　住所1
+     * @var string $address2 住所2
      * @var string $URL 地図URL
      * @var string $high 上位ID
      * @var string $remarks 備考
@@ -512,8 +512,8 @@ class Pssb01Controller extends Controller
      * @var $name 作業場所名称
      * @var $management_personnel_id 管理者人員ID
      * @var $post_code 郵便番号
-     * @var $address1　都道府県+以降の住所
-     * @var $address2 番地
+     * @var $address1　住所1
+     * @var $address2 住所2
      * @var $URL 地図URL
      * @var $remarks 備考
      * @var App\Libraries\php\Domain\PersonnelDataBase $personnel_db

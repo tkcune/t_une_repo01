@@ -28,9 +28,9 @@ class CreateDcsb01Table extends Migration
             $table->unsignedInteger('post_code')->index()
                 ->comment('郵便番号');
             $table->string('address1', '32')
-                ->comment('都道府県+以降の住所');
+                ->comment('住所1');
             $table->string('address2', '32')
-                ->comment('番地');
+                ->comment('住所2');
             $table->string('URL', '256')->nullable()
                 ->comment('地図URL');
             $table->string('remarks', '512')->nullable()

@@ -885,4 +885,20 @@ class Pskb01Controller extends Controller
 
         return;
     }
+
+
+    /**
+     * スタンプ動作
+     * @param $client 顧客ID
+     * @param $select_id 選択したID 
+     * @return  array $data
+     */
+    public function stamp(Request $request){
+
+        dd($request);
+
+        
+
+        return response()->json($request);
+    }
 }

@@ -115,6 +115,7 @@ Route::prefix('pskb')->group(function () {
     Route::post('/url/delete/{id}/{id2}/{id3}', [Pskb01Controller::class,'urlDelete'])->name('pskb01.urlDelete');
     Route::get('/{id}/{id2}', [Pskb01Controller::class, 'search']);
     Route::post('/{id}/{id2}', [Pskb01Controller::class, 'search'])->name('pskb01.search');
+    Route::post('/stamp', [Pskb01Controller::class,'stamp'])->name('pskb01.stamp');
 });
 
 //作業場所に関するルーティング

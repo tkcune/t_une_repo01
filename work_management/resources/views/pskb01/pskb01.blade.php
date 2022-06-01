@@ -4,6 +4,11 @@
     <script src="{{ asset('js/pskb01/pskb01.js') }}" defer></script>
 @endsection
 
+@section('css')
+    <link href="{{ asset('css/pccp01.css') }}" rel="stylesheet">
+@endsection
+
+
 @section('script')
     {{-- テーブルソート --}}
     <script>
@@ -115,7 +120,7 @@
 
                     <input type="hidden" id="remarks" name="remarks" value="{{$board_details[0]->remarks}}">
 
-                    <div class="row margin-reset" id="remarks-field" style="display:none"">
+                    <div class="row margin-reset" id="remarks-field" style="display:none">
                         <div>
                             備考
                         </div>
@@ -124,8 +129,14 @@
                         </div>
                     </div>
 
-                    <div class="row" id="little-information-field" style="display:none">
-                    <p>登録日:{{$board_details[0]->created_at}} 修正日:{{$board_details[0]->updated_at}}</p>
+                    <div class="row little-information-field" id="little-information-field" style="display:none">
+                        <p>登録日:{{$board_details[0]->created_at}} 修正日:{{$board_details[0]->updated_at}}
+                            <button class="main_button_style" type="button" data-toggle="tooltip" title="スタンプでリアクションする">
+                                <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.stamp')}}" alt="スタンプ" onclick="stamp()">
+                            </button>
+                        </p>
+
+                        @include('pcsp01.pcsp01')
                     </div>
 
                     <div class="row margin-reset">
@@ -468,7 +479,11 @@
                                     @endif
                                 @endif
                                 </li>
+                                @if($incidental_lists['max'] == 0)
+                                0/0&nbsp;&nbsp;0件
+                                @else
                                 {{$count_incidental}}/{{$incidental_lists['max']}}&nbsp;&nbsp;{{$incidental_lists['count']}}件
+                                @endif
                                 <li class="page-item">
                                 @if(!empty($_POST['search']))
                                     @if($count_incidental < $incidental_lists['max'])

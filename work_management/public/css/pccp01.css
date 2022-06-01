@@ -1,0 +1,11 @@
+.little-information-field {
+    position: relative;
+}
+    
+.stamp-area {
+    z-index: 10;
+    background-color: #FBE2B0;
+    height: 200px;
+    border: solid 2px #8ec6ff;
+    position: absolute;
+}

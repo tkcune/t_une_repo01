@@ -104,3 +104,54 @@
     document.getElementById("file_name").value = id2;
   }
 }
+
+function stamp() {
+  //切り替える対象の状態を取得
+  var div = document.getElementById('stamp-area');
+  //取得した情報からスタイルについての状態のみをstateに代入
+  state = div.style.display;
+  //非表示中のときの処理
+  if (state == "none") {
+    //スタイルを表示(inline)に切り替え
+    div.setAttribute("style", "display:inline");
+  } else {
+    //スタイルを非表示(none)に切り替え
+    div.setAttribute("style", "display:none");
+  }
+}
+
+//5/27押されたボタンを取得できるように調整する
+function stampClick(e) {
+ 
+  const stamp_data = e.currentTarget.dataset['stamp'];
+  const board_data = document.getElementById('stamp-area').dataset['board'];
+  const client_data = document.getElementById('stamp-area').dataset['client'];
+  const personnel_data = document.getElementById('stamp-area').dataset['personnel'];
+
+  //ajax処理スタート
+  $.ajax({
+    headers: { //HTTPヘッダ情報をヘッダ名と値のマップで記述
+      'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+    },  //↑name属性がcsrf-tokenのmetaタグのcontent属性の値を取得
+
+    url: '/pskb/stamp', //通信先アドレスで、このURLをあとでルートで設定します
+    method: 'POST', //HTTPメソッドの種別を指定します。1.9.0以前の場合はtype:を使用。
+    data: { //サーバーに送信するデータ
+      'stamp_id': stamp_data,//押されたスタンプの番号
+      'board_id': board_data, //掲示板ID
+      'client_id': client_data, //顧客ID
+      'personnel_id': personnel_data //人員ID
+    },
+  })
+  
+}
+
+done(function (data) {
+  console.log('data'); 
+  $this.toggleClass('liked'); //likedクラスのON/OFF切り替え。
+  $this.next('.like-counter').html(data.review_likes_count);
+})
+//通信失敗した時の処理
+.fail(function () {
+  console.log('fail'); 
+});

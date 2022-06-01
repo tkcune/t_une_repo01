@@ -9,6 +9,10 @@
                 <p>配下場所</p>
                 <form action="{{ route('pssb01.create') }}" method="get">
                     <input type="hidden" id="high" name="high" value="{{$space_data[0]->space_id}}">
+                    <input type="hidden" id="postcode" name="postcode" value="{{$space_data[0]->post_code}}">
+                    <input type="hidden" id="address1" name="address1" value="{{$space_data[0]->address1}}">
+                    <input type="hidden" id="address2" name="address2" value="{{$space_data[0]->address2}}">
+                    <input type="hidden" id="URL" name="URL" value="{{$space_data[0]->URL}}">
                     <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                         <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                     </button>

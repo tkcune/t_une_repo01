@@ -17,6 +17,9 @@
         });
     });
 </script>
+
+<!-- 郵便番号検索はいったん→を利用　https://dezanari.com/ajaxzip3/ -->
+<script src="https://ajaxzip3.github.io/ajaxzip3.js"></script>
 @endsection
 
 @section('content')
@@ -39,7 +42,7 @@
                         <div class="col-4" style="margin-right:-10px">
                             <p id="palent">
                                 <span data-toggle="tooltip" id="id_number" title="番号:{{$space_data[0]->space_id}}">
-                                    名称：<input type="text" name="name" value="{{$space_data[0]->name}}" placeholder="作業場所名" data-toggle="tooltip" title="">
+                                    名称：<input type="text" name="name" value="{{$space_data[0]->name}}" placeholder="作業場所名" data-toggle="tooltip" title="ここに作業場所の名称が入ります。">
                             </p>
                         </div>
 
@@ -51,7 +54,7 @@
 
                         <div class="row">
                             <div class="col-4">
-                                <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$space_data[0]->management_personnel_id}}" style="width:100px;" data-toggle="tooltip" title="" readonly></p>
+                                <p>管理者番号：<input type="text" id="management_number" name="management_number" maxlength="10" value="{{$space_data[0]->management_personnel_id}}" style="width:100px;" data-toggle="tooltip" title="作業場所情報を修正、抹消できる管理者を変更する場合、ここを修正します。管理者自身とシステム管理者だけが修正できます" readonly></p>
                             </div>
                             <div class="col-3" style="padding:0px">
                                 <p>管理者名：<a href="{{ route('plbs01.show',[session('client_id'),$space_data[0]->management_personnel_id])}}">{{$space_data[0]->management_name}}</a></p>
@@ -70,24 +73,25 @@
 
                         <div class="row margin-reset">
                             <div class="col-4">
-                                <p>郵便番号：<input type="text" name="postcode" size="10" value="{{$space_data[0]->post_code}}" maxlength="8" title="郵便番号はハイフン不要の7桁で入力してください。" onKeyUp="AjaxZip3.zip2addr(this,'','address1','address2');" placeholder="0123456">
+                                <p>郵便番号：<input type="text" name="postcode" size="10" value="{{$space_data[0]->post_code}}" maxlength="8" title="郵便番号はハイフン不要の7桁で入力してください。" placeholder="0123456">
+                                <button type="button" title="インターネット接続時にこのボタンを押すと、郵便番号に基づいた該当の住所が反映します。"  onclick="AjaxZip3.zip2addr('postcode', 'address1', 'address1', 'address1');">検索</button>
                             </div>
                             <div class="col" style="padding:0px">
                                 住所:
-                                <input type="text" name="address1" value="{{$space_data[0]->address1}}" size="10" placeholder="都道府県" title="ここに都道府県名が入ります。">
-                                <input type="text" name="address2" value="{{$space_data[0]->address2}}" size="30" placeholder="市区町村以降" title="ここに市区町村名が入ります。">
+                                <input type="text" name="address1" value="{{$space_data[0]->address1}}" size="25" placeholder="都道府県+市区町村" title="ここに都道府県名と以降の住所が入ります。">
+                                <input type="text" name="address2" value="{{$space_data[0]->address2}}" size="15" placeholder="番地" title="ここに番地が入ります。番地なしの場合は無番地と入力します。">
                                 </p>
                             </div>
                             <div class="row margin-reset">
                                 <div class="col">
-                                    <p>URL：<input type="url" name="URL" value="{{$space_data[0]->URL}}" size="81" placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
+                                    <p>地図URL：<input type="url" name="URL" value="{{$space_data[0]->URL}}" size="76" placeholder="https://www.google.co.jp/maps/?hl=ja" title="ここに作業場所の地図のURLを入力します。">
                                         {{-- 作業場所のマップURL、値がNULLならグーグルマップが表示される --}}
                                         @if(($space_data[0]->URL) === NULL)
-                                        <button class="main_button_style" type="button" id="remarks_change_display" onclick="window.open('https://www.google.com/maps/','_blank')" data-toggle="tooltip" title="クリックにより、地図を開きます">
+                                        <button class="main_button_style" type="button" id="remarks_change_display" onclick="window.open('https://www.google.com/maps/','_blank')" data-toggle="tooltip" title="クリックにより、地図を開きます。DBにURLの登録がない場合は、googleマップが開かれます。">
                                             <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.tizu')}}" alt="地図">
                                         </button>
                                         @else
-                                        <button class="main_button_style" type="button" id="remarks_change_display" onclick="window.open('{{$space_data[0]->URL}}','_blank')" data-toggle="tooltip" title="クリックにより、地図を開きます">
+                                        <button class="main_button_style" type="button" id="remarks_change_display" onclick="window.open('{{$space_data[0]->URL}}','_blank')" data-toggle="tooltip" title="クリックにより、地図を開きます。DBにURLの登録がない場合は、googleマップが開かれます。">
                                             <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.tizu')}}" alt="地図">
                                         </button>
                                         @endif
@@ -158,7 +162,4 @@
         </div>
     </div>
 </div>
-
-<!-- 郵便番号検索は→を一旦利用 https://www.webdesign-fan.com/ajaxzip3  -->
-<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
 @endsection

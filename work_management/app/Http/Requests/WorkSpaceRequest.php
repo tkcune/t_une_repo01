@@ -46,8 +46,8 @@ class WorkSpaceRequest extends FormRequest
         return [
             'name.required' => '作業場所名を入力してください',
             'name.max' => '作業場所名は32文字以内で入力してください',
-            'address1.max' => '都道府県は32文字以内で入力してください',
-            'address2.max' => '市区町村は32文字以内で入力してください',
+            'address1.max' => '都道府県部分は32文字以内で入力してください',
+            'address2.max' => '番地部分は32文字以内で入力してください',
             'URL.url' => '有効なURLではありません',
             'URL.max' => 'URLの文字数が255文字を超えています。短縮してください。',
         ];
@@ -108,7 +108,7 @@ class WorkSpaceRequest extends FormRequest
                 back()->withInput($this->input)->withErrors($validator)
             );
         } elseif (
-            $validator->errors()->first('address1') == "都道府県は32文字以内で入力してください"
+            $validator->errors()->first('address1') == "都道府県部分は32文字以内で入力してください"
         ) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0017', '01');
             $message = Message::get_message_handle('mhcmer0017', [0 => '']);
@@ -118,7 +118,7 @@ class WorkSpaceRequest extends FormRequest
                 back()->withInput($this->input)->withErrors($validator)
             );
         } elseif (
-            $validator->errors()->first('address2') == "市区町村は32文字以内で入力してください"
+            $validator->errors()->first('address2') == "番地部分は32文字以内で入力してください"
         ) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0018', '01');
             $message = Message::get_message_handle('mhcmer0018', [0 => '']);

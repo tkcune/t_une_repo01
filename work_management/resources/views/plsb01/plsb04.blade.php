@@ -4,6 +4,10 @@
     @csrf
     <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規" onclick="submit();" data-toggle="tooltip" title="本データの下位に新しいデータを追加します">
     <input type="hidden" id="high_new" name="high" value="{{ $space_data->space_id }}">
+    <input type="hidden" id="postcode" name="postcode" value="{{$space_data->post_code}}">
+    <input type="hidden" id="address1" name="address1" value="{{$space_data->address1}}">
+    <input type="hidden" id="address2" name="address2" value="{{$space_data->address2}}">
+    <input type="hidden" id="URL" name="URL" value="{{$space_data->URL}}">
 </form>
 
 @if(substr($click_id,0,2) == "ta")

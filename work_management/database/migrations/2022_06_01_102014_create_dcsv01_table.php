@@ -18,7 +18,7 @@ class CreateDcsv01Table extends Migration
             $table->string('client_id','10');
             $table->string('personnel_id','10');
             $table->string('board_id','10');
-            $table->integer('stamp_id','2');
+            $table->string('stamp_id','2');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
         });

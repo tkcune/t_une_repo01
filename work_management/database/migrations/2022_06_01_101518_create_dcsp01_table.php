@@ -14,7 +14,6 @@ class CreateDcsp01Table extends Migration
     public function up()
     {
         Schema::create('dcsp01', function (Blueprint $table) {
-            $table->primary(['stamp_id']);
             $table->integer('stamp_id','2');
             $table->string('content','10');
             $table->timestamp('created_at')->useCurrent();

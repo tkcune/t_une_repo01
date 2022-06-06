@@ -195,6 +195,8 @@ class Pskb01Controller extends Controller
      * @var App\Libraries\php\Service\Display\List\BoardDisplayList $board
      * @var array $board_lists 掲示板一覧データ
      * @var $system_management_lists システム管理者リスト
+     * @var array $stamps 押されたスタンプ情報
+     * @var array $stamp_lists スタンプリスト
      * 
      * @return \Illuminate\Http\Response
      */
@@ -251,7 +253,7 @@ class Pskb01Controller extends Controller
 
         $stamps = StampDataBase::stamp($client_id,$select_id);
         $stamp_lists = config('stamp');
-        
+
         return view('pskb01.pskb01',compact('board_details','board_lists','incidental_lists','system_management_lists',
         'count_board','count_incidental','stamps','stamp_lists'));
     }

@@ -3,7 +3,7 @@
 <p>
 
 @foreach($stamp_lists as $stamp_list)
-<button class="main_button_style" type="button" data-toggle="tooltip" title="スタンプでリアクションする" data-stamp="{{$loop->index+1}}" onclick="stampClick(event)">
+<button class="main_button_style" type="button" data-toggle="tooltip" title="スタンプでリアクションする" data-stamp="{{$loop->iteration}}" onclick="stampClick(event)">
   <img class="remarks_button" src="data:image/png;base64,{{Config::get($stamp_list)}}" alt="スタンプ">
 </button>
 @endforeach

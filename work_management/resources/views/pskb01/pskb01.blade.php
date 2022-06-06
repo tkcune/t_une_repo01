@@ -5,7 +5,7 @@
 @endsection
 
 @section('css')
-    <link href="{{ asset('css/pccp01.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/pcsp01.css') }}" rel="stylesheet">
 @endsection
 
 
@@ -100,7 +100,7 @@
                             <input type="file" name="file_name[]" id="file_name" multiple value="" style="width:254px;" data-toggle="tooltip" title="ファイルをアップロード" >
                             <button formaction="{{ route('pskb01.fileUpload',[session('client_id'),$board_details[0]->board_id])}}" formmethod="post">追加</button>
 
-                            <button class="main_button_style" type="button" id="remarks_change_display" onclick="remarksOn()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
+                            <button class="main_button_style" type="button" id="remarks_change_display" onclick="boardRemarks()" data-toggle="tooltip" title="クリックにより、備考及び登録日などの情報を開きます">
                                 <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.updown')}}" alt="開閉" >
                             </button>
                             </p>
@@ -129,13 +129,21 @@
                         </div>
                     </div>
 
-                    <div class="row little-information-field" id="little-information-field" style="display:none">
-                        <p>登録日:{{$board_details[0]->created_at}} 修正日:{{$board_details[0]->updated_at}}
-                            <button class="main_button_style" type="button" data-toggle="tooltip" title="スタンプでリアクションする">
-                                <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.stamp')}}" alt="スタンプ" onclick="stamp()">
-                            </button>
-                        </p>
+                    <div class="stamp-field" id="stamp-field" style="display:none">
+                        @foreach($stamps as $stamp)
+                        <div class ="stamp_cicrle" id ="{{$stamp->stamp_id}}" style="display:inline-block">
+                            <img class="stamp_button" src="data:image/png;base64,{{Config::get($stamp->base64)}}" alt="スタンプ"><span class="stamp_count">{{$stamp->count}}</span>
+                        </div>
+                        @endforeach
 
+                    </div>
+
+                    <div class="row little-information-field" id="little-information-field" style="display:none">
+                            <p>登録日:{{$board_details[0]->created_at}} 修正日:{{$board_details[0]->updated_at}}
+                                <button class="main_button_style" type="button" data-toggle="tooltip" title="スタンプでリアクションする">
+                                    <img class="remarks_button" src="data:image/png;base64,{{Config::get('base64.stamp')}}" alt="スタンプ" onclick="stamp()">
+                                </button>    
+                            </p>
                         @include('pcsp01.pcsp01')
                     </div>
 
@@ -580,6 +588,7 @@
                     </div>
                 </div>
     </div>
+
 </div>
 
 @endsection

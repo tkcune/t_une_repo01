@@ -92,9 +92,6 @@
  * @var string check チェックボタンの状態
  */
  function reflection(id,id2) {
-
-  console.log(id);
-  console.log(id2);
   
   if(id2.substring(0,4) == "http"){
     document.getElementById("url_id").defaultValue = id;
@@ -102,6 +99,37 @@
   }else{
     document.getElementById("file_id").defaultValue = id;
     document.getElementById("file_name").value = id2;
+  }
+}
+
+/**
+ * 掲示板備考欄及び微細情報の隠蔽表示メソッド
+ * @var string div 備考欄のdiv
+ * @var string div2 微細情報のdiv
+ * @var string stamp_div スタンプ情報のdiv
+ * @var string state 対象のdivの状態
+ */
+var boardRemarks = function () {
+  //切り替える対象の状態を取得
+  var div = document.getElementById('remarks-field');
+  var div2 = document.getElementById('little-information-field');
+  var stamp_div = document.getElementById('stamp-field');
+  //取得した情報からスタイルについての状態のみをstateに代入
+  state = div.style.display;
+  state2 = div2.style.display;
+  //非表示中のときの処理
+  if (state == "none") {
+    //スタイルを表示(inline)に切り替え
+    div.setAttribute("style","display:block");
+    div2.setAttribute("style", "display:block");
+    stamp_div.setAttribute("style", "display:block");
+
+  } else {
+    //スタイルを非表示(none)に切り替え
+    div.setAttribute("style", "display:none");
+    div2.setAttribute("style", "display:none");
+    stamp_div.setAttribute("style", "display:none");
+    
   }
 }
 
@@ -120,14 +148,20 @@ function stamp() {
   }
 }
 
-//5/27押されたボタンを取得できるように調整する
+//スタンプ動作
 function stampClick(e) {
- 
+  console.log(e.currentTarget.dataset['stamp']);
+  console.log(e.currentTarget);
   const stamp_data = e.currentTarget.dataset['stamp'];
+  //6月3日押したボタンのsrc属性を取得できればOK
+  const stamp_src = e.currentTarget.children[0].src;
   const board_data = document.getElementById('stamp-area').dataset['board'];
   const client_data = document.getElementById('stamp-area').dataset['client'];
   const personnel_data = document.getElementById('stamp-area').dataset['personnel'];
 
+  //スタンプ画面を閉じる
+  stamp();
+  
   //ajax処理スタート
   $.ajax({
     headers: { //HTTPヘッダ情報をヘッダ名と値のマップで記述
@@ -143,15 +177,63 @@ function stampClick(e) {
       'personnel_id': personnel_data //人員ID
     },
   })
-  
+  //通信成功した時の処理
+  .done(function (data) {
+    console.log('sucsess');
+
+    before_count = document.getElementsByClassName("stamp_cicrle").length;
+    after_count = data.length;
+    
+    if(before_count > after_count){
+      //カウントが0のスタンプは削除
+      var delete_div = document.getElementById(stamp_data);
+      delete_div.parentNode.removeChild(delete_div);
+
+      for(i=0;i<data.length;i++){
+        document.getElementsByClassName("stamp_count")[i].textContent = data[i].count;
+      }
+      
+    }else if(before_count < after_count){
+      //新しく押されたスタンプを追加
+
+      //div要素の生成
+      var div = document.createElement("div");
+      div.className = 'stamp_cicrle';
+      div.id = stamp_data;
+      div.style = 'display:inline-block';
+
+      //img要素の生成
+      var img = document.createElement("img");
+      img.src = stamp_src;
+      img.alt = "スタンプ";
+      img.className = 'stamp_button';
+
+      //span要素の生成
+      var span = document.createElement("span");
+      span.className = "stamp_count"
+      span.innerHTML = 1;
+
+      //divの生成
+      div.appendChild(img);
+      div.appendChild(span);
+
+      //domの生成
+      document.getElementById('stamp-field').appendChild(div);
+
+      for(i=0;i<data.length;i++){
+        document.getElementsByClassName("stamp_count")[i].textContent = data[i].count;
+      }
+
+    }else{
+      //スタンプ数に変化が無い場合は数字のみ変更
+      for(i=0;i<data.length;i++){
+        document.getElementsByClassName("stamp_count")[i].textContent = data[i].count;
+      }
+    }
+  })
+  //通信失敗した時の処理
+  .fail(function () {
+    console.log('fail'); 
+  });
 }
 
-done(function (data) {
-  console.log('data'); 
-  $this.toggleClass('liked'); //likedクラスのON/OFF切り替え。
-  $this.next('.like-counter').html(data.review_likes_count);
-})
-//通信失敗した時の処理
-.fail(function () {
-  console.log('fail'); 
-});

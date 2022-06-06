@@ -16,6 +16,7 @@ class CreateDcsp01Table extends Migration
         Schema::create('dcsp01', function (Blueprint $table) {
             $table->integer('stamp_id','2');
             $table->string('content','10');
+            $table->string('base64','100');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
         });

@@ -14,6 +14,7 @@ use App\Libraries\php\Domain\ProjectionDataBase;
 use App\Libraries\php\Domain\FileDataBase;
 use App\Libraries\php\Domain\UrlDataBase;
 use App\Libraries\php\Domain\Hierarchical;
+use App\Libraries\php\Domain\StampDataBase;
 use App\Libraries\php\Service\DatabaseException;
 use App\Libraries\php\Service\Message;
 use App\Libraries\php\Service\Pagination;
@@ -248,8 +249,11 @@ class Pskb01Controller extends Controller
             $count_board = $board_lists['max'];
         }
 
+        $stamps = StampDataBase::stamp($client_id,$select_id);
+        $stamp_lists = config('stamp');
+        
         return view('pskb01.pskb01',compact('board_details','board_lists','incidental_lists','system_management_lists',
-        'count_board','count_incidental'));
+        'count_board','count_incidental','stamps','stamp_lists'));
     }
 
     /**
@@ -493,6 +497,8 @@ class Pskb01Controller extends Controller
      * @var array $projection_board 掲示板投影データ
      * @var  int $board_max ページネーションの最大値
      * @var  array $board_lists ページネーション掲示板一覧データ
+     * @var array $stamps 押されたスタンプ情報
+     * @var array $stamp_lists スタンプリスト
      * 
      * @return \Illuminate\Http\Response
      */
@@ -566,8 +572,12 @@ class Pskb01Controller extends Controller
             $count_board = $board_lists['max'];
         }
 
+        //スタンプ情報取得
+        $stamps = StampDataBase::stamp($client_id,$select_id);
+        $stamp_lists = config('const.stamp');
+
         if($select_id == 'kb00000000'){
-            return view('pvkb01.pvkb01',compact('board_lists','count_board'));
+            return view('pvkb01.pvkb01',compact('board_lists','count_board','stamps','stamp_list'));
         }
         return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists',
         'count_board'));
@@ -819,10 +829,56 @@ class Pskb01Controller extends Controller
      */
     public function stamp(Request $request){
 
-        dd($request);
+        $client_id = $request->client_id;
+        $board_id = $request->board_id;
+        $personnel_id = $request->personnel_id;
+        $stamp_id = $request->stamp_id;
 
+        //既にスタンプを押してあるかどうかのチェック
+        try{
+            $stamp = StampDataBase::get($client_id,$board_id,$personnel_id,$stamp_id);
+            
+        }catch(\Exception $e){
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            DatabaseException::common($e);
+            
+            return redirect()->route('pskb01.index');
+        }
+
+        //押してある場合は削除
+        if(!empty($stamp)){
+            try{
+                StampDataBase::delete($client_id,$board_id,$personnel_id,$stamp_id);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+            
+                return redirect()->route('pskb01.index');
+            }
+        }else{
+        //押して無い場合は登録
+            try{
+                StampDataBase::insert($client_id,$board_id,$personnel_id,$stamp_id);
+            }catch(\Exception $e){
+                OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+                DatabaseException::common($e);
+            
+                return redirect()->route('pskb01.index');
+            }
+        }
+
+        //スタンプ情報の取得
+        //try{
+            $datas = StampDataBase::stamp($client_id,$board_id);
+        //}catch(\Exception $e){
+            //OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
+            //DatabaseException::common($e);
         
+            //return redirect()->route('pskb01.index');
+        //}
 
-        return response()->json($request);
+        //スタンプの種類のbase64の名前を何かしらの方法で取得
+    
+        return response()->json($datas);
     }
 }

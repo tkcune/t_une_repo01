@@ -1,0 +1,26 @@
+.little-information-field {
+    position: relative;
+    display:flex;
+}
+    
+.stamp-area {
+    z-index: 10;
+    background-color: #FBE2B0;
+    height: 200px;
+    border: solid 2px #8ec6ff;
+    position: absolute;
+}
+
+
+.stamp_button {
+    height: 15px;
+}
+
+.stamp_cicrle{
+    padding: 2px 2px;
+    font-weight: bold;
+    color: #6091d3;/*文字色*/
+    background: #FFF;
+    border: solid 1px #6091d3;/*線*/
+    border-radius: 10px;/*角の丸み*/
+}

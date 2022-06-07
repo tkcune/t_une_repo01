@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
             DckbSeeder::class,
             DcsbSeeder::class,
             DcspSeeder::class,
-            DcsvSeeder::class
+            DcsvSeeder::class,
+            DckgSeeder::class
         ]);
     }
 }

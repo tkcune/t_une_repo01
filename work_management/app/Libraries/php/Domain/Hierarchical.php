@@ -503,6 +503,7 @@ use App\Libraries\php\Service\Message;
         //@param string $number コピー対象のテーブルの最新のid
         //@param string $db_name コピー対象のテーブル名
         //@param string $id_name コピー対象のカラム名
+        //@return bool 成功の時に，true。失敗の時に，false。
         private static function subCopy($client_id, $copy_id, $high_id, $number, $db_name, $id_name){
             //@var string idから機能コードを除いた数字の部分
             $id_num = substr($number,3);
@@ -790,6 +791,7 @@ use App\Libraries\php\Service\Message;
         //コードのデータ取得を統一するために，無名のクラスを作成する
         //@param string $high_id コピー先の親のid
         //@param string $copy_id コピー対象のid
+        //@return class データ取得の統一のための無名クラス
         private static function hierarchy_instance($high_id, $copy_id){
             //high_id,lower_idというプロパティをもつクラスを作成する
             return ((

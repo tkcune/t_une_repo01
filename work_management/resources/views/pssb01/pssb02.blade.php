@@ -110,7 +110,7 @@
                                 備考
                             </div>
                             <div>
-                                <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" placeholder="備考欄は任意で入力します。" style="width:800px; height: 60px;">{{ $space_data[0]->remarks }}</textarea>
+                                <textarea id="remarks_set" onchange = "remarks(this value)" placeholder="備考欄は任意で入力します。" style="width:800px; height: 60px;">{{ $space_data[0]->remarks }}</textarea>
                             </div>
                         </div>
 

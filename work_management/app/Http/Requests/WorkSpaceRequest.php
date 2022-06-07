@@ -38,6 +38,7 @@ class WorkSpaceRequest extends FormRequest
             'address1' =>  ['required', new JapaneseAndAlphaNumRule, 'max:32'],
             'address2' => ['required', new JapaneseAndAlphaNumRule, 'max:32'],
             'URL' => ['url', 'nullable', 'max:255'],
+            'remarks' => ['nullable', 'max:512'],
         ];
     }
 
@@ -50,6 +51,7 @@ class WorkSpaceRequest extends FormRequest
             'address2.max' => '番地部分は32文字以内で入力してください',
             'URL.url' => '有効なURLではありません',
             'URL.max' => 'URLの文字数が255文字を超えています。短縮してください。',
+            'remarks.max' => '備考欄は512文字以内で入力してください',
         ];
     }
 
@@ -122,6 +124,16 @@ class WorkSpaceRequest extends FormRequest
         ) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0018', '01');
             $message = Message::get_message_handle('mhcmer0018', [0 => '']);
+            session(['message' => $message[0], 'handle_message' => $message[3]]);
+            // リダイレクト先
+            throw new HttpResponseException(
+                back()->withInput($this->input)->withErrors($validator)
+            );
+        } elseif (
+            $validator->errors()->first('remarks') == "備考欄は512文字以内で入力してください"
+        ) {
+            OutputLog::message_log(__FUNCTION__, 'mhcmer0020', '01');
+            $message = Message::get_message_handle('mhcmer0020', [0 => '']);
             session(['message' => $message[0], 'handle_message' => $message[3]]);
             // リダイレクト先
             throw new HttpResponseException(

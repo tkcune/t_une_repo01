@@ -120,10 +120,10 @@ class OutputLogClass{
     //ログファイルを出力する
     private function write_log_csv($log_csv){
         //@var boolean ログファイルが存在するか判断
-        $isfile = is_file('./fclg'.substr($this->client_id, -8).'.csv');
-        if($isfile){
+        $is_file = file_exists(storage_path().'\\logs\\fclg'.substr($this->client_id, -8).'.csv');
+        if($is_file){
             //@var File ログファイルのファイルポインタ
-            $facmlg_csv = fopen('./fclg'.substr($this->client_id, -8).'.csv', 'a');
+            $facmlg_csv = fopen(storage_path().'\\logs\\fclg'.substr($this->client_id, -8).'.csv', 'a');
             //ログを追加出力する
             fputcsv($facmlg_csv, $log_csv);
         }else{
@@ -131,7 +131,7 @@ class OutputLogClass{
             //@var array ログファイルのヘッダー
             $head = ['時間', '類別', 'アクセスユーザー', '機能', 'ログ'];
             //@var File ログファイルを作成し、ポインタを取得する
-            $facmlg_csv = fopen('./fclg'.substr($this->client_id, -8).'.csv', 'w');
+            $facmlg_csv = fopen(storage_path().'\\logs\\fclg'.substr($this->client_id, -8).'.csv', 'w');
             
             //ヘッダーを出力する
             fputcsv($facmlg_csv, $head);
@@ -144,10 +144,10 @@ class OutputLogClass{
     //システムログファイルを出力する
     private function write_system_log_csv($system_log_csv){
         //@var boolean システムログファイルが存在するか判断
-        $isfile = is_file('./falg01.csv');
-        if($isfile){
+        $is_file = file_exists(storage_path().'\\logs\\falg01.csv');
+        if($is_file){
             //@var File システムログファイルのファイルポインタ
-            $facmsl_csv = fopen('./falg01.csv', 'a');
+            $facmsl_csv = fopen(storage_path().'\\logs\\falg01.csv', 'a');
             //システムログを追加出力する
             fputcsv($facmsl_csv, $system_log_csv);
         }else{
@@ -155,7 +155,7 @@ class OutputLogClass{
             //@var array システムログファイルのヘッダー
             $head = ['時間', '類別', '顧客名', 'アクセスユーザー', '機能', 'プログラムパス', 'ログ'];
             //@var File システムログファイルを作成し、ポインタを取得する
-            $facmsl_csv = fopen('./falg01.csv', 'w');
+            $facmsl_csv = fopen(storage_path().'\\logs\\falg01.csv', 'w');
             
             //ヘッダーを出力する
             fputcsv($facmsl_csv, $head);

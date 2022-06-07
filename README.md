@@ -50,3 +50,4 @@
 1. コマンドプロンプトのwork_manegement配下でcomposer require --dev "orangehill/iseed"を実行(既に実行済みの場合は省略)<BR>
 
 2. コマンドプロンプトのwork_manegement配下でphp artisan iseed {table_name}を実行({table_name}は対応したテーブル名を記載)<BR>
+

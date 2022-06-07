@@ -7,7 +7,7 @@
         <div class="col-4" style="display:inline-flex;">
             <p>配下場所</p>
             <form action="{{ route('pssb01.create') }}" method="get">
-                <input type="hidden" id="high_new" name="high" value="{{$space_details['data'][0]->space_id}}">
+                <input type="hidden" id="high_new" name="high" value='sb00000000'>
                 <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                     <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                 </button>

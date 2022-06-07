@@ -232,7 +232,18 @@ class Pssb01Controller extends Controller
 
             //データベースに階層情報を登録
             $hierarchical = new Hierarchical();
-            $hierarchical->insert($client_id, $space_id, $high);
+
+            //6/7　概要画面から登録したとき用
+            if (!($high === 'sb00000000')) {
+                $hierarchical->insert($client_id, $space_id, $high);
+            };
+
+            // if ($high === 'sb00000000') {
+            //     $high = NULL;
+            //     $hierarchical->insert($client_id, $space_id, $high);
+            // } else {
+            //     $hierarchical->insert($client_id, $space_id, $high);
+            // };
 
             DB::commit();
 
@@ -242,7 +253,13 @@ class Pssb01Controller extends Controller
             $request->session()->put('message', Config::get('message.mhcmok0001'));
             PtcmtrController::open_node($space_id);
 
-            return redirect()->route('pssb01.show', [$client_id, $high]);
+            //6/7　概要画面から登録したとき用
+            if ($high === 'sb00000000') {
+                return redirect()->route('pssb01.index');
+            } else {
+                return redirect()->route('pssb01.show', [$client_id, $high]);
+            };
+            
         } catch (\Exception $e) {
             DB::rollBack();
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');

@@ -16,7 +16,7 @@ class CreateDccmksTable extends Migration
         Schema::create('dccmks', function (Blueprint $table) {
             $table->string('client_id','10');
             $table->string('lower_id','10');
-            $table->string('high_id','10');
+            $table->string('high_id','10')->nullable();
             $table->timestamps();
         });
     }

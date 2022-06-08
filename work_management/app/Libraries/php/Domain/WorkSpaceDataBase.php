@@ -84,15 +84,14 @@ class WorkSpaceDataBase
      */
     public static function getList($client_id)
     {
-
         $data = DB::select(
             'SELECT sb1.client_id,sb1.space_id,sb1.name,sb1.management_personnel_id,
             sb1.post_code,sb1.address1, sb1.address2,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
             AS high_name,high_id,dcji01.name AS management_name FROM dcsb01 AS sb1
             left join dccmks on sb1.space_id = dccmks.lower_id
-            left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id
+            left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id = NULL
             left join dcji01 on sb1.management_personnel_id = dcji01.personnel_id
-            where sb1.client_id = ? order by sb1.space_id',
+            where sb1.client_id = ? and dccmks.high_id IS NULL order by sb1.space_id',
             [$client_id]
         );
 
@@ -329,14 +328,14 @@ class WorkSpaceDataBase
      */
     public static function getSearchTop($client_id, $search)
     {
-
         $data = DB::select('SELECT sb1.client_id,sb1.space_id,sb1.name,sb1.management_personnel_id,
             sb1.post_code,sb1.address1, sb1.address2,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
             AS high_name,high_id,dcji01.name AS management_name FROM dcsb01 as sb1
             left join dccmks on sb1.space_id = dccmks.lower_id
             left join dcsb01 as sb2 on dccmks.high_id = sb2.space_id
             left join dcji01 on sb1.management_personnel_id = dcji01.personnel_id
-            where sb1.client_id = ? and sb1.name like ? order by sb1.space_id', [$client_id, '%' . $search . '%']);
+            where sb1.client_id = ?  and dccmks.high_id IS NULL and sb1.name like ? order by sb1.space_id',
+            [$client_id, '%' . $search . '%']);
 
         return $data;
     }

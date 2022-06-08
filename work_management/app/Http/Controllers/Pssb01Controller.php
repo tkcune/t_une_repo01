@@ -68,25 +68,16 @@ class Pssb01Controller extends Controller
         $tree_data = $tree->set_view_treedata();
 
         if (isset($_GET['space_page'])) {
-            $count_department = $_GET['space_page'];
-            $count_personnel = $_GET['personnel_page'];
             $count_space = $_GET['space_page'];
         } else {
-            $count_department = Config::get('startcount.count');
-            $count_personnel = Config::get('startcount.count');
             $count_space = Config::get('startcount.count');
         }
 
         //一覧画面のデータ取得
         try {
-            $department_display_list = new DepartmentDisplayList();
-            $department_data = $department_display_list->display($client_id, $select_id, $count_department);
-
-            $personnel_display_list = new PersonnelDisplayList();
-            $personnel_data = $personnel_display_list->display($client_id, $select_id, $count_personnel);
-
             $space_display_list = new SpaceDisplayList();
             $space_details = $space_display_list->display($client_id, $select_id, $count_space);
+
         } catch (\Exception $e) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
             DatabaseException::common($e);
@@ -94,27 +85,18 @@ class Pssb01Controller extends Controller
         }
 
         //ページネーションが最大値を超えていないかの判断
-        if ($count_personnel > $personnel_data['max']) {
-            $count_personnel = $personnel_data['max'];
-        }
-
         if ($count_space > $space_details['max']) {
             $count_space = $space_details['max'];
         }
 
         //ページネーションオブジェクト設定
         $pagination_object = new PaginationObject();
-        $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
         $pagination_object->space_set_pagination($space_details, $count_space);
 
         return view('pvsb01.pvsb01', compact(
-            'count_department',
-            'count_personnel',
             'count_space',
-            'department_data',
-            'personnel_data',
             'space_details',
-            'pagination_object'
+            'pagination_object',
         ));
     }
 
@@ -232,7 +214,13 @@ class Pssb01Controller extends Controller
 
             //データベースに階層情報を登録
             $hierarchical = new Hierarchical();
-            $hierarchical->insert($client_id, $space_id, $high);
+
+            if ($high === 'sb00000000') {
+                $high = NULL;
+                $hierarchical->insert($client_id, $space_id, $high);
+            } else {
+                $hierarchical->insert($client_id, $space_id, $high);
+            };
 
             DB::commit();
 
@@ -242,7 +230,11 @@ class Pssb01Controller extends Controller
             $request->session()->put('message', Config::get('message.mhcmok0001'));
             PtcmtrController::open_node($space_id);
 
-            return redirect()->route('pssb01.show', [$client_id, $high]);
+            if ($high === NULL) {
+                return redirect()->route('pssb01.index');
+            } else {
+                return redirect()->route('pssb01.show', [$client_id, $high]);
+            };
         } catch (\Exception $e) {
             DB::rollBack();
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001');
@@ -388,8 +380,6 @@ class Pssb01Controller extends Controller
         $space_display_list = new SpaceDisplayList();
         $personnel_db = new PersonnelDataBase();
         $projection_db = new ProjectionDataBase();
-        $personnel_display_list = new PersonnelDisplayList();
-        $department_display_list = new DepartmentDisplayList();
 
         $select_code = substr($select_id, 0, 2);
         View::share('click_id', $select_id);
@@ -439,46 +429,9 @@ class Pssb01Controller extends Controller
         //概要画面用
         if ($select_id == 'sb00000000') {
 
-            //検索語のチェック
-            if (isset($_GET['search2'])) {
-                $_POST['search2'] = $_GET['search2'];
-            }
-
-            //ページネーションの番号チェック
-            if (isset($_GET['personnel_page'])) {
-                $count_department = $_GET['space_page'];
-                $count_personnel = $_GET['personnel_page'];
-            } else {
-                $count_department = Config::get('startcount.count');
-                $count_personnel = Config::get('startcount.count');
-            }
-
-            //一覧に記載する人員データの取得
-            $personnel_data = $personnel_display_list->display($client_id, $select_id, $count_personnel, $request->search2);
-            $department_data = $department_display_list->display($client_id, $select_id, $count_department);
-
-            //検索結果が0件なら戻る
-            if (empty($personnel_data['data'])) {
-                OutputLog::message_log(__FUNCTION__, 'mhcmwn0001');
-                $message = Message::get_message_handle('mhcmwn0001', [0 => '']);
-                session(['message' => $message[0], 'handle_message' => $message[3]]);
-                return redirect()->route('pssb01.index');
-            }
-
-            //ページネーションが最大値を超えていないかの判断
-            if ($count_personnel > $personnel_data['max']) {
-                $count_personnel = $personnel_data['max'];
-            }
-
-            //一覧データの取得
-            $space_details = $space_display_list->display($client_id, $select_id, $count_space, $request->search);
-            $pagination_object->set_pagination($department_data, $count_department, $personnel_data, $count_personnel);
-
             return view('pvsb01.pvsb01', compact(
                 'space_details',
                 'count_space',
-                'personnel_data',
-                'count_personnel',
                 'pagination_object'
             ));
         }
@@ -770,7 +723,13 @@ class Pssb01Controller extends Controller
         //データベース更新
         try {
             $hierarchical = new Hierarchical();
-            $hierarchical->update($high_id, $client_id, $lower_id);
+
+            if ($high_id === 'sb00000000') {
+                $high_id = NULL;
+                $hierarchical->update($high_id, $client_id, $lower_id);
+            } else {
+                $hierarchical->update($high_id, $client_id, $lower_id);
+            };
         } catch (\Exception $e) {
             //エラー及びログ処理
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
@@ -853,7 +812,13 @@ class Pssb01Controller extends Controller
 
             //データベースに階層情報を登録
             $hierarchical = new Hierarchical();
-            $hierarchical->insert($client_id, $projection_id, $high);
+
+            if ($high === 'sb00000000') {
+                $high = NULL;
+                $hierarchical->insert($client_id, $projection_id, $high);
+            } else {
+                $hierarchical->insert($client_id, $projection_id, $high);
+            };
 
             DB::commit();
         } catch (\Exception $e) {
@@ -872,7 +837,12 @@ class Pssb01Controller extends Controller
         session(['message' => $message[0]]);
         PtcmtrController::open_node($projection_id);
 
-        return redirect()->route('pssb01.show', [$client_id, $high]);
+    
+        if ($high === NULL) {
+            return redirect()->route('pssb01.index');
+        } else {
+            return redirect()->route('pssb01.show', [$client_id, $high]);
+        };
     }
 
     /**

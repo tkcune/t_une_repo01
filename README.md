@@ -35,7 +35,7 @@
     
 　4-2.続けて、 php artisan db:seedで、データベースにデータを挿入する<BR>
     
-５・APP_KEYの生成
+５・APP_KEYの生成（C.Laravelプログラム資源をダウンロードし開発可能にする手順　3.アプリケーションキーを生成を行っていない場合）
     
 　5-1. php artisan key:generateの実行で、.envファイルのAPP_KEYが生成される<BR>
   

@@ -14,7 +14,7 @@ class CreateDckg01Table extends Migration
     public function up()
     {
         Schema::create('dckg01', function (Blueprint $table) {
-            $table->primary(['client_id', 'authority_id', 'authority_path_id']);
+            $table->primary(['client_id', 'authority_path_id', 'own_authority_id']);
             $table->string('client_id','10')->comment('クライアントのid');
             $table->string('authority_id','10')->comment('権限のid');
             $table->string('authority_path_id','10')->comment('権限場所のid');

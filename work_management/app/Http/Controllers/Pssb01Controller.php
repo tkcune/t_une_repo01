@@ -58,7 +58,7 @@ class Pssb01Controller extends Controller
         //ログインしている顧客IDの取得
         $client_id = "aa00000001";
         //select_idはbsにしないと人員・部署情報が取れない
-        $select_id = "sb00000000";
+        $select_id = "bs00000000";
 
         //ログイン機能が完成次第、そちらで取得可能なため、このセッション取得を削除する。
         session(['client_id' => $client_id]);

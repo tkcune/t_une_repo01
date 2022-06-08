@@ -58,7 +58,7 @@ class Pssb01Controller extends Controller
         //ログインしている顧客IDの取得
         $client_id = "aa00000001";
         //select_idはbsにしないと人員・部署情報が取れない
-        $select_id = "bs00000000";
+        $select_id = "sb00000000";
 
         //ログイン機能が完成次第、そちらで取得可能なため、このセッション取得を削除する。
         session(['client_id' => $client_id]);
@@ -723,7 +723,6 @@ class Pssb01Controller extends Controller
         //データベース更新
         try {
             $hierarchical = new Hierarchical();
-
             if ($high_id === 'sb00000000') {
                 $high_id = NULL;
                 $hierarchical->update($high_id, $client_id, $lower_id);
@@ -812,7 +811,6 @@ class Pssb01Controller extends Controller
 
             //データベースに階層情報を登録
             $hierarchical = new Hierarchical();
-
             if ($high === 'sb00000000') {
                 $high = NULL;
                 $hierarchical->insert($client_id, $projection_id, $high);
@@ -837,7 +835,6 @@ class Pssb01Controller extends Controller
         session(['message' => $message[0]]);
         PtcmtrController::open_node($projection_id);
 
-    
         if ($high === NULL) {
             return redirect()->route('pssb01.index');
         } else {

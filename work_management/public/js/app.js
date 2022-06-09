@@ -2644,16 +2644,22 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.deviceName === 'pc') {
           //@var string Laravelのセッションid
           var clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
 
-          var nodeId = this.node.id; //移動命令
+          var nodeId = this.node.id;
 
-          window.location = document.location.origin + "/show/".concat(clientId, "/").concat(nodeId);
+          if (nodeId === 'bs00000000') {
+            //移動命令
+            window.location = document.location.origin + "/show/bs/top";
+          } else {
+            //移動命令
+            window.location = document.location.origin + "/show/".concat(clientId, "/").concat(nodeId);
+          }
         } else if (this.node.id.substr(0, 2) === 'kb') {
           //@var string Laravelのセッションid
           var _clientId = document.getElementById('hidden_client_id').value; //@var string ノードのid
 
           var _nodeId = this.node.id;
 
-          if (_nodeId === 'kb') {
+          if (_nodeId === 'kb00000000') {
             //移動命令
             window.location = document.location.origin + "/pskb/";
           } else {
@@ -2666,7 +2672,7 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.deviceName === 'pc') {
 
           var _nodeId2 = this.node.id;
 
-          if (_nodeId2 === 'sb') {
+          if (_nodeId2 === 'sb00000000') {
             //移動命令
             window.location = document.location.origin + "/pssb01/";
           } else {
@@ -2682,7 +2688,11 @@ if (_ptcmrd__WEBPACK_IMPORTED_MODULE_1__.findMobile.deviceName === 'pc') {
           var projectionId = this.node.fromLink[0]; //作業場所の場合
 
           if (projectionId.substr(0, 2) === 'sb') {
+            //移動命令
             window.location = document.location.origin + "/pssb01/show/".concat(_clientId3, "/").concat(_nodeId3);
+          } else if (projectionId.substr(0, 2) === 'kb') {
+            //移動命令
+            window.location = document.location.origin + "/pskb01/show/".concat(_clientId3, "/").concat(_nodeId3);
           } else {
             //移動命令
             window.location = document.location.origin + "/show/".concat(_clientId3, "/").concat(_nodeId3);

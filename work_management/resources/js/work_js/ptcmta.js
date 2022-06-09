@@ -299,18 +299,24 @@ TreeAction.node = class Node {
     }else if(this.node.id === 'ssnw'){
       window.location = document.location.origin + '/psnw01';
     }else if(this.node.id.substr(0, 2) === 'ji' || this.node.id.substr(0, 2) === 'bs'){
+
       //@var string Laravelのセッションid
       let clientId = document.getElementById('hidden_client_id').value;
       //@var string ノードのid
       let nodeId = this.node.id;
-      //移動命令
-      window.location = document.location.origin + `/show/${clientId}/${nodeId}`;
+      if(nodeId === 'bs00000000'){
+        //移動命令
+        window.location = document.location.origin + `/show/bs/top`;
+      }else{
+        //移動命令
+        window.location = document.location.origin + `/show/${clientId}/${nodeId}`;
+      }
     }else if(this.node.id.substr(0, 2) === 'kb'){
       //@var string Laravelのセッションid
       let clientId = document.getElementById('hidden_client_id').value;
       //@var string ノードのid
       let nodeId = this.node.id;
-      if(nodeId === 'kb'){
+      if(nodeId === 'kb00000000'){
         //移動命令
         window.location = document.location.origin + `/pskb/`;
       }else{
@@ -322,7 +328,7 @@ TreeAction.node = class Node {
       let clientId = document.getElementById('hidden_client_id').value;
       //@var string ノードのid
       let nodeId = this.node.id;
-      if(nodeId === 'sb'){
+      if(nodeId === 'sb00000000'){
         //移動命令
         window.location = document.location.origin + `/pssb01/`;
       }else{
@@ -338,7 +344,11 @@ TreeAction.node = class Node {
       let projectionId = this.node.fromLink[0];
       //作業場所の場合
       if(projectionId.substr(0, 2) === 'sb'){
+        //移動命令
         window.location = document.location.origin + `/pssb01/show/${clientId}/${nodeId}`;
+      }else if(projectionId.substr(0, 2) === 'kb'){
+        //移動命令
+        window.location = document.location.origin + `/pskb01/show/${clientId}/${nodeId}`;
       }else{
         //移動命令
         window.location = document.location.origin + `/show/${clientId}/${nodeId}`;

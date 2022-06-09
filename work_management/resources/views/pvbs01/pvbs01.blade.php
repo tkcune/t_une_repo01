@@ -23,7 +23,7 @@
                         @csrf
                         <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写"  onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
                         </form>
-                        <button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+                        <button class="main_button_style" type="button" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
                             <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く" >
                         </button>
 
@@ -35,7 +35,7 @@
                         </form>
                         {{--ここまで--}}
 
-                        <input type="checkbox" onclick="deleteOn()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
+                        <input type="checkbox" onclick="deleteOn2()" data-toggle="tooltip" title="チェックを入れることで削除ボタンがクリックできるようになります（削除権限がある場合）">
                         <font size="-2" color="red">削除有効化</font>
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                     <div class="col-4" style="display:inline-flex; padding-top:15px;">
                         <p>配下部署</p>
                         <form action="{{ route('psbs01.index') }}" method="get">
-                            <input type="hidden" id="high" name="high" value="{{$department_details['data'][0]->department_id}}">
+                            <input type="hidden" id="high" name="high" value="bs00000000">
                         
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                             <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
@@ -60,12 +60,12 @@
                         </form>
 
                         <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
-                            <input type="hidden" id="high_move" name="high_id" value="{{$department_details['data'][0]->department_id}}">
+                            <input type="hidden" id="high_move" name="high_id" value="bs00000000">
                             <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}">
                         @csrf
                         @method('patch')
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動" disabled style="opacity:0.3">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動">
                         </button>
                         </form>
 
@@ -74,9 +74,9 @@
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         <input type="hidden" id="copy" name="copy_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" id="high_insert" name="high_id" value="{{$department_details['data'][0]->department_id}}">
+                        <input type="hidden" id="high_insert" name="high_id" value="bs00000000">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入" disabled style="opacity:0.3">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入">
                         </button>
                         </form>
 
@@ -85,9 +85,9 @@
                         @method('post')
                         <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                         <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" id="high_projection" name="high_id" value="{{$department_details['data'][0]->department_id}}">
+                        <input type="hidden" id="high_projection" name="high_id" value="bs00000000">
                         <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影" disabled style="opacity:0.3">
+                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
                         </button>
                         </form>
                     </div>
@@ -254,222 +254,6 @@
                     </div>
                 </div>
             </div>
-            <div class="personnel-area" style="padding-top:5px">
-                <div class="row">
-                    <div class="col-4" style="display:inline-flex;">
-                        {{-- ツリー操作機能　--}}
-                        <p>所属人員</p>
-                        <form action="{{ route('psji01.index') }}" method="get">
-                        <input type="hidden" id="ji_high_new" name="high" value="{{$department_details['data'][0]->department_id}}">
-
-                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
-                        </button>
-                        </form>
-
-                        <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
-                        @csrf
-                        @method('patch')
-                        <input type="hidden" id="ji_high_move" name="high_id" value="{{$department_details['data'][0]->department_id}}">
-                        <input type="hidden" id="ji_lower_move" name="lower_id" value="{{session('clipboard_id')}}"> 
-                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動" disabled style="opacity:0.3">
-                        </button>
-                        </form>
-
-                        <form action="{{ route('psji01.copy') }}" method="post">
-                        @csrf
-                        @method('post')
-                        <input type="hidden" name="client_id" value="{{ session('client_id') }}">
-                        <input type="hidden" name="high_id" value="{{$department_details['data'][0]->department_id}}">
-                        <input type="hidden" id="ji_copy_id" name="copy_id" value="{{session('clipboard_id')}}">
-                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入" disabled style="opacity:0.3">
-                        </button>
-                        </form>
-
-                        <form action="{{ route('ptcm01.store') }}" method="post">
-                        @csrf
-                        @method('post')
-                        <input type="hidden" name="projection_source_id" value="{{session('clipboard_id')}}">
-                        <input type="hidden" name="client_id" value="{{ session('client_id') }}">
-                        <input type="hidden" id="ji_high_projection" name="high_id" value="{{$department_details['data'][0]->department_id}}">
-                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影" disabled style="opacity:0.3">
-                        </button>
-                        </form>
-                    </div>
-                        {{-- ツリー操作機能ここまで　--}}
-
-                        {{-- ページネーション--}}
-                    <div class="col-3">
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination pagination-sm">
-                                <li class="page-item">
-                                @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('psbs01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                @elseif(!empty($_POST['search2']))
-                                    <a class="page-link" href="{{ route('psji01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>1,'search2'=>$_POST['search2']]) }}" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                @else
-                                    <a class="page-link" href="{{ route('pa0001.top',['department_page'=>$count_department,'personnel_page'=>1]) }}" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                @endif
-                                </li>
-                                <li class="page-item">
-    @if($count_personnel == 1)
-                                @if(!empty($_POST['search']))
-                                <a class="page-link" href="{{ route('psbs01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>$count_personnel,'search'=>$_POST['search']]) }}" aria-label="Previous">
-                                @elseif(!empty($_POST['search2']))
-                                <a class="page-link" href="{{ route('psji01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>$count_personnel,'search2'=>$_POST['search2']]) }}" aria-label="Previous">
-                                @else
-                                <a class="page-link" href="{{ route('pa0001.top',['department_page'=>$count_department,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
-                                @endif
-    @else
-                                @if(!empty($_POST['search']))
-                                <a class="page-link" href="{{ route('psbs01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'search'=>$_POST['search']]) }}" aria-label="Previous">
-                                @elseif(!empty($_POST['search2']))
-                                <a class="page-link" href="{{ route('psji01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>$count_personnel-1,'search2'=>$_POST['search2']]) }}" aria-label="Previous">
-                                @else
-                                <a class="page-link" href="{{ route('pa0001.top',['department_page'=>$count_department,'personnel_page'=>$count_personnel-1]) }}" aria-label="Previous">
-                                @endif
-    @endif
-                                    <span aria-hidden="true">&lt;</span>
-                                </a>
-                                </li>
-                                {{$count_personnel}}/{{$personnel_details['max']}}&nbsp;&nbsp;{{$personnel_details['count']}}件
-                                <li class="page-item">
-    @if($count_personnel<$personnel_details['max'])
-                                @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('psbs01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'search'=>$_POST['search']]) }}" aria-label="Next">
-                                @elseif(!empty($_POST['search2']))
-                                    <a class="page-link" href="{{ route('psji01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>$count_personnel+1,'search2'=>$_POST['search2']]) }}" aria-label="Next">
-                                @else
-                                    <a class="page-link" href="{{ route('pa0001.top',['department_page'=>$count_department,'personnel_page'=>$count_personnel+1]) }}" aria-label="Next">
-                                @endif
-    @else
-                                @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('psbs01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>$personnel_details['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
-                                @elseif(!empty($_POST['search2']))
-                                    <a class="page-link" href="{{ route('psji01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>$personnel_details['max'],'search2'=>$_POST['search2']]) }}" aria-label="Next">
-                                @else
-                                    <a class="page-link" href="{{ route('pa0001.top',['department_page'=>$count_department,'personnel_page'=>$personnel_details['max']]) }}" aria-label="Next">
-                                @endif
-    @endif
-                                        <span aria-hidden="true">&gt;</span>
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('psbs01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>$personnel_details['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                @elseif(!empty($_POST['search2']))
-                                    <a class="page-link" href="{{ route('psji01.search',[session('client_id'),'bs00000000','department_page'=>$count_department,'personnel_page'=>$personnel_details['max'],'search2'=>$_POST['search2']]) }}" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                @else
-                                    <a class="page-link" href="{{ route('pa0001.top',['department_page'=>$count_department,'personnel_page'=>$personnel_details['max']]) }}" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                @endif
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                        {{-- ページネーションここまで --}}
-
-                        {{-- 検索機能　--}}
-                    <div class="col-4" style="display:inline-flex;">
-                        <p>氏名</p>
-                        <form action="{{ route('psji01.search',[session('client_id'),'bs00000000'])}}" method="post">
-                        @csrf
-                        @method('post')
-                        @if(!empty($_POST['search2']))
-                            <input type="text" name="search2" class="top" maxlength="32" value="{{ $_POST['search2'] }}">
-                        @else
-                            <input type="text" name="search2" class="top" maxlength="32">
-                        @endif
-                        <button class="main_button_style" data-toggle="tooltip" title="クリックにより、検索文字に従い検索し、一覧に表示するレコードを限定します。文字が入力されていない場合は、全件を表示します" type="submit">
-                            <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.search')}}" alt="検索">
-                        </button>
-                        </form>
-                        {{-- 検索機能ここまで　--}}
-                    
-                    </div>
-                </div>
-                
-                <div class="row margin-reset">
-                    <div class="col">
-                        <div class="border border-dark">
-                            <table id="ji-table" class="ji-table table_sticky table table-striped" style=" margin-bottom:0px;margin-top:0px;">
-                                <thead>
-                                    <tr>
-                                    <th width="102">人員番号</th>
-                                    <th width="100">氏名</th>
-                                    <th width="130">所属部署</th>
-                                    <th width="80">状態</th>
-                                    <th width="60">ID</th>
-                                    <th width="100">PW更新</th>
-                                    <th width="80">権限</th>
-                                    <th width="160">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($personnel_details['data'] as $personnel_detail['data'])
-                                    <tr>
-                                    <td width="100">{{ $personnel_detail['data']->personnel_id}}</td>
-                                    @if($personnel_detail['data']->operation_start_date > \Carbon\Carbon::today()->format('Y-m-d') || (!(null == $personnel_detail['data']->operation_end_date) && \Carbon\Carbon::today()->format('Y-m-d') > $personnel_detail['data']->operation_end_date))
-                                    <td width="100"><s><a href="{{ route('plbs01.show',[session('client_id'),$personnel_detail['data']->personnel_id])}}">{{$personnel_detail['data']->name}}</a> </s> </td>
-                                    @else
-                                    <td width="100"><a href="{{ route('plbs01.show',[session('client_id'),$personnel_detail['data']->personnel_id])}}">{{$personnel_detail['data']->name}}</a></td>
-                                    @endif 
-                                    <td width="130"><a href="{{ route('plbs01.show',[session('client_id'),$personnel_detail['data']->high_id])}}">{{$personnel_detail['data']->high_name}}</a>
-                                    <td width="80">
-                                    @switch($personnel_detail['data']->status)
-                                        @case(10)
-                                        応募
-                                        @break
-                                        @case(11)
-                                        審査中
-                                        @break
-                                        @case(12)
-                                        入社待
-                                        @break
-                                        @case(13)
-                                        在職
-                                        @break
-                                        @case(14)
-                                        休職
-                                        @break
-                                        @case(18)
-                                        退職
-                                        @break
-                                    @endswitch
-                                    </td>
-                                    <td width="60">aaa02</td>
-                                    <td width="100">{{$personnel_detail['data']->password_update_day}}</td>
-                                    <td width="80">---------</td>
-                                    <td width="162">【<a href="{{ route('pa0001.clipboard',$personnel_detail['data']->personnel_id)}}">複写</a>】
-                                    【<p id="list_delete{{$loop->index}}" name="bs_delete" style="pointer-events: none; display:inline-block; text-decoration:underline; margin:0px;" onclick="event.preventDefault(); document.getElementById('delete{{$loop->index}}').submit();">削除</p>】
-                                    <form id="delete{{$loop->index}}" action="{{ route('psji01.destroy',[session('client_id'),$personnel_detail['data']->personnel_id])}}" method="post" style="display: none;">
-                                    @csrf
-                                    </form>
-                                    </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
 @endsection

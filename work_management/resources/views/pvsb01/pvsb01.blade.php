@@ -72,30 +72,6 @@
             </div>
         </div>
         {{-- 作業場所一覧部分ここまで--}}
-
-        {{-- 人員詳細部分 --}}
-        <div class="personnel-area">
-            <div class="row">
-                <div>
-                    @include('plsb01.plsb07',
-                    [
-                    'count_department' => $pagination_object->count_department,
-                    'count_personnel' => $pagination_object->count_personnel,
-                    'personnel_max' => $pagination_object->personnel_max,
-                    'total_personnel' => $pagination_object->total_personnel,
-                    ]
-                    )
-                </div>
-
-                {{-- 作業場所一覧部分 --}}
-                <div class="row margin-reset">
-                    <div class="col">
-                        {{-- 作業場所表示画面 --}}
-                        @include('plji01.plji03', ['names' => $pagination_object->names])
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 @endsection

@@ -11,6 +11,7 @@
             <script>
             let treeChain = @json($tree_chain);
             let projectionChain = @json($projection_chain);
+            let base64ImgList = @json(Config::get('base64'));
             </script>
             <!-- ツリー生成データ -->
 

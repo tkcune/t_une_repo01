@@ -7,20 +7,20 @@
         <div class="col-4" style="display:inline-flex;">
             <p>配下場所</p>
             <form action="{{ route('pssb01.create') }}" method="get">
-                <input type="hidden" id="high_new" name="high" value="{{$space_details['data'][0]->space_id}}">
+                <input type="hidden" id="high_new" name="high" value='sb00000000'>
                 <button class="main_button_style" data-toggle="tooltip" title="クリックにより、詳細情報に属する下位情報を新規登録する詳細画面に遷移します">
                     <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.new')}}" alt="新規">
                 </button>
             </form>
 
             {{-- 作業場所移動ボタン --}}
-            <form action="{{ route('psbs01.hierarchyUpdate',[session('client_id')]) }}" method="post">
+            <form action="{{ route('pssb01.hierarchyUpdate',[session('client_id')]) }}" method="post">
                 @csrf
                 @method('patch')
-                <input type="hidden" id="high_move" name="high_id" value="{{$space_details['data'][0]->space_id}}">
+                <input type="hidden" id="high_move" name="high_id" value='sb00000000'>
                 <input type="hidden" id="lower_move" name="lower_id" value="{{session('clipboard_id')}}">
                 <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に移動します 移動元からは抹消されます">
-                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動" disabled style="opacity:0.3">
+                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.move')}}" alt="移動">
                 </button>
             </form>
 
@@ -30,11 +30,12 @@
                 @method('post')
                 <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                 <input type="hidden" id="copy" name="copy_id" value="{{session('clipboard_id')}}">
-                <input type="hidden" id="high_insert" name="high_id" value="{{$space_details['data'][0]->space_id}}">
+                <input type="hidden" id="high_insert" name="high_id" value='sb00000000'>
                 <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧に挿入します 移動元は消えません">
-                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入" disabled style="opacity:0.3">
+                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.insert')}}" alt="挿入">
                 </button>
             </form>
+
 
             {{-- 作業場所投影ボタン --}}
             <form action="{{ route('pssb01.projection') }}" method="post">
@@ -42,9 +43,8 @@
                 @method('post')
                 <input type="hidden" name="client_id" value="{{ session('client_id') }}">
                 <input type="hidden" id="projection_source" name="projection_source_id" value="{{session('clipboard_id')}}">
-                <input type="hidden" id="high_projection" name="high_id" value="{{$space_details['data'][0]->space_id}}">
-                <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
-                    <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影" disabled style="opacity:0.3">
+                <input type="hidden" id="high_projection" name="high_id" value='sb00000000' } <button class="main_button_style" data-toggle="tooltip" title="クリックにより、クリップボードにコピーした情報を、一覧にショートカットして投影します 移動元は消えません">
+                <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.ji')}}" alt="投影">
                 </button>
             </form>
         </div>
@@ -56,74 +56,72 @@
                 <ul class="pagination pagination-sm">
                     <li class="page-item">
                         @if(!empty($_POST['search']))
-                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>1,'personnel_page'=>$count_personnel,'search'=>$_POST['search']]) }}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                        @elseif(!empty($_POST['search2']))
-                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>1,'personnel_page'=>$count_personnel,'search2'=>$_POST['search2']]) }}" aria-label="Previous">
+                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                         @else
-                        <a class="page-link" href="{{ route('pssb01.index',['space_page'=>1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
+                        <a class="page-link" href="{{ route('pssb01.index',['space_page'=>1]) }}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                         @endif
                     </li>
 
                     <li class="page-item">
-                        @if($count_space == 1)
                         @if(!empty($_POST['search']))
-                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$count_space,'personnel_page'=>$count_personnel,'search'=>$_POST['search']]) }}" aria-label="Previous">
-                            @elseif(!empty($_POST['search2']))
-                            <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$count_space,'personnel_page'=>$count_personnel,'search2'=>$_POST['search2']]) }}" aria-label="Previous">
+                        @if($count_space <= 1) <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span>
+                            </a>
+                            @else
+                            <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$count_space-1,'search'=>$_POST['search']]) }}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;</span>
+                            </a>
+                            @endif
+                            @else
+                            @if($count_space <= 1) <a class="page-link" href="{{ route('pssb01.index',['space_page'=>$count_space-1]) }}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;</span>
+                                </a>
                                 @else
-                                <a class="page-link" href="{{ route('pssb01.index',['space_page'=>$count_space,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
-                                    @endif
-                                    @else
-                                    @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$count_space-1,'personnel_page'=>$count_personnel,'search'=>$_POST['search']]) }}" aria-label="Previous">
-                                        @elseif(!empty($_POST['search2']))
-                                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$count_space-1,'personnel_page'=>$count_personnel,'search2'=>$_POST['search2']]) }}" aria-label="Previous">
-                                            @else
-                                            <a class="page-link" href="{{ route('pssb01.index',['space_page'=>$count_space-1,'personnel_page'=>$count_personnel]) }}" aria-label="Previous">
-                                                @endif
-                                                @endif
-                                                <span aria-hidden="true">&lt;</span>
-                                            </a>
+                                <a class="page-link" href="{{ route('pssb01.index',['space_page'=>$count_space-1]) }}" aria-label="Previous">
+                                    <span aria-hidden="true">&lt;</span>
+                                </a>
+                                @endif
+                                @endif
                     </li>
 
                     {{$count_space}}/{{$space_details['max']}}&nbsp;&nbsp;{{$space_details['count']}}件
 
                     <li class="page-item">
-                        @if($count_space<$space_details['max']) @if(!empty($_POST['search'])) <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$count_space+1,'personnel_page'=>$count_personnel,'search'=>$_POST['search']]) }}" aria-label="Next">
-                            @elseif(!empty($_POST['search2']))
-                            <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$count_space+1,'personnel_page'=>$count_personnel,'search2'=>$_POST['search2']]) }}" aria-label="Next">
+                        @if(!empty($_POST['search']))
+                        @if($count_space < $space_details['max']) <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$count_space+1,'search'=>$_POST['search']]) }}" aria-label="Next">
+                            <span aria-hidden="true">&gt;</span>
+                            </a>
+                            @else
+                            <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$space_details['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
+                                <span aria-hidden="true">&gt;</span>
+                            </a>
+                            @endif
+                            @else
+                            @if($count_space < $space_details['max']) <a class="page-link" href="{{ route('pssb01.index',['space_page'=>$count_space+1]) }}" aria-label="Next">
+                                <span aria-hidden="true">&gt;</span>
+                                </a>
                                 @else
-                                <a class="page-link" href="{{ route('pssb01.index',['space_page'=>$count_space+1,'personnel_page'=>$count_personnel,'id'=>session('client_id')]) }}" aria-label="Next">
-                                    @endif
-                                    @else
-                                    @if(!empty($_POST['search']))
-                                    <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$space_details['max'],'personnel_page'=>$count_personnel,'search'=>$_POST['search']]) }}" aria-label="Next">
-                                        @elseif(!empty($_POST['search2']))
-                                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$space_details['max'],'personnel_page'=>$count_personnel,'search2'=>$_POST['search2']]) }}" aria-label="Next">
-                                            @else
-                                            <a class="page-link" href="{{ route('pssb01.index',['space_page'=>$space_details['max'],'personnel_page'=>$count_personnel,'id'=>session('client_id')]) }}" aria-label="Next">
-                                                @endif
-                                                @endif
-                                                <span aria-hidden="true">&gt;</span>
-                                            </a>
+                                <a class="page-link" href="{{ route('pssb01.index',['space_page'=>$space_details['max']]) }}" aria-label="Next">
+                                    <span aria-hidden="true">&gt;</span>
+                                </a>
+                                @endif
+                                @endif
                     </li>
 
                     <li class="page-item">
                         @if(!empty($_POST['search']))
-                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$space_details['max'],'personnel_page'=>$count_personnel,'search'=>$_POST['search']]) }}" aria-label="Next">
-                            @elseif(!empty($_POST['search2']))
-                            <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$space_details['max'],'personnel_page'=>$count_personnel,'search2'=>$_POST['search2']]) }}" aria-label="Next">
-                                @else
-                                <a class="page-link" href="{{ route('pssb01.index',['space_page'=>$space_details['max'],'personnel_page'=>$count_personnel, 'id'=>session('client_id'),'id2'=>session('client_id')]) }}" aria-label="Next">
-                                    @endif
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
+                        <a class="page-link" href="{{ route('pssb01.search',[session('client_id'),'sb00000000','space_page'=>$space_details['max'],'search'=>$_POST['search']]) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                        @else
+                        <a class="page-link" href="{{ route('pssb01.index',['space_page'=>$space_details['max']]) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                        @endif
                     </li>
                 </ul>
             </nav>

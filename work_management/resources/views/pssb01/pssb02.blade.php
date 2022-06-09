@@ -78,8 +78,8 @@
                             </div>
                             <div class="col" style="padding:0px">
                                 住所:
-                                <input type="text" name="address1" value="{{$space_data[0]->address1}}" size="25" placeholder="都道府県+市区町村" title="ここに都道府県名と以降の住所が入ります。">
-                                <input type="text" name="address2" value="{{$space_data[0]->address2}}" size="15" placeholder="番地" title="ここに番地が入ります。番地なしの場合は無番地と入力します。">
+                                <input type="text" name="address1" value="{{$space_data[0]->address1}}" size="29" placeholder="都道府県+市区町村" title="ここに都道府県名と以降の住所が入ります。">
+                                <input type="text" name="address2" value="{{$space_data[0]->address2}}" size="22" placeholder="番地" title="ここに番地が入ります。番地なしの場合は無番地と入力します。">
                                 </p>
                             </div>
                             <div class="row margin-reset">
@@ -110,7 +110,7 @@
                                 備考
                             </div>
                             <div>
-                                <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" placeholder="備考欄は任意で入力します。" style="width:800px; height: 60px;">{{ $space_data[0]->remarks }}</textarea>
+                                <textarea id="remarks_set" onchange = "remarks(this value)" placeholder="備考欄は任意で入力します。" style="width:800px; height: 60px;">{{ $space_data[0]->remarks }}</textarea>
                             </div>
                         </div>
 

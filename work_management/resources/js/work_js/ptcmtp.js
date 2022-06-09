@@ -23,8 +23,10 @@ if(findMobile.deviceName !== 'pc'){
                 //@var dom ツールチップのdom
                 let tooltipSpan = this.createTooltip();
                 tooltipSpan = this.appendChild(tooltipSpan);
+
                 //ツールチップの表示が画面よりはみ出ていたら、修正する
                 this.changePosition(span, tooltipSpan);
+                
                 //？マークのクリック処理
                 span.addEventListener('click', () => {
                     //非表示なら表示
@@ -32,12 +34,14 @@ if(findMobile.deviceName !== 'pc'){
                         tooltipSpan.style.visibility = 'visible';
                     }
                 });
+
                 //表示したツールチップを非表示にする
                 function clearToolTip(){
                     if(this.tooltipSpan.style.visibility === 'visible'){
                         this.tooltipSpan.style.visibility = 'hidden';
                     }
                 }
+
                 //？マーク以外をクリックしたら、ツールチップを非表示にする
                 window.addEventListener('click', {tooltipSpan: tooltipSpan, handleEvent: clearToolTip}, true);
             }
@@ -61,6 +65,7 @@ if(findMobile.deviceName !== 'pc'){
                 tooltipSpan.style.width = '10rem';
                 tooltipSpan.style.top = '1rem';
                 tooltipSpan.style.left = '1rem';
+
                 //改行を実現する
                 tooltipSpan.style.whiteSpace = 'pre-line !important';
                 tooltipSpan.style.backgroundColor = 'white';
@@ -69,6 +74,7 @@ if(findMobile.deviceName !== 'pc'){
                 tooltipSpan.style.border = '1px solid';
                 tooltipSpan.style.fontWeight = 'bold';
                 tooltipSpan.innerText = this.getAttribute('title');
+                
                 if(this.getAttribute('title').length >= 100){
                     tooltipSpan.style.width = '20rem';
                 }

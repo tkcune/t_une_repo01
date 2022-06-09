@@ -61,15 +61,15 @@
                         <div class="col" style="padding-right:0px">
                             住所<span class="kome">*</span>:
                             @if(!empty($address1))
-                            <input type="text" name="address1" value="{{ $address1 }}" size="25" placeholder="都道府県+市区町村" title="ここに都道府県名と市区町村が入ります。">
+                            <input type="text" name="address1" value="{{ $address1 }}" size="29" placeholder="都道府県+市区町村" title="ここに都道府県名と市区町村が入ります。">
                             @else
-                            <input type="text" name="address1" value="{{ old('address1') }}" size="25" placeholder="都道府県+市区町村" title="ここに都道府県名と市区町村が入ります。">
+                            <input type="text" name="address1" value="{{ old('address1') }}" size="29" placeholder="都道府県+市区町村" title="ここに都道府県名と市区町村が入ります。">
                             @endif
 
                             @if(!empty($address2))
-                            <input type="text" name="address2" value="{{ $address2 }}" size="15" placeholder="番地" title="ここに番地が入ります。番地なしの場合は無番地と入力します。">
+                            <input type="text" name="address2" value="{{ $address2 }}" size="22" placeholder="番地" title="ここに番地が入ります。番地なしの場合は無番地と入力します。">
                             @else
-                            <input type="text" name="address2" value="{{ old('address2') }}" size="15" placeholder="番地" title="ここに番地が入ります。番地なしの場合は無番地と入力します。">
+                            <input type="text" name="address2" value="{{ old('address2') }}" size="22" placeholder="番地" title="ここに番地が入ります。番地なしの場合は無番地と入力します。">
                             @endif
                             </p>
                         </div>
@@ -96,7 +96,7 @@
                          備考
                         </div>
                         <div>
-                            <textarea id="remarks_set" onchange = "remarks(this value)" maxlength="512" placeholder="備考欄は任意で入力します。" style="width:800px; height: 60px;"></textarea>
+                            <textarea id="remarks_set" onchange = "remarks(this value)" placeholder="備考欄は任意で入力します。" style="width:800px; height: 60px;"></textarea>
                         </div>
                     </div>
 

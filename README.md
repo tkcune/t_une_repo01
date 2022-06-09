@@ -35,7 +35,7 @@
     
 　4-2.続けて、 php artisan db:seedで、データベースにデータを挿入する<BR>
     
-５・APP_KEYの生成
+５・APP_KEYの生成（C.Laravelプログラム資源をダウンロードし開発可能にする手順　3.アプリケーションキーを生成を行っていない場合）
     
 　5-1. php artisan key:generateの実行で、.envファイルのAPP_KEYが生成される<BR>
   
@@ -50,3 +50,4 @@
 1. コマンドプロンプトのwork_manegement配下でcomposer require --dev "orangehill/iseed"を実行(既に実行済みの場合は省略)<BR>
 
 2. コマンドプロンプトのwork_manegement配下でphp artisan iseed {table_name}を実行({table_name}は対応したテーブル名を記載)<BR>
+

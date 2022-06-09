@@ -48,7 +48,9 @@
 
                         <div class="col-3">
                             @if(isset($space_data[0]->high_id))
+                            @if(($space_data[0]->high_id) === "sb00000000")@else
                             <p>上位：<a href="{{ route('pssb01.show',[session('client_id'),$space_data[0]->high_id])}}" data-toggle="tooltip" title="クリックにより、上位部署に遷移します">{{$space_data[0]->high_name}}</a></p>
+                            @endif
                             @endif
                         </div>
 

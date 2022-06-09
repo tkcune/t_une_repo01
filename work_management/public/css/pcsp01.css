@@ -24,3 +24,24 @@
     border: solid 1px #6091d3;/*線*/
     border-radius: 10px;/*角の丸み*/
 }
+
+.stamp_names{
+    position: relative;
+    padding: 20px;
+    background-color: #fff3ad;
+  }
+  /* 三角アイコン - 左右の中心 */
+  .stamp_names::before{
+    content: '';
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    left: 0;
+    right: 0;
+    bottom: -15px;
+    margin: 0 auto;
+    border-top: 15px solid #fff3ad;
+    border-right: 15px solid transparent;
+    border-left: 15px solid transparent;
+  }

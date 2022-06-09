@@ -251,8 +251,25 @@ class Pskb01Controller extends Controller
             $count_board = $board_lists['max'];
         }
 
-        $stamps = StampDataBase::stamp($client_id,$select_id);
+        $datas = StampDataBase::stamp($client_id,$select_id);
+        $stamps = [];
+        
+        //キーの振り直し
+        foreach($datas as $data){
+           if(!isset($stamps[$data->stamp_id]['name'])){
+                $stamps[$data->stamp_id]['name'] = array();
+                $stamps[$data->stamp_id]['id'] = $data->stamp_id;
+                $stamps[$data->stamp_id]['base64'] = $data->base64;    
+                array_push($stamps[$data->stamp_id]['name'],$data->name);
+            }else{
+                array_push($stamps[$data->stamp_id]['name'],$data->name);
+            }
+        }
         $stamp_lists = config('stamp');
+
+        $stamps = array_values($stamps);
+
+        //dd($stamps);
 
         return view('pskb01.pskb01',compact('board_details','board_lists','incidental_lists','system_management_lists',
         'count_board','count_incidental','stamps','stamp_lists'));
@@ -512,8 +529,10 @@ class Pskb01Controller extends Controller
         //ページネーションの番号チェック
         if(isset($_GET['count'])){
             $count_board = $_GET['count'];
+            $count_incidental = $_GET['count'];
         }else{
             $count_board = Config::get('startcount.count');
+            $count_incidental = Config::get('startcount.count');
         }
 
         //検索語のチェック
@@ -569,6 +588,10 @@ class Pskb01Controller extends Controller
         $tree = new PtcmtrController();
         $tree_data = $tree->set_view_treedata();
 
+        //付帯データの取得
+        $incidental = new IncidentalDisplayList();
+        $incidental_lists = $incidental->display($client_id,$select_id,$count_board);
+
         //ページネーションが最大値を超えていないかの判断
         if($count_board > $board_lists['max']){
             $count_board = $board_lists['max'];
@@ -576,13 +599,13 @@ class Pskb01Controller extends Controller
 
         //スタンプ情報取得
         $stamps = StampDataBase::stamp($client_id,$select_id);
-        $stamp_lists = config('const.stamp');
+        $stamp_lists = config('stamp');
 
         if($select_id == 'kb00000000'){
-            return view('pvkb01.pvkb01',compact('board_lists','count_board','stamps','stamp_list'));
+            return view('pvkb01.pvkb01',compact('board_lists','count_board'));
         }
         return view('pskb01.pskb01',compact('board_details','board_lists','system_management_lists',
-        'count_board'));
+        'count_board','stamps','stamp_lists','incidental_lists','count_incidental'));
     }
 
     /**

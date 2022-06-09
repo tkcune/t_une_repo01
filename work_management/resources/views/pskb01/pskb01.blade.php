@@ -131,8 +131,14 @@
 
                     <div class="stamp-field" id="stamp-field" style="display:none">
                         @foreach($stamps as $stamp)
-                        <div class ="stamp_cicrle" id ="{{$stamp->stamp_id}}" style="display:inline-block">
-                            <img class="stamp_button" src="data:image/png;base64,{{Config::get($stamp->base64)}}" alt="スタンプ"><span class="stamp_count">{{$stamp->count}}</span>
+                        <div class ="stamp_cicrle" id ="{{$stamp['id']}}" style="display:inline-block" onmouseover="over(this)" onmouseleave="leave(this)">
+                            <img class="stamp_button" src="data:image/png;base64,{{Config::get($stamp['base64'])}}" alt="スタンプ">
+                            <span class="stamp_count">{{count($stamp['name'])}}</span>
+                        </div>
+                        <div class="stamp_names{{$stamp['id']}} stamp_names" style="display:none">
+                            @for($i=0; $i < count($stamp['name']) ; $i++ )
+                            <span>{{$stamp['name'][$i]}}</span>
+                            @endfor
                         </div>
                         @endforeach
 

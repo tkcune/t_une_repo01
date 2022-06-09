@@ -46,15 +46,14 @@
 
             $data = DB::table('dcsv01')
                     ->join('dcsp01','dcsv01.stamp_id','=', 'dcsp01.stamp_id')
-                    ->select(DB::raw('dcsv01.stamp_id,count(dcsv01.stamp_id) as count,base64'))
-                    ->where('client_id',$client)
+                    ->join('dcji01',function ($join) {
+                        $join->on('dcsv01.personnel_id','=', 'dcji01.personnel_id')
+                             ->on('dcsv01.client_id','=', 'dcji01.client_id');
+                        })
+                    ->select(DB::raw('dcsv01.stamp_id,base64,dcji01.name'))
+                    ->where('dcsv01.client_id',$client)
                     ->where('board_id',$board_id)
-                    ->groupby('dcsv01.stamp_id')
                     ->get();
-            
-            //DB::raw('SELECT sv1.stamp_id,count(sv1.stamp_id) AS count,base64 FROM dcsv01 AS sv1
-                    //INNER JOIN dcsp01 AS sp1 ON sv1.stamp_id = sp1.stamp_id
-                    //WHERE client_id = ? and board_id = ? GROUP BY stamp_id;',[$client,$board_id]);
 
             return $data;
         }

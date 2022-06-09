@@ -133,6 +133,28 @@ var boardRemarks = function () {
   }
 }
 
+/*
+ *スタンプホバーメソッド
+ */
+function over(x) {
+  var num = x.id;
+  var stamp_id = 'stamp_names'+num;
+  var div = document.getElementsByClassName(stamp_id);
+  let element = div.item(0);
+  element.setAttribute("style","display:block");
+}
+
+/*
+ *スタンプホバー解除メソッド
+ */
+function leave(x) {
+  var num = x.id;
+  var stamp_id = 'stamp_names'+num;
+  var div = document.getElementsByClassName(stamp_id);
+  let element = div.item(0);
+  element.setAttribute("style","display:none");
+}
+
 function stamp() {
   //切り替える対象の状態を取得
   var div = document.getElementById('stamp-area');
@@ -150,10 +172,7 @@ function stamp() {
 
 //スタンプ動作
 function stampClick(e) {
-  console.log(e.currentTarget.dataset['stamp']);
-  console.log(e.currentTarget);
   const stamp_data = e.currentTarget.dataset['stamp'];
-  //6月3日押したボタンのsrc属性を取得できればOK
   const stamp_src = e.currentTarget.children[0].src;
   const board_data = document.getElementById('stamp-area').dataset['board'];
   const client_data = document.getElementById('stamp-area').dataset['client'];
@@ -179,7 +198,6 @@ function stampClick(e) {
   })
   //通信成功した時の処理
   .done(function (data) {
-    console.log('sucsess');
 
     before_count = document.getElementsByClassName("stamp_cicrle").length;
     after_count = data.length;
@@ -233,7 +251,7 @@ function stampClick(e) {
   })
   //通信失敗した時の処理
   .fail(function () {
-    console.log('fail'); 
+
   });
 }
 

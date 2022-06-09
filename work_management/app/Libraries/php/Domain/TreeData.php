@@ -104,7 +104,7 @@ class TreeData{
         $tree_chain = [];
 
         //@var array ツリーの第一階層のidとタイトル
-        $database_index_chain = ['bs.部署', 'sb.作業場所', 'kb.掲示板','ss.システム設定', '0.notitle'];
+        $database_index_chain = ['bs00000000.部署', 'sb00000000.作業場所', 'kb00000000.掲示板','ss.システム設定', '0.notitle'];
     
         //一つ一つのテーブルから上下関係のオブジェクトのデータを作成する
         //@var int $index ループのインデックス
@@ -142,29 +142,9 @@ class TreeData{
                             }
                         }
                     }else{
-                        foreach($tree_id_chain[$index] as $value){
-                            //@var string データベースのid
-                            $search = $value['high_id'];
-                            if(!in_array($value['high_id'], $was_search_array)){
-                                $search = $value['high_id'];
-                                $was_search_array[] = $value['high_id'];
-                            }else{
-                                continue;
-                            }
-    
-                            //@var boolean下位の方にデータがないか判断するフラグ
-                            $top_flag = true;
-                            //上下関係のオブジェクトのデータ(idだけ)をループする
-                            foreach($tree_id_chain[$index] as $search_row){
-                                //下位に、データが存在すれば、フラグをfalseにする
-                                if($search == $search_row['lower_id']){
-                                    $top_flag = false;
-                                }
-                            }
-                            //下位に、データが存在しない上位にしかデータが存在しない場合、
-                            if($top_flag){
-                                //配列にidと名称を結合して代入する
-                                $chain[] = array($database_index_chain[$index] => $search.'.'.$database_id_name[$search]);
+                        foreach($tree_id_chain[$index] as $row){
+                            if($row['high_id'] == substr($database_index_chain[$index], 0, 10)){
+                                $chain[] = array($database_index_chain[$index] => $row['lower_id'].'.'.$database_id_name[$row['lower_id']]);
                             }
                         }
                         //第一階層と第一階層の下以外の上下関係のオブジェクトのデータを作成する

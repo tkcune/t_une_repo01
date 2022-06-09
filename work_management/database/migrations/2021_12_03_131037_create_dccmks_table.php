@@ -14,10 +14,12 @@ class CreateDccmksTable extends Migration
     public function up()
     {
         Schema::create('dccmks', function (Blueprint $table) {
+            $table->primary(['client_id', 'lower_id', 'high_id']);
             $table->string('client_id','10');
             $table->string('lower_id','10');
-            $table->string('high_id','10')->nullable();
-            $table->timestamps();
+            $table->string('high_id','10');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
         });
     }
 

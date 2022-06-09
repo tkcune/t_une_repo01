@@ -311,13 +311,10 @@ class Pa0001Controller extends Controller
             $count_department = Config::get('startcount.count');
             $count_personnel = Config::get('startcount.count');
         }
-        
         //一覧画面のデータ取得
         try{
             $department_display_list = new DepartmentDisplayList();
             $department_details = $department_display_list->display($client_id,$select_id,$count_department);
-            $personnel_display_list = new PersonnelDisplayList();
-            $personnel_details = $personnel_display_list->display($client_id,$select_id,$count_personnel);
         }catch(\Exception $e){
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001','01');
             DatabaseException::common($e);
@@ -329,7 +326,7 @@ class Pa0001Controller extends Controller
         $tree_data = $tree->set_view_treedata();
         
         if(session('device') != 'mobile'){
-            return view('pvbs01.pvbs01',compact('department_details','personnel_details',
+            return view('pvbs01.pvbs01',compact('department_details',
             'count_department','count_personnel'));
         }else{
             return view('pvbs01.pvbs02',compact('department_max','department_details','personnel_max','personnel_details',

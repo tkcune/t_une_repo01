@@ -140,6 +140,10 @@ class Psbs01Controller extends Controller
         //メッセージの表示
         $request->session()->put('message',Config::get('message.mhcmok0001'));
         PtcmtrController::open_node($department_id);
+
+        if($high == "bs00000000"){
+            return redirect()->route('pa0001.top');
+        }
         return redirect()->route('plbs01.show',[$client_id,$high]);
         
     }
@@ -178,8 +182,8 @@ class Psbs01Controller extends Controller
 
         //ログイン機能が完成次第、そちらで取得可能なため、このセッション取得を削除する。
         session(['client_id'=>$client_id]);
-
-        if($select_id == "bs"){
+        
+        if($select_id == "top"){
             return redirect()->route('pa0001.top');
         }
         
@@ -286,6 +290,7 @@ class Psbs01Controller extends Controller
             session(['click_code'=>$select_code]);
 
             //詳細画面オブジェクトの設定
+
             $personnel_details_object = new PersonnelDetailsObject();
             $personnel_details_object->setPersonnelObject($click_personnel_data);
 
@@ -458,6 +463,10 @@ class Psbs01Controller extends Controller
         OutputLog::message_log(__FUNCTION__, 'mhcmok0008');
         $message = Message::get_message('mhcmok0008',[0=>'']);
         session(['message'=>$message[0]]);
+
+        if($high_id == "bs00000000"){
+            return redirect()->route('pa0001.top');
+        }
         return back();
     }
 
@@ -571,7 +580,7 @@ class Psbs01Controller extends Controller
 
         PtcmtrController::delete_node($delete_data[0]->high_id);
         
-        if($delete_data[0]->high_id == "bs"){
+        if($delete_data[0]->high_id == "bs00000000"){
             return redirect()->route('pa0001.top');
         }
         return redirect()->route('plbs01.show',[$client,$delete_data[0]->high_id]);

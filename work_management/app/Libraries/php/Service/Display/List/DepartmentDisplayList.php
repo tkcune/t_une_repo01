@@ -27,11 +27,7 @@
             $department_db = new DepartmentDataBase();
 
             //一覧の部署データの取得
-            if($select_id == 'bs00000000'){
-                $department_data = $department_db->getList($client_id);
-            }else{
-                $department_data = $department_db->getSelectList($client_id,$select_id);
-            }
+            $department_data = $department_db->getSelectList($client_id,$select_id);
 
             //一覧の投影部署データの取得
             $projection_db = new ProjectionDataBase();

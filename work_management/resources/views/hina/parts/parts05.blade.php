@@ -5,11 +5,10 @@
     <input class="main_button_img" type="image" src="data:image/png;base64,{{Config::get('base64.copy')}}" alt="複写" onclick="submit();" id="copyTarget" data-toggle="tooltip" title="クリックにより、詳細領域のデータをクリップボードに複写します">
 </form>
 
-<!-- ツリー表示 -->
-<button class="main_button_style" type="button" id="tree_change_display" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
-    <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}}" alt="開く">
-</button>
-
+<!-- ツリーの表示 -->
+<button class="main_button_style" type="button" data-toggle="tooltip" title="ツリーを表示します" onclick="displayOn()">
+     <img class="main_button_img" src="data:image/png;base64,{{Config::get('base64.tree')}} alt=" 開く">
+ </button>
 {{--動作の為に非表示で設置--}}
 <form action="#" method="post">
     @csrf

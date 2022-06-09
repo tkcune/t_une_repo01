@@ -77,7 +77,6 @@ class Pssb01Controller extends Controller
         try {
             $space_display_list = new SpaceDisplayList();
             $space_details = $space_display_list->display($client_id, $select_id, $count_space);
-
         } catch (\Exception $e) {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
             DatabaseException::common($e);
@@ -214,13 +213,7 @@ class Pssb01Controller extends Controller
 
             //データベースに階層情報を登録
             $hierarchical = new Hierarchical();
-
-            if ($high === 'sb00000000') {
-                $high = NULL;
-                $hierarchical->insert($client_id, $space_id, $high);
-            } else {
-                $hierarchical->insert($client_id, $space_id, $high);
-            };
+            $hierarchical->insert($client_id, $space_id, $high);
 
             DB::commit();
 
@@ -230,7 +223,7 @@ class Pssb01Controller extends Controller
             $request->session()->put('message', Config::get('message.mhcmok0001'));
             PtcmtrController::open_node($space_id);
 
-            if ($high === NULL) {
+            if ($high === "sb00000000") {
                 return redirect()->route('pssb01.index');
             } else {
                 return redirect()->route('pssb01.show', [$client_id, $high]);
@@ -632,7 +625,12 @@ class Pssb01Controller extends Controller
         if ($delete_data[0]->high_id == "sb") {
             return redirect()->route('pssb01.index');
         }
-        return redirect()->route('pssb01.show', [$client_id, $delete_data[0]->high_id]);
+
+        if ($delete_data[0]->high_id === "sb00000000") {
+            return redirect()->route('pssb01.index');
+        } else {
+            return redirect()->route('pssb01.show', [$client_id, $delete_data[0]->high_id]);
+        };
     }
 
 
@@ -723,12 +721,7 @@ class Pssb01Controller extends Controller
         //データベース更新
         try {
             $hierarchical = new Hierarchical();
-            if ($high_id === 'sb00000000') {
-                $high_id = NULL;
-                $hierarchical->update($high_id, $client_id, $lower_id);
-            } else {
-                $hierarchical->update($high_id, $client_id, $lower_id);
-            };
+            $hierarchical->update($high_id, $client_id, $lower_id);
         } catch (\Exception $e) {
             //エラー及びログ処理
             OutputLog::message_log(__FUNCTION__, 'mhcmer0001', '01');
@@ -811,12 +804,7 @@ class Pssb01Controller extends Controller
 
             //データベースに階層情報を登録
             $hierarchical = new Hierarchical();
-            if ($high === 'sb00000000') {
-                $high = NULL;
-                $hierarchical->insert($client_id, $projection_id, $high);
-            } else {
-                $hierarchical->insert($client_id, $projection_id, $high);
-            };
+            $hierarchical->insert($client_id, $projection_id, $high);
 
             DB::commit();
         } catch (\Exception $e) {
@@ -835,7 +823,7 @@ class Pssb01Controller extends Controller
         session(['message' => $message[0]]);
         PtcmtrController::open_node($projection_id);
 
-        if ($high === NULL) {
+        if ($high === "sb00000000") {
             return redirect()->route('pssb01.index');
         } else {
             return redirect()->route('pssb01.show', [$client_id, $high]);
@@ -894,6 +882,11 @@ class Pssb01Controller extends Controller
         $message = Message::get_message('mhcmok0003', [0 => '']);
         session(['message' => $message[0]]);
         PtcmtrController::delete_node($high_id[0]->high_id);
-        return redirect()->route('pssb01.show', [$id, $high_id[0]->high_id]);
+
+        if ($high_id[0]->high_id === "sb00000000") {
+            return redirect()->route('pssb01.index');
+        } else {
+            return redirect()->route('pssb01.show', [$id, $high_id[0]->high_id]);
+        };
     }
 }

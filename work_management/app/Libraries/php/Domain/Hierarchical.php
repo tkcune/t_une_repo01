@@ -486,12 +486,7 @@ class Hierarchical
                 $space_id = WorkSpaceDataBase::getId($client_id)[0]->space_id;
 
                 //作業場所の複写
-                if ($high_id === 'sb00000000') {
-                    $high_id = NULL;
-                    self::subCopy($client_id, $copy_id, $high_id, $space_id, $db_name, $id_name);
-                } else {
-                    self::subCopy($client_id, $copy_id, $high_id, $space_id, $db_name, $id_name);
-                };
+                self::subCopy($client_id, $copy_id, $high_id, $space_id, $db_name, $id_name);
             } else if ($code_number == "kb") {
                 //掲示板の複写
                 //@var string 掲示板のテーブル名

@@ -210,8 +210,34 @@ class ProjectionDataBase
                                 left join dccmks AS ks1 on ta1.projection_id = ks1.lower_id
                                 left join dcsb01 AS sb2 on ks1.high_id = sb2.space_id
                                 left join dcji01 on sb1.management_personnel_id = dcji01.personnel_id
-                                where ta1.client_id = ? and high_id = ? order by sb1.space_id',
+                                where ta1.client_id = ? and ks1.high_id = ? order by sb1.space_id',
             [$client, $select_id]
+        );
+
+        return $data;
+    }
+
+    /**
+     * 作業場所一覧画面の検索投影データ
+     * @param string $client_id 顧客ID
+     * @param string $select_id 選択ID
+     * @param $search 検索文字
+     *
+     * @return $data
+     */
+    public function getSpaceSearch($client_id, $select_id, $search)
+    {
+
+        $data = DB::select(
+            'SELECT ta1.client_id,ta1.projection_id AS space_id,sb1.name,sb1.management_personnel_id,
+                                sb1.post_code,sb1.address1, sb1.address2,sb1.URL,sb1.remarks,sb1.created_at,sb1.updated_at,sb2.name
+                                AS high_name,high_id,dcji01.name AS management_name FROM dccmta AS ta1
+                                LEFT JOIN dcsb01 AS sb1 ON ta1.projection_source_id = sb1.space_id
+                                LEFT JOIN dccmks AS ks1 ON ta1.projection_id = ks1.lower_id
+                                LEFT JOIN dcsb01 AS sb2 ON ks1.high_id = sb2.space_id
+                                LEFT JOIN dcji01 ON sb1.management_personnel_id = dcji01.personnel_id
+                                WHERE ta1.client_id = ? AND ks1.high_id = ? and sb1.name like ? order by sb1.space_id',
+            [$client_id, $select_id, '%' . $search . '%']
         );
 
         return $data;

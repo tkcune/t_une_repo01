@@ -656,8 +656,8 @@ class Pssb01Controller extends Controller
 
         // 重複クリック対策
         $request->session()->regenerateToken();
-        $copy_id = substr($copy_id, -8);
-        if ($request->copy_id == null || $copy_id == "00000000") {
+        $check_id = substr($copy_id, -8);
+        if ($request->copy_id == null || $check_id == "00000000") {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0009', '01');
             $message = Message::get_message_handle('mhcmer0009', [0 => '']);
             session(['message' => $message[0], 'handle_message' => $message[3]]);
@@ -693,8 +693,8 @@ class Pssb01Controller extends Controller
         $request->session()->regenerateToken();
 
         //複写番号が空白の場合エラーメッセージを表示
-        $lower_id = substr($lower_id, -8);
-        if ($request->lower_id == null || $lower_id == "00000000") {
+        $check_id = substr($lower_id, -8);
+        if ($request->lower_id == null || $check_id == "00000000") {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0009', '01');
             $message = Message::get_message_handle('mhcmer0009', [0 => '']);
             session(['message' => $message[0], 'handle_message' => $message[3]]);
@@ -719,6 +719,7 @@ class Pssb01Controller extends Controller
             return back();
         }
 
+
         //データベース更新
         try {
             $hierarchical = new Hierarchical();
@@ -737,6 +738,7 @@ class Pssb01Controller extends Controller
         OutputLog::message_log(__FUNCTION__, 'mhcmok0008');
         $message = Message::get_message('mhcmok0008', [0 => '']);
         session(['message' => $message[0]]);
+
         return back();
     }
 
@@ -765,8 +767,8 @@ class Pssb01Controller extends Controller
         $request->session()->regenerateToken();
 
         //複写番号が空白の場合はエラーメッセージを表示
-        $projection_source_id = substr($projection_source_id, -8);
-        if ($request->projection_source_id == null || $projection_source_id == "00000000") {
+        $check_id = substr($projection_source_id, -8);
+        if ($request->projection_source_id == null || $check_id == "00000000") {
             OutputLog::message_log(__FUNCTION__, 'mhcmer0009', '01');
             $message = Message::get_message_handle('mhcmer0009', [0 => '']);
             session(['message' => $message[0], 'handle_message' => $message[3]]);

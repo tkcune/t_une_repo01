@@ -93,7 +93,11 @@
                                     @endif
                         </li>
 
+                        @if($space_max == 0)
+                        0/{{$space_details['max']}}&nbsp;&nbsp;{{$space_details['count']}}件
+                        @else
                         {{$count_space}}/{{$space_details['max']}}&nbsp;&nbsp;{{$space_details['count']}}件
+                        @endif
 
                         <li class="page-item">
                             @if(!empty($_POST['search']))
@@ -106,8 +110,7 @@
                                 </a>
                                 @endif
                                 @else
-                                @if($count_space < $space_details['max'])
-                                <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$click_id,'space_page'=>$count_space+1]) }}" aria-label="Next">
+                                @if($count_space < $space_details['max']) <a class="page-link" href="{{ route('pssb01.show',[session('client_id'),$click_id,'space_page'=>$count_space+1]) }}" aria-label="Next">
                                     <span aria-hidden="true">&gt;</span>
                                     </a>
                                     @else

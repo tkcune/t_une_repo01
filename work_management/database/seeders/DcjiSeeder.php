@@ -29,7 +29,8 @@ class DcjiSeeder extends Seeder
             ['aa00000001', 'ji00000007', '下山五郎', 'simoyama@gorou.com', '$2y$10$Sr9RRVQD1VVGs6Robx1yjOqlBIpaLc1bPWas4t7e/s8OZNyBG65nS', '2021-09-06 10:29:36', '13', 'ji00000007', 1, 1, '2021-09-06 10:29:36', NULL, NULL, '2021-09-06 01:29:36', '2021-09-06 01:29:36'],
             ['aa00000001', 'ji00000008', '浅田桜子', 'ninzin', '$2y$10$chTpoLp.IdkgTk2EFPcLZ.0oAkTIA84QKmqmbZWG0USB15IM.XfDG', '2021-09-06 10:30:12', '14', 'ji00000008', 1, 0, '2021-09-06 00:00:00', NULL, NULL, '2021-09-06 01:30:12', '2021-12-09 05:39:22'],
             ['aa00000001', 'ji00000009', '山田恭子', 'yamada@kyouko.com', '$2y$10$I5YGcb564hVxuxtgCfU8X.e8vlqLDm17eR4NXorktbyAp5y2yYNJG', '2021-09-06 10:31:34', '13', 'ji00000009', 1, 1, '2021-09-06 10:31:34', NULL, NULL, '2021-09-06 01:31:34', '2021-09-06 01:31:34'],
-            ['aa00000001', 'ji00000010', '高橋花子', 'takahasi@hanako.com', '$2y$10$AjVYz1C75May3.ykuUBI5OuJueL2dl967AYLlIG4biOZt5K1hoLQW', '2021-09-06 10:32:25', '12', 'ji00000010', 0, 0, '2021-09-06 10:31:34', NULL, NULL, '2021-09-06 01:32:25', '2021-09-06 01:32:25']
+            ['aa00000001', 'ji00000010', '高橋花子', 'takahasi@hanako.com', '$2y$10$AjVYz1C75May3.ykuUBI5OuJueL2dl967AYLlIG4biOZt5K1hoLQW', '2021-09-06 10:32:25', '12', 'ji00000010', 0, 0, '2021-09-06 10:31:34', NULL, NULL, '2021-09-06 01:32:25', '2021-09-06 01:32:25'],
+            ['aa00000001', 'ji00000011', 'abcd', 'abcd@sample.jp', '$2y$10$sbeMXkbMYD747RIk6wl.geyb4VdQMGEEd4jfgClCAlX8unnWTaYn.', '2021-09-06 10:32:25', '12', 'ji00000010', 0, 0, '2021-09-06 10:31:34', NULL, NULL, '2021-09-06 01:32:25', '2021-09-06 01:32:25']
         ];
         foreach($dcji_insert_data_list as $insert_data){
             DB::insert('insert into dcji01 ('. $dcji_columns .') VALUE ('. $dcji_holder .')', $insert_data);
